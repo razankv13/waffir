@@ -1,0 +1,58 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'user_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_UserModel _$UserModelFromJson(Map<String, dynamic> json) => _UserModel(
+  id: json['id'] as String,
+  email: json['email'] as String,
+  displayName: json['displayName'] as String?,
+  photoURL: json['photoURL'] as String?,
+  phoneNumber: json['phoneNumber'] as String?,
+  emailVerified: json['emailVerified'] as bool? ?? false,
+  isAnonymous: json['isAnonymous'] as bool? ?? false,
+  createdAt: json['createdAt'] == null
+      ? null
+      : DateTime.parse(json['createdAt'] as String),
+  lastSignInAt: json['lastSignInAt'] == null
+      ? null
+      : DateTime.parse(json['lastSignInAt'] as String),
+  metadata: json['metadata'] as Map<String, dynamic>?,
+  firstName: json['firstName'] as String?,
+  lastName: json['lastName'] as String?,
+  dateOfBirth: json['dateOfBirth'] as String?,
+  gender: json['gender'] as String?,
+  country: json['country'] as String?,
+  language: json['language'] as String?,
+  timezone: json['timezone'] as String?,
+  roles:
+      (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      const [],
+  preferences: json['preferences'] as Map<String, dynamic>? ?? const {},
+);
+
+Map<String, dynamic> _$UserModelToJson(_UserModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'email': instance.email,
+      'displayName': instance.displayName,
+      'photoURL': instance.photoURL,
+      'phoneNumber': instance.phoneNumber,
+      'emailVerified': instance.emailVerified,
+      'isAnonymous': instance.isAnonymous,
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'lastSignInAt': instance.lastSignInAt?.toIso8601String(),
+      'metadata': instance.metadata,
+      'firstName': instance.firstName,
+      'lastName': instance.lastName,
+      'dateOfBirth': instance.dateOfBirth,
+      'gender': instance.gender,
+      'country': instance.country,
+      'language': instance.language,
+      'timezone': instance.timezone,
+      'roles': instance.roles,
+      'preferences': instance.preferences,
+    };

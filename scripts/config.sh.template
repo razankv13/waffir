@@ -1,0 +1,200 @@
+#!/bin/bash
+
+# =============================================================================
+# Project Configuration Template
+# =============================================================================
+# This is a template for the project configuration file.
+# Copy this file to config.sh and update with your project-specific values.
+#
+# Usage:
+#   cp scripts/config.sh.template scripts/config.sh
+#   nano scripts/config.sh  # Update with your values
+#
+# IMPORTANT: Do not commit config.sh if it contains sensitive information.
+# Add config.sh to .gitignore to keep credentials private.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# App Information
+# -----------------------------------------------------------------------------
+export APP_NAME="YourAppName"                        # Your app's display name
+export BUNDLE_ID="com.yourcompany.yourapp"           # Base bundle identifier
+export PACKAGE_NAME="$BUNDLE_ID"                     # Android package name
+
+# App Store metadata
+export APP_DESCRIPTION="Your app description for the stores"
+export APP_CATEGORY="Utilities"                      # Primary category
+export APP_SUBCATEGORY="Productivity"                # Secondary category
+export APP_KEYWORDS="app,keywords,here"              # Comma-separated, max 100 chars
+
+# Copyright and versioning
+export APP_COPYRIGHT_YEAR="2024"
+export APP_COPYRIGHT_HOLDER="Your Company Name"
+export APP_SKU="${APP_NAME}_001"                     # Unique SKU for App Store
+
+# -----------------------------------------------------------------------------
+# Development Team Information
+# -----------------------------------------------------------------------------
+# Find your Team ID at: developer.apple.com/account > Membership
+export APPLE_TEAM_ID="YOUR_TEAM_ID"
+export APPLE_TEAM_NAME="Your Team Name"
+
+# -----------------------------------------------------------------------------
+# Project Paths
+# -----------------------------------------------------------------------------
+export PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export PUBSPEC_PATH="$PROJECT_ROOT/pubspec.yaml"
+
+# Xcode project settings
+export IOS_SCHEME="Runner"
+export IOS_WORKSPACE="Runner.xcworkspace"
+
+# -----------------------------------------------------------------------------
+# Environment-Specific Bundle IDs
+# -----------------------------------------------------------------------------
+export BUNDLE_ID_DEV=".dev"
+export BUNDLE_ID_STAGING=".staging"
+export BUNDLE_ID_PROD=""
+
+# -----------------------------------------------------------------------------
+# iOS Authentication (App Store Connect)
+# -----------------------------------------------------------------------------
+# Configure ONE of the two methods below
+
+# Method 1: API Key (Recommended)
+# Get from: appstoreconnect.apple.com > Users and Access > Keys
+export IOS_API_KEY_PATH="$HOME/.appstoreconnect/private_keys/AuthKey_XXXXXXXXXX.p8"
+export IOS_API_KEY_ID="XXXXXXXXXX"
+export IOS_API_ISSUER_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+# Method 2: Apple ID (Alternative)
+# Get app-specific password from: appleid.apple.com > Sign-In and Security
+export IOS_APPLE_ID="your@email.com"
+export IOS_APP_SPECIFIC_PASSWORD="xxxx-xxxx-xxxx-xxxx"
+
+# -----------------------------------------------------------------------------
+# Android Authentication (Google Play Console)
+# -----------------------------------------------------------------------------
+export ANDROID_SERVICE_ACCOUNT_KEY="$HOME/.playstore/service-account.json"
+export ANDROID_PACKAGE_NAME="$PACKAGE_NAME"
+export ANDROID_TRACK="internal"
+
+# -----------------------------------------------------------------------------
+# Build Configuration
+# -----------------------------------------------------------------------------
+export DEFAULT_PLATFORM="both"
+export DEFAULT_ENVIRONMENT="production"
+export DEFAULT_BUILD_TYPE="archive"
+export DEFAULT_EXPORT_METHOD="app-store"
+export AUTO_INCREMENT_VERSION=true
+export CLEAN_BUILD_DEFAULT=false
+
+# -----------------------------------------------------------------------------
+# Output Directories
+# -----------------------------------------------------------------------------
+export IOS_OUTPUT_DIR="build/ios"
+export ANDROID_OUTPUT_DIR="build/app/outputs"
+
+# -----------------------------------------------------------------------------
+# URLs and Links
+# -----------------------------------------------------------------------------
+export APP_PRIVACY_POLICY_URL="https://yourcompany.com/privacy"
+export APP_SUPPORT_URL="https://yourcompany.com/support"
+export APP_MARKETING_URL="https://yourcompany.com"
+
+# Store links (update after app is published)
+export APP_STORE_URL="https://apps.apple.com/app/idXXXXXXXXXX"
+export PLAY_STORE_URL="https://play.google.com/store/apps/details?id=$PACKAGE_NAME"
+
+# -----------------------------------------------------------------------------
+# CI/CD Configuration (Optional)
+# -----------------------------------------------------------------------------
+export ENABLE_CI_MODE=false
+export CI_SLACK_WEBHOOK=""
+export CI_EMAIL_NOTIFICATIONS=""
+
+# -----------------------------------------------------------------------------
+# Helper Functions
+# -----------------------------------------------------------------------------
+
+get_bundle_id() {
+    local env=$1
+    case $env in
+        dev|development)
+            echo "${BUNDLE_ID}${BUNDLE_ID_DEV}"
+            ;;
+        staging)
+            echo "${BUNDLE_ID}${BUNDLE_ID_STAGING}"
+            ;;
+        production|prod)
+            echo "${BUNDLE_ID}${BUNDLE_ID_PROD}"
+            ;;
+        *)
+            echo "$BUNDLE_ID"
+            ;;
+    esac
+}
+
+get_configuration() {
+    local env=$1
+    case $env in
+        dev|development)
+            echo "Debug"
+            ;;
+        staging|production|prod)
+            echo "Release"
+            ;;
+        *)
+            echo "Release"
+            ;;
+    esac
+}
+
+validate_config() {
+    local errors=0
+
+    if [ "$APP_NAME" = "YourAppName" ]; then
+        echo "⚠️  Warning: APP_NAME is still set to default 'YourAppName'"
+        errors=$((errors + 1))
+    fi
+
+    if [ "$BUNDLE_ID" = "com.yourcompany.yourapp" ]; then
+        echo "⚠️  Warning: BUNDLE_ID is still set to default"
+        errors=$((errors + 1))
+    fi
+
+    if [ "$APPLE_TEAM_ID" = "YOUR_TEAM_ID" ]; then
+        echo "⚠️  Warning: APPLE_TEAM_ID is not configured"
+        errors=$((errors + 1))
+    fi
+
+    if [ $errors -gt 0 ]; then
+        echo ""
+        echo "Please update scripts/config.sh with your project-specific values"
+        return 1
+    fi
+
+    return 0
+}
+
+print_config_summary() {
+    echo "📋 Project Configuration:"
+    echo "  App Name: $APP_NAME"
+    echo "  Bundle ID: $BUNDLE_ID"
+    echo "  Team ID: $APPLE_TEAM_ID"
+    echo ""
+}
+
+export -f get_bundle_id
+export -f get_configuration
+export -f validate_config
+export -f print_config_summary
+
+# -----------------------------------------------------------------------------
+# Configuration Validation
+# -----------------------------------------------------------------------------
+if [ "${SKIP_CONFIG_VALIDATION:-false}" = "false" ] && [ "${BASH_SOURCE[0]}" != "${0}" ]; then
+    if ! validate_config 2>/dev/null; then
+        :
+    fi
+fi

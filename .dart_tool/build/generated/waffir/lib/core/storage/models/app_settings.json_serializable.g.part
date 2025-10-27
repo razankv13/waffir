@@ -1,0 +1,36 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_AppSettings _$AppSettingsFromJson(Map<String, dynamic> json) => _AppSettings(
+  themeMode: json['themeMode'] as String? ?? 'system',
+  languageCode: json['languageCode'] as String? ?? 'en',
+  notificationsEnabled: json['notificationsEnabled'] as bool? ?? true,
+  biometricsEnabled: json['biometricsEnabled'] as bool? ?? false,
+  onboardingCompleted: json['onboardingCompleted'] as bool? ?? false,
+  lastSyncTime: json['lastSyncTime'] == null
+      ? null
+      : DateTime.parse(json['lastSyncTime'] as String),
+  lastKnownVersion: json['lastKnownVersion'] as String?,
+  featureFlags: (json['featureFlags'] as Map<String, dynamic>?)?.map(
+    (k, e) => MapEntry(k, e as bool),
+  ),
+  preferences: json['preferences'] as Map<String, dynamic>?,
+  analyticsEnabled: json['analyticsEnabled'] as bool? ?? true,
+  crashReportingEnabled: json['crashReportingEnabled'] as bool? ?? true,
+);
+
+Map<String, dynamic> _$AppSettingsToJson(_AppSettings instance) =>
+    <String, dynamic>{
+      'themeMode': instance.themeMode,
+      'languageCode': instance.languageCode,
+      'notificationsEnabled': instance.notificationsEnabled,
+      'biometricsEnabled': instance.biometricsEnabled,
+      'onboardingCompleted': instance.onboardingCompleted,
+      'lastSyncTime': instance.lastSyncTime?.toIso8601String(),
+      'lastKnownVersion': instance.lastKnownVersion,
+      'featureFlags': instance.featureFlags,
+      'preferences': instance.preferences,
+      'analyticsEnabled': instance.analyticsEnabled,
+      'crashReportingEnabled': instance.crashReportingEnabled,
+    };

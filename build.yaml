@@ -1,0 +1,37 @@
+targets:
+  $default:
+    builders:
+      # Riverpod code generation
+      riverpod_generator:
+        generate_for:
+          - lib/**/*.dart
+        options:
+          # Generate providers for all annotated classes
+          line_length: 120
+
+      # Freezed code generation
+      freezed:
+        generate_for:
+          - lib/**/*.dart
+
+      # JSON serialization
+      json_serializable:
+        generate_for:
+          - lib/**/*.dart
+        options:
+          # Generate toJson and fromJson methods
+          any_map: false
+          checked: false
+          create_factory: true
+          create_to_json: true
+          disallow_unrecognized_keys: false
+          explicit_to_json: false
+          field_rename: none
+          generic_argument_factories: false
+          ignore_unannotated: false
+          include_if_null: true
+
+      # Hive type adapters generation
+      hive_ce_generator:
+        generate_for:
+          - lib/**/*.dart

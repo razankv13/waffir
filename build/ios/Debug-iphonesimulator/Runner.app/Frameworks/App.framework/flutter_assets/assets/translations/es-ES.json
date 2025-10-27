@@ -1,0 +1,113 @@
+{
+  "app": {
+    "name": "Plantilla Flutter",
+    "welcome": "Bienvenido a Plantilla Flutter",
+    "description": "Una plantilla de aplicación Flutter lista para producción con arquitectura limpia"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "about": "Acerca de"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar Sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "signInWithGoogle": "Iniciar sesión con Google",
+    "signInWithApple": "Iniciar sesión con Apple",
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "resetPassword": "Restablecer Contraseña",
+    "backToLogin": "Volver al Login",
+    "loginSuccessful": "¡Inicio de sesión exitoso!",
+    "registrationSuccessful": "¡Registro exitoso!",
+    "resetPasswordEmailSent": "¡Correo de restablecimiento de contraseña enviado!",
+    "welcomeToWaffir": "Bienvenido a Waffir",
+    "loginSubtitle": "Inicia sesión o crea una cuenta para continuar",
+    "phoneHint": "Número de teléfono",
+    "or": "O",
+    "continueWithGoogle": "Continuar con Google",
+    "continueWithApple": "Continuar con Apple",
+    "phoneNumber": "Número de Teléfono",
+    "enterPhoneNumber": "Ingresa tu número de teléfono",
+    "otpTitle": "Ingresa el código de verificación",
+    "otpSubtitle": "Ingresa el código de 6 dígitos enviado a {contact}",
+    "changeNumber": "Cambiar número",
+    "resendCode": "Reenviar código",
+    "verify": "Verificar",
+    "resendCodeIn": "Reenviar código en {seconds}s",
+    "codeSentSuccess": "Código de verificación enviado exitosamente"
+  },
+  "validation": {
+    "required": "Este campo es obligatorio",
+    "invalidEmail": "Por favor ingresa un correo electrónico válido",
+    "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+    "passwordsDoNotMatch": "Las contraseñas no coinciden",
+    "invalidPhone": "Por favor ingresa un número de teléfono válido",
+    "phoneTooShort": "El número de teléfono es demasiado corto",
+    "phoneTooLong": "El número de teléfono es demasiado largo"
+  },
+  "buttons": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "update": "Actualizar",
+    "submit": "Enviar",
+    "confirm": "Confirmar",
+    "getStarted": "Comenzar",
+    "retry": "Reintentar",
+    "close": "Cerrar",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "finish": "Finalizar"
+  },
+  "settings": {
+    "title": "Configuración",
+    "appearance": "Apariencia",
+    "theme": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema",
+    "language": "Idioma",
+    "notifications": "Notificaciones",
+    "privacy": "Privacidad",
+    "about": "Acerca de",
+    "version": "Versión",
+    "themeSettings": "Configuración de Tema"
+  },
+  "errors": {
+    "networkError": "Por favor revisa tu conexión a internet e intenta de nuevo",
+    "serverError": "Algo salió mal en nuestro servidor. Por favor intenta más tarde",
+    "unknownError": "Ocurrió un error inesperado. Por favor intenta de nuevo",
+    "timeoutError": "La solicitud expiró. Por favor intenta de nuevo",
+    "unauthorizedError": "No tienes autorización para realizar esta acción"
+  },
+  "success": {
+    "dataSaved": "Datos guardados exitosamente",
+    "profileUpdated": "Perfil actualizado exitosamente",
+    "settingsUpdated": "Configuración actualizada exitosamente"
+  },
+  "dialogs": {
+    "confirmation": "Confirmación",
+    "areYouSure": "¿Estás seguro?",
+    "deleteConfirmation": "¿Estás seguro de que quieres eliminar este elemento?",
+    "logoutConfirmation": "¿Estás seguro de que quieres cerrar sesión?",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "loading": {
+    "pleaseWait": "Por favor espera...",
+    "loading": "Cargando",
+    "saving": "Guardando...",
+    "updating": "Actualizando...",
+    "processing": "Procesando..."
+  }
+}

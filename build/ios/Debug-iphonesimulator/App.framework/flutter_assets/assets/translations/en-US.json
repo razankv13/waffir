@@ -1,0 +1,113 @@
+{
+  "app": {
+    "name": "Flutter Template",
+    "welcome": "Welcome to Flutter Template",
+    "description": "A production-ready Flutter app template with clean architecture"
+  },
+  "navigation": {
+    "home": "Home",
+    "profile": "Profile",
+    "settings": "Settings",
+    "about": "About"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "forgotPassword": "Forgot Password?",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "signInWithGoogle": "Sign in with Google",
+    "signInWithApple": "Sign in with Apple",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "resetPassword": "Reset Password",
+    "backToLogin": "Back to Login",
+    "loginSuccessful": "Login successful!",
+    "registrationSuccessful": "Registration successful!",
+    "resetPasswordEmailSent": "Password reset email sent!",
+    "welcomeToWaffir": "Welcome to Waffir",
+    "loginSubtitle": "Sign in or create an account to continue",
+    "phoneHint": "Phone number",
+    "or": "OR",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithApple": "Continue with Apple",
+    "phoneNumber": "Phone Number",
+    "enterPhoneNumber": "Enter phone number",
+    "otpTitle": "Enter verification code",
+    "otpSubtitle": "Enter the 6-digit code sent to {contact}",
+    "changeNumber": "Change number",
+    "resendCode": "Resend code",
+    "verify": "Verify",
+    "resendCodeIn": "Resend code in {seconds}s",
+    "codeSentSuccess": "Verification code sent successfully"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "invalidPhone": "Please enter a valid phone number",
+    "phoneTooShort": "Phone number is too short",
+    "phoneTooLong": "Phone number is too long"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "update": "Update",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "getStarted": "Get Started",
+    "retry": "Retry",
+    "close": "Close",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "language": "Language",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "about": "About",
+    "version": "Version",
+    "themeSettings": "Theme Settings"
+  },
+  "errors": {
+    "networkError": "Please check your internet connection and try again",
+    "serverError": "Something went wrong on our end. Please try again later",
+    "unknownError": "An unexpected error occurred. Please try again",
+    "timeoutError": "Request timed out. Please try again",
+    "unauthorizedError": "You are not authorized to perform this action"
+  },
+  "success": {
+    "dataSaved": "Data saved successfully",
+    "profileUpdated": "Profile updated successfully",
+    "settingsUpdated": "Settings updated successfully"
+  },
+  "dialogs": {
+    "confirmation": "Confirmation",
+    "areYouSure": "Are you sure?",
+    "deleteConfirmation": "Are you sure you want to delete this item?",
+    "logoutConfirmation": "Are you sure you want to logout?",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "loading": {
+    "pleaseWait": "Please wait...",
+    "loading": "Loading",
+    "saving": "Saving...",
+    "updating": "Updating...",
+    "processing": "Processing..."
+  }
+}
