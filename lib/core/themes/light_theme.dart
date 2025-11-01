@@ -15,8 +15,8 @@ class LightTheme {
       
       // Typography
       textTheme: AppTypography.textTheme.apply(
-        bodyColor: AppColors.textPrimaryLight,
-        displayColor: AppColors.textPrimaryLight,
+        bodyColor: AppColors.textPrimary,
+        displayColor: AppColors.textPrimary,
       ),
       
       // App Bar
@@ -28,15 +28,15 @@ class LightTheme {
         surfaceTintColor: AppColors.lightColorScheme.surfaceTint,
         foregroundColor: AppColors.lightColorScheme.onSurface,
         titleTextStyle: AppTypography.titleLarge.copyWith(
-          color: AppColors.textPrimaryLight,
+          color: AppColors.textPrimary,
         ),
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         shadowColor: AppColors.lightColorScheme.shadow,
         iconTheme: const IconThemeData(
-          color: AppColors.textPrimaryLight,
+          color: AppColors.textPrimary,
         ),
         actionsIconTheme: const IconThemeData(
-          color: AppColors.textPrimaryLight,
+          color: AppColors.textPrimary,
         ),
       ),
       
@@ -232,10 +232,10 @@ class LightTheme {
           borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
         ),
         titleTextStyle: AppTypography.headlineSmall.copyWith(
-          color: AppColors.textPrimaryLight,
+          color: AppColors.textPrimary,
         ),
         contentTextStyle: AppTypography.bodyMedium.copyWith(
-          color: AppColors.textSecondaryLight,
+          color: AppColors.textSecondary,
         ),
       ),
       
@@ -314,14 +314,14 @@ class LightTheme {
   static MaterialColor _createMaterialColor(Color color) {
     final strengths = <double>[.05];
     final swatch = <int, Color>{};
-    final int r = (color.r * 255.0).round() & 0xff;
-    final int g = (color.g * 255.0).round() & 0xff;
-    final int b = (color.b * 255.0).round() & 0xff;
+    final int r = color.red;
+    final int g = color.green;
+    final int b = color.blue;
 
     for (int i = 1; i < 10; i++) {
       strengths.add(0.1 * i);
     }
-    
+
     for (final strength in strengths) {
       final double ds = 0.5 - strength;
       swatch[(strength * 1000).round()] = Color.fromRGBO(
@@ -331,7 +331,7 @@ class LightTheme {
         1,
       );
     }
-    
-    return MaterialColor(color.toARGB32(), swatch);
+
+    return MaterialColor(color.value, swatch);
   }
 }

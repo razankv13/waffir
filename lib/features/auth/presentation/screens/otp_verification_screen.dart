@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pinput/pinput.dart';
 import 'package:waffir/core/constants/app_spacing.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/widgets/buttons/back_button.dart';
 import 'package:waffir/core/widgets/widgets.dart';
+import 'package:waffir/gen/assets.gen.dart';
 
 class OtpVerificationScreen extends ConsumerStatefulWidget {
   const OtpVerificationScreen({
@@ -27,15 +29,15 @@ class OtpVerificationScreen extends ConsumerStatefulWidget {
 }
 
 class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
-  final List<TextEditingController> _controllers = List.generate(6, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+  final TextEditingController _pinController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   bool _isLoading = false;
   bool _isResending = false;
   int _resendCountdown = 0;
   Timer? _countdownTimer;
 
-  String get _otpCode => _controllers.map((controller) => controller.text).join();
+  String get _otpCode => _pinController.text;
   bool get _isOtpComplete => _otpCode.length == 6;
 
   @override
@@ -44,18 +46,14 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     _startResendCountdown();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNodes[0].requestFocus();
+      _focusNode.requestFocus();
     });
   }
 
   @override
   void dispose() {
-    for (final controller in _controllers) {
-      controller.dispose();
-    }
-    for (final focusNode in _focusNodes) {
-      focusNode.dispose();
-    }
+    _pinController.dispose();
+    _focusNode.dispose();
     _countdownTimer?.cancel();
     super.dispose();
   }
@@ -129,118 +127,149 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     }
   }
 
-  void _onFieldChanged(String value, int index) {
-    if (value.isNotEmpty) {
-      HapticFeedback.lightImpact();
-
-      if (index < 5) {
-        _focusNodes[index + 1].requestFocus();
-      } else {
-        _focusNodes[index].unfocus();
-        if (_isOtpComplete) {
-          HapticFeedback.mediumImpact();
-          _verifyOtp();
-        }
-      }
-    }
-  }
-
-  void _onFieldSubmitted(String value, int index) {
-    if (index < 5) {
-      _focusNodes[index + 1].requestFocus();
-    } else if (_isOtpComplete) {
-      _verifyOtp();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     final isRTL = context.locale.languageCode == 'ar';
+    final size = MediaQuery.of(context).size;
+    final isSmallScreen = size.height < 700;
+
+    // Pinput theme matching Figma design
+    final defaultPinTheme = PinTheme(
+      width: 50,
+      height: 50,
+      textStyle: textTheme.headlineSmall?.copyWith(
+        color: colorScheme.onSurface,
+        fontWeight: FontWeight.bold,
+      ),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.3), width: 1.5),
+        borderRadius: BorderRadius.circular(16),
+      ),
+    );
+
+    final focusedPinTheme = defaultPinTheme.copyWith(
+      decoration: defaultPinTheme.decoration?.copyWith(
+        border: Border.all(color: colorScheme.primary, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.primary.withValues(alpha: 0.2),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+    );
+
+    final submittedPinTheme = defaultPinTheme.copyWith(
+      decoration: defaultPinTheme.decoration?.copyWith(
+        border: Border.all(color: colorScheme.primary, width: 2),
+      ),
+    );
+
+    final errorPinTheme = defaultPinTheme.copyWith(
+      decoration: defaultPinTheme.decoration?.copyWith(
+        border: Border.all(color: colorScheme.error, width: 2),
+      ),
+    );
 
     return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: colorScheme.surface,
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: AppBackButton(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              showBackground: true,
-            ),
-          ),
-        ),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                colorScheme.primary.withValues(alpha: 0.35),
-                colorScheme.primary.withValues(alpha: 0.15),
-                colorScheme.surface.withValues(alpha: 0.95),
-                colorScheme.surface,
-              ],
-              stops: const [0.0, 0.25, 0.55, 0.75],
-            ),
-          ),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.xl,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildHeader(),
-                        const SizedBox(height: AppSpacing.xl3),
-                        _buildOtpInput(),
-                        const SizedBox(height: AppSpacing.lg),
-                        _buildActionLinks(),
-                      ],
-                    ),
+        body: SafeArea(
+          child: Stack(
+            children: [
+              // Background shape image (matching Figma design)
+              Positioned(
+                left: isRTL ? null : -40,
+                right: isRTL ? -40 : null,
+                top: -100,
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform: isRTL ? Matrix4.identity().scaled(-1.0, 1.0) : Matrix4.identity(),
+                  child: Image.asset(
+                    Assets.images.onboardingShape.path,
+                    width: 467.78,
+                    height: 461.3,
+                    fit: BoxFit.cover,
                   ),
-                  _buildVerifyButton(),
-                ],
+                ),
               ),
-            ),
+
+              // Back button (top-right for RTL, top-left for LTR)
+              Positioned(
+                top: 16,
+                right: isRTL ? 16 : null,
+                left: isRTL ? null : 16,
+                child: const AppBackButton(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  showBackground: true,
+                ),
+              ),
+
+              // Main content
+              Padding(
+                padding: EdgeInsets.only(
+                  left: AppSpacing.lg,
+                  right: AppSpacing.lg,
+                  bottom: isSmallScreen ? 60 : 120,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildHeader(textTheme, colorScheme),
+                          SizedBox(height: isSmallScreen ? AppSpacing.xl : AppSpacing.xl3),
+                          _buildOtpInput(
+                            defaultPinTheme,
+                            focusedPinTheme,
+                            submittedPinTheme,
+                            errorPinTheme,
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+                          _buildActionLinks(textTheme, colorScheme),
+                        ],
+                      ),
+                    ),
+                    _buildVerifyButton(colorScheme, textTheme),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
-    final theme = Theme.of(context);
-
+  Widget _buildHeader(TextTheme textTheme, ColorScheme colorScheme) {
     return Column(
       children: [
         Text(
           'auth.otpTitle'.tr(),
-          style: theme.textTheme.headlineLarge?.copyWith(
+          style: textTheme.headlineLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
+            fontSize: 20,
+            color: colorScheme.onSurface,
             letterSpacing: -0.5,
-            height: 1.2,
+            height: 1.15,
           ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: 16),
         Text(
           'auth.otpSubtitle'.tr(namedArgs: {'contact': widget.phoneNumber}),
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+          style: textTheme.bodyLarge?.copyWith(
+            fontSize: 16,
+            color: colorScheme.onSurfaceVariant,
             height: 1.6,
             letterSpacing: 0.1,
           ),
@@ -250,104 +279,45 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     );
   }
 
-  Widget _buildOtpInput() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        6,
-        (index) => Padding(
-          padding: EdgeInsets.symmetric(horizontal: index == 0 || index == 5 ? 0 : 6),
-          child: _buildOtpField(index),
-        ),
+  Widget _buildOtpInput(
+    PinTheme defaultPinTheme,
+    PinTheme focusedPinTheme,
+    PinTheme submittedPinTheme,
+    PinTheme errorPinTheme,
+  ) {
+    return Center(
+      child: Pinput(
+        controller: _pinController,
+        focusNode: _focusNode,
+        length: 6,
+        defaultPinTheme: defaultPinTheme,
+        focusedPinTheme: focusedPinTheme,
+        submittedPinTheme: submittedPinTheme,
+        errorPinTheme: errorPinTheme,
+        pinAnimationType: PinAnimationType.scale,
+        animationDuration: const Duration(milliseconds: 300),
+        animationCurve: Curves.easeInOut,
+        enabled: !_isLoading,
+        autofocus: true,
+        hapticFeedbackType: HapticFeedbackType.lightImpact,
+        closeKeyboardWhenCompleted: false,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        onCompleted: (pin) {
+          HapticFeedback.mediumImpact();
+          _verifyOtp();
+        },
+        onChanged: (pin) {
+          if (pin.isNotEmpty) {
+            HapticFeedback.lightImpact();
+          }
+          setState(() {});
+        },
       ),
     );
   }
 
-  Widget _buildOtpField(int index) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final hasFocus = _focusNodes[index].hasFocus;
-    final hasValue = _controllers[index].text.isNotEmpty;
-
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOut,
-      width: 56,
-      height: 56,
-      transform: hasFocus
-          ? (Matrix4.identity()..scaleByDouble(1.02, 1.02, 1.02, 1.02))
-          : Matrix4.identity(),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        border: Border.all(
-          color: hasValue || hasFocus
-              ? colorScheme.primary
-              : colorScheme.outline.withValues(alpha: 1.0),
-          width: hasValue || hasFocus ? 2 : 1.5,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: hasFocus
-            ? [
-                BoxShadow(
-                  color: colorScheme.primary.withValues(alpha: 0.2),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : null,
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Hidden TextField for input
-          Opacity(
-            opacity: 0,
-            child: TextField(
-              controller: _controllers[index],
-              focusNode: _focusNodes[index],
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(1),
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-              enabled: !_isLoading,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                counterText: '',
-                contentPadding: EdgeInsets.zero,
-              ),
-              onChanged: (value) => _onFieldChanged(value, index),
-              onSubmitted: (value) => _onFieldSubmitted(value, index),
-              onTapOutside: (_) => _focusNodes[index].unfocus(),
-            ),
-          ),
-          // Visible dot indicator
-          if (hasValue)
-            TweenAnimationBuilder<double>(
-              duration: const Duration(milliseconds: 300),
-              tween: Tween(begin: 0.0, end: 1.0),
-              curve: Curves.elasticOut,
-              builder: (context, value, child) {
-                return Transform.scale(
-                  scale: value,
-                  child: Container(
-                    width: 14,
-                    height: 14,
-                    decoration: BoxDecoration(color: colorScheme.primary, shape: BoxShape.circle),
-                  ),
-                );
-              },
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionLinks() {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
+  Widget _buildActionLinks(TextTheme textTheme, ColorScheme colorScheme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -366,11 +336,12 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
                   _resendCountdown > 0
                       ? 'auth.resendCodeIn'.tr(namedArgs: {'seconds': _resendCountdown.toString()})
                       : 'auth.resendCode'.tr(),
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: textTheme.bodyMedium?.copyWith(
+                    fontSize: 14,
                     color: _resendCountdown > 0
                         ? colorScheme.onSurfaceVariant
                         : colorScheme.primary,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
         ),
@@ -378,9 +349,10 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
           onPressed: _onChangeNumber,
           child: Text(
             'auth.changeNumber'.tr(),
-            style: theme.textTheme.bodyMedium?.copyWith(
+            style: textTheme.bodyMedium?.copyWith(
+              fontSize: 14,
               color: colorScheme.primary,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),
@@ -388,61 +360,15 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     );
   }
 
-  Widget _buildVerifyButton() {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+  Widget _buildVerifyButton(ColorScheme colorScheme, TextTheme textTheme) {
     final isEnabled = !_isLoading && _isOtpComplete;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      height: 56,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: isEnabled
-            ? LinearGradient(
-                colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.85)],
-              )
-            : null,
-        color: isEnabled ? null : colorScheme.onSurface.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: isEnabled
-            ? [
-                BoxShadow(
-                  color: colorScheme.primary.withValues(alpha: 0.3),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
-                ),
-              ]
-            : null,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: isEnabled ? _verifyOtp : null,
-          borderRadius: BorderRadius.circular(28),
-          child: Center(
-            child: _isLoading
-                ? SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
-                      valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onPrimary),
-                    ),
-                  )
-                : Text(
-                    'auth.verify'.tr(),
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: isEnabled
-                          ? colorScheme.onPrimary
-                          : colorScheme.onSurface.withValues(alpha: 0.38),
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-          ),
-        ),
-      ),
+    return AppButton.primary(
+      text: 'auth.verify'.tr(),
+      onPressed: isEnabled ? _verifyOtp : null,
+      isLoading: _isLoading,
+      enabled: isEnabled,
+      width: 330,
     );
   }
 }

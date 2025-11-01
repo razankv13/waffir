@@ -11,11 +11,24 @@ import 'package:waffir/features/auth/presentation/screens/account_details_screen
 import 'package:waffir/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:waffir/features/onboarding/presentation/screens/splash_screen.dart';
 import 'package:waffir/features/onboarding/presentation/screens/city_selection_screen.dart';
-import 'package:waffir/features/home/presentation/screens/home_screen.dart';
-import 'package:waffir/features/profile/presentation/screens/profile_screen.dart';
+import 'package:waffir/features/profile/presentation/screens/profile_screen/profile_screen.dart';
+import 'package:waffir/features/profile/presentation/screens/manage_personal_details_screen.dart';
+import 'package:waffir/features/profile/presentation/screens/notification_settings_screen.dart';
+import 'package:waffir/features/profile/presentation/screens/saved_deals_screen.dart';
+import 'package:waffir/features/profile/presentation/screens/change_city_screen.dart';
+import 'package:waffir/features/profile/presentation/screens/language_selection_screen.dart';
+import 'package:waffir/features/profile/presentation/screens/help_center_screen.dart';
+import 'package:waffir/features/profile/presentation/screens/delete_account_screen.dart';
 import 'package:waffir/features/settings/presentation/screens/settings_screen.dart';
 import 'package:waffir/features/subscription/presentation/screens/paywall_screen.dart';
 import 'package:waffir/features/subscription/presentation/screens/subscription_management_screen.dart';
+import 'package:waffir/features/deals/presentation/screens/hot_deals_screen.dart';
+import 'package:waffir/features/stores/presentation/screens/stores_screen.dart';
+import 'package:waffir/features/credit_cards/presentation/screens/credit_cards_screen.dart';
+import 'package:waffir/features/credit_cards/presentation/screens/add_credit_card_screen.dart';
+import 'package:waffir/features/products/presentation/screens/product_detail_screen.dart';
+import 'package:waffir/features/products/presentation/screens/store_page_screen.dart';
+import 'package:waffir/core/widgets/navigation/custom_bottom_nav.dart';
 
 // Global navigator key
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -92,13 +105,38 @@ final routerProvider = Provider<GoRouter>((ref) {
           return MainShell(child: child);
         },
         routes: [
-          // Home
+          // Deals (Hot Deals)
           GoRoute(
-            path: AppRoutes.home,
-            name: AppRouteNames.home,
-            builder: (context, state) => const HomeScreen(),
+            path: AppRoutes.deals,
+            name: AppRouteNames.deals,
+            builder: (context, state) => const HotDealsScreen(),
             routes: [
-              // Home sub-routes can be added here
+              // Deals sub-routes can be added here
+            ],
+          ),
+
+          // Stores
+          GoRoute(
+            path: AppRoutes.stores,
+            name: AppRouteNames.stores,
+            builder: (context, state) => const StoresScreen(),
+            routes: [
+              // Stores sub-routes can be added here
+            ],
+          ),
+
+          // Credit Cards
+          GoRoute(
+            path: AppRoutes.creditCards,
+            name: AppRouteNames.creditCards,
+            builder: (context, state) => const CreditCardsScreen(),
+            routes: [
+              // Add Credit Card sub-route
+              GoRoute(
+                path: '/add',
+                name: AppRouteNames.addCreditCard,
+                builder: (context, state) => const AddCreditCardScreen(),
+              ),
             ],
           ),
 
@@ -114,29 +152,77 @@ final routerProvider = Provider<GoRouter>((ref) {
                 name: AppRouteNames.profileEdit,
                 builder: (context, state) => const ProfileEditScreen(),
               ),
-            ],
-          ),
-
-          // Settings
-          GoRoute(
-            path: AppRoutes.settings,
-            name: AppRouteNames.settings,
-            builder: (context, state) => const SettingsScreen(),
-            routes: [
-              // Settings sub-routes
               GoRoute(
-                path: '/theme',
-                name: AppRouteNames.themeSettings,
-                builder: (context, state) => const ThemeSettingsScreen(),
+                path: '/personal-details',
+                name: AppRouteNames.profilePersonalDetails,
+                builder: (context, state) => const ManagePersonalDetailsScreen(),
               ),
               GoRoute(
-                path: '/privacy',
-                name: AppRouteNames.privacySettings,
-                builder: (context, state) => const PrivacySettingsScreen(),
+                path: '/saved-deals',
+                name: AppRouteNames.profileSavedDeals,
+                builder: (context, state) => const SavedDealsScreen(),
+              ),
+              GoRoute(
+                path: '/change-city',
+                name: AppRouteNames.profileChangeCity,
+                builder: (context, state) => const ChangeCityScreen(),
+              ),
+              GoRoute(
+                path: '/language',
+                name: AppRouteNames.profileLanguage,
+                builder: (context, state) => const LanguageSelectionScreen(),
+              ),
+              GoRoute(
+                path: '/help-center',
+                name: AppRouteNames.profileHelpCenter,
+                builder: (context, state) => const HelpCenterScreen(),
+              ),
+              GoRoute(
+                path: '/delete-account',
+                name: AppRouteNames.profileDeleteAccount,
+                builder: (context, state) => const DeleteAccountScreen(),
               ),
             ],
           ),
         ],
+      ),
+
+      // Settings (Outside shell - accessible from Profile or AppBar)
+      GoRoute(
+        path: AppRoutes.settings,
+        name: AppRouteNames.settings,
+        builder: (context, state) => const SettingsScreen(),
+        routes: [
+          // Settings sub-routes
+          GoRoute(
+            path: '/notifications',
+            name: AppRouteNames.notificationSettings,
+            builder: (context, state) => const NotificationSettingsScreen(),
+          ),
+          GoRoute(
+            path: '/theme',
+            name: AppRouteNames.themeSettings,
+            builder: (context, state) => const ThemeSettingsScreen(),
+          ),
+          GoRoute(
+            path: '/privacy',
+            name: AppRouteNames.privacySettings,
+            builder: (context, state) => const PrivacySettingsScreen(),
+          ),
+        ],
+      ),
+
+      // Root redirect to Deals (default home)
+      GoRoute(
+        path: '/',
+        redirect: (context, state) => AppRoutes.deals,
+      ),
+
+      // Notifications (Outside shell - full screen experience)
+      GoRoute(
+        path: AppRoutes.notifications,
+        name: AppRouteNames.notifications,
+        builder: (context, state) => const Placeholder(), // TODO: Replace with NotificationsScreen
       ),
 
       // Subscription Routes (Outside shell for fullscreen experience)
@@ -149,6 +235,24 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.subscriptionManagement,
         name: AppRouteNames.subscriptionManagement,
         builder: (context, state) => const SubscriptionManagementScreen(),
+      ),
+
+      // Product Routes
+      GoRoute(
+        path: '/product/:id',
+        name: AppRouteNames.productDetail,
+        builder: (context, state) {
+          final productId = state.pathParameters['id']!;
+          return ProductDetailScreen(productId: productId);
+        },
+      ),
+      GoRoute(
+        path: '/store/:id',
+        name: AppRouteNames.storeDetail,
+        builder: (context, state) {
+          final storeId = state.pathParameters['id']!;
+          return StorePageScreen(storeId: storeId);
+        },
       ),
 
       // Error/Not Found Route
@@ -183,46 +287,33 @@ class BottomNavigation extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final location = GoRouterState.of(context).uri.path;
 
-    return NavigationBar(
+    return CustomBottomNav(
       selectedIndex: _getSelectedIndex(location),
-      onDestinationSelected: (index) => _onTap(context, index),
-      destinations: const [
-        NavigationDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.person_outlined),
-          selectedIcon: Icon(Icons.person),
-          label: 'Profile',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.settings_outlined),
-          selectedIcon: Icon(Icons.settings),
-          label: 'Settings',
-        ),
-      ],
+      onTap: (index) => _onTap(context, index),
     );
   }
 
   int _getSelectedIndex(String location) {
-    if (location.startsWith(AppRoutes.home)) return 0;
-    if (location.startsWith(AppRoutes.profile)) return 1;
-    if (location.startsWith(AppRoutes.settings)) return 2;
-    return 0;
+    if (location.startsWith(AppRoutes.deals)) return 0;
+    if (location.startsWith(AppRoutes.stores)) return 1;
+    if (location.startsWith(AppRoutes.creditCards)) return 2;
+    if (location.startsWith(AppRoutes.profile)) return 3;
+    return 0; // Default to Deals
   }
 
   void _onTap(BuildContext context, int index) {
     switch (index) {
       case 0:
-        context.go(AppRoutes.home);
+        context.go(AppRoutes.deals);
         break;
       case 1:
-        context.go(AppRoutes.profile);
+        context.go(AppRoutes.stores);
         break;
       case 2:
-        context.go(AppRoutes.settings);
+        context.go(AppRoutes.creditCards);
+        break;
+      case 3:
+        context.go(AppRoutes.profile);
         break;
     }
 
@@ -232,13 +323,15 @@ class BottomNavigation extends ConsumerWidget {
   String _getRouteForIndex(int index) {
     switch (index) {
       case 0:
-        return AppRoutes.home;
+        return AppRoutes.deals;
       case 1:
-        return AppRoutes.profile;
+        return AppRoutes.stores;
       case 2:
-        return AppRoutes.settings;
+        return AppRoutes.creditCards;
+      case 3:
+        return AppRoutes.profile;
       default:
-        return AppRoutes.home;
+        return AppRoutes.deals;
     }
   }
 }

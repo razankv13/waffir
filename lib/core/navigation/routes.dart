@@ -11,7 +11,7 @@ class AppRoutes {
   static const String otpVerification = '/auth/otp-verification';
 
   // Main app routes
-  static const String home = '/';
+  static const String home = '/deals';
   static const String profile = '/profile';
   static const String settings = '/settings';
 
@@ -22,8 +22,25 @@ class AppRoutes {
   static const String help = '/help';
   static const String about = '/about';
 
+  // Landing page routes
+  static const String deals = '/deals';
+  static const String hotDeals = '/deals'; // Alias for deals
+  static const String stores = '/stores';
+  static const String creditCards = '/credit-cards';
+  static const String addCreditCard = '/credit-cards/add';
+
+  // Product routes
+  static const String productDetail = '/product/:id';
+  static const String storeDetail = '/store/:id';
+
   // Nested routes
   static const String profileEdit = '/profile/edit';
+  static const String profilePersonalDetails = '/profile/personal-details';
+  static const String profileSavedDeals = '/profile/saved-deals';
+  static const String profileChangeCity = '/profile/change-city';
+  static const String profileLanguage = '/profile/language';
+  static const String profileHelpCenter = '/profile/help-center';
+  static const String profileDeleteAccount = '/profile/delete-account';
   static const String themeSettings = '/settings/theme';
   static const String privacySettings = '/settings/privacy';
   static const String accountSettings = '/settings/account';
@@ -56,10 +73,22 @@ class AppRoutes {
     notifications,
     sampleList,
     profileEdit,
+    profilePersonalDetails,
+    profileSavedDeals,
+    profileChangeCity,
+    profileLanguage,
+    profileHelpCenter,
+    profileDeleteAccount,
     themeSettings,
     privacySettings,
     accountSettings,
     notificationSettings,
+    deals,
+    stores,
+    creditCards,
+    addCreditCard,
+    productDetail,
+    storeDetail,
   ];
 
   /// Get all public routes (no authentication required)
@@ -98,8 +127,25 @@ class AppRouteNames {
   static const String help = 'help';
   static const String about = 'about';
 
+  // Landing page route names
+  static const String deals = 'deals';
+  static const String hotDeals = 'hot-deals';
+  static const String stores = 'stores';
+  static const String creditCards = 'credit-cards';
+  static const String addCreditCard = 'add-credit-card';
+
+  // Product route names
+  static const String productDetail = 'product-detail';
+  static const String storeDetail = 'store-detail';
+
   // Nested route names
   static const String profileEdit = 'profile-edit';
+  static const String profilePersonalDetails = 'profile-personal-details';
+  static const String profileSavedDeals = 'profile-saved-deals';
+  static const String profileChangeCity = 'profile-change-city';
+  static const String profileLanguage = 'profile-language';
+  static const String profileHelpCenter = 'profile-help-center';
+  static const String profileDeleteAccount = 'profile-delete-account';
   static const String themeSettings = 'theme-settings';
   static const String privacySettings = 'privacy-settings';
   static const String accountSettings = 'account-settings';

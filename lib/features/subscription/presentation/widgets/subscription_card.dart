@@ -6,7 +6,6 @@ import 'package:waffir/core/constants/app_typography.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class SubscriptionCard extends StatelessWidget {
-
   const SubscriptionCard({
     super.key,
     required this.package,
@@ -22,7 +21,7 @@ class SubscriptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = package.storeProduct;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -32,9 +31,7 @@ class SubscriptionCard extends StatelessWidget {
           color: isSelected ? AppColors.primary.withValues(alpha: 0.05) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected 
-                ? AppColors.primary 
-                : Colors.grey.withValues(alpha: 0.3),
+            color: isSelected ? AppColors.primary : Colors.grey.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
@@ -76,9 +73,7 @@ class SubscriptionCard extends StatelessWidget {
                           const SizedBox(height: AppSpacing.xs),
                           Text(
                             _getPackageDescription(),
-                            style: AppTypography.bodyMedium.copyWith(
-                              color: Colors.grey[600],
-                            ),
+                            style: AppTypography.bodyMedium.copyWith(color: Colors.grey[600]),
                           ),
                         ],
                       ),
@@ -95,9 +90,7 @@ class SubscriptionCard extends StatelessWidget {
                         ),
                         Text(
                           _getPricePeriod(),
-                          style: AppTypography.bodySmall.copyWith(
-                            color: Colors.grey[500],
-                          ),
+                          style: AppTypography.bodySmall.copyWith(color: Colors.grey[500]),
                         ),
                       ],
                     ),
@@ -107,38 +100,30 @@ class SubscriptionCard extends StatelessWidget {
                   const SizedBox(height: AppSpacing.md),
                   _buildDiscountInfo(),
                 ],
-                if (_hasTrial()) ...[
-                  const SizedBox(height: AppSpacing.md),
-                  _buildTrialInfo(),
-                ],
+                if (_hasTrial()) ...[const SizedBox(height: AppSpacing.md), _buildTrialInfo()],
               ],
             ),
             if (isSelected)
               Positioned(
                 top: 0,
                 right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                )
-                    .animate()
-                    .scale(begin: const Offset(0.5, 0.5), duration: 300.ms)
-                    .fadeIn(duration: 200.ms),
+                child:
+                    Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.check, color: Colors.white, size: 16),
+                        )
+                        .animate()
+                        .scale(begin: const Offset(0.5, 0.5), duration: 300.ms)
+                        .fadeIn(duration: 200.ms),
               ),
           ],
         ),
       ),
-    )
-        .animate(target: isSelected ? 1 : 0)
-        .scale(end: const Offset(1.02, 1.02), duration: 200.ms);
+    ).animate(target: isSelected ? 1 : 0).scale(end: const Offset(1.02, 1.02), duration: 200.ms);
   }
 
   Widget _buildPopularBadge() {
@@ -146,13 +131,10 @@ class SubscriptionCard extends StatelessWidget {
       top: -8,
       right: 16,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: 4,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 4),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.primary, AppColors.secondary],
+            colors: [AppColors.primary, AppColors.primaryColorDark],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -172,10 +154,7 @@ class SubscriptionCard extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-      )
-          .animate()
-          .fadeIn(delay: 200.ms, duration: 400.ms)
-          .slideY(begin: -0.5, duration: 400.ms),
+      ).animate().fadeIn(delay: 200.ms, duration: 400.ms).slideY(begin: -0.5, duration: 400.ms),
     );
   }
 
@@ -184,16 +163,11 @@ class SubscriptionCard extends StatelessWidget {
     if (discount == null) return const SizedBox.shrink();
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: 4,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.green.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: Colors.green.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
       ),
       child: Text(
         'Save $discount%',
@@ -207,16 +181,11 @@ class SubscriptionCard extends StatelessWidget {
 
   Widget _buildTrialInfo() {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: 4,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.blue.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: Colors.blue.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
       ),
       child: Text(
         _getTrialText(),
@@ -287,13 +256,13 @@ class SubscriptionCard extends StatelessWidget {
 
   bool _hasDiscount() {
     return package.packageType == PackageType.annual ||
-           package.packageType == PackageType.sixMonth ||
-           package.packageType == PackageType.threeMonth;
+        package.packageType == PackageType.sixMonth ||
+        package.packageType == PackageType.threeMonth;
   }
 
   bool _hasTrial() {
     return package.storeProduct.introductoryPrice != null &&
-           package.storeProduct.introductoryPrice!.price == 0;
+        package.storeProduct.introductoryPrice!.price == 0;
   }
 
   String? _getDiscountPercentage() {
@@ -316,7 +285,7 @@ class SubscriptionCard extends StatelessWidget {
     if (introPrice?.price == 0) {
       final periodUnit = introPrice?.periodUnit;
       final numberOfUnits = introPrice?.periodNumberOfUnits ?? 1;
-      
+
       switch (periodUnit) {
         case PeriodUnit.day:
           return '$numberOfUnits day${numberOfUnits > 1 ? 's' : ''} free';

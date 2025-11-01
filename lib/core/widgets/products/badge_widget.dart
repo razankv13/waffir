@@ -33,12 +33,12 @@ class BadgeWidget extends StatelessWidget {
 
     switch (type) {
       case BadgeType.sale:
-        backgroundColor = const Color(0xFFFF3B30); // Sale red
-        textColor = Colors.white;
+        backgroundColor = colorScheme.error;
+        textColor = colorScheme.onError;
         break;
       case BadgeType.newBadge:
-        backgroundColor = const Color(0xFF5856D6); // Purple
-        textColor = Colors.white;
+        backgroundColor = colorScheme.tertiary;
+        textColor = colorScheme.onTertiary;
         break;
       case BadgeType.discount:
         backgroundColor = colorScheme.error;

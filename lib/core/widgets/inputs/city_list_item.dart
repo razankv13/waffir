@@ -57,11 +57,10 @@ class CityListItem extends StatelessWidget {
           child: Ink(
             height: 56,
             decoration: BoxDecoration(
-              color: isSelected ? colorScheme.primary : colorScheme.surface,
+              color: colorScheme.surface,
               border: Border.all(
-                color: isSelected
-                    ? colorScheme.primary
-                    : colorScheme.outline.withValues(alpha: 0.2),
+                color: isSelected ? colorScheme.primary : colorScheme.outline,
+                width: isSelected ? 2.5 : 1,
               ),
               borderRadius: BorderRadius.circular(60),
             ),
@@ -69,12 +68,11 @@ class CityListItem extends StatelessWidget {
               child: Text(
                 cityName,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  fontSize: 13,
-                  height: 18 / 13,
-                  color: isSelected
-                      ? colorScheme.onPrimary
-                      : colorScheme.onSurface,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  fontSize: 14,
+                  height: 20 / 14,
+                  letterSpacing: -0.1,
+                  color: colorScheme.onSurface,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 ),
                 textAlign: TextAlign.center,
                 textDirection: TextDirection.rtl,

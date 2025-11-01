@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:waffir/core/extensions/context_extensions.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/widgets/buttons/social_auth_button.dart';
 import 'package:waffir/core/widgets/inputs/phone_input_widget.dart';
-import 'package:waffir/features/auth/presentation/widgets/radial_starburst_background.dart';
+import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
 /// Phone login screen with premium design
@@ -98,125 +97,147 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Animated radial starburst background
-          const Positioned.fill(child: RadialStarburstBackground()),
+          // Blurred background matching Figma design
+          const Positioned.fill(child: BlurredBackground()),
+
+          // Back button (top right per Figma) with white circular background
+          Positioned(
+            top: 64,
+            right: 16,
+            child: GestureDetector(
+              onTap: () => GoRouterHelper(context).pop(),
+              child: Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: Color(0xFF0F352D),
+                    size: 24,
+                  ),
+                ),
+              ),
+            ),
+          ),
 
           // Content
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: maxContentWidth),
+                  constraints: BoxConstraints(maxWidth: isTablet ? 500.0 : double.infinity),
                   child: Column(
                     children: [
                       SizedBox(height: isTablet ? 80 : 60),
 
-                      // Hero section: Key icon with sun/star
+                      // Hero section: Waffir icon - 177x175px per Figma
                       Image.asset(
-                        Assets.icons.appIconNoBg.path,
-                        width: 200,
-                        height: 200,
+                        Assets.images.waffirIconLogin.path,
+                        width: 177,
+                        height: 175,
                         fit: BoxFit.contain,
-                        color: context.colorScheme.onPrimaryContainer,
                       ),
 
-                      SizedBox(height: isTablet ? 50 : 40),
+                      SizedBox(height: isTablet ? 42 : 40),
 
-                      // Title
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'مرحباً بكم في ',
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontSize: isTablet ? 28 : 25.4,
-                                fontWeight: FontWeight.normal,
-                                color: colorScheme.onSurface,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'وفــــر',
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontSize: isTablet ? 28 : 25.4,
-                                fontWeight: FontWeight.w900,
-                                color: colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
+                      // Title - Parkinsans 20px bold (all bold, no mixed weights)
+                      const Text(
+                        'مرحباً بكم في وفــــر',
+                        style: TextStyle(
+                          fontFamily: 'Parkinsans',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          height: 1.0,
                         ),
                         textAlign: TextAlign.center,
                       ),
 
-                      SizedBox(height: isTablet ? 42 : 38),
+                      const SizedBox(height: 16),
 
-                      // Subtitle
-                      Text(
+                      // Subtitle - Parkinsans 16px regular
+                      const Text(
                         'سجّل الدخول أو أنشئ حساباً للمتابعة',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.8),
-                          fontSize: isTablet ? 16 : 14,
+                        style: TextStyle(
+                          fontFamily: 'Parkinsans',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          height: 1.25,
                         ),
                         textAlign: TextAlign.center,
                       ),
 
-                      SizedBox(height: isTablet ? 52 : 47),
+                      const SizedBox(height: 32),
 
-                      // Phone input with validation
-                      PhoneInputWidget(
-                        controller: _phoneController,
-                        isLoading: _isLoading,
-                        isValid: _isPhoneValid,
-                        onSubmit: _submitPhone,
+                      // Phone input with validation - 361px width per Figma
+                      SizedBox(
+                        width: 361,
+                        child: PhoneInputWidget(
+                          controller: _phoneController,
+                          hintText: 'Phone Number', // Match Figma placeholder
+                          isLoading: _isLoading,
+                          isValid: _isPhoneValid,
+                          onSubmit: _submitPhone,
+                        ),
                       ),
 
-                      SizedBox(height: isTablet ? 40 : 36),
+                      const SizedBox(height: 40),
 
-                      // "or" divider
+                      // "or" divider - Parkinsans 14px weight 500
                       Row(
                         children: [
-                          Expanded(
-                            child: Container(
-                              height: 1,
-                              color: colorScheme.onSurface.withOpacity(0.2),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                          Expanded(child: Container(height: 1, color: colorScheme.surface)),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
                               'أو',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurface.withOpacity(0.6),
+                              style: TextStyle(
+                                fontFamily: 'Parkinsans',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                height: 1.25,
                               ),
                             ),
                           ),
-                          Expanded(
-                            child: Container(
-                              height: 1,
-                              color: colorScheme.onSurface.withOpacity(0.2),
-                            ),
-                          ),
+                          Expanded(child: Container(height: 1, color: colorScheme.surface)),
                         ],
                       ),
 
-                      SizedBox(height: isTablet ? 40 : 36),
+                      const SizedBox(height: 40),
 
-                      // Social auth buttons
-                      SocialAuthButton(
-                        provider: SocialAuthProvider.google,
-                        label: 'تابع باستخدام Google',
-                        onTap: _signInWithGoogle,
+                      // Social auth buttons - 361px width per Figma
+                      SizedBox(
+                        width: 361,
+                        child: SocialAuthButton(
+                          provider: SocialAuthProvider.google,
+                          label: 'تابع باستخدام Google',
+                          onTap: _signInWithGoogle,
+                        ),
                       ),
 
-                      const SizedBox(height: 25),
+                      const SizedBox(height: 24),
 
-                      SocialAuthButton(
-                        provider: SocialAuthProvider.apple,
-                        label: 'تابع باستخدام Apple',
-                        onTap: _signInWithApple,
+                      SizedBox(
+                        width: 361,
+                        child: SocialAuthButton(
+                          provider: SocialAuthProvider.apple,
+                          label: 'تابع باستخدام Apple',
+                          onTap: _signInWithApple,
+                        ),
                       ),
 
-                      SizedBox(height: isTablet ? 60 : 48),
+                      SizedBox(height: isTablet ? 120 : 120),
                     ],
                   ),
                 ),

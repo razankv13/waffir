@@ -59,7 +59,7 @@ class CitySelector extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
-              : AppColors.blue05,
+              : AppColors.gray01,
           borderRadius: BorderRadius.circular(AppSpacing.radiusWaffir),
           border: isSelected
               ? Border.all(
@@ -74,7 +74,7 @@ class CitySelector extends StatelessWidget {
             style: AppTypography.waffirInput.copyWith(
               color: isSelected
                   ? Theme.of(context).colorScheme.primary
-                  : AppColors.blue60,
+                  : AppColors.textSecondary,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             ),
             textAlign: TextAlign.center,

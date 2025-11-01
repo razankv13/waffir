@@ -17,7 +17,7 @@ class App extends ConsumerWidget {
     
       // Waffir Design System Theme
       theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+    //  darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light, // Can be changed to ThemeMode.system
     
       // Localization & RTL Support

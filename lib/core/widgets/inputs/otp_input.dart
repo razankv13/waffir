@@ -174,7 +174,7 @@ class _OTPInputState extends State<OTPInput> {
           border: Border.all(
             color: isFocused
                 ? Theme.of(context).colorScheme.primary
-                : AppColors.blue20,
+                : AppColors.gray02,
             width: isFocused ? 2 : 1,
           ),
           color: Colors.transparent,
@@ -184,9 +184,9 @@ class _OTPInputState extends State<OTPInput> {
               ? Container(
                   width: 16,
                   height: 16,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.blue60,
+                    color: AppColors.textSecondary,
                   ),
                 )
               : null,
@@ -220,7 +220,7 @@ Future<String?> showOTPInputDialog(
           Text(
             description,
             style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.blue60,
+              color: AppColors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),

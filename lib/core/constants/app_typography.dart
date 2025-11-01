@@ -293,6 +293,56 @@ class AppTypography {
     height: 20 / 14, // 20px line height
   );
 
+  // Store section header style (exact from Figma Stores screen)
+  static const TextStyle storeSectionHeader = TextStyle(
+    fontFamily: primaryFontFamily,
+    fontSize: 16,
+    fontWeight: FontWeight.w700, // Exact: 700 from Figma
+    height: 1.0, // Line-height 16px / font-size 16px = 1.0
+    letterSpacing: normalLetterSpacing,
+  );
+
+  // Profile screen text styles (exact from Figma Profile screen - node 34:3080)
+  static const TextStyle profileName = TextStyle(
+    fontFamily: primaryFontFamily,
+    fontSize: 20,
+    fontWeight: semiBold, // 600
+    height: 1.0, // Line-height 20px / font-size 20px = 1.0
+    letterSpacing: normalLetterSpacing,
+  );
+
+  static const TextStyle profileEmail = TextStyle(
+    fontFamily: primaryFontFamily,
+    fontSize: 14,
+    fontWeight: medium, // 500
+    height: 1.0, // Line-height 14px / font-size 14px = 1.0
+    letterSpacing: normalLetterSpacing,
+  );
+
+  static const TextStyle premiumTitle = TextStyle(
+    fontFamily: primaryFontFamily,
+    fontSize: 16,
+    fontWeight: bold, // 700
+    height: 1.0, // Line-height 16px / font-size 16px = 1.0
+    letterSpacing: normalLetterSpacing,
+  );
+
+  static const TextStyle premiumSubtitle = TextStyle(
+    fontFamily: primaryFontFamily,
+    fontSize: 12,
+    fontWeight: regular, // 400
+    height: 1.0, // Line-height 12px / font-size 12px = 1.0
+    letterSpacing: normalLetterSpacing,
+  );
+
+  static const TextStyle menuItemText = TextStyle(
+    fontFamily: primaryFontFamily,
+    fontSize: 14,
+    fontWeight: medium, // 500
+    height: 1.25, // Line-height 17.5px / font-size 14px = 1.25
+    letterSpacing: normalLetterSpacing,
+  );
+
   // Create a complete TextTheme for Material 3
   static TextTheme get textTheme => TextTheme(
         displayLarge: displayLarge,

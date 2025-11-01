@@ -1,9 +1,12 @@
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
+import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/core/widgets/buttons/back_button.dart';
 import 'package:waffir/core/widgets/inputs/gender_selector.dart';
+import 'package:waffir/gen/assets.gen.dart';
 
 /// Account details screen with premium UI design
 ///
@@ -25,8 +28,7 @@ class AccountDetailsScreen extends ConsumerStatefulWidget {
   const AccountDetailsScreen({super.key});
 
   @override
-  ConsumerState<AccountDetailsScreen> createState() =>
-      _AccountDetailsScreenState();
+  ConsumerState<AccountDetailsScreen> createState() => _AccountDetailsScreenState();
 }
 
 class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
@@ -53,9 +55,7 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
 
   /// Checks if form is valid and button should be enabled
   bool get _isFormValid {
-    return _selectedGender != null &&
-        _acceptedTerms &&
-        _nameController.text.trim().isNotEmpty;
+    return _selectedGender != null && _acceptedTerms && _nameController.text.trim().isNotEmpty;
   }
 
   @override
@@ -63,151 +63,162 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final size = MediaQuery.of(context).size;
+    final isRTL = context.locale.languageCode == 'ar';
+    final isSmallScreen = size.height < 700;
 
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              colorScheme.primary.withValues(alpha: 0.15),
-              colorScheme.surface,
-            ],
-            stops: const [0.0, 0.4],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Header with back button
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    AppBackButton(
-                      size: 48,
-                      showBackground: true,
-                    ),
-                  ],
+    return Directionality(
+      textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // White background
+            Container(color: colorScheme.surface),
+
+            // Blur shape background (positioned top-left, mirrored for RTL)
+            Positioned(
+              left: isRTL ? null : -40,
+              right: isRTL ? -40 : null,
+              top: -100,
+              child: Transform.scale(
+                scaleX: isRTL ? -1.0 : 1.0,
+                child: Image.asset(
+                  Assets.images.loginBlurShape.path,
+                  width: 467.78,
+                  height: 461.3,
+                  fit: BoxFit.contain,
                 ),
               ),
+            ),
 
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: size.width > 600 ? 60 : 39,
+            // Main content
+            SafeArea(
+              child: Column(
+                children: [
+                  // Back button (positioned for RTL awareness)
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(children: [AppBackButton(size: 38, showBackground: true)]),
                   ),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 80),
 
-                      // Title
-                      Text(
-                        'تفاصيل الحساب',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                  // Scrollable content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(horizontal: size.width > 600 ? 24 : 16),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 80),
 
-                      const SizedBox(height: 27),
-
-                      // Name input
-                      _PillTextField(
-                        controller: _nameController,
-                        hintText: 'الاسم',
-                        colorScheme: colorScheme,
-                        theme: theme,
-                        onChanged: (_) => setState(() {}),
-                      ),
-
-                      const SizedBox(height: 11),
-
-                      // Gender selection
-                      SizedBox(
-                        height: 56,
-                        child: Center(
-                          child: GenderSelector(
-                            selectedGender: _selectedGender,
-                            onChanged: (gender) {
-                              setState(() {
-                                _selectedGender = gender;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 11),
-
-                      // Referral code input
-                      _PillTextField(
-                        controller: _referralController,
-                        hintText: 'رمز الخصم / رمز الدعوة',
-                        colorScheme: colorScheme,
-                        theme: theme,
-                      ),
-
-                      const SizedBox(height: 105),
-
-                      // Terms checkbox
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _acceptedTerms = !_acceptedTerms;
-                          });
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _RoundedSquareCheckbox(
-                              isSelected: _acceptedTerms,
-                              colorScheme: colorScheme,
+                          // Title - 20px, Parkinsans 700
+                          Text(
+                            'تفاصيل الحساب',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              height: 1.15,
+                              color: colorScheme.onSurface,
                             ),
-                            const SizedBox(width: 10),
-                            Flexible(
-                              child: Text(
-                                'أوافق على الشروط وسياسة الخصوصية',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
+                            textAlign: TextAlign.center,
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // Name input - 16px border radius
+                          _PillTextField(
+                            controller: _nameController,
+                            hintText: 'الاسم',
+                            colorScheme: colorScheme,
+                            theme: theme,
+                            onChanged: (_) => setState(() {}),
+                          ),
+
+                          const SizedBox(height: 11),
+
+                          // Gender selection
+                          SizedBox(
+                            height: 56,
+                            child: Center(
+                              child: GenderSelector(
+                                selectedGender: _selectedGender,
+                                onChanged: (gender) {
+                                  setState(() {
+                                    _selectedGender = gender;
+                                  });
+                                },
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+
+                          const SizedBox(height: 11),
+
+                          // Referral code input - 16px border radius
+                          _PillTextField(
+                            controller: _referralController,
+                            hintText: 'رمز الخصم / رمز الدعوة',
+                            colorScheme: colorScheme,
+                            theme: theme,
+                          ),
+
+                          const SizedBox(height: 105),
+
+                          // Terms checkbox - 14px text, 4px border radius
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _acceptedTerms = !_acceptedTerms;
+                              });
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _RoundedSquareCheckbox(
+                                  isSelected: _acceptedTerms,
+                                  colorScheme: colorScheme,
+                                ),
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: Text(
+                                    'أوافق على الشروط وسياسة الخصوصية',
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.4,
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(height: 40),
+                        ],
                       ),
-
-                      const SizedBox(height: 40),
-                    ],
+                    ),
                   ),
-                ),
-              ),
 
-              // Confirm button
-              Padding(
-                padding: EdgeInsets.only(
-                  left: size.width > 600 ? 60 : 39,
-                  right: size.width > 600 ? 60 : 39,
-                  bottom: size.height > 700 ? 158 : 40,
-                ),
-                child: _PremiumButton(
-                  onPressed: _isFormValid ? _confirm : null,
-                  text: 'تأكيد',
-                  colorScheme: colorScheme,
-                  theme: theme,
-                ),
+                  // Confirm button - 330x48, 30px border radius
+                  Padding(
+                    padding: EdgeInsets.only(left: 16, right: 16, bottom: isSmallScreen ? 60 : 120),
+                    child: Center(
+                      child: AppButton.primary(
+                        text: 'تأكيد',
+                        onPressed: _isFormValid ? _confirm : null,
+                        width: 330,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-/// Pill-shaped text field with centered text
+/// Pill-shaped text field with centered text - 16px border radius
 class _PillTextField extends StatelessWidget {
   const _PillTextField({
     required this.controller,
@@ -229,7 +240,7 @@ class _PillTextField extends StatelessWidget {
       height: 56,
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(16), // Changed from 30 to 16
       ),
       padding: const EdgeInsets.symmetric(horizontal: 22),
       child: Center(
@@ -237,14 +248,23 @@ class _PillTextField extends StatelessWidget {
           controller: controller,
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: 16, // Explicit 16px
+            fontWeight: FontWeight.w500, // Parkinsans 500
             color: colorScheme.onSurface,
           ),
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 16, // Explicit 16px
+              fontWeight: FontWeight.w500, // Parkinsans 500
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
             ),
             border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            disabledBorder: InputBorder.none,
+            errorBorder: InputBorder.none,
+            focusedErrorBorder: InputBorder.none,
             contentPadding: EdgeInsets.zero,
           ),
           onChanged: onChanged,
@@ -254,12 +274,9 @@ class _PillTextField extends StatelessWidget {
   }
 }
 
-/// Rounded square checkbox matching the gender selector style
+/// Rounded square checkbox - 4px border radius, bright green check icon
 class _RoundedSquareCheckbox extends StatelessWidget {
-  const _RoundedSquareCheckbox({
-    required this.isSelected,
-    required this.colorScheme,
-  });
+  const _RoundedSquareCheckbox({required this.isSelected, required this.colorScheme});
 
   final bool isSelected;
   final ColorScheme colorScheme;
@@ -272,79 +289,17 @@ class _RoundedSquareCheckbox extends StatelessWidget {
       width: 24,
       height: 24,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(4), // Changed from 6 to 4
         color: isSelected ? colorScheme.primary : Colors.transparent,
-        border: Border.all(
-          color: isSelected ? colorScheme.primary : colorScheme.outline,
-          width: 2,
-        ),
+        border: Border.all(color: isSelected ? colorScheme.primary : colorScheme.outline, width: 2),
       ),
       child: isSelected
           ? Icon(
               Icons.check,
               size: 16,
-              color: colorScheme.onPrimary,
+              color: colorScheme.secondary, // Changed to secondary (#00FF88)
             )
           : null,
-    );
-  }
-}
-
-/// Premium button with rounded corners and state-based styling
-class _PremiumButton extends StatelessWidget {
-  const _PremiumButton({
-    required this.onPressed,
-    required this.text,
-    required this.colorScheme,
-    required this.theme,
-  });
-
-  final VoidCallback? onPressed;
-  final String text;
-  final ColorScheme colorScheme;
-  final ThemeData theme;
-
-  @override
-  Widget build(BuildContext context) {
-    final isEnabled = onPressed != null;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(60),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: double.infinity,
-          height: 56,
-          decoration: BoxDecoration(
-            color: isEnabled
-                ? colorScheme.primary
-                : colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(60),
-            boxShadow: isEnabled
-                ? [
-                    BoxShadow(
-                      color: colorScheme.primary.withValues(alpha: 0.3),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Center(
-            child: Text(
-              text,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: isEnabled
-                    ? colorScheme.onPrimary
-                    : colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

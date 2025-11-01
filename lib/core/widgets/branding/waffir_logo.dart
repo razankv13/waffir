@@ -82,7 +82,7 @@ class WaffirLogo extends StatelessWidget {
         child: Icon(
           Icons.percent,
           size: iconSize * 0.5,
-          color: AppColors.secondaryColor,
+          color: AppColors.textSecondary,
         ),
       ),
     );

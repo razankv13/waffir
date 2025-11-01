@@ -76,17 +76,18 @@ class ProductGrid extends StatelessWidget {
         return ProductCard(
           imageUrl: product.imageUrl,
           title: product.title,
-          brand: product.brand,
-          price: product.price,
+          salePrice: product.salePrice,
           originalPrice: product.originalPrice,
           discountPercentage: product.discountPercentage,
-          rating: product.rating,
-          reviewCount: product.reviewCount,
+          storeName: product.storeName,
           badge: product.badge,
           badgeType: product.badgeType,
-          isFavorite: product.isFavorite,
+          likeCount: product.likeCount,
+          commentCount: product.commentCount,
+          isLiked: product.isLiked,
           onTap: product.onTap,
-          onFavorite: product.onFavorite,
+          onLike: product.onLike,
+          onComment: product.onComment,
         );
       },
     );
@@ -99,31 +100,33 @@ class ProductGridItem {
     required this.id,
     required this.imageUrl,
     required this.title,
-    required this.price,
-    this.brand,
+    this.salePrice,
     this.originalPrice,
     this.discountPercentage,
-    this.rating,
-    this.reviewCount,
+    this.storeName,
     this.badge,
     this.badgeType,
-    this.isFavorite = false,
+    this.likeCount,
+    this.commentCount,
+    this.isLiked = false,
     this.onTap,
-    this.onFavorite,
+    this.onLike,
+    this.onComment,
   });
 
   final String id;
   final String imageUrl;
   final String title;
-  final String? brand;
-  final double price;
-  final double? originalPrice;
+  final String? salePrice;
+  final String? originalPrice;
   final int? discountPercentage;
-  final double? rating;
-  final int? reviewCount;
+  final String? storeName;
   final String? badge;
   final BadgeType? badgeType;
-  final bool isFavorite;
+  final int? likeCount;
+  final int? commentCount;
+  final bool isLiked;
   final VoidCallback? onTap;
-  final VoidCallback? onFavorite;
+  final VoidCallback? onLike;
+  final VoidCallback? onComment;
 }

@@ -5,16 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waffir/core/extensions/context_extensions.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/storage/settings_service.dart';
+import 'package:waffir/core/widgets/buttons/app_button.dart';
+import 'package:waffir/gen/assets.gen.dart';
 
 /// Onboarding screen with language selection and gradient background
 ///
 /// Features:
 /// - Bilingual content (English + Arabic) displayed simultaneously
-/// - Language toggle buttons with visual selection state
+/// - Language toggle buttons with visual selection state using AppButton
 /// - Beautiful gradient background illustration
-/// - Responsive design matching Figma specifications
+/// - Pixel-perfect responsive design matching Figma specifications (393x852 base)
+/// - Theme-compliant color usage via colorScheme
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -47,207 +51,220 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final size = MediaQuery.of(context).size;
-    final screenHeight = size.height;
 
-    // Define responsive breakpoints
-    final isExtraSmall = screenHeight < 650;
-    final isSmall = screenHeight >= 650 && screenHeight < 750;
-    // Medium is >= 750 && < 900
-    // Large is >= 900
-
-    // Calculate responsive values
-    final gradientHeight = _getResponsiveValue(
-      screenHeight: screenHeight,
-      extraSmall: screenHeight * 0.28,
-      small: screenHeight * 0.32,
-      medium: screenHeight * 0.34,
-      large: screenHeight * 0.38,
+    // Responsive horizontal padding
+    final horizontalPadding = context.responsive<double>(
+      mobile: 16.0,
+      tablet: 32.0,
+      desktop: 48.0,
     );
 
-    final titleFontSize = _getResponsiveValue(
-      screenHeight: screenHeight,
-      extraSmall: 20.0,
-      small: 22.0,
-      medium: 24.0,
-      large: 25.4,
+    // Responsive spacing
+    final sectionGap = context.responsive<double>(
+      mobile: 40.0,
+      tablet: 48.0,
+      desktop: 56.0,
     );
 
-    final bodyFontSize = _getResponsiveValue(
-      screenHeight: screenHeight,
-      extraSmall: 13.0,
-      small: 14.0,
-      medium: 15.0,
-      large: 16.0,
+    final contentGap = context.responsive<double>(
+      mobile: 64.0,
+      tablet: 80.0,
+      desktop: 96.0,
     );
 
-    final sectionSpacing = _getResponsiveValue(
-      screenHeight: screenHeight,
-      extraSmall: 16.0,
-      small: 24.0,
-      medium: 28.0,
-      large: 40.0,
+    final bottomPadding = context.responsive<double>(
+      mobile: 120.0,
+      tablet: 80.0,
+      desktop: 60.0,
     );
 
-    final buttonSpacing = _getResponsiveValue(
-      screenHeight: screenHeight,
-      extraSmall: 16.0,
-      small: 24.0,
-      medium: 28.0,
-      large: 40.0,
-    );
-
-    final bottomPadding = _getResponsiveValue(
-      screenHeight: screenHeight,
-      extraSmall: 16.0,
-      small: 20.0,
-      medium: 20.0,
-      large: 32.0,
-    );
+    // Pixel-perfect values from Figma (393x852)
+    const double titleFontSize = 20.0;
+    const double bodyFontSize = 16.0;
+    const double languageHeadingFontSize = 16.0;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: SafeArea(
-        child: Stack(
-          children: [
-            // Gradient background image
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Image.asset(
-                'assets/images/onboarding_gradient.png',
-                fit: BoxFit.cover,
-                height: gradientHeight,
-              ),
-            ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Responsive shape dimensions
+            final shapeWidth = context.responsive<double>(
+              mobile: 467.78,
+              tablet: 550.0,
+              desktop: 600.0,
+            );
+            final shapeHeight = context.responsive<double>(
+              mobile: 461.3,
+              tablet: 540.0,
+              desktop: 590.0,
+            );
 
-            // Main content without scrolling
-            Column(
+            return Stack(
               children: [
-                SizedBox(height: gradientHeight),
-
-                // Progress indicators
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: _buildProgressIndicators(colorScheme),
-                ),
-
-                // English Section
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isExtraSmall ? 16 : 24,
-                  ),
-                  child: _buildContentSection(
-                    title: 'Welcome to ',
-                    brandName: 'waffir',
-                    bulletPoints: const [
-                      'Find the best discounts in one place.',
-                      'Compare offers and save instantly.',
-                      'Never miss a deal again.',
-                    ],
-                    isArabic: false,
-                    theme: theme,
-                    colorScheme: colorScheme,
-                    titleFontSize: titleFontSize,
-                    bodyFontSize: bodyFontSize,
-                    isCompact: isExtraSmall || isSmall,
+                // Blurred shape background (exported from Figma)
+                Positioned(
+                  left: -40,
+                  top: -100,
+                  child: Image.asset(
+                    Assets.images.onboardingShape.path,
+                    width: shapeWidth,
+                    height: shapeHeight,
+                    fit: BoxFit.cover,
                   ),
                 ),
 
-                SizedBox(height: sectionSpacing),
+                // Main scrollable content
+                SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                      maxWidth: context.isDesktopSize ? 600 : double.infinity,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Top spacer (gradient height from Figma)
+                          SizedBox(
+                            height: context.responsive<double>(
+                              mobile: 256.0,
+                              tablet: 200.0,
+                              desktop: 180.0,
+                            ),
+                          ),
 
-                // Arabic Section
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isExtraSmall ? 16 : 24,
-                  ),
-                  child: _buildContentSection(
-                    title: 'مرحباً بكم في ',
-                    brandName: 'وفــــر',
-                    bulletPoints: const [
-                      'اعثر على أفضل الخصومات في مكان واحد.',
-                      'قارن العروض ووفّر فورًا.',
-                      'لا تفوّت أي عرض بعد الآن.',
-                    ],
-                    isArabic: true,
-                    theme: theme,
-                    colorScheme: colorScheme,
-                    titleFontSize: titleFontSize,
-                    bodyFontSize: bodyFontSize,
-                    isCompact: isExtraSmall || isSmall,
-                  ),
-                ),
+                          // Content sections
+                          Column(
+                            children: [
+                              // English Section (Figma: "Welcome to Waffir")
+                              _buildContentSection(
+                                title: 'Welcome to ',
+                                brandName: 'Waffir',
+                                bulletPoints: const [
+                                  'Find the best discounts in one place.',
+                                  'Compare offers and save instantly.',
+                                  'Never miss a deal again.',
+                                ],
+                                isArabic: false,
+                                theme: theme,
+                                colorScheme: colorScheme,
+                                titleFontSize: titleFontSize,
+                                bodyFontSize: bodyFontSize,
+                              ),
 
-                // Flexible space to push buttons to bottom
-                const Expanded(child: SizedBox()),
+                              SizedBox(height: sectionGap),
 
-                // Language selection buttons
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isExtraSmall ? 32 : 56,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: _buildLanguageButton(
-                          label: 'العربية',
-                          isSelected: _isArabic,
-                          onTap: () => _selectLanguage('ar'),
-                          theme: theme,
-                          colorScheme: colorScheme,
-                        ),
+                              // Arabic Section (Figma: "مرحباً بكم في وفــــر")
+                              _buildContentSection(
+                                title: 'مرحباً بكم في ',
+                                brandName: 'وفــــر',
+                                bulletPoints: const [
+                                  'اعثر على أفضل الخصومات في مكان واحد.',
+                                  'قارن العروض ووفّر فورًا.',
+                                  'لا تفوّت أي عرض بعد الآن.',
+                                ],
+                                isArabic: true,
+                                theme: theme,
+                                colorScheme: colorScheme,
+                                titleFontSize: titleFontSize,
+                                bodyFontSize: bodyFontSize,
+                              ),
+                            ],
+                          ),
+
+                          // Spacing between content and language selection
+                          SizedBox(height: contentGap),
+
+                          // Language selection and continue button
+                          Column(
+                            children: [
+                              // Heading: Please choose your language
+                              Text(
+                                tr('choose_language'),
+                                textAlign: TextAlign.center,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontSize: languageHeadingFontSize,
+                                  fontWeight: FontWeight.w400,
+                                  color: colorScheme.onSurface,
+                                  height: 1.0,
+                                ),
+                              ),
+
+                              const SizedBox(height: 16),
+
+                              // Language selection buttons using AppButton
+                              Column(
+                                children: [
+                                  // Arabic button (Secondary variant - 2px dark green border)
+                                  Semantics(
+                                    button: true,
+                                    selected: _isArabic,
+                                    label: _isArabic ? 'العربية، محدد' : 'اختر لغة العربية',
+                                    child: SizedBox(
+                                      height: 56,
+                                      child: AppButton.secondary(
+                                        text: 'العربية',
+                                        onPressed: () => _selectLanguage('ar'),
+                                        width: double.infinity,
+                                      ),
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 12),
+
+                                  // English button (Tertiary variant - 1px gray border, 60px radius)
+                                  Semantics(
+                                    button: true,
+                                    selected: !_isArabic,
+                                    label: !_isArabic ? 'English, selected' : 'Choose English language',
+                                    child: SizedBox(
+                                      height: 56,
+                                      child: AppButton.tertiary(
+                                        text: 'English',
+                                        onPressed: () => _selectLanguage('en'),
+                                        width: double.infinity,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: sectionGap),
+
+                              // Continue button using AppButton.primary
+                              Semantics(
+                                button: true,
+                                label: 'متابعة إلى تسجيل الدخول',
+                                child: SizedBox(
+                                  height: 56,
+                                  child: AppButton.primary(
+                                    text: 'استمر',
+                                    onPressed: _continue,
+                                    width: double.infinity,
+                                  ),
+                                ),
+                              ),
+
+                              SizedBox(height: bottomPadding),
+                            ],
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildLanguageButton(
-                          label: 'English',
-                          isSelected: !_isArabic,
-                          onTap: () => _selectLanguage('en'),
-                          theme: theme,
-                          colorScheme: colorScheme,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-
-                SizedBox(height: buttonSpacing),
-
-                // Continue button
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: _buildContinueButton(
-                    theme: theme,
-                    colorScheme: colorScheme,
-                  ),
-                ),
-
-                SizedBox(height: bottomPadding),
               ],
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
   }
 
-  /// Helper method to get responsive values based on screen height
-  double _getResponsiveValue({
-    required double screenHeight,
-    required double extraSmall,
-    required double small,
-    required double medium,
-    required double large,
-  }) {
-    if (screenHeight < 650) return extraSmall;
-    if (screenHeight < 750) return small;
-    if (screenHeight < 900) return medium;
-    return large;
-  }
-
-  /// Builds a content section with title and bullet points
+  /// Builds a content section with title and description (joined from bulletPoints)
   Widget _buildContentSection({
     required String title,
     required String brandName,
@@ -257,176 +274,48 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     required ColorScheme colorScheme,
     required double titleFontSize,
     required double bodyFontSize,
-    required bool isCompact,
   }) {
     final direction = isArabic ? TextDirection.rtl : TextDirection.ltr;
-    final titleHeight = isCompact ? 1.3 : 1.4;
-    final bodyHeight = isCompact ? 1.4 : 1.5;
-    final titleSpacing = isCompact ? 12.0 : 16.0;
-    final bulletSpacing = isCompact ? 1.0 : 2.0;
+    const double titleHeight = 1.0;
+    const double bodyHeight = 1.2;
+    const double titleSpacing = 16.0;
+    final String description = bulletPoints.join(' ');
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Title with brand name
+        // Title (using theme colors for consistency)
         Directionality(
           textDirection: direction,
-          child: Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: title,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontSize: titleFontSize,
-                    fontWeight: FontWeight.w300,
-                    color: colorScheme.onSurface,
-                    height: titleHeight,
-                  ),
-                ),
-                TextSpan(
-                  text: brandName,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontSize: titleFontSize,
-                    fontWeight: FontWeight.w900,
-                    color: colorScheme.onSurface,
-                    height: titleHeight,
-                  ),
-                ),
-              ],
+          child: Text(
+            '$title$brandName',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontSize: titleFontSize,
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onSurface, // Black text for theme compliance
+              height: titleHeight,
             ),
             textAlign: TextAlign.center,
           ),
         ),
 
-        SizedBox(height: titleSpacing),
+        const SizedBox(height: titleSpacing),
 
-        // Description bullet points
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: bulletPoints.map((text) {
-            return Padding(
-              padding: EdgeInsets.symmetric(vertical: bulletSpacing),
-              child: Directionality(
-                textDirection: direction,
-                child: Text(
-                  text,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontSize: bodyFontSize,
-                    color: colorScheme.onSurface,
-                    height: bodyHeight,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            );
-          }).toList(),
+        // Description paragraph
+        Directionality(
+          textDirection: direction,
+          child: Text(
+            description,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: bodyFontSize,
+              fontWeight: FontWeight.w400,
+              color: colorScheme.onSurface, // Black text for theme compliance
+              height: bodyHeight,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ),
       ],
-    );
-  }
-
-  /// Builds a language selection button
-  Widget _buildLanguageButton({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-    required ThemeData theme,
-    required ColorScheme colorScheme,
-  }) {
-    return Semantics(
-      button: true,
-      selected: isSelected,
-      label: isSelected
-          ? '$label، محدد'
-          : 'اختر لغة $label',
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 167),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(30),
-            child: Ink(
-              height: 64,
-              decoration: BoxDecoration(
-                color: isSelected ? colorScheme.primary : colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Center(
-                child: Text(
-                  label,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Builds the continue button
-  Widget _buildContinueButton({required ThemeData theme, required ColorScheme colorScheme}) {
-    return Semantics(
-      button: true,
-      label: 'متابعة إلى تسجيل الدخول',
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 394),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: _continue,
-            borderRadius: BorderRadius.circular(30),
-            child: Ink(
-              width: double.infinity,
-              height: 56,
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Center(
-                child: Text(
-                  'Continue',
-                  style: theme.textTheme.bodyLarge?.copyWith(fontSize: 16, color: colorScheme.onSurface),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Builds progress indicators showing step 2 of 3
-  Widget _buildProgressIndicators(ColorScheme colorScheme) {
-    return Semantics(
-      label: 'الخطوة ٢ من ٣',
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildProgressDot(colorScheme, isActive: false), // City selection (completed)
-          const SizedBox(width: 8),
-          _buildProgressDot(colorScheme, isActive: true), // Current (Onboarding)
-          const SizedBox(width: 8),
-          _buildProgressDot(colorScheme, isActive: false), // Login (upcoming)
-        ],
-      ),
-    );
-  }
-
-  /// Builds a single progress dot
-  Widget _buildProgressDot(ColorScheme colorScheme, {required bool isActive}) {
-    return Container(
-      width: isActive ? 24 : 8,
-      height: 8,
-      decoration: BoxDecoration(
-        color: isActive ? colorScheme.primary : colorScheme.outline.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(4),
-      ),
     );
   }
 }

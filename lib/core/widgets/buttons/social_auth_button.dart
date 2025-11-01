@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/gen/assets.gen.dart';
 
 /// Social authentication provider types
 enum SocialAuthProvider {
@@ -72,12 +74,12 @@ class _SocialAuthButtonState extends State<SocialAuthButton>
     widget.onTap();
   }
 
-  IconData get _icon {
+  String get _iconPath {
     switch (widget.provider) {
       case SocialAuthProvider.google:
-        return Icons.g_mobiledata; // Using Material icon as placeholder
+        return Assets.icons.googleIcon.path;
       case SocialAuthProvider.apple:
-        return Icons.apple;
+        return Assets.icons.appleIcon.path;
     }
   }
 
@@ -91,35 +93,30 @@ class _SocialAuthButtonState extends State<SocialAuthButton>
       child: GestureDetector(
         onTap: _handleTap,
         child: Container(
-          height: 56,
+          height: 48,
           decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest,
+            color: colorScheme.surface,
             borderRadius: BorderRadius.circular(30),
-            boxShadow: [
-              BoxShadow(
-                color: colorScheme.shadow.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Icon
-              Icon(
-                _icon,
-                size: 24,
-                color: colorScheme.onSurface,
+              // Icon from Figma assets - 23.64x23.64px
+              SvgPicture.asset(
+                _iconPath,
+                width: 23.64,
+                height: 23.64,
               ),
               const SizedBox(width: 11),
-              // Label
+              // Label - Parkinsans 14px weight 600
               Text(
                 widget.label,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w500,
+                style: const TextStyle(
+                  fontFamily: 'Parkinsans',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  height: 1.0,
                 ),
                 textDirection: TextDirection.rtl,
               ),

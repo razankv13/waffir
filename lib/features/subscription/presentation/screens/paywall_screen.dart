@@ -100,7 +100,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
             gradient: LinearGradient(
               colors: [
                 AppColors.primary.withValues(alpha: 0.1),
-                AppColors.secondary.withValues(alpha: 0.1),
+                AppColors.primaryColorDark.withValues(alpha: 0.1),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,

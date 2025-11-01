@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:waffir/core/config/environment_config.dart';
 import 'package:waffir/core/constants/app_spacing.dart';
 import 'package:waffir/core/constants/app_typography.dart';
-import 'package:waffir/core/config/environment_config.dart';
-import 'package:waffir/core/providers/ad_providers.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 
 /// Dialog for managing ad consent and privacy settings
@@ -280,11 +278,11 @@ class _AdConsentDialogState extends ConsumerState<AdConsentDialog> {
     });
 
     try {
-      final adStateNotifier = ref.read(adStateNotifierProvider.notifier);
+     // final adStateNotifier = ref.read(adStateNotifierProvider.notifier);
 
       // Here you would typically save the user's consent preferences
       // For now, we'll just refresh the ad state
-      await adStateNotifier.refreshState();
+   //   await adStateNotifier.refreshState();
 
       if (mounted) {
         Navigator.of(context).pop(true);

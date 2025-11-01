@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:waffir/gen/assets.gen.dart';
 
 /// Phone number input widget with country selector
 ///
@@ -95,113 +97,55 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
       height: 56,
       child: Row(
         children: [
-          // Submit button (circular arrow) with animations
-          ScaleTransition(
-            scale: _scaleAnimation,
-            child: GestureDetector(
-              onTap: _handleSubmitTap,
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: widget.isValid && !widget.isLoading
-                      ? colorScheme.primary
-                      : colorScheme.surfaceContainerHighest,
-                  shape: BoxShape.circle,
-                  boxShadow: widget.isValid && !widget.isLoading
-                      ? [
-                          BoxShadow(
-                            color: colorScheme.primary.withOpacity(0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: widget.isLoading
-                    ? SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                      )
-                    : Icon(
-                        Icons.arrow_forward,
-                        color: widget.isValid
-                            ? colorScheme.onPrimary
-                            : colorScheme.onSurfaceVariant.withOpacity(0.5),
-                        size: 24,
-                      ),
-              ),
-            ),
-          ),
-
-          const SizedBox(width: 8),
-
-          // Phone input field with country selector
+          // Phone input field with country selector - LEFT per Figma
           Expanded(
             child: Container(
               height: 56,
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(30),
+                color: colorScheme.surface,
+                borderRadius: BorderRadius.circular(16),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 14),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  // Country selector (flag + code + dropdown arrow)
+                  // Country selector (flag + code + dropdown arrow) - Figma specs
                   GestureDetector(
                     onTap: () {
                       HapticFeedback.selectionClick();
                       widget.onCountryTap?.call();
                     },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Dropdown arrow
-                          Icon(
-                            Icons.keyboard_arrow_down,
-                            color: colorScheme.onSurfaceVariant,
-                            size: 20,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Country flag from Figma assets
+                        SvgPicture.asset(
+                          Assets.icons.flagSa.path,
+                          width: 22,
+                          height: 15,
+                        ),
+                        const SizedBox(width: 8),
+                        // Country code - Parkinsans 14px weight 600
+                        Text(
+                          widget.countryCode,
+                          style: const TextStyle(
+                            fontFamily: 'Parkinsans',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            height: 1.0,
                           ),
-                          const SizedBox(width: 4),
-                          // Country flag
-                          Text(
-                            widget.countryFlag,
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          const SizedBox(width: 8),
-                          // Country code
-                          Text(
-                            widget.countryCode,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(width: 12),
+                        // Dropdown arrow
+                        Icon(
+                          Icons.keyboard_arrow_down,
+                          color: colorScheme.onSurface,
+                          size: 12,
+                        ),
+                      ],
                     ),
                   ),
 
-                  const SizedBox(width: 12),
-
-                  // Vertical divider
-                  Container(
-                    width: 1,
-                    height: 24,
-                    color: colorScheme.outline.withOpacity(0.3),
-                  ),
-
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 24),
 
                   // Phone number input
                   Expanded(
@@ -212,8 +156,11 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                       textAlign: TextAlign.left,
                       enabled: !widget.isLoading,
                       onChanged: widget.onChanged,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface,
+                      style: const TextStyle(
+                        fontFamily: 'Parkinsans',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        height: 1.0,
                       ),
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
@@ -222,8 +169,12 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                       decoration: InputDecoration(
                         hintText: widget.hintText,
                         hintTextDirection: TextDirection.rtl,
-                        hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                        hintStyle: TextStyle(
+                          fontFamily: 'Parkinsans',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          height: 1.0,
+                          color: colorScheme.onSurfaceVariant.withOpacity(0.64),
                         ),
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
@@ -234,6 +185,60 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 16),
+
+          // Submit button (circular arrow) with animations - 44x44px per Figma - RIGHT per Figma
+          ScaleTransition(
+            scale: _scaleAnimation,
+            child: GestureDetector(
+              onTap: _handleSubmitTap,
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: widget.isValid && !widget.isLoading
+                      ? const Color(0xFF0F352D) // Dark green when valid
+                      : const Color(0xFFF2F2F2), // Light gray when invalid
+                  shape: BoxShape.circle,
+                  boxShadow: widget.isValid && !widget.isLoading
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: widget.isLoading
+                    ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.0,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: SvgPicture.asset(
+                          Assets.icons.arrowIcon.path,
+                          width: 24,
+                          height: 24,
+                          color: widget.isValid
+                              ? Colors.white // White arrow on dark green
+                              : const Color(0xFFA3A3A3), // Gray arrow on light gray
+                        ),
+                      ),
               ),
             ),
           ),

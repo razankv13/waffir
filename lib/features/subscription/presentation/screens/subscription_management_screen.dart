@@ -1,500 +1,468 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 
-import 'package:waffir/core/constants/app_colors.dart';
-import 'package:waffir/core/constants/app_spacing.dart';
 import 'package:waffir/core/constants/app_typography.dart';
-import 'package:waffir/core/widgets/widgets.dart';
-import 'package:waffir/core/extensions/datetime_extensions.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/features/subscription/presentation/providers/subscription_providers.dart';
+import 'package:waffir/features/subscription/presentation/widgets/subscription_benefit_item.dart';
+import 'package:waffir/features/subscription/presentation/widgets/subscription_option_card.dart';
+import 'package:waffir/features/subscription/presentation/widgets/subscription_tab_switcher.dart';
 
-class SubscriptionManagementScreen extends ConsumerWidget {
+/// Subscription management screen with pixel-perfect Figma design
+///
+/// Allows users to select and purchase subscription plans (Monthly or Yearly)
+/// with Individual or Family options.
+class SubscriptionManagementScreen extends ConsumerStatefulWidget {
   const SubscriptionManagementScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final subscriptionState = ref.watch(subscriptionNotifierProvider);
-    final isPremium = ref.watch(isPremiumUserProvider);
+  ConsumerState<SubscriptionManagementScreen> createState() =>
+      _SubscriptionManagementScreenState();
+}
+
+class _SubscriptionManagementScreenState
+    extends ConsumerState<SubscriptionManagementScreen> {
+  SubscriptionPeriod _selectedPeriod = SubscriptionPeriod.monthly;
+  SubscriptionOption _selectedOption = SubscriptionOption.individual;
+  final TextEditingController _promoController = TextEditingController();
+
+  @override
+  void dispose() {
+    _promoController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = ResponsiveHelper(context);
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        title: const Text('Subscription'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: subscriptionState.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => _buildErrorState(context, ref, error),
-        data: (state) => _buildContent(context, ref, state, isPremium),
-      ),
-    );
-  }
-
-  Widget _buildContent(
-    BuildContext context,
-    WidgetRef ref,
-    SubscriptionState state,
-    bool isPremium,
-  ) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSubscriptionStatus(context, state, isPremium),
-          const SizedBox(height: AppSpacing.xl),
-          if (isPremium) ...[
-            _buildActiveSubscription(context, state),
-            const SizedBox(height: AppSpacing.xl),
-          ],
-          _buildQuickActions(context, ref, isPremium),
-          const SizedBox(height: AppSpacing.xl),
-          _buildSubscriptionHistory(context, state),
-          const SizedBox(height: AppSpacing.xl),
-          _buildManagementOptions(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSubscriptionStatus(
-    BuildContext context,
-    SubscriptionState state,
-    bool isPremium,
-  ) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isPremium
-              ? [
-                  AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.secondary.withValues(alpha: 0.1),
-                ]
-              : [
-                  Colors.grey.withValues(alpha: 0.05),
-                  Colors.grey.withValues(alpha: 0.1),
-                ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isPremium 
-              ? AppColors.primary.withValues(alpha: 0.2)
-              : Colors.grey.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            isPremium ? Icons.star_rounded : Icons.star_outline_rounded,
-            size: 48,
-            color: isPremium ? AppColors.primary : Colors.grey,
-          )
-              .animate()
-              .fadeIn(duration: 600.ms)
-              .scale(begin: const Offset(0.8, 0.8), duration: 600.ms),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            isPremium ? 'Premium Active' : 'Free Plan',
-            style: AppTypography.headlineSmall.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isPremium ? AppColors.primary : Colors.grey[700],
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            isPremium
-                ? 'You have access to all premium features'
-                : 'Upgrade to unlock all premium features',
-            style: AppTypography.bodyMedium.copyWith(
-              color: Colors.grey[600],
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    )
-        .animate()
-        .fadeIn(duration: 600.ms)
-        .slideY(begin: 0.3, duration: 600.ms);
-  }
-
-  Widget _buildActiveSubscription(BuildContext context, SubscriptionState state) {
-    final activeEntitlements = state.customerInfo?.entitlements.active ?? {};
-    
-    if (activeEntitlements.isEmpty) return const SizedBox.shrink();
-
-    final entitlement = activeEntitlements.values.first;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.receipt_long,
-                color: AppColors.primary,
-                size: 20,
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              Text(
-                'Current Subscription',
-                style: AppTypography.titleMedium.copyWith(
-                  fontWeight: FontWeight.w600,
+      backgroundColor: theme.colorScheme.surface,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // Blurred gradient background shape (matches Figma)
+            Positioned(
+              top: responsive.scale(-103.46),
+              left: responsive.scale(-40),
+              child: Container(
+                width: responsive.scale(467.78),
+                height: responsive.scale(477.28),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF00FF88).withOpacity(0.15),
+                      const Color(0xFF00D9A3).withOpacity(0.10),
+                      const Color(0xFF00C531).withOpacity(0.05),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(responsive.scale(200)),
+                ),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.0),
+                    ),
+                  ),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _buildSubscriptionDetail('Product', entitlement.productIdentifier),
-          const SizedBox(height: AppSpacing.sm),
-          _buildSubscriptionDetail(
-            'Status',
-            entitlement.isActive ? 'Active' : 'Inactive',
-          ),
-          if (entitlement.expirationDate != null) ...[
-            const SizedBox(height: AppSpacing.sm),
-            _buildSubscriptionDetail(
-              'Next Billing',
-              entitlement.expirationDate != null ? DateTime.parse(entitlement.expirationDate!).toFormattedString() : 'N/A',
+            ),
+            // Main scrollable content
+            SingleChildScrollView(
+              padding: responsive.scalePadding(
+                const EdgeInsets.only(top: 108, bottom: 120),
+              ),
+              child: Padding(
+                padding: responsive.scalePadding(
+                  const EdgeInsets.symmetric(horizontal: 16),
+                ),
+                child: Column(
+                  children: [
+                    // Header section
+                    _buildHeader(context, responsive, theme),
+                    SizedBox(height: responsive.scale(32)),
+
+                    // Tab switcher
+                    SubscriptionTabSwitcher(
+                      selectedTab: _selectedPeriod,
+                      onTabChanged: (period) {
+                        setState(() => _selectedPeriod = period);
+                      },
+                    ),
+                    SizedBox(height: responsive.scale(32)),
+
+                    // Subscription options
+                    _buildSubscriptionOptions(context, responsive),
+                    SizedBox(height: responsive.scale(13)),
+
+                    // Benefits list
+                    _buildBenefitsList(context, responsive),
+                    SizedBox(height: responsive.scale(32)),
+
+                    // Divider
+                    Container(
+                      width: responsive.scale(338),
+                      height: 1,
+                      color: theme.colorScheme.surfaceContainerHighest,
+                    ),
+                    SizedBox(height: responsive.scale(32)),
+
+                    // Promo code section
+                    _buildPromoSection(context, responsive, theme),
+                  ],
+                ),
+              ),
+            ),
+
+            // Back button (top left)
+            Positioned(
+              top: 0,
+              left: 0,
+              child: Padding(
+                padding: responsive.scalePadding(
+                  const EdgeInsets.only(top: 64, left: 16),
+                ),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    size: responsive.scale(24),
+                    color: theme.colorScheme.onSurface,
+                  ),
+                  onPressed: () => context.pop(),
+                ),
+              ),
+            ),
+
+            // Proceed button (bottom)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                color: theme.colorScheme.surface,
+                padding: responsive.scalePadding(
+                  const EdgeInsets.all(16),
+                ),
+                child: Center(
+                  child: SizedBox(
+                    width: responsive.scale(330),
+                    height: responsive.scale(48),
+                    child: AppButton.primary(
+                      onPressed: _handleProceed,
+                      child: Text(
+                        'Proceed',
+                        style: AppTypography.labelLarge.copyWith(
+                          fontSize: responsive.scaleFontSize(14, minSize: 12),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
-          const SizedBox(height: AppSpacing.sm),
-          _buildSubscriptionDetail(
-            'Auto Renew',
-            entitlement.willRenew ? 'On' : 'Off',
-          ),
-        ],
+        ),
       ),
-    )
-        .animate()
-        .fadeIn(delay: 200.ms, duration: 600.ms)
-        .slideX(begin: 0.3, duration: 600.ms);
+    );
   }
 
-  Widget _buildSubscriptionDetail(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildHeader(
+    BuildContext context,
+    ResponsiveHelper responsive,
+    ThemeData theme,
+  ) {
+    return Column(
       children: [
+        // Title
         Text(
-          label,
-          style: AppTypography.bodyMedium.copyWith(
-            color: Colors.grey[600],
+          'You just got "One" month free',
+          textAlign: TextAlign.center,
+          style: AppTypography.headlineSmall.copyWith(
+            fontSize: responsive.scaleFontSize(18, minSize: 16),
+            fontWeight: FontWeight.w700,
+            color: theme.colorScheme.onSurface,
+            height: 1.4,
           ),
         ),
-        Text(
-          value,
-          style: AppTypography.bodyMedium.copyWith(
-            fontWeight: FontWeight.w500,
+        SizedBox(height: responsive.scale(16)),
+        // Subtitle
+        SizedBox(
+          width: _selectedPeriod == SubscriptionPeriod.monthly
+              ? responsive.scale(243)
+              : responsive.scale(323),
+          child: Text(
+            'Continue to start your free month and confirm your plan.',
+            textAlign: TextAlign.center,
+            style: AppTypography.bodyMedium.copyWith(
+              fontSize: responsive.scaleFontSize(16, minSize: 14),
+              fontWeight: FontWeight.w400,
+              color: theme.colorScheme.onSurface,
+              height: 1.4,
+            ),
           ),
         ),
       ],
-    );
+    )
+        .animate()
+        .fadeIn(duration: 400.ms)
+        .slideY(begin: -0.2, duration: 400.ms);
   }
 
-  Widget _buildQuickActions(BuildContext context, WidgetRef ref, bool isPremium) {
+  Widget _buildSubscriptionOptions(
+    BuildContext context,
+    ResponsiveHelper responsive,
+  ) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Quick Actions',
-          style: AppTypography.titleMedium.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        if (!isPremium) ...[
-          _buildActionCard(
-            icon: Icons.upgrade,
-            title: 'Upgrade to Premium',
-            subtitle: 'Unlock all premium features',
-            onTap: () => _showPaywall(context),
-            color: AppColors.primary,
-          )
-              .animate()
-              .fadeIn(delay: 300.ms, duration: 400.ms)
-              .slideX(begin: 0.3, duration: 400.ms),
-          const SizedBox(height: AppSpacing.md),
-        ],
-        _buildActionCard(
-          icon: Icons.restore,
-          title: 'Restore Purchases',
-          subtitle: 'Restore previous purchases',
-          onTap: () => _restorePurchases(context, ref),
+        // Individual option
+        SubscriptionOptionCard(
+          price: _selectedPeriod == SubscriptionPeriod.monthly
+              ? '4 SAR / month'
+              : '38 SAR / month',
+          userInfo: '1 User',
+          isMultiUser: false,
+          isSelected: _selectedOption == SubscriptionOption.individual,
+          onTap: () {
+            setState(() => _selectedOption = SubscriptionOption.individual);
+          },
+          badges: _getIndividualBadges(),
         )
             .animate()
-            .fadeIn(delay: 400.ms, duration: 400.ms)
-            .slideX(begin: 0.3, duration: 400.ms),
-        if (isPremium) ...[
-          const SizedBox(height: AppSpacing.md),
-          _buildActionCard(
-            icon: Icons.refresh,
-            title: 'Refresh Status',
-            subtitle: 'Update subscription status',
-            onTap: () => _refreshSubscription(ref),
-          )
-              .animate()
-              .fadeIn(delay: 500.ms, duration: 400.ms)
-              .slideX(begin: 0.3, duration: 400.ms),
-        ],
+            .fadeIn(delay: 200.ms, duration: 400.ms)
+            .slideX(begin: -0.2, duration: 400.ms),
+        SizedBox(height: responsive.scale(24)),
+        // Family option
+        SubscriptionOptionCard(
+          price: _selectedPeriod == SubscriptionPeriod.monthly
+              ? '12 SAR / month'
+              : '100 SAR / month',
+          userInfo: 'Up to 4 Family Members',
+          isMultiUser: true,
+          isSelected: _selectedOption == SubscriptionOption.family,
+          onTap: () {
+            setState(() => _selectedOption = SubscriptionOption.family);
+          },
+          badges: _getFamilyBadges(),
+        )
+            .animate()
+            .fadeIn(delay: 300.ms, duration: 400.ms)
+            .slideX(begin: -0.2, duration: 400.ms),
       ],
     );
   }
 
-  Widget _buildActionCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-    Color? color,
-  }) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(AppSpacing.md),
-        leading: Container(
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          decoration: BoxDecoration(
-            color: (color ?? AppColors.primary).withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            icon,
-            color: color ?? AppColors.primary,
-            size: 24,
-          ),
+  List<SubscriptionBadge> _getIndividualBadges() {
+    if (_selectedPeriod == SubscriptionPeriod.monthly) {
+      return const [
+        SubscriptionBadge(
+          text: '1st Month Free',
+          position: BadgePosition.left,
         ),
-        title: Text(
-          title,
-          style: AppTypography.titleSmall.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+      ];
+    } else {
+      // Yearly
+      return const [
+        SubscriptionBadge(
+          text: '20% OFF',
+          position: BadgePosition.left,
         ),
-        subtitle: Text(
-          subtitle,
-          style: AppTypography.bodySmall.copyWith(
-            color: Colors.grey[600],
-          ),
+        SubscriptionBadge(
+          text: '1st Month Free',
+          position: BadgePosition.center,
         ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: Colors.grey[400],
-        ),
-        onTap: onTap,
-      ),
-    );
-  }
-
-  Widget _buildSubscriptionHistory(BuildContext context, SubscriptionState state) {
-    final allPurchases = state.customerInfo?.allPurchasedProductIdentifiers ?? [];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Purchase History',
-          style: AppTypography.titleMedium.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        if (allPurchases.isEmpty) ...[
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            decoration: BoxDecoration(
-              color: Colors.grey.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-            ),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.history,
-                  color: Colors.grey[400],
-                  size: 32,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  'No purchases yet',
-                  style: AppTypography.bodyMedium.copyWith(
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ] else ...[
-          ...allPurchases.map((productId) => Card(
-                elevation: 0,
-                margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
-                ),
-                child: ListTile(
-                  leading: Icon(
-                    Icons.shopping_cart,
-                    color: AppColors.primary,
-                  ),
-                  title: Text(
-                    productId,
-                    style: AppTypography.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  subtitle: Text(
-                    'Purchased',
-                    style: AppTypography.bodySmall.copyWith(
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ),
-              )),
-        ],
-      ],
-    )
-        .animate()
-        .fadeIn(delay: 600.ms, duration: 600.ms)
-        .slideY(begin: 0.3, duration: 600.ms);
-  }
-
-  Widget _buildManagementOptions(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Manage Subscription',
-          style: AppTypography.titleMedium.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        Text(
-          'To modify or cancel your subscription, please visit your account settings in the App Store or Google Play Store.',
-          style: AppTypography.bodyMedium.copyWith(
-            color: Colors.grey[600],
-          ),
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        AppButton.secondary(
-          onPressed: () => _openSubscriptionManagement(context),
-          child: const Text('Open Store Settings'),
-        ),
-      ],
-    )
-        .animate()
-        .fadeIn(delay: 700.ms, duration: 600.ms)
-        .slideY(begin: 0.3, duration: 600.ms);
-  }
-
-  Widget _buildErrorState(BuildContext context, WidgetRef ref, Object error) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red[400],
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            Text(
-              'Failed to load subscription info',
-              style: AppTypography.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              error.toString(),
-              style: AppTypography.bodyMedium.copyWith(
-                color: Colors.grey[600],
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.xl),
-            AppButton.primary(
-              onPressed: () => ref.read(subscriptionNotifierProvider.notifier).refreshData(),
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showPaywall(BuildContext context) {
-    context.push('/subscription/paywall');
-  }
-
-  Future<void> _restorePurchases(BuildContext context, WidgetRef ref) async {
-    try {
-      await ref.read(subscriptionNotifierProvider.notifier).restorePurchases();
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Purchases restored successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (error) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to restore purchases: $error'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      ];
     }
   }
 
-  void _refreshSubscription(WidgetRef ref) {
-    ref.read(subscriptionNotifierProvider.notifier).refreshData();
+  List<SubscriptionBadge> _getFamilyBadges() {
+    if (_selectedPeriod == SubscriptionPeriod.monthly) {
+      return const [
+        SubscriptionBadge(
+          text: 'Best Value - 25% OFF',
+          position: BadgePosition.left,
+          isSpecial: true,
+        ),
+        SubscriptionBadge(
+          text: '1st Month Free',
+          position: BadgePosition.right,
+        ),
+      ];
+    } else {
+      // Yearly
+      return const [
+        SubscriptionBadge(
+          text: 'Best Value - 30% OFF',
+          position: BadgePosition.left,
+          isSpecial: true,
+        ),
+        SubscriptionBadge(
+          text: '1st Month Free',
+          position: BadgePosition.right,
+        ),
+      ];
+    }
   }
 
-  void _openSubscriptionManagement(BuildContext context) {
-    // TODO: Open platform-specific subscription management
-    // On iOS: Settings app > Apple ID > Subscriptions
-    // On Android: Play Store > Account > Subscriptions
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Manage Subscription'),
-        content: const Text(
-          'Please open your device settings:\n\n'
-          'iOS: Settings > Apple ID > Subscriptions\n'
-          'Android: Play Store > Account > Subscriptions',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
+  Widget _buildBenefitsList(
+    BuildContext context,
+    ResponsiveHelper responsive,
+  ) {
+    return Padding(
+      padding: responsive.scalePadding(
+        const EdgeInsets.symmetric(horizontal: 32),
+      ),
+      child: Column(
+        children: [
+          const SubscriptionBenefitItem(text: 'Cancel anytime'),
+          SizedBox(height: responsive.scale(8)),
+          const SubscriptionBenefitItem(text: 'Daily verified discounts'),
+          SizedBox(height: responsive.scale(8)),
+          const SubscriptionBenefitItem(text: 'One app for all offers'),
         ],
+      ),
+    )
+        .animate()
+        .fadeIn(delay: 400.ms, duration: 400.ms)
+        .slideY(begin: 0.2, duration: 400.ms);
+  }
+
+  Widget _buildPromoSection(
+    BuildContext context,
+    ResponsiveHelper responsive,
+    ThemeData theme,
+  ) {
+    return Column(
+      children: [
+        // Promo question
+        SizedBox(
+          width: responsive.scale(243),
+          child: Text(
+            'Do you have a promo code?',
+            textAlign: TextAlign.center,
+            style: AppTypography.bodyMedium.copyWith(
+              fontSize: responsive.scaleFontSize(16, minSize: 14),
+              fontWeight: FontWeight.w400,
+              color: theme.colorScheme.onSurface,
+              height: 1.4,
+            ),
+          ),
+        ),
+        SizedBox(height: responsive.scale(16)),
+        // Promo input with button
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Input field
+            Container(
+              width: responsive.scale(232),
+              height: responsive.scale(56),
+              padding: responsive.scalePadding(
+                const EdgeInsets.symmetric(horizontal: 16),
+              ),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest,
+                borderRadius: responsive.scaleBorderRadius(
+                  BorderRadius.circular(16),
+                ),
+              ),
+              child: Center(
+                child: TextField(
+                  controller: _promoController,
+                  textAlign: TextAlign.center,
+                  style: AppTypography.bodyMedium.copyWith(
+                    fontSize: responsive.scaleFontSize(16, minSize: 14),
+                    fontWeight: FontWeight.w500,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Apply Promo Code',
+                    hintStyle: AppTypography.bodyMedium.copyWith(
+                      fontSize: responsive.scaleFontSize(16, minSize: 14),
+                      fontWeight: FontWeight.w500,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: responsive.scale(11)),
+            // Arrow button
+            GestureDetector(
+              onTap: _applyPromoCode,
+              child: Container(
+                width: responsive.scale(44),
+                height: responsive.scale(44),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.arrow_forward,
+                  size: responsive.scale(20),
+                  color: theme.colorScheme.onPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    )
+        .animate()
+        .fadeIn(delay: 500.ms, duration: 400.ms)
+        .slideY(begin: 0.2, duration: 400.ms);
+  }
+
+  void _handleProceed() {
+    // Get subscription notifier
+    final subscriptionNotifier =
+        ref.read(subscriptionNotifierProvider.notifier);
+
+    // TODO: Implement actual subscription purchase logic
+    // This would involve:
+    // 1. Determining the package ID based on selected period and option
+    // 2. Calling subscriptionNotifier.purchasePackage(package)
+    // 3. Handling success/error states
+    // 4. Navigating to success screen or showing error
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Selected: ${_selectedPeriod == SubscriptionPeriod.monthly ? 'Monthly' : 'Yearly'} - '
+          '${_selectedOption == SubscriptionOption.individual ? 'Individual' : 'Family'}',
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
     );
   }
+
+  void _applyPromoCode() {
+    final promoCode = _promoController.text.trim();
+    if (promoCode.isEmpty) return;
+
+    // TODO: Implement promo code validation
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Promo code "$promoCode" applied!'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+    );
+  }
+}
+
+/// Subscription option enum
+enum SubscriptionOption {
+  individual,
+  family,
 }

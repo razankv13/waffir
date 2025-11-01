@@ -60,7 +60,7 @@ Future<void> mainCommon(Flavor flavor) async {
           ],
           path: 'assets/translations',
           fallbackLocale: const Locale('en', 'US'),
-          startLocale: const Locale('ar', 'SA'), // Default to Arabic to match Figma
+          startLocale: const Locale('en', 'US'), // Default to Arabic to match Figma
           child: const ProviderScope(child: App()),
         ),
       );

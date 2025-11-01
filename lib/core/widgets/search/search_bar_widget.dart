@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:waffir/core/constants/app_typography.dart';
 
 /// Custom search bar widget for product search
@@ -75,12 +76,12 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     final colorScheme = theme.colorScheme;
 
     return Container(
-      height: 48,
+      height: 68,
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(24),
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: colorScheme.outlineVariant,
+          color: colorScheme.tertiary,
           width: 1,
         ),
       ),
@@ -140,26 +141,41 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
             },
           ),
 
-          // Filter Button (optional)
-          if (widget.showFilterButton) ...[
-            Container(
-              width: 1,
-              height: 24,
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              color: colorScheme.outlineVariant,
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.tune,
-                size: 20,
-                color: colorScheme.onSurface,
+          // Vertical Divider (always visible)
+          Container(
+            width: 1,
+            height: 24,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            color: colorScheme.outlineVariant,
+          ),
+
+          // Filter Button (always visible, circular design)
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: InkWell(
+              onTap: widget.onFilterTap,
+              borderRadius: BorderRadius.circular(1000),
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    'assets/icons/categories/arrow_filter_icon.svg',
+                    width: 20,
+                    height: 20,
+                    colorFilter: ColorFilter.mode(
+                      colorScheme.onPrimary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
               ),
-              onPressed: widget.onFilterTap,
-              padding: const EdgeInsets.only(right: 16),
-              constraints: const BoxConstraints(),
             ),
-          ] else
-            const SizedBox(width: 16),
+          ),
         ],
       ),
     );

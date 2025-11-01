@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/storage/settings_service.dart';
 import 'package:waffir/core/widgets/inputs/city_list_item.dart';
+import 'package:waffir/core/widgets/buttons/app_button.dart';
+import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 
 /// City selection screen
 ///
@@ -85,28 +87,34 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // Header section with gradient fade
-            _buildHeaderSection(
-              context,
-              theme,
-              colorScheme,
-              horizontalPadding,
-              headerVerticalPadding,
-            ),
+            // Blurred background matching Figma design
+            const Positioned.fill(child: BlurredBackground()),
+            Column(
+              children: [
+                // Header section with gradient fade
+                _buildHeaderSection(
+                  context,
+                  theme,
+                  colorScheme,
+                  horizontalPadding,
+                  headerVerticalPadding,
+                ),
 
-            // Scrollable city list (takes remaining space)
-            Expanded(child: _buildCityList(context, colorScheme, horizontalPadding)),
+                // Scrollable city list (takes remaining space)
+                Expanded(child: _buildCityList(context, colorScheme, horizontalPadding)),
 
-            // Footer section with continue button
-            _buildFooterSection(
-              context,
-              theme,
-              colorScheme,
-              horizontalPadding,
-              footerBottomPadding,
-              size.width,
+                // Footer section with continue button
+                _buildFooterSection(
+                  context,
+                  theme,
+                  colorScheme,
+                  horizontalPadding,
+                  footerBottomPadding,
+                  size.width,
+                ),
+              ],
             ),
           ],
         ),
@@ -122,67 +130,45 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
     double horizontalPadding,
     double verticalPadding,
   ) {
-    return Stack(
-      children: [
-        // Solid background
-        Container(
-          color: colorScheme.surface,
-          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Semantics(
-                header: true,
-                child: Text(
-                  'اختر مدينتك',
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontSize: 20,
-                    height: 27 / 20,
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
-                  textAlign: TextAlign.center,
-                  textDirection: TextDirection.rtl,
-                ),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Semantics(
+            header: true,
+            child: Text(
+              'اختر مدينتك',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontSize: 20,
+                height: 27 / 20,
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface,
               ),
-              SizedBox(height: verticalPadding),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Semantics(
-                  label: 'سنعرض لك جميع الخصومات المتوفرة من البنوك والبطاقات من حولك.',
-                  child: Text(
-                    'سنعرض لك جميع الخصومات المتوفرة من البنوك والبطاقات من حولك.',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: 20,
-                      height: 27 / 20,
-                      fontWeight: FontWeight.normal,
-                      color: colorScheme.onSurface,
-                    ),
-                    textAlign: TextAlign.center,
-                    textDirection: TextDirection.rtl,
-                  ),
-                ),
-              ),
-            ],
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.rtl,
+            ),
           ),
-        ),
-        // Bottom gradient fade
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 32,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [colorScheme.surface, colorScheme.surface.withValues(alpha: 0)],
+          SizedBox(height: verticalPadding),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Semantics(
+              label: 'سنعرض لك جميع الخصومات المتوفرة من البنوك والبطاقات من حولك.',
+              child: Text(
+                'سنعرض لك جميع الخصومات المتوفرة من البنوك والبطاقات من حولك.',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontSize: 20,
+                  height: 27 / 20,
+                  fontWeight: FontWeight.normal,
+                  color: colorScheme.onSurface,
+                ),
+                textAlign: TextAlign.center,
+                textDirection: TextDirection.rtl,
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -221,97 +207,29 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
   ) {
     final isEnabled = _selectedCity != null && !_isLoading;
 
-    return Stack(
-      children: [
-        // Top gradient fade
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 32,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [colorScheme.surface, colorScheme.surface.withValues(alpha: 0)],
-              ),
-            ),
+    return Padding(
+      padding: EdgeInsets.only(
+        left: horizontalPadding,
+        right: horizontalPadding,
+        top: 32,
+        bottom: bottomPadding,
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: screenWidth > 600 ? 600 : double.infinity),
+          child: AppButton.primary(
+            text: 'استمر',
+            onPressed: isEnabled ? _onContinue : null,
+            size: ButtonSize.large,
+            isLoading: _isLoading,
+            enabled: isEnabled,
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            borderRadius: BorderRadius.circular(60),
+            tooltip: _selectedCity == null ? 'يرجى اختيار مدينة للمتابعة' : null,
           ),
         ),
-        // Footer content
-        Container(
-          color: colorScheme.surface,
-          padding: EdgeInsets.only(
-            left: horizontalPadding,
-            right: horizontalPadding,
-            top: 32,
-            bottom: bottomPadding,
-          ),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: screenWidth > 600 ? 600 : double.infinity),
-              child: Tooltip(
-                message: _selectedCity == null ? 'يرجى اختيار مدينة للمتابعة' : '',
-                child: Semantics(
-                  button: true,
-                  enabled: isEnabled,
-                  label: _isLoading
-                      ? 'جاري الحفظ...'
-                      : (_selectedCity == null
-                          ? 'زر المتابعة، معطل، يرجى اختيار مدينة أولاً'
-                          : 'استمر إلى الخطوة التالية'),
-                  child: Opacity(
-                    opacity: isEnabled ? 1.0 : 0.6,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: isEnabled ? _onContinue : null,
-                        borderRadius: BorderRadius.circular(60),
-                        child: Ink(
-                          width: double.infinity,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: isEnabled
-                                ? colorScheme.primary
-                                : colorScheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(60),
-                          ),
-                          child: Center(
-                            child: _isLoading
-                                ? SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        colorScheme.onPrimary,
-                                      ),
-                                    ),
-                                  )
-                                : Text(
-                                    'استمر',
-                                    style: theme.textTheme.bodyLarge?.copyWith(
-                                      fontSize: 16,
-                                      height: 24 / 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: isEnabled
-                                          ? colorScheme.onPrimary
-                                          : colorScheme.onSurfaceVariant,
-                                    ),
-                                    textDirection: TextDirection.rtl,
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

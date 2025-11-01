@@ -44,7 +44,7 @@ class PhoneNumberInput extends StatelessWidget {
     return Container(
       height: 56,
       decoration: BoxDecoration(
-        color: AppColors.blue05,
+        color: AppColors.gray01,
         borderRadius: BorderRadius.circular(AppSpacing.radiusWaffir),
       ),
       child: Row(
@@ -105,7 +105,7 @@ class PhoneNumberInput extends StatelessWidget {
               textDirection: TextDirection.ltr, // Phone numbers are LTR
               textAlign: TextAlign.right,
               style: AppTypography.waffirInput.copyWith(
-                color: AppColors.blue60,
+                color: AppColors.textSecondary,
               ),
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
@@ -114,7 +114,7 @@ class PhoneNumberInput extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: AppTypography.waffirInput.copyWith(
-                  color: AppColors.blue60,
+                  color: AppColors.textSecondary,
                 ),
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
@@ -146,7 +146,7 @@ class PhoneNumberInput extends StatelessWidget {
             Icon(
               Icons.keyboard_arrow_down,
               size: 16,
-              color: AppColors.blue60,
+              color: AppColors.textSecondary,
             ),
 
             const SizedBox(width: 4),
@@ -163,7 +163,7 @@ class PhoneNumberInput extends StatelessWidget {
             Text(
               countryCode,
               style: AppTypography.waffirInput.copyWith(
-                color: AppColors.blue60,
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w400,
               ),
             ),

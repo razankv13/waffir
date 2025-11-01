@@ -64,6 +64,475 @@ Waffir - A production-ready Flutter application with clean architecture, Supabas
 - **Flavors**: Always use flavors when running. Default `flutter run` uses production flavor.
 - **Tests**: 9 test files provide examples/patterns. Expand coverage for production use.
 - **Theme System**: **CRITICAL** - ALWAYS use `Theme.of(context)` to access colors and styles. NEVER directly import or use `AppColors` in widget files. The theme system ensures proper light/dark mode support and Material 3 consistency.
+- **Responsive Design**: **MANDATORY** - ALWAYS use `ResponsiveHelper` for ALL dimensions, padding, spacing, and font sizes. See Responsive Design Guidelines below.
+
+## 📋 Code Generation Rules (CRITICAL)
+
+**ALWAYS follow these rules when working with code generation in this project:**
+
+### Build Configuration Standards
+
+This project uses `build.yaml` with specific configurations for code generation. **You MUST adhere to these settings:**
+
+**Line Length**: 120 characters (configured for Riverpod generator)
+- All generated code follows this standard
+- When writing code that will be generated, keep this limit in mind
+
+### Generated File Patterns
+
+**NEVER edit these generated files directly:**
+- `*.g.dart` - JSON serialization, Riverpod providers, Hive adapters
+- `*.freezed.dart` - Freezed immutable classes
+
+**⚠️ WARNING:** Any manual edits to generated files will be overwritten on next build!
+
+### When to Run Build Runner (MANDATORY)
+
+**Always run `dart run build_runner build --delete-conflicting-outputs` after:**
+
+1. **Freezed Changes**:
+   - Creating/modifying classes with `@freezed` annotation
+   - Adding new union types or copyWith methods
+   - Changing class fields or adding new sealed classes
+
+2. **JSON Serializable Changes**:
+   - Adding/modifying classes with `@JsonSerializable()` annotation
+   - Changing field names or types in serializable models
+   - Adding custom JSON converters
+
+3. **Riverpod Changes**:
+   - Creating providers with `@riverpod` annotation
+   - Modifying provider parameters or return types
+   - Adding family providers with code generation
+
+4. **Hive Changes**:
+   - Creating/modifying classes with `@HiveType()` annotation
+   - Adding fields with `@HiveField()` annotation
+   - Changing type adapter IDs
+
+### JSON Serialization Configuration (build.yaml)
+
+**The following JSON serialization options are configured:**
+```yaml
+json_serializable:
+  any_map: false                      # Strict Map<String, dynamic> only
+  checked: false                      # No runtime type checking
+  create_factory: true                # Generate fromJson factory
+  create_to_json: true                # Generate toJson method
+  disallow_unrecognized_keys: false   # Allow extra keys in JSON
+  explicit_to_json: false             # Auto-detect nested serialization
+  field_rename: none                  # Use exact field names (no snake_case conversion)
+  include_if_null: true               # Include null values in JSON output
+```
+
+**What this means for your code:**
+- Use exact field names (no automatic snake_case conversion)
+- Null values WILL be included in JSON output
+- No runtime type checking - ensure type safety at compile time
+- Extra JSON keys won't cause errors (flexible API responses)
+
+### Code Generation Best Practices
+
+1. **Freezed Classes**:
+   ```dart
+   import 'package:freezed_annotation/freezed_annotation.dart';
+
+   part 'user.freezed.dart';  // REQUIRED
+   part 'user.g.dart';        // REQUIRED for JSON serialization
+
+   @freezed
+   class User with _$User {
+     const factory User({
+       required String id,
+       required String name,
+       String? email,
+     }) = _User;
+
+     factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+   }
+   ```
+
+2. **JSON Serializable (without Freezed)**:
+   ```dart
+   import 'package:json_annotation/json_annotation.dart';
+
+   part 'response.g.dart';  // REQUIRED
+
+   @JsonSerializable()
+   class ApiResponse {
+     final bool success;
+     final String? message;
+
+     ApiResponse({required this.success, this.message});
+
+     factory ApiResponse.fromJson(Map<String, dynamic> json) => _$ApiResponseFromJson(json);
+     Map<String, dynamic> toJson() => _$ApiResponseToJson(this);
+   }
+   ```
+
+3. **Riverpod Providers (Code Generation)**:
+   ```dart
+   import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+   part 'providers.g.dart';  // REQUIRED
+
+   @riverpod
+   Future<User> user(UserRef ref, String id) async {
+     // Line length: 120 characters max for generated code
+     return await ref.read(userRepositoryProvider).fetchUser(id);
+   }
+   ```
+
+4. **Hive Type Adapters**:
+   ```dart
+   import 'package:hive/hive.dart';
+
+   part 'settings.g.dart';  // REQUIRED
+
+   @HiveType(typeId: 0)  // Unique typeId required
+   class Settings {
+     @HiveField(0)
+     final bool darkMode;
+
+     @HiveField(1)
+     final String language;
+
+     Settings({required this.darkMode, required this.language});
+   }
+   ```
+
+### Build Runner Commands Summary
+
+```bash
+# Generate code once (most common)
+dart run build_runner build --delete-conflicting-outputs
+
+# Watch mode for continuous development
+dart run build_runner watch --delete-conflicting-outputs
+
+# Clean all generated files (use when build fails)
+dart run build_runner clean
+
+# Generate only asset files (flutter_gen)
+dart run build_runner build --build-filter="lib/gen/**"
+```
+
+### Troubleshooting Generated Code
+
+**If build_runner fails:**
+1. Run `dart run build_runner clean`
+2. Check for missing `part` directives
+3. Ensure all annotations are correct
+4. Verify no syntax errors in source files
+5. Run `flutter clean && flutter pub get`
+6. Run `dart run build_runner build --delete-conflicting-outputs` again
+
+**Common mistakes to avoid:**
+- ❌ Forgetting `part` directive for generated files
+- ❌ Editing `.g.dart` or `.freezed.dart` files directly
+- ❌ Not running build_runner after modifying annotated classes
+- ❌ Using wrong typeId for Hive adapters (must be unique)
+- ❌ Missing `const factory` for Freezed classes
+- ❌ Not including `with _$ClassName` mixin for Freezed
+
+## 📱 Responsive Design Guidelines (MANDATORY)
+
+**CRITICAL: ALL UI dimensions, padding, spacing, and font sizes MUST use ResponsiveHelper for cross-device compatibility.**
+
+### Design Reference
+
+This project is based on **Figma design frames with dimensions 393×852px (mobile)**.
+
+**Golden Rule**: NEVER hardcode pixel values from Figma. ALWAYS use `ResponsiveHelper` to scale them proportionally.
+
+### Device Breakpoints
+
+- **Mobile**: < 600px width
+- **Tablet**: 600px - 900px width
+- **Desktop**: ≥ 900px width
+
+### Usage Patterns
+
+**1. Basic Dimension Scaling (Most Common)**
+
+```dart
+// ❌ WRONG - Hardcoded Figma values
+Container(
+  width: 200,
+  height: 100,
+  padding: EdgeInsets.all(16),
+)
+
+// ✅ CORRECT - Scaled from Figma
+final responsive = ResponsiveHelper(context);
+// OR use extension:
+Container(
+  width: context.responsive.scale(200),   // Scales 200px from Figma
+  height: context.responsive.scale(100),  // Scales 100px from Figma
+  padding: context.responsive.scalePadding(EdgeInsets.all(16)),
+)
+```
+
+**2. Font Sizes (Prevents Too-Small Text)**
+
+```dart
+// ❌ WRONG
+Text(
+  'Hello',
+  style: TextStyle(fontSize: 14),
+)
+
+// ✅ CORRECT - Scales with minimum readable size
+Text(
+  'Hello',
+  style: TextStyle(
+    fontSize: context.responsive.scaleFontSize(14, minSize: 10),
+  ),
+)
+```
+
+**3. Padding & Spacing**
+
+```dart
+// ❌ WRONG
+Padding(
+  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+  child: child,
+)
+
+// ✅ CORRECT
+Padding(
+  padding: context.responsive.scalePadding(
+    EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+  ),
+  child: child,
+)
+```
+
+**4. Border Radius**
+
+```dart
+// ❌ WRONG
+Container(
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(12),
+  ),
+)
+
+// ✅ CORRECT
+Container(
+  decoration: BoxDecoration(
+    borderRadius: context.responsive.scaleBorderRadius(
+      BorderRadius.circular(12),
+    ),
+  ),
+)
+```
+
+**5. Size Constraints (Min/Max Values)**
+
+```dart
+// For elements that shouldn't get too small on small screens
+final width = context.responsive.scaleWithMin(100, min: 80);
+
+// For elements that shouldn't get too large on big screens
+final maxWidth = context.responsive.scaleWithMax(300, max: 400);
+
+// Both min and max constraints
+final constrained = context.responsive.scaleWithRange(
+  150,
+  min: 120,
+  max: 200,
+);
+```
+
+**6. Device-Specific Layouts**
+
+```dart
+// Different values per device type
+final columns = context.responsive.responsiveValue(
+  mobile: 2,
+  tablet: 3,
+  desktop: 4,
+);
+
+// Different widgets per device type
+context.responsive.responsiveWidget(
+  mobile: MobileLayout(),
+  tablet: TabletLayout(),
+  desktop: DesktopLayout(),
+)
+```
+
+**7. Device Detection**
+
+```dart
+// Using ResponsiveHelper instance
+final responsive = ResponsiveHelper(context);
+if (responsive.isMobile) {
+  // Mobile-specific code
+}
+
+// Using context extension (shorter)
+if (context.isMobile) {
+  // Mobile-specific code
+} else if (context.isTablet) {
+  // Tablet-specific code
+} else if (context.isDesktop) {
+  // Desktop-specific code
+}
+```
+
+**8. Responsive Builder Widget**
+
+```dart
+// For complex responsive widgets that need access to responsive helper
+ResponsiveBuilder(
+  builder: (context, responsive) {
+    return Container(
+      width: responsive.scale(200),
+      padding: responsive.scalePadding(EdgeInsets.all(16)),
+      child: Column(
+        children: [
+          Text(
+            'Responsive!',
+            style: TextStyle(
+              fontSize: responsive.scaleFontSize(16),
+            ),
+          ),
+        ],
+      ),
+    );
+  },
+)
+```
+
+**9. Grid Layouts**
+
+```dart
+// Responsive grid columns
+GridView.builder(
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: context.responsive.gridColumns(), // 2/3/4 based on device
+    crossAxisSpacing: context.responsive.scale(16),
+    mainAxisSpacing: context.responsive.scale(16),
+  ),
+)
+```
+
+**10. Content Max Width (Centering on Large Screens)**
+
+```dart
+Container(
+  width: context.responsive.contentMaxWidth(), // Full on mobile, max 1200 on desktop
+  child: YourContent(),
+)
+```
+
+### Helper Methods Reference
+
+| Method | Use Case | Example |
+|--------|----------|---------|
+| `scale(double)` | General dimensions | `scale(200)` |
+| `scaleWithMin(double, min)` | Prevent too small | `scaleWithMin(100, min: 80)` |
+| `scaleWithMax(double, max)` | Prevent too large | `scaleWithMax(300, max: 400)` |
+| `scaleWithRange(double, min, max)` | Constrain both | `scaleWithRange(150, min: 120, max: 200)` |
+| `scaleFontSize(double, minSize)` | Font sizes | `scaleFontSize(14, minSize: 10)` |
+| `scalePadding(EdgeInsets)` | Padding/margins | `scalePadding(EdgeInsets.all(16))` |
+| `scaleBorderRadius(BorderRadius)` | Border radius | `scaleBorderRadius(BorderRadius.circular(12))` |
+| `scaleSize(Size)` | Size objects | `scaleSize(Size(200, 100))` |
+| `scaleOffset(Offset)` | Offset values | `scaleOffset(Offset(10, 20))` |
+| `scaleConstraints(BoxConstraints)` | Constraints | `scaleConstraints(BoxConstraints(maxWidth: 300))` |
+| `responsiveValue<T>()` | Different values per device | See example above |
+| `responsiveWidget()` | Different widgets per device | See example above |
+| `gridColumns()` | Grid column counts | `gridColumns()` returns 2/3/4 |
+| `horizontalPadding()` | Standard horizontal padding | Returns 16/24/32 |
+| `verticalPadding()` | Standard vertical padding | Returns 16/20/24 |
+| `contentMaxWidth()` | Max content width | Returns ∞/900/1200 |
+
+### Quick Access via Context Extension
+
+```dart
+// These are equivalent:
+ResponsiveHelper(context).scale(16)
+context.responsive.scale(16)
+
+// Device checks:
+context.isMobile    // < 600px
+context.isTablet    // 600-900px
+context.isDesktop   // ≥ 900px
+
+// Screen dimensions:
+context.screenWidth
+context.screenHeight
+```
+
+### Common Patterns
+
+**1. Figma to Flutter Workflow**
+
+1. Get dimension from Figma design (e.g., width: 343px)
+2. Use `context.responsive.scale(343)` in Flutter
+3. For fonts, use `context.responsive.scaleFontSize(16)`
+4. For padding, use `context.responsive.scalePadding(EdgeInsets...)`
+
+**2. Safe Area Handling**
+
+```dart
+// Check for notch/safe area
+if (context.responsive.hasBottomNotch) {
+  // Add extra padding
+  padding = context.responsive.bottomSafeArea;
+}
+
+// Access safe area insets
+final safeArea = context.responsive.safeAreaInsets;
+```
+
+**3. Custom Breakpoint Logic**
+
+```dart
+final responsive = context.responsive;
+
+if (responsive.screenWidth < 400) {
+  // Very small phones
+} else if (responsive.isMobile) {
+  // Standard mobile
+} else if (responsive.isTablet) {
+  // Tablet
+} else {
+  // Desktop
+}
+```
+
+### Critical Rules Summary
+
+✅ **DO:**
+- ALWAYS use `context.responsive.scale()` for Figma dimensions
+- ALWAYS use `scaleFontSize()` for text sizes
+- ALWAYS use `scalePadding()` for EdgeInsets
+- ALWAYS use `scaleBorderRadius()` for rounded corners
+- Use `responsiveValue()` for device-specific values
+- Use device detection helpers (`isMobile`, `isTablet`, `isDesktop`)
+
+❌ **DON'T:**
+- NEVER hardcode pixel values from Figma designs
+- NEVER use raw numbers for dimensions, padding, or fonts
+- NEVER ignore responsive scaling (breaks tablet/desktop)
+- NEVER create custom scaling logic (use ResponsiveHelper)
+
+### Testing Responsive Layouts
+
+```bash
+# Test on different screen sizes
+flutter run -d chrome  # Desktop browser (can resize)
+flutter run -d macos   # Desktop
+flutter run -d iphone  # Mobile
+
+# In Chrome DevTools: Toggle device toolbar to test various sizes
+```
+
+**File Location**: `lib/core/utils/responsive_helper.dart`
 
 ## Development Commands
 

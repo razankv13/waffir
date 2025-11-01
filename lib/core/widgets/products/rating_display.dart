@@ -54,7 +54,7 @@ class RatingDisplay extends StatelessWidget {
         break;
     }
 
-    final effectiveStarColor = starColor ?? const Color(0xFFFBBF24); // Gold
+    final effectiveStarColor = starColor ?? colorScheme.tertiary;
 
     return Row(
       mainAxisSize: MainAxisSize.min,

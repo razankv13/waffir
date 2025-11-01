@@ -7,22 +7,22 @@ import 'package:waffir/core/constants/app_typography.dart';
 class AppTheme {
   AppTheme._();
 
-  // Light Theme
+  // Light Theme - Single Theme Design
   static ThemeData get lightTheme {
     return ThemeData(
       // Color Scheme
       colorScheme: AppColors.lightColorScheme,
       brightness: Brightness.light,
-      
+
       // Material 3
       useMaterial3: true,
-      
+
       // Typography
       textTheme: AppTypography.textTheme.apply(
-        bodyColor: AppColors.textPrimaryLight,
-        displayColor: AppColors.textPrimaryLight,
+        bodyColor: AppColors.textPrimary,
+        displayColor: AppColors.textPrimary,
       ),
-      
+
       // App Bar Theme
       appBarTheme: AppBarTheme(
         elevation: 0,
@@ -31,14 +31,14 @@ class AppTheme {
         foregroundColor: AppColors.lightColorScheme.onSurface,
         surfaceTintColor: AppColors.lightColorScheme.surfaceTint,
         titleTextStyle: AppTypography.titleLarge.copyWith(
-          color: AppColors.textPrimaryLight,
+          color: AppColors.textPrimary,
         ),
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         iconTheme: const IconThemeData(
-          color: AppColors.textPrimaryLight,
+          color: AppColors.textPrimary,
         ),
       ),
-      
+
       // Card Theme
       cardTheme: CardThemeData(
         elevation: AppSpacing.elevation2,
@@ -48,7 +48,7 @@ class AppTheme {
         ),
         color: AppColors.lightColorScheme.surface,
       ),
-      
+
       // Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -63,7 +63,7 @@ class AppTheme {
           textStyle: AppTypography.button,
         ),
       ),
-      
+
       // Outlined Button Theme
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
@@ -78,7 +78,7 @@ class AppTheme {
           textStyle: AppTypography.button,
         ),
       ),
-      
+
       // Text Button Theme
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
@@ -92,14 +92,14 @@ class AppTheme {
           textStyle: AppTypography.button,
         ),
       ),
-      
+
       // Icon Button Theme
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           padding: const EdgeInsets.all(AppSpacing.xs2),
         ),
       ),
-      
+
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -141,7 +141,7 @@ class AppTheme {
           color: AppColors.lightColorScheme.onSurfaceVariant,
         ),
       ),
-      
+
       // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         type: BottomNavigationBarType.fixed,
@@ -152,7 +152,7 @@ class AppTheme {
         unselectedLabelStyle: AppTypography.labelSmall,
         elevation: AppSpacing.elevation3,
       ),
-      
+
       // Navigation Bar Theme (Material 3)
       navigationBarTheme: NavigationBarThemeData(
         height: 80,
@@ -179,7 +179,7 @@ class AppTheme {
           );
         }),
       ),
-      
+
       // Tab Bar Theme
       tabBarTheme: TabBarThemeData(
         labelColor: AppColors.lightColorScheme.primary,
@@ -193,7 +193,7 @@ class AppTheme {
         labelStyle: AppTypography.labelLarge,
         unselectedLabelStyle: AppTypography.labelLarge,
       ),
-      
+
       // Dialog Theme
       dialogTheme: DialogThemeData(
         elevation: AppSpacing.elevation6,
@@ -202,13 +202,13 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
         ),
         titleTextStyle: AppTypography.headlineSmall.copyWith(
-          color: AppColors.textPrimaryLight,
+          color: AppColors.textPrimary,
         ),
         contentTextStyle: AppTypography.bodyMedium.copyWith(
-          color: AppColors.textSecondaryLight,
+          color: AppColors.textSecondary,
         ),
       ),
-      
+
       // Bottom Sheet Theme
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: AppColors.lightColorScheme.surface,
@@ -219,7 +219,7 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Snack Bar Theme
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.lightColorScheme.inverseSurface,
@@ -233,7 +233,7 @@ class AppTheme {
         ),
         behavior: SnackBarBehavior.floating,
       ),
-      
+
       // FloatingActionButton Theme
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: AppColors.lightColorScheme.primaryContainer,
@@ -243,7 +243,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
         ),
       ),
-      
+
       // Chip Theme
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.lightColorScheme.surfaceContainerHighest,
@@ -255,7 +255,7 @@ class AppTheme {
         ),
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs3),
       ),
-      
+
       // Switch Theme
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
@@ -271,7 +271,7 @@ class AppTheme {
           return AppColors.lightColorScheme.surfaceContainerHighest;
         }),
       ),
-      
+
       // Checkbox Theme
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
@@ -283,7 +283,7 @@ class AppTheme {
         checkColor: WidgetStateProperty.all(AppColors.lightColorScheme.onPrimary),
         side: BorderSide(color: AppColors.lightColorScheme.outline),
       ),
-      
+
       // Radio Theme
       radioTheme: RadioThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
@@ -293,7 +293,7 @@ class AppTheme {
           return AppColors.lightColorScheme.outline;
         }),
       ),
-      
+
       // Slider Theme
       sliderTheme: SliderThemeData(
         activeTrackColor: AppColors.lightColorScheme.primary,
@@ -305,21 +305,21 @@ class AppTheme {
           color: AppColors.lightColorScheme.onInverseSurface,
         ),
       ),
-      
+
       // Progress Indicator Theme
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: AppColors.lightColorScheme.primary,
         linearTrackColor: AppColors.lightColorScheme.surfaceContainerHighest,
         circularTrackColor: AppColors.lightColorScheme.surfaceContainerHighest,
       ),
-      
+
       // Divider Theme
       dividerTheme: DividerThemeData(
         color: AppColors.lightColorScheme.outlineVariant,
         thickness: 1,
         space: 1,
       ),
-      
+
       // List Tile Theme
       listTileTheme: ListTileThemeData(
         tileColor: AppColors.transparent,
@@ -335,7 +335,7 @@ class AppTheme {
           borderRadius: AppSpacing.borderRadiusLg,
         ),
       ),
-      
+
       // Drawer Theme
       drawerTheme: DrawerThemeData(
         backgroundColor: AppColors.lightColorScheme.surface,
@@ -346,7 +346,7 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // Tooltip Theme
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
@@ -361,7 +361,7 @@ class AppTheme {
           vertical: AppSpacing.xs,
         ),
       ),
-      
+
       // Banner Theme
       bannerTheme: MaterialBannerThemeData(
         backgroundColor: AppColors.lightColorScheme.surface,
@@ -372,152 +372,6 @@ class AppTheme {
     );
   }
 
-  // Dark Theme
-  static ThemeData get darkTheme {
-    return ThemeData(
-      // Color Scheme
-      colorScheme: AppColors.darkColorScheme,
-      brightness: Brightness.dark,
-      
-      // Material 3
-      useMaterial3: true,
-      
-      // Typography
-      textTheme: AppTypography.textTheme.apply(
-        bodyColor: AppColors.textPrimaryDark,
-        displayColor: AppColors.textPrimaryDark,
-      ),
-      
-      // App Bar Theme
-      appBarTheme: AppBarTheme(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: AppColors.darkColorScheme.surface,
-        foregroundColor: AppColors.darkColorScheme.onSurface,
-        surfaceTintColor: AppColors.darkColorScheme.surfaceTint,
-        titleTextStyle: AppTypography.titleLarge.copyWith(
-          color: AppColors.textPrimaryDark,
-        ),
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        iconTheme: const IconThemeData(
-          color: AppColors.textPrimaryDark,
-        ),
-      ),
-      
-      // Card Theme
-      cardTheme: CardThemeData(
-        elevation: AppSpacing.elevation2,
-        margin: AppSpacing.paddingSm,
-        shape: const RoundedRectangleBorder(
-          borderRadius: AppSpacing.cardBorderRadius,
-        ),
-        color: AppColors.darkColorScheme.surface,
-      ),
-      
-      // Elevated Button Theme
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          elevation: AppSpacing.elevation2,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppSpacing.buttonBorderRadius,
-          ),
-          textStyle: AppTypography.button,
-        ),
-      ),
-      
-      // Similar implementations for other components...
-      // (For brevity, I'll implement key differences from light theme)
-      
-      // Input Decoration Theme
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: AppColors.darkColorScheme.surface,
-        border: OutlineInputBorder(
-          borderRadius: AppSpacing.inputBorderRadius,
-          borderSide: BorderSide(color: AppColors.darkColorScheme.outline),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: AppSpacing.inputBorderRadius,
-          borderSide: BorderSide(color: AppColors.darkColorScheme.outline),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: AppSpacing.inputBorderRadius,
-          borderSide: BorderSide(
-            color: AppColors.darkColorScheme.primary,
-            width: 2,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: AppSpacing.inputBorderRadius,
-          borderSide: BorderSide(color: AppColors.darkColorScheme.error),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: AppSpacing.inputBorderRadius,
-          borderSide: BorderSide(
-            color: AppColors.darkColorScheme.error,
-            width: 2,
-          ),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: AppSpacing.xs3,
-        ),
-        hintStyle: AppTypography.bodyMedium.copyWith(
-          color: AppColors.darkColorScheme.onSurfaceVariant,
-        ),
-        labelStyle: AppTypography.bodyMedium.copyWith(
-          color: AppColors.darkColorScheme.onSurfaceVariant,
-        ),
-      ),
-      
-      // SnackBar Theme
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.darkColorScheme.inverseSurface,
-        contentTextStyle: AppTypography.bodyMedium.copyWith(
-          color: AppColors.darkColorScheme.onInverseSurface,
-        ),
-        actionTextColor: AppColors.darkColorScheme.inversePrimary,
-        elevation: AppSpacing.elevation4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
-      
-      // Progress Indicator Theme
-      progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: AppColors.darkColorScheme.primary,
-        linearTrackColor: AppColors.darkColorScheme.surfaceContainerHighest,
-        circularTrackColor: AppColors.darkColorScheme.surfaceContainerHighest,
-      ),
-      
-      // Divider Theme
-      dividerTheme: DividerThemeData(
-        color: AppColors.darkColorScheme.outlineVariant,
-        thickness: 1,
-        space: 1,
-      ),
-    );
-  }
-
-  // Get theme based on brightness
-  static ThemeData getTheme(Brightness brightness) {
-    return brightness == Brightness.dark ? darkTheme : lightTheme;
-  }
-  
-  // Get theme based on ThemeMode
-  static ThemeData getThemeFromMode(ThemeMode themeMode, Brightness systemBrightness) {
-    switch (themeMode) {
-      case ThemeMode.light:
-        return lightTheme;
-      case ThemeMode.dark:
-        return darkTheme;
-      case ThemeMode.system:
-        return systemBrightness == Brightness.dark ? darkTheme : lightTheme;
-    }
-  }
+  // Convenience getter for theme (always returns light theme)
+  static ThemeData get theme => lightTheme;
 }

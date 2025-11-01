@@ -69,7 +69,7 @@ class PriceDisplay extends StatelessWidget {
           '${showCurrency ? currency : ''}${price.toStringAsFixed(2)}',
           style: priceStyle.copyWith(
             color: isOnSale
-                ? const Color(0xFFEF4444) // Sale red
+                ? colorScheme.error
                 : colorScheme.onSurface,
           ),
         ),
@@ -81,7 +81,7 @@ class PriceDisplay extends StatelessWidget {
           Text(
             '${showCurrency ? currency : ''}${originalPrice!.toStringAsFixed(2)}',
             style: originalPriceStyle.copyWith(
-              color: const Color(0xFF9CA3AF), // Gray
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
 
@@ -91,13 +91,13 @@ class PriceDisplay extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: const Color(0xFFFF3B30),
+                color: colorScheme.error,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
                 '-$discountPercentage%',
                 style: AppTypography.badgeText.copyWith(
-                  color: Colors.white,
+                  color: colorScheme.onError,
                   fontSize: 10,
                 ),
               ),

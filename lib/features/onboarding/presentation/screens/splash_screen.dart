@@ -69,11 +69,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Use fixed brand colors from app_colors.dart for consistent splash screen
-    final splashColors = AppColors.darkColorScheme;
-
     return Scaffold(
-      backgroundColor: splashColors.surface, // Always #121535 (blue wafir)
+      // Figma design: Dark green background #0F352D (Waffir-Green-04)
+      backgroundColor: AppColors.primaryColorDarkest,
       body: SafeArea(
         child: Center(
           child: FadeTransition(
@@ -81,13 +79,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Spacer(),
                 _buildLogo(),
-                const SizedBox(height: 24),
+                const SizedBox(height: 40), // Figma gap: 40px
                 _buildAppName(),
-                const Spacer(),
-                _buildLoadingIndicator(),
-                const SizedBox(height: 48),
               ],
             ),
           ),
@@ -101,52 +95,51 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       tag: 'app_logo',
       child: Image.asset(
         Assets.icons.appIconNoBg.path,
-        width: 200,
-        height: 200,
+        width: 220, // Figma: 220px
+        height: 217, // Figma: 217px
         fit: BoxFit.contain,
       ),
     );
   }
 
   Widget _buildAppName() {
-    // Use fixed brand color from app_colors.dart
-    final splashColors = AppColors.darkColorScheme;
-
     return Hero(
       tag: 'app_name',
       child: Material(
         color: Colors.transparent,
-        child: Text(
-          'وفــــــر',
-          style: TextStyle(
-            fontFamily: 'Parkinsans',
-            fontSize: 59.4,
-            fontWeight: FontWeight.w900, // ExtraBold
-            color: splashColors.primary, // Always #00FF88 (green wafir)
-            height: 0.6, // Leading 36px for 59.4px font
-          ),
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.rtl,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Arabic text "وفـــــــر"
+            Text(
+              'وفـــــــر', // 7 dashes as per Figma
+              style: TextStyle(
+                fontFamily: 'Parkinsans',
+                fontSize: 52, // Proportional to Figma design
+                fontWeight: FontWeight.w900, // ExtraBold
+                color: AppColors.primaryColor, // #00FF88 (green wafir)
+                height: 1.0,
+              ),
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.rtl,
+            ),
+            const SizedBox(height: 8),
+            // English text "waffir"
+            Text(
+              'waffir',
+              style: TextStyle(
+                fontFamily: 'Parkinsans',
+                fontSize: 40, // Based on Figma proportions (93px total height)
+                fontWeight: FontWeight.w700, // Bold
+                color: AppColors.primaryColor, // #00FF88 (green wafir)
+                height: 1.0,
+                letterSpacing: 0.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  Widget _buildLoadingIndicator() {
-    // Use fixed brand color from app_colors.dart
-    final splashColors = AppColors.darkColorScheme;
-
-    return SizedBox(
-      width: 32,
-      height: 32,
-      child: CircularProgressIndicator(
-        strokeWidth: 2.5,
-        valueColor: AlwaysStoppedAnimation<Color>(
-          splashColors.primary, // Always #00FF88 (green wafir)
-        ),
-      ),
-    )
-        .animate(onPlay: (controller) => controller.repeat())
-        .fadeIn(duration: 600.ms);
   }
 }

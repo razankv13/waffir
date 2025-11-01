@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:waffir/core/constants/app_typography.dart';
 import 'package:waffir/core/widgets/products/badge_widget.dart';
-import 'package:waffir/core/widgets/products/price_display.dart';
-import 'package:waffir/core/widgets/products/rating_display.dart';
+import 'package:waffir/core/widgets/products/card_actions.dart';
+import 'package:waffir/core/widgets/products/discount_tag_pill.dart';
+import 'package:waffir/core/widgets/products/price_pill.dart';
 
-/// Product card widget for displaying product in grid/list view
+/// Product card widget for displaying product in horizontal layout
+///
+/// Redesigned to match Figma specifications with:
+/// - Horizontal layout (image left, content right)
+/// - Fixed 120×120px image
+/// - Pill-styled price displays
+/// - Like and comment actions
 ///
 /// Example usage:
 /// ```dart
 /// ProductCard(
 ///   imageUrl: 'https://example.com/product.jpg',
-///   title: 'Nike Air Max',
-///   brand: 'Nike',
-///   price: 129.99,
-///   rating: 4.5,
-///   reviewCount: 128,
+///   title: 'Nike Men\'s Air Max 2025 Shoes (3 Colors)',
+///   salePrice: '400',
+///   originalPrice: '809',
+///   discountPercentage: 20,
+///   storeName: 'Nike store',
+///   likeCount: 45,
+///   commentCount: 45,
 ///   onTap: () => navigateToProduct(),
 /// )
 /// ```
@@ -23,37 +31,38 @@ class ProductCard extends StatelessWidget {
     super.key,
     required this.imageUrl,
     required this.title,
-    required this.price,
-    this.brand,
+    this.salePrice,
     this.originalPrice,
     this.discountPercentage,
-    this.rating,
-    this.reviewCount,
+    this.storeName,
     this.badge,
     this.badgeType,
+    this.likeCount,
+    this.commentCount,
     this.onTap,
-    this.onFavorite,
-    this.isFavorite = false,
+    this.onLike,
+    this.onComment,
+    this.isLiked = false,
   });
 
   final String imageUrl;
   final String title;
-  final String? brand;
-  final double price;
-  final double? originalPrice;
+  final String? salePrice;
+  final String? originalPrice;
   final int? discountPercentage;
-  final double? rating;
-  final int? reviewCount;
+  final String? storeName;
   final String? badge;
   final BadgeType? badgeType;
+  final int? likeCount;
+  final int? commentCount;
   final VoidCallback? onTap;
-  final VoidCallback? onFavorite;
-  final bool isFavorite;
+  final VoidCallback? onLike;
+  final VoidCallback? onComment;
+  final bool isLiked;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return GestureDetector(
       onTap: onTap,
@@ -62,145 +71,199 @@ class ProductCard extends StatelessWidget {
           color: colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: colorScheme.outlineVariant,
-            width: 1,
+            color: colorScheme.outlineVariant.withValues(alpha: 0.3),
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Product Image with badge and favorite
-            Expanded(
-              child: Stack(
-                children: [
-                  // Product Image
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(11),
-                    ),
-                    child: Container(
-                      width: double.infinity,
-                      color: colorScheme.surfaceContainerHighest,
-                      child: Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Center(
-                            child: Icon(
-                              Icons.image_not_supported_outlined,
-                              size: 48,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          );
-                        },
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Product Image (Fixed 120×120px)
+              _buildImageContainer(context),
+
+              const SizedBox(width: 12), // Gap from Figma
+
+              // Product Info (Fills remaining space)
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8,
+                    right: 8,
+                    bottom: 8,
                   ),
-
-                  // Badge overlay (top left)
-                  if (badge != null && badgeType != null)
-                    Positioned(
-                      top: 8,
-                      left: 8,
-                      child: BadgeWidget(
-                        text: badge!,
-                        type: badgeType!,
-                      ),
-                    ),
-
-                  // Favorite button (top right)
-                  if (onFavorite != null)
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: GestureDetector(
-                        onTap: onFavorite,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: colorScheme.surface.withValues(alpha: 0.9),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            size: 18,
-                            color: isFavorite
-                                ? const Color(0xFFEF4444)
-                                : colorScheme.onSurface,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
+                  child: _buildContentColumn(context),
+                ),
               ),
-            ),
-
-            // Product Info
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Brand (if provided)
-                  if (brand != null) ...[
-                    Text(
-                      brand!,
-                      style: AppTypography.productBrand.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                  ],
-
-                  // Product Title
-                  Text(
-                    title,
-                    style: AppTypography.productTitle.copyWith(
-                      color: colorScheme.onSurface,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Rating (if provided)
-                  if (rating != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: RatingDisplay(
-                        rating: rating!,
-                        reviewCount: reviewCount,
-                        size: RatingSize.small,
-                      ),
-                    ),
-
-                  // Price
-                  PriceDisplay(
-                    price: price,
-                    originalPrice: originalPrice,
-                    discountPercentage: discountPercentage,
-                    size: PriceSize.small,
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  /// Build image container with fixed size and badge overlay
+  Widget _buildImageContainer(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      width: 120,
+      height: 120,
+      padding: const EdgeInsets.all(8), // Padding from Figma
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(11),
+          bottomLeft: Radius.circular(11),
+        ),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.05),
+        ),
+      ),
+      child: Stack(
+        children: [
+          // Product Image
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: colorScheme.surfaceContainerHighest,
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Icon(
+                      Icons.image_not_supported_outlined,
+                      size: 32,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  );
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+
+          // Badge overlay (top left)
+          if (badge != null && badgeType != null)
+            Positioned(
+              top: 4,
+              left: 4,
+              child: BadgeWidget(
+                text: badge!,
+                type: badgeType!,
+                size: BadgeSize.small,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// Build content column with title, discount, prices, and actions
+  Widget _buildContentColumn(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Title
+        Text(
+          title,
+          style: const TextStyle(
+            fontFamily: 'Parkinsans',
+            fontSize: 14,
+            fontWeight: FontWeight.w700, // Bold from Figma
+            height: 1.4, // Line height from Figma
+            color: Color(0xFF151515), // onSurface from Figma
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+
+        const SizedBox(height: 12), // Gap from Figma
+
+        // Discount tag (if discount exists)
+        if (discountPercentage != null && discountPercentage! > 0)
+          DiscountTagPill(
+            discountText: '$discountPercentage% off',
+          ),
+
+        if (discountPercentage != null && discountPercentage! > 0)
+          const SizedBox(height: 12), // Gap from Figma
+
+        // Price row with store name
+        _buildPriceRow(),
+
+        const SizedBox(height: 12), // Gap from Figma
+
+        // Card actions (like and comment)
+        if (likeCount != null || commentCount != null)
+          CardActions(
+            likeCount: likeCount,
+            commentCount: commentCount,
+            onLike: onLike,
+            onComment: onComment,
+            isLiked: isLiked,
+          ),
+      ],
+    );
+  }
+
+  /// Build price row with pill-styled prices and store name
+  Widget _buildPriceRow() {
+    return Row(
+      children: [
+        // Sale price pill
+        if (salePrice != null)
+          PricePill(
+            price: salePrice!,
+          ),
+
+        if (salePrice != null && originalPrice != null)
+          const SizedBox(width: 8), // Gap from Figma
+
+        // Original price pill
+        if (originalPrice != null)
+          PricePill(
+            price: originalPrice!,
+            isSalePrice: false,
+          ),
+
+        if (storeName != null && (salePrice != null || originalPrice != null))
+          const SizedBox(width: 8), // Gap from Figma
+
+        // Store name
+        if (storeName != null)
+          Expanded(
+            child: Text(
+              'At $storeName',
+              style: const TextStyle(
+                fontFamily: 'Parkinsans',
+                fontSize: 12,
+                fontWeight: FontWeight.w500, // Medium
+                height: 1.15, // Line height from Figma
+                color: Color(0xFF595959), // Gray from Figma
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+      ],
     );
   }
 }

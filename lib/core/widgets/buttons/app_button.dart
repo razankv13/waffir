@@ -5,7 +5,7 @@ import 'package:waffir/core/widgets/loading/loading_indicators.dart';
 
 enum ButtonSize { small, medium, large }
 
-enum ButtonVariant { primary, secondary, outlined, text, ghost, destructive }
+enum ButtonVariant { primary, secondary, tertiary, outlined, text, ghost, destructive }
 
 class AppButton extends StatefulWidget {
   const AppButton({
@@ -65,6 +65,26 @@ class AppButton extends StatefulWidget {
     this.animateOnTap = true,
     this.tooltip,
   }) : variant = ButtonVariant.secondary,
+       assert(text != null || child != null, 'Either text or child must be provided');
+
+  // Factory constructor for tertiary button
+  const AppButton.tertiary({
+    super.key,
+    this.text,
+    this.child,
+    this.onPressed,
+    this.size = ButtonSize.medium,
+    this.icon,
+    this.isLoading = false,
+    this.enabled = true,
+    this.width,
+    this.padding,
+    this.borderRadius,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.animateOnTap = true,
+    this.tooltip,
+  }) : variant = ButtonVariant.tertiary,
        assert(text != null || child != null, 'Either text or child must be provided');
 
   // Factory constructor for outlined button
@@ -228,9 +248,34 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
         );
         break;
       case ButtonVariant.secondary:
-        button = FilledButton.tonal(
+        // Updated to match Figma: White bg with 2px dark green border
+        button = OutlinedButton(
           onPressed: isEnabled ? widget.onPressed : null,
-          style: buttonStyle,
+          style: buttonStyle.copyWith(
+            backgroundColor: WidgetStateProperty.all(colorScheme.surface),
+            side: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.disabled)) {
+                return BorderSide(color: colorScheme.onSurface.withValues(alpha: 0.12), width: 2);
+              }
+              return BorderSide(color: colorScheme.primary, width: 2);
+            }),
+          ),
+          child: content,
+        );
+        break;
+      case ButtonVariant.tertiary:
+        // Figma design: White bg with 1px gray border, 60px radius
+        button = OutlinedButton(
+          onPressed: isEnabled ? widget.onPressed : null,
+          style: buttonStyle.copyWith(
+            backgroundColor: WidgetStateProperty.all(colorScheme.surface),
+            side: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.disabled)) {
+                return BorderSide(color: colorScheme.onSurface.withValues(alpha: 0.12), width: 1);
+              }
+              return BorderSide(color: colorScheme.outline, width: 1);
+            }),
+          ),
           child: content,
         );
         break;
@@ -290,22 +335,32 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
       shape: WidgetStateProperty.all(
         RoundedRectangleBorder(borderRadius: widget.borderRadius ?? _getBorderRadius()),
       ),
-      backgroundColor: widget.backgroundColor != null
-          ? WidgetStateProperty.all(widget.backgroundColor)
-          : null,
-      foregroundColor: widget.foregroundColor != null
-          ? WidgetStateProperty.all(widget.foregroundColor)
-          : null,
+      // Explicit disabled state colors per Figma design
+      backgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled) && widget.backgroundColor == null) {
+          // Figma disabled state: #CECECE background
+          return const Color(0xFFCECECE);
+        }
+        return widget.backgroundColor;
+      }),
+      foregroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled) && widget.foregroundColor == null) {
+          // Figma disabled state: #A3A3A3 text
+          return const Color(0xFFA3A3A3);
+        }
+        return widget.foregroundColor ?? _getForegroundColor(colorScheme);
+      }),
       textStyle: WidgetStateProperty.all(_getTextStyle(colorScheme)),
       elevation: _getElevation(),
       shadowColor: WidgetStateProperty.all(colorScheme.shadow.withValues(alpha: 0.06)),
+      // Fixed height (48px for medium size) via minimum size
+      minimumSize: WidgetStateProperty.all(Size(widget.width ?? 330, 48)),
     );
   }
 
   WidgetStateProperty<double> _getElevation() {
     switch (widget.variant) {
       case ButtonVariant.primary:
-      case ButtonVariant.secondary:
       case ButtonVariant.destructive:
         return WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.pressed)) {
@@ -316,6 +371,8 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
           }
           return AppSpacing.elevation1;
         });
+      case ButtonVariant.secondary:
+      case ButtonVariant.tertiary:
       case ButtonVariant.outlined:
       case ButtonVariant.text:
       case ButtonVariant.ghost:
@@ -338,10 +395,32 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
         break;
     }
 
+    // Font weights per Figma design
+    FontWeight fontWeight;
+    switch (widget.variant) {
+      case ButtonVariant.primary:
+        fontWeight = FontWeight.w600; // SemiBold
+        break;
+      case ButtonVariant.secondary:
+        fontWeight = FontWeight.w600; // SemiBold (Figma: Node 35:2197, weight 600)
+        break;
+      case ButtonVariant.tertiary:
+        fontWeight = FontWeight.w500; // Medium
+        break;
+      case ButtonVariant.outlined:
+      case ButtonVariant.text:
+      case ButtonVariant.ghost:
+        fontWeight = FontWeight.w600; // SemiBold (default)
+        break;
+      case ButtonVariant.destructive:
+        fontWeight = FontWeight.w700; // Bold
+        break;
+    }
+
     return baseStyle.copyWith(
       color: widget.foregroundColor ?? _getForegroundColor(colorScheme),
-      fontWeight: FontWeight.w600,
-      letterSpacing: -0.2,
+      fontWeight: fontWeight,
+      fontSize: 14, // Figma specifies 14px for all buttons
     );
   }
 
@@ -360,11 +439,16 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
   }
 
   BorderRadius _getBorderRadius() {
+    // Tertiary button uses 60px radius per Figma (double the standard 30px)
+    if (widget.variant == ButtonVariant.tertiary) {
+      return BorderRadius.circular(60);
+    }
+
     switch (widget.size) {
       case ButtonSize.small:
         return AppSpacing.borderRadiusSm;
       case ButtonSize.medium:
-        return AppSpacing.buttonBorderRadius;
+        return AppSpacing.buttonBorderRadius; // 30px for most buttons
       case ButtonSize.large:
         return AppSpacing.borderRadiusLg;
     }
@@ -386,11 +470,13 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
 
     switch (widget.variant) {
       case ButtonVariant.primary:
-        return colorScheme.onPrimary;
+        return colorScheme.onPrimary; // White text
       case ButtonVariant.destructive:
         return colorScheme.onError;
       case ButtonVariant.secondary:
-        return colorScheme.onSecondaryContainer;
+        return colorScheme.onSurface; // Black text on white bg
+      case ButtonVariant.tertiary:
+        return colorScheme.onSurface; // Black text on white bg
       case ButtonVariant.outlined:
       case ButtonVariant.text:
       case ButtonVariant.ghost:
@@ -401,11 +487,13 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
   Color _getLoadingColor(ColorScheme colorScheme) {
     switch (widget.variant) {
       case ButtonVariant.primary:
-        return colorScheme.onPrimary;
+        return colorScheme.onPrimary; // White loading indicator
       case ButtonVariant.destructive:
         return colorScheme.onError;
       case ButtonVariant.secondary:
-        return colorScheme.onSecondaryContainer;
+        return colorScheme.onSurface; // Black loading indicator
+      case ButtonVariant.tertiary:
+        return colorScheme.onSurface; // Black loading indicator
       case ButtonVariant.outlined:
       case ButtonVariant.text:
       case ButtonVariant.ghost:
@@ -646,6 +734,7 @@ class _AppIconButtonState extends State<AppIconButton> with SingleTickerProvider
         return colorScheme.primary;
       case ButtonVariant.secondary:
         return colorScheme.secondaryContainer;
+      case ButtonVariant.tertiary:
       case ButtonVariant.outlined:
       case ButtonVariant.text:
       case ButtonVariant.ghost:
@@ -661,6 +750,7 @@ class _AppIconButtonState extends State<AppIconButton> with SingleTickerProvider
         return colorScheme.onPrimary;
       case ButtonVariant.secondary:
         return colorScheme.onSecondaryContainer;
+      case ButtonVariant.tertiary:
       case ButtonVariant.destructive:
         return colorScheme.onErrorContainer;
       case ButtonVariant.outlined:
