@@ -25,6 +25,7 @@ abstract class Store with _$Store {
     String? phoneNumber,
     String? email,
     String? website,
+    String? discountText,
     @Default(false) bool isVerified,
     @Default(false) bool isFollowing,
     @Default(true) bool isActive,

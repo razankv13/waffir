@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:waffir/core/constants/app_typography.dart';
+import 'package:waffir/core/navigation/routes.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/cards/store_card.dart';
 import 'package:waffir/core/widgets/filters/stores_category_chips.dart';
 import 'package:waffir/core/widgets/overlays/bottom_gradient_cta.dart';
@@ -47,9 +50,9 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
 
   void _handleFilterTap() {
     // TODO: Implement filter dialog
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Filter dialog coming soon')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Filter dialog coming soon')));
   }
 
   List<StoreModel> _filterStoresBySearch(List<StoreModel> stores) {
@@ -69,6 +72,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final responsive = context.responsive;
     final selectedCategory = ref.watch(selectedStoreCategoryProvider);
     final nearYouStores = ref.watch(filteredNearYouStoresProvider);
     final mallStores = ref.watch(filteredMallStoresProvider);
@@ -87,87 +91,176 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
     final hasResults = filteredNearYou.isNotEmpty || filteredMall.isNotEmpty;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Stores',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        backgroundColor: colorScheme.surface,
-      ),
       body: Stack(
         children: [
           // Main Content
-          Column(
-            children: [
-              // Search Bar (Waffir branded with exact Figma specs)
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: WaffirSearchBar(
-                  hintText: 'Search stores...',
-                  onChanged: _handleSearch,
-                  onSearch: _handleSearch,
-                  onFilterTap: _handleFilterTap,
-                ),
-              ),
+          SafeArea(
+            bottom: false,
+            child: NestedScrollView(
+              floatHeaderSlivers: true,
+              headerSliverBuilder: (context, _) {
+              // Keep responsive scaling for the header area (repo rule).
+              final headerHorizontalPadding = responsive.scale(16);
+              final headerVerticalPadding = responsive.scale(12);
+              final logoHeight = responsive.scale(56);
+              final notificationSize = responsive.scale(44);
+              final notificationIconSize = responsive.scale(22);
+              final notificationSplashRadius = responsive.scale(24);
 
-              // Category Filters (with icons and bottom borders)
-              StoresCategoryChips(
-                categories: _categories,
-                selectedCategory: selectedCategory,
-                onCategorySelected: (category) {
-                  ref.read(selectedStoreCategoryProvider.notifier).selectCategory(category);
-                },
-              ),
+              // WaffirSearchBar has a fixed height of 68px by design.
+              const searchBarHeight = 68.0;
+              final searchPadding = responsive.scale(16);
 
-              const SizedBox(height: 16),
+              final rowHeight = logoHeight > notificationSize ? logoHeight : notificationSize;
+              final headerSearchHeight =
+                  (headerVerticalPadding * 2) + rowHeight + (searchPadding * 2) + searchBarHeight;
 
-              // Stores List
-              Expanded(
-                child: !hasResults
-                    ? _buildEmptyState(context)
-                    : ListView(
-                        padding: const EdgeInsets.only(
-                          left: 16,
-                          right: 16,
-                          bottom: 300, // Extra padding for CTA overlay + bottom nav
+              // StoresCategoryChips has a fixed height of 66px currently.
+              const chipsHeight = 66.0;
+              final chipsTopSpacing = responsive.scale(6);
+              final chipsHeaderHeight = chipsTopSpacing + chipsHeight;
+
+              return [
+                // Header + Search (hides on scroll up, snaps back on scroll down)
+                SliverAppBar(
+                  floating: true,
+                  snap: true,
+                  toolbarHeight: 0,
+                  collapsedHeight: headerSearchHeight,
+                  expandedHeight: headerSearchHeight,
+                  elevation: 0,
+                  backgroundColor: colorScheme.surface,
+                  surfaceTintColor: Colors.transparent,
+                  flexibleSpace: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Header row (logo + notifications)
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: headerHorizontalPadding,
+                          vertical: headerVerticalPadding,
                         ),
-                        children: [
-                          // Near You Section
-                          if (filteredNearYou.isNotEmpty) ...[
-                            _buildSectionHeader(
-                              context,
-                              'Near to you',
-                              'قريب منك',
-                              filteredNearYou.length,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Image.asset(
+                              'assets/images/splash_logo.png',
+                              height: logoHeight,
+                              fit: BoxFit.contain,
                             ),
-                            const SizedBox(height: 12),
-                            _buildStoreGrid(filteredNearYou),
-                            const SizedBox(height: 24),
-                          ],
 
-                          // Mall Stores Sections
-                          if (filteredMall.isNotEmpty) ...[
-                            for (final entry in mallStoresByMall.entries) ...[
-                              _buildSectionHeader(
-                                context,
-                                'In Mall shops near to you',
-                                entry.key, // Arabic mall name
-                                entry.value.length,
+                            // Notification Icon with soft background
+                            Container(
+                              width: notificationSize,
+                              height: notificationSize,
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+                                shape: BoxShape.circle,
                               ),
-                              const SizedBox(height: 12),
-                              _buildStoreGrid(entry.value),
-                              const SizedBox(height: 24),
-                            ],
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.notifications,
+                                  size: notificationIconSize,
+                                  color: colorScheme.primary,
+                                ),
+                                onPressed: () {
+                                  context.pushNamed(AppRouteNames.notifications);
+                                },
+                                padding: EdgeInsets.zero,
+                                splashRadius: notificationSplashRadius,
+                              ),
+                            ),
                           ],
-                        ],
+                        ),
                       ),
-              ),
-            ],
+
+                      // Search Bar (Waffir branded with exact Figma specs)
+                      Padding(
+                        padding: EdgeInsets.all(searchPadding),
+                        child: WaffirSearchBar(
+                          hintText: 'Search stores...',
+                          onChanged: _handleSearch,
+                          onSearch: _handleSearch,
+                          onFilterTap: _handleFilterTap,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Category Filters (always visible + sticky)
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _StickyCategoryChipsHeaderDelegate(
+                    height: chipsHeaderHeight,
+                    topSpacing: chipsTopSpacing,
+                    backgroundColor: colorScheme.surface,
+                    child: StoresCategoryChips(
+                      categories: _categories,
+                      selectedCategory: selectedCategory,
+                      onCategorySelected: (category) {
+                        ref.read(selectedStoreCategoryProvider.notifier).selectCategory(category);
+                      },
+                    ),
+                  ),
+                ),
+              ];
+            },
+            body: !hasResults
+                ? ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(
+                      left: responsive.scale(16),
+                      right: responsive.scale(16),
+                      top: responsive.scale(16),
+                      bottom: responsive.scale(300), // CTA overlay + nav
+                    ),
+                    children: [
+                      SizedBox(height: responsive.scale(120)),
+                      _buildEmptyState(context),
+                    ],
+                  )
+                : ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(
+                      left: responsive.scale(16),
+                      right: responsive.scale(16),
+                      top: responsive.scale(
+                        16,
+                      ), // Space below sticky chips (was SizedBox before ListView)
+                      bottom: responsive.scale(300), // CTA overlay + nav
+                    ),
+                    children: [
+                      // Near You Section
+                      if (filteredNearYou.isNotEmpty) ...[
+                        _buildSectionHeader(
+                          context,
+                          'Near to you',
+                          'قريب منك',
+                          filteredNearYou.length,
+                        ),
+                        SizedBox(height: responsive.scale(12)),
+                        _buildStoreCarousel(context, filteredNearYou),
+                        SizedBox(height: responsive.scale(24)),
+                      ],
+
+                      // Mall Stores Sections
+                      if (filteredMall.isNotEmpty) ...[
+                        for (final entry in mallStoresByMall.entries) ...[
+                          _buildSectionHeader(
+                            context,
+                            'In Mall shops near to you',
+                            entry.key, // Arabic mall name
+                            entry.value.length,
+                          ),
+                          SizedBox(height: responsive.scale(12)),
+                          _buildStoreCarousel(context, entry.value),
+                          SizedBox(height: responsive.scale(24)),
+                        ],
+                      ],
+                    ],
+                  ),
+            ),
           ),
 
           // Bottom Gradient CTA Overlay
@@ -179,9 +272,9 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
               buttonText: 'Login to view full deal details',
               onButtonPressed: () {
                 // TODO: Navigate to login screen
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Navigate to login')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Navigate to login')));
               },
             ),
           ),
@@ -190,60 +283,50 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
     );
   }
 
-  Widget _buildSectionHeader(
-    BuildContext context,
-    String title,
-    String titleAr,
-    int count,
-  ) {
+  Widget _buildSectionHeader(BuildContext context, String title, String titleAr, int count) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: AppTypography.storeSectionHeader.copyWith(
-            color: colorScheme.onSurface,
-          ),
-        ),
+        Text(title, style: AppTypography.storeSectionHeader.copyWith(color: colorScheme.onSurface)),
         Text(
           '$count ${count == 1 ? 'store' : 'stores'}',
-          style: AppTypography.bodyMedium.copyWith(
-            color: colorScheme.onSurfaceVariant,
-          ),
+          style: AppTypography.bodyMedium.copyWith(color: colorScheme.onSurfaceVariant),
         ),
       ],
     );
   }
 
-  Widget _buildStoreGrid(List<StoreModel> stores) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Changed from 3 to 2 per Figma
-        childAspectRatio: 0.70, // Adjusted for 160x160px image + text container
-        crossAxisSpacing: 12, // Exact from Figma
-        mainAxisSpacing: 12, // Exact from Figma
+  Widget _buildStoreCarousel(BuildContext context, List<StoreModel> stores) {
+    final responsive = context.responsive;
+    final cardWidth = responsive.scale(160);
+    final horizontalSpacing = responsive.scale(
+      16,
+    ); // 16px gap from Figma layout_ZNFSE6/layout_I888LG
+    final carouselHeight = responsive.scale(248);
+
+    return SizedBox(
+      height: carouselHeight,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: stores.length,
+        separatorBuilder: (_, _) => SizedBox(width: horizontalSpacing),
+        itemBuilder: (context, index) {
+          final store = stores[index];
+          return SizedBox(
+            width: cardWidth,
+            child: StoreCard(
+              storeId: store.id,
+              imageUrl: store.imageUrl,
+              storeName: store.name,
+              discountText: store.discountText,
+              // Removed category, distance, rating to match Figma Node 54:2349
+            ),
+          );
+        },
       ),
-      itemCount: stores.length,
-      itemBuilder: (context, index) {
-        final store = stores[index];
-        return StoreCard(
-          imageUrl: store.imageUrl,
-          storeName: store.name,
-          category: store.category,
-          distance: store.distance,
-          rating: store.rating,
-          onTap: () {
-            // TODO: Navigate to store details
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Tapped: ${store.name}')),
-            );
-          },
-        );
-      },
     );
   }
 
@@ -273,13 +356,50 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
             _searchQuery.isEmpty
                 ? 'Try selecting a different category'
                 : 'Try a different search term',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
+            style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
         ],
       ),
     );
+  }
+}
+
+class _StickyCategoryChipsHeaderDelegate extends SliverPersistentHeaderDelegate {
+  _StickyCategoryChipsHeaderDelegate({
+    required this.height,
+    required this.topSpacing,
+    required this.backgroundColor,
+    required this.child,
+  });
+
+  final double height;
+  final double topSpacing;
+  final Color backgroundColor;
+  final Widget child;
+
+  @override
+  double get minExtent => height;
+
+  @override
+  double get maxExtent => height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: backgroundColor,
+      child: Padding(
+        padding: EdgeInsets.only(top: topSpacing),
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _StickyCategoryChipsHeaderDelegate oldDelegate) {
+    return height != oldDelegate.height ||
+        topSpacing != oldDelegate.topSpacing ||
+        backgroundColor != oldDelegate.backgroundColor ||
+        child != oldDelegate.child;
   }
 }

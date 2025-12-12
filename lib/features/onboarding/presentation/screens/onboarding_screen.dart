@@ -53,30 +53,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final colorScheme = theme.colorScheme;
 
     // Responsive horizontal padding
-    final horizontalPadding = context.responsive<double>(
-      mobile: 16.0,
-      tablet: 32.0,
-      desktop: 48.0,
-    );
+    final horizontalPadding = context.responsive<double>(mobile: 16.0, tablet: 32.0, desktop: 48.0);
 
     // Responsive spacing
-    final sectionGap = context.responsive<double>(
-      mobile: 40.0,
-      tablet: 48.0,
-      desktop: 56.0,
-    );
+    final sectionGap = context.responsive<double>(mobile: 40.0, tablet: 48.0, desktop: 56.0);
 
-    final contentGap = context.responsive<double>(
-      mobile: 64.0,
-      tablet: 80.0,
-      desktop: 96.0,
-    );
+    final contentGap = context.responsive<double>(mobile: 64.0, tablet: 80.0, desktop: 96.0);
 
-    final bottomPadding = context.responsive<double>(
-      mobile: 120.0,
-      tablet: 80.0,
-      desktop: 60.0,
-    );
+    final bottomPadding = context.responsive<double>(mobile: 120.0, tablet: 80.0, desktop: 60.0);
 
     // Pixel-perfect values from Figma (393x852)
     const double titleFontSize = 20.0;
@@ -219,7 +203,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                   Semantics(
                                     button: true,
                                     selected: !_isArabic,
-                                    label: !_isArabic ? 'English, selected' : 'Choose English language',
+                                    label: !_isArabic
+                                        ? 'English, selected'
+                                        : 'Choose English language',
                                     child: SizedBox(
                                       height: 56,
                                       child: AppButton.tertiary(

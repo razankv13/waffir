@@ -9,7 +9,9 @@ import 'package:waffir/core/mock/mock_user_data.dart';
 ///
 /// Allows users to change their selected city. Uses the existing CitySelector widget.
 class ChangeCityScreen extends ConsumerStatefulWidget {
-  const ChangeCityScreen({super.key});
+  const ChangeCityScreen({super.key, this.showBackButton = true});
+
+  final bool showBackButton;
 
   @override
   ConsumerState<ChangeCityScreen> createState() => _ChangeCityScreenState();
@@ -84,19 +86,21 @@ class _ChangeCityScreenState extends ConsumerState<ChangeCityScreen> {
                   padding: const EdgeInsets.all(16),
                   child: Row(
                     children: [
-                      IconButton(
-                        onPressed: () => context.pop(),
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: colorScheme.onSurface,
+                      if (widget.showBackButton) ...[
+                        IconButton(
+                          onPressed: () => context.pop(),
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: colorScheme.onSurface,
+                          ),
+                          style: IconButton.styleFrom(
+                            backgroundColor: colorScheme.surface,
+                            elevation: 2,
+                            shadowColor: Colors.black.withValues(alpha: 0.1),
+                          ),
                         ),
-                        style: IconButton.styleFrom(
-                          backgroundColor: colorScheme.surface,
-                          elevation: 2,
-                          shadowColor: Colors.black.withValues(alpha: 0.1),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
+                        const SizedBox(width: 16),
+                      ],
                       Text(
                         'Change City',
                         style: textTheme.titleLarge?.copyWith(

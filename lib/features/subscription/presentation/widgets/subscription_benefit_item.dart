@@ -32,14 +32,14 @@ class SubscriptionBenefitItem extends StatelessWidget {
         Icon(
           Icons.check_circle,
           size: responsive.scale(16),
-          color: theme.colorScheme.onSurface,
+          color: const Color(0xFF00D9A3), // Bright green from design
         ),
-        SizedBox(width: responsive.scale(12)),
+        SizedBox(width: responsive.scale(8)), // Reduced spacing from 12 to 8
         // Benefit text
         Text(
           text,
           style: AppTypography.bodyMedium.copyWith(
-            fontSize: responsive.scaleFontSize(14, minSize: 12),
+            fontSize: responsive.scaleFontSize(13, minSize: 11), // Slightly smaller
             color: theme.colorScheme.onSurface,
             fontWeight: FontWeight.w400,
             height: 1.25,

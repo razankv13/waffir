@@ -3,6 +3,26 @@ import 'package:waffir/core/constants/app_typography.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
+class _ProfileHeaderSpec {
+  const _ProfileHeaderSpec._();
+
+  static const double frameHeight = 234;
+  static const double basePadding = 24;
+  static const double avatarSize = 80;
+  static const double avatarBorderWidth = 2;
+  static const double avatarIconSize = 40;
+  static const double editBadgeSize = 24;
+  static const double editIconSize = 11;
+  static const double verticalGap = 8;
+  static const BorderRadius borderRadius = BorderRadius.only(
+    bottomLeft: Radius.circular(30),
+    bottomRight: Radius.circular(30),
+  );
+  static const double overlayTopOpacity = 0.9;
+  static const double overlayBottomOpacity = 0.7;
+  static const Alignment backgroundAlignment = Alignment(0.0, -0.2);
+}
+
 /// A profile header widget that displays user avatar, name, and email.
 ///
 /// Pixel-perfect implementation matching Figma Profile screen (node 34:3080):
@@ -50,129 +70,159 @@ class ProfileHeader extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final responsive = ResponsiveHelper(context);
+    final safeTop = responsive.topSafeArea;
+    final headerHeight =
+        responsive.scale(_ProfileHeaderSpec.frameHeight) + safeTop;
+    final avatarSize = responsive.scale(_ProfileHeaderSpec.avatarSize);
+    final avatarBorderWidth = responsive.scale(
+      _ProfileHeaderSpec.avatarBorderWidth,
+    );
+    final placeholderIconSize = responsive.scale(
+      _ProfileHeaderSpec.avatarIconSize,
+    );
+    final borderRadius = responsive.scaleBorderRadius(
+      _ProfileHeaderSpec.borderRadius,
+    );
+    final gap = responsive.scale(_ProfileHeaderSpec.verticalGap);
+    final editBadgeSize = responsive.scale(_ProfileHeaderSpec.editBadgeSize);
+    final editIconSize = responsive.scale(_ProfileHeaderSpec.editIconSize);
+    final ImageProvider backgroundImageProvider = backgroundImage != null
+        ? NetworkImage(backgroundImage!)
+        : Assets.images.profileHeaderBgBd1db0.provider();
 
-    return Container(
-      // Exact height from Figma: 234px, scaled responsively
-      height: responsive.scale(234),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        // Primary color: #0F352D (primaryColorDarkest)
-        color: colorScheme.primary,
-        // Bottom corners only: 30px radius (exact from Figma)
-        borderRadius: responsive.scaleBorderRadius(
-          const BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
-          ),
-        ),
-        // Background image from Figma design
-        image: DecorationImage(
-          image: backgroundImage != null
-              ? NetworkImage(backgroundImage!)
-              : Assets.images.profileHeaderBgBd1db0.provider(),
-          fit: BoxFit.cover,
-          // Overlay to maintain text readability
-          colorFilter: ColorFilter.mode(
-            colorScheme.primary.withValues(alpha: 0.7),
-            BlendMode.darken,
-          ),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          // Exact padding from Figma: 24px all sides
-          padding: responsive.scalePadding(const EdgeInsets.all(24)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+    return RepaintBoundary(
+      child: SizedBox(
+        height: headerHeight,
+        width: double.infinity,
+        child: ClipRRect(
+          borderRadius: borderRadius,
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              // Avatar with optional edit icon
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  // Avatar: 80×80px circular (exact from Figma)
-                  Container(
-                    width: responsive.scale(80),
-                    height: responsive.scale(80),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      // Border: 2px solid rgba(255,255,255,0.4) (exact from Figma)
-                      border: Border.all(
-                        color: colorScheme.surface.withValues(alpha: 0.4),
-                        width: responsive.scale(2),
-                      ),
-                      image: avatarUrl != null
-                          ? DecorationImage(
-                              image: NetworkImage(avatarUrl!),
-                              fit: BoxFit.cover,
-                            )
-                          : null,
-                      color: colorScheme.surfaceContainerHighest,
-                    ),
-                    child: avatarUrl == null
-                        ? Icon(
-                            Icons.person,
-                            size: responsive.scale(40),
-                            color: colorScheme.onSurface.withValues(alpha: 0.5),
-                          )
-                        : null,
-                  ),
-
-                  // Edit icon (hidden in Figma design)
-                  if (showEditIcon)
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: onEditTap,
-                        child: Container(
-                          width: responsive.scale(24),
-                          height: responsive.scale(24),
-                          decoration: BoxDecoration(
-                            color: colorScheme.surface,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.25),
-                                blurRadius: responsive.scale(12),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.edit,
-                            size: responsive.scale(11),
-                            color: colorScheme.onSurface,
-                          ),
+              DecoratedBox(
+                decoration: BoxDecoration(color: colorScheme.primary),
+              ),
+              Positioned.fill(
+                child: Image(
+                  image: backgroundImageProvider,
+                  fit: BoxFit.cover,
+                  alignment: _ProfileHeaderSpec.backgroundAlignment,
+                  color: colorScheme.primary.withValues(alpha: 0.25),
+                  colorBlendMode: BlendMode.darken,
+                ),
+              ),
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        colorScheme.primary.withValues(
+                          alpha: _ProfileHeaderSpec.overlayTopOpacity,
                         ),
-                      ),
+                        colorScheme.primary.withValues(
+                          alpha: _ProfileHeaderSpec.overlayBottomOpacity,
+                        ),
+                      ],
                     ),
-                ],
-              ),
-
-              // Gap: 8px (exact from Figma)
-              SizedBox(height: responsive.scale(8)),
-
-              // Name: Parkinsans 20px weight 600, line-height 1em, color #FFFFFF
-              Text(
-                name,
-                style: AppTypography.profileName.copyWith(
-                  color: colorScheme.surface, // White
-                  fontSize: responsive.scaleFontSize(20, minSize: 16),
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
-
-              // Gap: 8px between name and email (Figma shows tight spacing, using same 8px)
-              SizedBox(height: responsive.scale(8)),
-
-              // Email: Parkinsans 14px weight 500, line-height 1em, color #FFFFFF
-              Text(
-                email,
-                style: AppTypography.profileEmail.copyWith(
-                  color: colorScheme.surface, // White
-                  fontSize: responsive.scaleFontSize(14, minSize: 12),
+              SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: responsive.scalePadding(
+                    const EdgeInsets.all(_ProfileHeaderSpec.basePadding),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            width: avatarSize,
+                            height: avatarSize,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: colorScheme.surface.withValues(
+                                  alpha: 0.4,
+                                ),
+                                width: avatarBorderWidth,
+                              ),
+                              image: avatarUrl != null
+                                  ? DecorationImage(
+                                      image: NetworkImage(avatarUrl!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
+                              color: colorScheme.surfaceContainerHighest,
+                            ),
+                            child: avatarUrl == null
+                                ? Icon(
+                                    Icons.person,
+                                    size: placeholderIconSize,
+                                    color: colorScheme.onSurface.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          if (showEditIcon)
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: onEditTap,
+                                child: Container(
+                                  width: editBadgeSize,
+                                  height: editBadgeSize,
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.surface,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.25,
+                                        ),
+                                        blurRadius: responsive.scale(12),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    Icons.edit,
+                                    size: editIconSize,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      SizedBox(height: gap),
+                      Text(
+                        name,
+                        style: AppTypography.profileName.copyWith(
+                          color: colorScheme.surface,
+                          fontSize: responsive.scaleFontSize(20, minSize: 16),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: gap),
+                      Text(
+                        email,
+                        style: AppTypography.profileEmail.copyWith(
+                          color: colorScheme.surface,
+                          fontSize: responsive.scaleFontSize(14, minSize: 12),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),

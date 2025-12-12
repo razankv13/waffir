@@ -44,27 +44,32 @@ class SubscriptionOptionCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        padding: responsive.scalePadding(
-          const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        ),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? theme.colorScheme.primaryContainer
-              : theme.colorScheme.surfaceContainerHighest,
-          borderRadius: responsive.scaleBorderRadius(
-            BorderRadius.circular(30),
-          ),
-        ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            // Main content row
-            Row(
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            padding: responsive.scalePadding(
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            ),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface, // Always white/surface
+              borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(24)),
+              border: Border.all(
+                color: isSelected ? const Color(0xFF00D9A3) : Colors.transparent,
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF0F352D).withOpacity(0.08),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Left: Price and user info
                 Expanded(
@@ -102,7 +107,7 @@ class SubscriptionOptionCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTypography.bodySmall.copyWith(
-                                fontSize: responsive.scaleFontSize(11.9, minSize: 10),
+                                fontSize: responsive.scaleFontSize(11.9),
                                 fontWeight: FontWeight.w400,
                                 color: theme.colorScheme.onSurface,
                                 height: 1.15,
@@ -119,19 +124,15 @@ class SubscriptionOptionCard extends StatelessWidget {
                 _RadioButton(isSelected: isSelected),
               ],
             ),
-            // Badges positioned absolutely
-            ...badges.map((badge) => _buildBadge(context, badge, responsive)),
-          ],
-        ),
+          ),
+          // Badges positioned absolutely
+          ...badges.map((badge) => _buildBadge(context, badge, responsive)),
+        ],
       ),
     );
   }
 
-  Widget _buildBadge(
-    BuildContext context,
-    SubscriptionBadge badge,
-    ResponsiveHelper responsive,
-  ) {
+  Widget _buildBadge(BuildContext context, SubscriptionBadge badge, ResponsiveHelper responsive) {
     final theme = Theme.of(context);
 
     double leftPosition;
@@ -148,17 +149,13 @@ class SubscriptionOptionCard extends StatelessWidget {
     }
 
     return Positioned(
-      top: responsive.scale(-13),
+      top: responsive.scale(-13), // Overlap border
       left: leftPosition,
       child: Container(
-        padding: responsive.scalePadding(
-          const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-        ),
+        padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 8, vertical: 5)),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: responsive.scaleBorderRadius(
-            BorderRadius.circular(30),
-          ),
+          color: Colors.black,
+          borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
         ),
         child: Text(
           badge.text,
@@ -171,7 +168,7 @@ class SubscriptionOptionCard extends StatelessWidget {
                   color: Color(0xFF00FF88), // Bright green
                 )
               : AppTypography.labelSmall.copyWith(
-                  fontSize: responsive.scaleFontSize(12, minSize: 10),
+                  fontSize: responsive.scaleFontSize(12),
                   fontWeight: FontWeight.w500,
                   color: const Color(0xFF00FF88), // Bright green
                   height: 1.33,
@@ -196,16 +193,9 @@ class _RadioButton extends StatelessWidget {
       width: responsive.scale(24),
       height: responsive.scale(24),
       decoration: BoxDecoration(
-        color: isSelected
-            ? theme.colorScheme.primary
-            : theme.colorScheme.surface,
+        color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
         shape: BoxShape.circle,
-        border: isSelected
-            ? null
-            : Border.all(
-                color: theme.colorScheme.primary,
-                width: 2,
-              ),
+        border: isSelected ? null : Border.all(color: theme.colorScheme.primary, width: 2),
       ),
       child: isSelected
           ? Center(
@@ -222,11 +212,7 @@ class _RadioButton extends StatelessWidget {
 
 /// Subscription badge data model
 class SubscriptionBadge {
-  const SubscriptionBadge({
-    required this.text,
-    required this.position,
-    this.isSpecial = false,
-  });
+  const SubscriptionBadge({required this.text, required this.position, this.isSpecial = false});
 
   final String text;
   final BadgePosition position;
@@ -247,7 +233,7 @@ class SubscriptionBadge {
 
 /// Badge position on the card
 enum BadgePosition {
-  left,   // x: 16
+  left, // x: 16
   center, // x: 89
-  right,  // x: 162
+  right, // x: 162
 }

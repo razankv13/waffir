@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/constants/app_colors.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
 /// Social authentication provider types
-enum SocialAuthProvider {
-  google,
-  apple,
-}
+enum SocialAuthProvider { google, apple }
 
 /// Social authentication button
 ///
@@ -43,8 +41,7 @@ class SocialAuthButton extends StatefulWidget {
   State<SocialAuthButton> createState() => _SocialAuthButtonState();
 }
 
-class _SocialAuthButtonState extends State<SocialAuthButton>
-    with SingleTickerProviderStateMixin {
+class _SocialAuthButtonState extends State<SocialAuthButton> with SingleTickerProviderStateMixin {
   late AnimationController _scaleController;
   late Animation<double> _scaleAnimation;
 
@@ -55,9 +52,10 @@ class _SocialAuthButtonState extends State<SocialAuthButton>
       vsync: this,
       duration: const Duration(milliseconds: 100),
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.97,
+    ).animate(CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut));
   }
 
   @override
@@ -85,9 +83,6 @@ class _SocialAuthButtonState extends State<SocialAuthButton>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return ScaleTransition(
       scale: _scaleAnimation,
       child: GestureDetector(
@@ -95,7 +90,7 @@ class _SocialAuthButtonState extends State<SocialAuthButton>
         child: Container(
           height: 48,
           decoration: BoxDecoration(
-            color: colorScheme.surface,
+            color: AppColors.gray01,
             borderRadius: BorderRadius.circular(30),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -103,11 +98,7 @@ class _SocialAuthButtonState extends State<SocialAuthButton>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Icon from Figma assets - 23.64x23.64px
-              SvgPicture.asset(
-                _iconPath,
-                width: 23.64,
-                height: 23.64,
-              ),
+              SvgPicture.asset(_iconPath, width: 23.64, height: 23.64),
               const SizedBox(width: 11),
               // Label - Parkinsans 14px weight 600
               Text(

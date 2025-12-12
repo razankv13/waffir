@@ -37,10 +37,12 @@ class AppRoutes {
   static const String profileEdit = '/profile/edit';
   static const String profilePersonalDetails = '/profile/personal-details';
   static const String profileSavedDeals = '/profile/saved-deals';
+  static const String profileFavorites = '/profile/favorites';
   static const String profileChangeCity = '/profile/change-city';
   static const String profileLanguage = '/profile/language';
   static const String profileHelpCenter = '/profile/help-center';
   static const String profileDeleteAccount = '/profile/delete-account';
+  static const String profileSelectedCreditCards = '/profile/selected-credit-cards';
   static const String themeSettings = '/settings/theme';
   static const String privacySettings = '/settings/privacy';
   static const String accountSettings = '/settings/account';
@@ -75,10 +77,12 @@ class AppRoutes {
     profileEdit,
     profilePersonalDetails,
     profileSavedDeals,
+    profileFavorites,
     profileChangeCity,
     profileLanguage,
     profileHelpCenter,
     profileDeleteAccount,
+    profileSelectedCreditCards,
     themeSettings,
     privacySettings,
     accountSettings,
@@ -141,11 +145,14 @@ class AppRouteNames {
   // Nested route names
   static const String profileEdit = 'profile-edit';
   static const String profilePersonalDetails = 'profile-personal-details';
+  static const String profileMyAccount = 'profile-my-account';
   static const String profileSavedDeals = 'profile-saved-deals';
+  static const String profileFavorites = 'profile-favorites';
   static const String profileChangeCity = 'profile-change-city';
   static const String profileLanguage = 'profile-language';
   static const String profileHelpCenter = 'profile-help-center';
   static const String profileDeleteAccount = 'profile-delete-account';
+  static const String profileSelectedCreditCards = 'profile-selected-credit-cards';
   static const String themeSettings = 'theme-settings';
   static const String privacySettings = 'privacy-settings';
   static const String accountSettings = 'account-settings';

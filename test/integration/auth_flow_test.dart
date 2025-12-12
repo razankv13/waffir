@@ -20,7 +20,7 @@ void main() {
 
     testWidgets('complete auth flow - signup, login, logout', (WidgetTester tester) async {
       // Start the app
-      app.main();
+      await app.main();
       await tester.pumpAndSettle();
 
       // Test signup flow
@@ -35,7 +35,7 @@ void main() {
 
     testWidgets('should handle network errors gracefully', (WidgetTester tester) async {
       // Start the app
-      app.main();
+      await app.main();
       await tester.pumpAndSettle();
 
       // Simulate network error by disabling network
@@ -49,7 +49,7 @@ void main() {
 
     testWidgets('should persist login state across app restarts', (WidgetTester tester) async {
       // Start the app
-      app.main();
+      await app.main();
       await tester.pumpAndSettle();
 
       // Login
@@ -65,7 +65,7 @@ void main() {
       );
 
       // Start app again
-      app.main();
+      await app.main();
       await tester.pumpAndSettle();
 
       // Should still be logged in

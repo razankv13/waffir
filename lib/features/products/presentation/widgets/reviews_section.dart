@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:waffir/core/widgets/products/rating_display.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:waffir/features/products/domain/entities/review.dart';
 import 'package:waffir/features/products/presentation/widgets/review_card.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 
 /// Reviews section widget for displaying product reviews/comments
 ///
@@ -29,57 +30,74 @@ class ReviewsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final responsive = context.responsive;
 
     return Container(
       height: height,
-      padding: const EdgeInsets.all(16),
+      padding: responsive.scalePadding(const EdgeInsets.all(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Reviews header
+          // Composer row (avatar, input pill, send button)
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Reviews & Ratings',
-                    style: textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface,
-                    ),
-                  ),
-                  if (averageRating != null) ...[
-                    const SizedBox(height: 8),
-                    RatingDisplay(
-                      rating: averageRating!,
-                      reviewCount: totalReviews,
-                      size: RatingSize.medium,
-                      showRatingText: true,
-                    ),
-                  ],
-                ],
+              // Avatar 64x64
+              CircleAvatar(
+                radius: responsive.scale(32),
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: Icon(
+                  Icons.person_outline,
+                  size: responsive.scale(28),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
-
-              // View all button
-              if (onViewAllReviews != null)
-                TextButton(
-                  onPressed: onViewAllReviews,
-                  child: Text(
-                    'View All',
-                    style: textTheme.labelLarge?.copyWith(
-                      color: colorScheme.primary,
-                      fontWeight: FontWeight.w600,
+              SizedBox(width: responsive.scale(12)),
+              // Input pill 232x56 (use Expanded to avoid overflow on small screens)
+              Expanded(
+                child: Container(
+                  height: responsive.scale(56),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF2F2F2),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    'Write your comment',
+                    style: TextStyle(
+                      fontFamily: 'Parkinsans',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFA3A3A3),
+                      height: 1.15,
                     ),
                   ),
                 ),
+              ),
+              SizedBox(width: responsive.scale(11)),
+              // Send button 44x44
+              InkWell(
+                borderRadius: BorderRadius.circular(1000),
+                onTap: () {},
+                child: Container(
+                  width: responsive.scale(44),
+                  height: responsive.scale(44),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0F352D),
+                    borderRadius: BorderRadius.circular(1000),
+                  ),
+                  alignment: Alignment.center,
+                  child: SvgPicture.asset(
+                    'assets/icons/arrow_icon.svg',
+                    width: responsive.scale(20),
+                    height: responsive.scale(20),
+                    colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                  ),
+                ),
+              ),
             ],
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: responsive.scale(12)),
 
           // Reviews list
           Expanded(
@@ -88,7 +106,7 @@ class ReviewsSection extends StatelessWidget {
                 : ListView.separated(
                     padding: EdgeInsets.zero,
                     itemCount: reviews.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                    separatorBuilder: (context, index) => SizedBox(height: responsive.scale(12)),
                     itemBuilder: (context, index) {
                       return ReviewCard(
                         review: reviews[index],
@@ -105,6 +123,7 @@ class ReviewsSection extends StatelessWidget {
   Widget _buildEmptyState(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final responsive = context.responsive;
 
     return Center(
       child: Column(
@@ -112,17 +131,17 @@ class ReviewsSection extends StatelessWidget {
         children: [
           Icon(
             Icons.rate_review_outlined,
-            size: 64,
+            size: responsive.scale(64),
             color: colorScheme.onSurfaceVariant.withOpacity(0.5),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: responsive.scale(16)),
           Text(
             'No reviews yet',
             style: textTheme.titleMedium?.copyWith(
               color: colorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: responsive.scale(8)),
           Text(
             'Be the first to review this product',
             style: textTheme.bodyMedium?.copyWith(

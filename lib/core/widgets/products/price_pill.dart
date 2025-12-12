@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/themes/extensions/promo_colors_extension.dart';
 
 /// Price pill widget - pill-shaped price container with riyal icon
 ///
@@ -31,16 +33,14 @@ class PricePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final promo = Theme.of(context).extension<PromoColors>()!;
 
     // Determine colors based on type
-    final Color backgroundColor = isSalePrice
-        ? const Color(0xFF0F352D) // Dark green for sale price
-        : colorScheme.surfaceContainerHighest; // Light gray for original
+    final Color backgroundColor =
+        isSalePrice ? promo.saleBg : promo.originalBg;
 
-    final Color textColor = isSalePrice
-        ? const Color(0xFF00FF88) // Bright green for sale price
-        : colorScheme.error; // Red for original price
+    final Color textColor =
+        isSalePrice ? promo.saleText : promo.originalText;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -52,10 +52,11 @@ class PricePill extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Riyal icon (12×12px)
-          SizedBox(
+          SvgPicture.asset(
+            'assets/icons/riyal.svg',
             width: 12,
             height: 12,
-            child: _RiyalIcon(color: textColor),
+            colorFilter: ColorFilter.mode(textColor, BlendMode.srcIn),
           ),
           const SizedBox(width: 4), // Small gap
           Text(
@@ -69,30 +70,6 @@ class PricePill extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Riyal icon - simplified SVG representation
-class _RiyalIcon extends StatelessWidget {
-  const _RiyalIcon({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    // Using a simple Text representation for now
-    // TODO: Replace with actual Riyal SVG icon from Figma
-    return Center(
-      child: Text(
-        'ر.س',
-        style: TextStyle(
-          fontSize: 8,
-          fontWeight: FontWeight.w600,
-          color: color,
-          height: 1.0,
-        ),
       ),
     );
   }

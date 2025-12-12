@@ -77,8 +77,7 @@ class AppBackButton extends StatefulWidget {
   State<AppBackButton> createState() => _AppBackButtonState();
 }
 
-class _AppBackButtonState extends State<AppBackButton>
-    with SingleTickerProviderStateMixin {
+class _AppBackButtonState extends State<AppBackButton> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
 
@@ -93,12 +92,7 @@ class _AppBackButtonState extends State<AppBackButton>
     _scaleAnimation = Tween<double>(
       begin: 1.0,
       end: 0.95,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
   }
 
   @override
@@ -129,7 +123,8 @@ class _AppBackButtonState extends State<AppBackButton>
 
     // Determine colors based on theme and overrides
     final iconColor = widget.foregroundColor ?? colorScheme.onSurface;
-    final bgColor = widget.backgroundColor ??
+    final bgColor =
+        widget.backgroundColor ??
         (widget.showBackground
             ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
             : Colors.transparent);
@@ -139,8 +134,8 @@ class _AppBackButtonState extends State<AppBackButton>
       height: widget.size,
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: widget.borderRadius ??
-            BorderRadius.circular(widget.size / 2), // Circular by default
+        borderRadius:
+            widget.borderRadius ?? BorderRadius.circular(widget.size / 2), // Circular by default
       ),
       child: widget.isLoading
           ? Center(
@@ -161,25 +156,19 @@ class _AppBackButtonState extends State<AppBackButton>
     );
 
     final button = widget.animateOnTap
-        ? ScaleTransition(
-            scale: _scaleAnimation,
-            child: buttonContent,
-          )
+        ? ScaleTransition(scale: _scaleAnimation, child: buttonContent)
         : buttonContent;
 
     final inkWell = InkWell(
       onTap: widget.isLoading ? null : _handleTap,
-      borderRadius: widget.borderRadius ??
-          BorderRadius.circular(widget.size / 2), // Circular by default
+      borderRadius:
+          widget.borderRadius ?? BorderRadius.circular(widget.size / 2), // Circular by default
       child: button,
     );
 
     // Wrap with tooltip if provided
     if (widget.tooltip != null && widget.tooltip!.isNotEmpty) {
-      return Tooltip(
-        message: widget.tooltip!,
-        child: inkWell,
-      );
+      return Tooltip(message: widget.tooltip!, child: inkWell);
     }
 
     return inkWell;

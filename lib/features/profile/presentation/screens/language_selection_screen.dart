@@ -1,48 +1,43 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:waffir/core/widgets/buttons/app_button.dart';
-import 'package:waffir/core/widgets/profile/profile_card.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/waffir_back_button.dart';
 
 /// Language Selection Screen
 ///
-/// Allows users to change the app language. Supports multiple languages
-/// including English, Arabic, Spanish, and French.
-class LanguageSelectionScreen extends ConsumerStatefulWidget {
+/// Pixel-perfect implementation based on Figma node `7774:7230` (Switch Language).
+class LanguageSelectionScreen extends StatefulWidget {
   const LanguageSelectionScreen({super.key});
 
   @override
-  ConsumerState<LanguageSelectionScreen> createState() => _LanguageSelectionScreenState();
+  State<LanguageSelectionScreen> createState() => _LanguageSelectionScreenState();
 }
 
-class _LanguageSelectionScreenState extends ConsumerState<LanguageSelectionScreen> {
+class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   String _selectedLanguage = 'English';
-  bool _isLoading = false;
-
-  final Map<String, Map<String, String>> _languages = {
-    'English': {'name': 'English', 'nativeName': 'English', 'code': 'en'},
-    'Arabic': {'name': 'Arabic', 'nativeName': 'العربية', 'code': 'ar'},
-    'Spanish': {'name': 'Spanish', 'nativeName': 'Español', 'code': 'es'},
-    'French': {'name': 'French', 'nativeName': 'Français', 'code': 'fr'},
-  };
+  bool _isSaving = false;
 
   Future<void> _saveLanguage() async {
-    setState(() => _isLoading = true);
+    setState(() => _isSaving = true);
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
+    // TODO(waffir): Wire to EasyLocalization + persisted preference.
+    await Future<void>.delayed(const Duration(seconds: 1));
 
-    setState(() => _isLoading = false);
+    if (!mounted) return;
 
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Language changed to $_selectedLanguage'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      context.pop();
-    }
+    setState(() => _isSaving = false);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Language changed to $_selectedLanguage'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    context.pop();
   }
 
   @override
@@ -50,150 +45,199 @@ class _LanguageSelectionScreenState extends ConsumerState<LanguageSelectionScree
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
+    final responsive = context.responsive;
+    final safeAreaInsets = MediaQuery.of(context).padding;
+
+    // Figma: total top padding for back button area is 64px.
+    // We subtract the actual safe area inset so the *total* matches Figma on notched devices.
+    final backTopPadding = (responsive.scale(64) - safeAreaInsets.top).clamp(0.0, double.infinity);
+
+    // Figma: screen bottom padding is 120px.
+    final bottomPadding = (responsive.scale(120) - safeAreaInsets.bottom).clamp(0.0, double.infinity);
+
+    final titleStyle = (textTheme.bodyLarge ?? const TextStyle()).copyWith(
+      fontSize: responsive.scaleFontSize(16, minSize: 12),
+      fontWeight: FontWeight.w500,
+      height: 1.15,
+      color: colorScheme.onSurface,
+    );
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
-          // Gradient background shape
+          // Background shape (exported from Figma) + blur.
           Positioned(
-            top: -85,
-            left: -40,
-            child: Container(
-              width: 468,
-              height: 395,
-              decoration: BoxDecoration(
-                color: colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(200),
+            left: -responsive.scale(40),
+            top: -responsive.scale(85.54),
+            child: ImageFiltered(
+              imageFilter: ImageFilter.blur(
+                sigmaX: responsive.scale(100),
+                sigmaY: responsive.scale(100),
+              ),
+              child: SvgPicture.asset(
+                'assets/images/language_switch_shape.svg',
+                width: responsive.scale(467.78),
+                height: responsive.scale(394.6),
+                fit: BoxFit.cover,
               ),
             ),
           ),
 
-          // Main content
-          Column(
-            children: [
-              // App bar
-              SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
+          // Main content.
+          SafeArea(
+            bottom: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: responsive.scale(16),
+                    right: responsive.scale(16),
+                    top: backTopPadding,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: WaffirBackButton(size: responsive.scale(44)),
+                  ),
+                ),
+
+                SizedBox(height: responsive.scale(32)),
+
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+                  child: Text('Change Language', style: titleStyle),
+                ),
+
+                SizedBox(height: responsive.scale(32)),
+
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+                  child: Column(
                     children: [
-                      IconButton(
-                        onPressed: () => context.pop(),
-                        icon: Icon(
-                          Icons.arrow_back,
+                      _LanguagePillButton(
+                        label: 'العربية',
+                        width: responsive.scale(361),
+                        height: responsive.scale(48),
+                        borderColor: const Color(0xFFCECECE),
+                        borderWidth: responsive.scale(1),
+                        borderRadius: responsive.scale(60),
+                        textStyle: (textTheme.labelLarge ?? const TextStyle()).copyWith(
+                          fontSize: responsive.scaleFontSize(14, minSize: 11),
+                          fontWeight: FontWeight.w500,
+                          height: 1.0,
                           color: colorScheme.onSurface,
                         ),
-                        style: IconButton.styleFrom(
-                          backgroundColor: colorScheme.surface,
-                          elevation: 2,
-                          shadowColor: Colors.black.withValues(alpha: 0.1),
-                        ),
+                        onPressed: () => setState(() => _selectedLanguage = 'Arabic'),
                       ),
-                      const SizedBox(width: 16),
-                      Text(
-                        'Language',
-                        style: textTheme.titleLarge?.copyWith(
+                      SizedBox(height: responsive.scale(16)),
+                      _LanguagePillButton(
+                        label: 'English',
+                        width: responsive.scale(361),
+                        height: responsive.scale(48),
+                        borderColor: colorScheme.primary,
+                        borderWidth: responsive.scale(2),
+                        borderRadius: responsive.scale(30),
+                        textStyle: (textTheme.labelLarge ?? const TextStyle()).copyWith(
+                          fontSize: responsive.scaleFontSize(14, minSize: 11),
                           fontWeight: FontWeight.w600,
+                          height: 1.0,
+                          color: colorScheme.onSurface,
                         ),
+                        onPressed: () => setState(() => _selectedLanguage = 'English'),
                       ),
                     ],
                   ),
                 ),
-              ),
 
-              // Language list
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: ProfileCard(
-                    child: Column(
-                      children: [
-                        ..._languages.entries.map((entry) {
-                          final isSelected = _selectedLanguage == entry.key;
-                          final lang = entry.value;
+                const Spacer(),
 
-                          return Column(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedLanguage = entry.key;
-                                  });
-                                },
-                                borderRadius: BorderRadius.circular(8),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  child: Row(
-                                    children: [
-                                      Radio<String>(
-                                        value: entry.key,
-                                        groupValue: _selectedLanguage,
-                                        onChanged: (String? value) {
-                                          if (value != null) {
-                                            setState(() {
-                                              _selectedLanguage = value;
-                                            });
-                                          }
-                                        },
-                                        activeColor: colorScheme.primary,
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              lang['name']!,
-                                              style: textTheme.bodyLarge?.copyWith(
-                                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                                              ),
-                                            ),
-                                            Text(
-                                              lang['nativeName']!,
-                                              style: textTheme.bodySmall?.copyWith(
-                                                color: colorScheme.onSurface.withValues(alpha: 0.6),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      if (isSelected)
-                                        Icon(
-                                          Icons.check_circle,
-                                          color: colorScheme.primary,
-                                          size: 24,
-                                        ),
-                                    ],
-                                  ),
-                                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: responsive.scale(31.5),
+                    right: responsive.scale(31.5),
+                    bottom: bottomPadding,
+                  ),
+                  child: SizedBox(
+                    width: responsive.scale(330),
+                    height: responsive.scale(48),
+                    child: FilledButton(
+                      onPressed: _isSaving ? null : _saveLanguage,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                        foregroundColor: colorScheme.onPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(responsive.scale(30)),
+                        ),
+                      ),
+                      child: _isSaving
+                          ? SizedBox(
+                              width: responsive.scale(18),
+                              height: responsive.scale(18),
+                              child: CircularProgressIndicator(
+                                strokeWidth: responsive.scaleWithMin(2, min: 1.5),
+                                valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onPrimary),
                               ),
-                              if (entry.key != _languages.keys.last)
-                                const ProfileDivider(),
-                            ],
-                          );
-                        }),
-                      ],
+                            )
+                          : Text(
+                              'Save',
+                              style: (textTheme.labelLarge ?? const TextStyle()).copyWith(
+                                fontSize: responsive.scaleFontSize(14, minSize: 11),
+                                fontWeight: FontWeight.w600,
+                                height: 1.0,
+                                color: colorScheme.onPrimary,
+                              ),
+                            ),
                     ),
                   ),
                 ),
-              ),
-
-              // Save button
-              SafeArea(
-                top: false,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: AppButton.primary(
-                    onPressed: _isLoading ? null : _saveLanguage,
-                    isLoading: _isLoading,
-                    child: const Text('Save'),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _LanguagePillButton extends StatelessWidget {
+  const _LanguagePillButton({
+    required this.label,    required this.width,
+    required this.height,
+    required this.borderColor,
+    required this.borderWidth,
+    required this.borderRadius,
+    required this.textStyle,
+    required this.onPressed,
+  });
+
+  final String label;
+  final double width;
+  final double height;
+  final Color borderColor;
+  final double borderWidth;
+  final double borderRadius;
+  final TextStyle textStyle;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return SizedBox(
+      width: width,
+      height: height,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: colorScheme.surface,
+          foregroundColor: colorScheme.onSurface,
+          side: BorderSide(color: borderColor, width: borderWidth),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+        ),
+        child: Text(label, style: textStyle),
       ),
     );
   }

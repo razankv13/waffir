@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 
 /// Size and color selector widget for product variants
 class SizeColorSelector extends StatelessWidget {
@@ -24,13 +25,14 @@ class SizeColorSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final responsive = context.responsive;
 
     if (availableSizes.isEmpty && availableColors.isEmpty) {
       return const SizedBox.shrink();
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -43,10 +45,10 @@ class SizeColorSelector extends StatelessWidget {
                 color: colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: responsive.scale(12)),
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: responsive.scale(8),
+              runSpacing: responsive.scale(8),
               children: availableSizes.map((size) {
                 final isSelected = size == selectedSize;
                 return _SizeChip(
@@ -59,7 +61,7 @@ class SizeColorSelector extends StatelessWidget {
                 );
               }).toList(),
             ),
-            if (availableColors.isNotEmpty) const SizedBox(height: 16),
+            if (availableColors.isNotEmpty) SizedBox(height: responsive.scale(16)),
           ],
 
           // Color selector
@@ -71,10 +73,10 @@ class SizeColorSelector extends StatelessWidget {
                 color: colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: responsive.scale(12)),
             Wrap(
-              spacing: 12,
-              runSpacing: 12,
+              spacing: responsive.scale(12),
+              runSpacing: responsive.scale(12),
               children: availableColors.map((color) {
                 final isSelected = color == selectedColor;
                 return _ColorChip(
@@ -110,13 +112,14 @@ class _SizeChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final responsive = context.responsive;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(responsive.scale(8)),
       child: Container(
-        width: 48,
-        height: 48,
+        width: responsive.scale(48),
+        height: responsive.scale(48),
         decoration: BoxDecoration(
           color: isSelected ? colorScheme.primary : colorScheme.surface,
           border: Border.all(
@@ -125,7 +128,7 @@ class _SizeChip extends StatelessWidget {
                 : colorScheme.outline.withOpacity(0.5),
             width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(responsive.scale(8)),
         ),
         child: Center(
           child: Text(
@@ -157,12 +160,13 @@ class _ColorChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final responsive = context.responsive;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(responsive.scale(16)),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 10)),
         decoration: BoxDecoration(
           color: isSelected ? colorScheme.primary : colorScheme.surface,
           border: Border.all(
@@ -171,7 +175,7 @@ class _ColorChip extends StatelessWidget {
                 : colorScheme.outline.withOpacity(0.5),
             width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(responsive.scale(16)),
         ),
         child: Text(
           label,

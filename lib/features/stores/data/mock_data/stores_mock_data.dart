@@ -4,32 +4,34 @@ import 'package:waffir/features/stores/data/models/store_model.dart';
 class StoresMockData {
   static List<StoreModel> get stores => [
         // Near You - Stores
-        const StoreModel(
-          id: '1',
-          name: 'Nike Store',
-          category: 'Fashion',
-          imageUrl: 'https://images.unsplash.com/photo-1556906781-9a412961c28c?w=400',
-          description: 'Athletic footwear and apparel',
-          address: 'Riyadh Park Mall, Riyadh',
-          distance: '1.2 km',
-          rating: 4.8,
-          reviewCount: 256,
-          phoneNumber: '+966 11 234 5678',
-          location: 'Riyadh Park Mall, Riyadh',
-        ),
+    const StoreModel(
+      id: '1',
+      name: 'Nike Store',
+      category: 'Fashion',
+      imageUrl: 'https://images.unsplash.com/photo-1556906781-9a412961c28c?w=400',
+      description: 'Athletic footwear and apparel',
+      address: 'Riyadh Park Mall, Riyadh',
+      distance: '1.2 km',
+      rating: 4.8,
+      reviewCount: 256,
+      phoneNumber: '+966 11 234 5678',
+      location: 'Riyadh Park Mall, Riyadh',
+      discountText: '20% off',
+    ),
 
-        const StoreModel(
-          id: '2',
-          name: 'Zara',
-          category: 'Fashion',
-          imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400',
-          description: 'Contemporary fashion',
-          address: 'Granada Mall, Riyadh',
-          distance: '2.5 km',
-          rating: 4.6,
-          reviewCount: 189,
-          location: 'Granada Mall, Riyadh',
-        ),
+    const StoreModel(
+      id: '2',
+      name: 'Zara',
+      category: 'Fashion',
+      imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400',
+      description: 'Contemporary fashion',
+      address: 'Granada Mall, Riyadh',
+      distance: '2.5 km',
+      rating: 4.6,
+      reviewCount: 189,
+      location: 'Granada Mall, Riyadh',
+      discountText: '30% - 70% off',
+    ),
 
         const StoreModel(
           id: '3',
@@ -71,18 +73,19 @@ class StoresMockData {
         ),
 
         // Mall Stores
-        const StoreModel(
-          id: '6',
-          name: 'H&M',
-          category: 'Fashion',
-          imageUrl: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400',
-          description: 'Fashion and quality at the best price',
-          address: 'Al Nakheel Mall',
-          distance: '4.2 km',
-          rating: 4.6,
-          reviewCount: 178,
-          location: 'Al Nakheel Mall',
-        ),
+    const StoreModel(
+      id: '6',
+      name: 'H&M',
+      category: 'Fashion',
+      imageUrl: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400',
+      description: 'Fashion and quality at the best price',
+      address: 'Al Nakheel Mall',
+      distance: '4.2 km',
+      rating: 4.6,
+      reviewCount: 178,
+      location: 'Al Nakheel Mall',
+      discountText: 'Buy 1 Get 1',
+    ),
 
         const StoreModel(
           id: '7',

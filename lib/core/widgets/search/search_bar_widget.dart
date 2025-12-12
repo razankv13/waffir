@@ -80,21 +80,14 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: colorScheme.tertiary,
-          width: 1,
-        ),
+        border: Border.all(color: colorScheme.tertiary, width: 1),
       ),
       child: Row(
         children: [
           // Search Icon
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 8),
-            child: Icon(
-              Icons.search,
-              size: 20,
-              color: colorScheme.onSurfaceVariant,
-            ),
+            child: Icon(Icons.search, size: 20, color: colorScheme.onSurfaceVariant),
           ),
 
           // Search TextField
@@ -102,14 +95,10 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
             child: TextField(
               controller: _controller,
               autofocus: widget.autofocus,
-              style: AppTypography.bodyMedium.copyWith(
-                color: colorScheme.onSurface,
-              ),
+              style: AppTypography.bodyMedium.copyWith(color: colorScheme.onSurface),
               decoration: InputDecoration(
                 hintText: widget.hintText,
-                hintStyle: AppTypography.bodyMedium.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
+                hintStyle: AppTypography.bodyMedium.copyWith(color: colorScheme.onSurfaceVariant),
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -129,11 +118,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 return const SizedBox.shrink();
               }
               return IconButton(
-                icon: Icon(
-                  Icons.clear,
-                  size: 18,
-                  color: colorScheme.onSurfaceVariant,
-                ),
+                icon: Icon(Icons.clear, size: 18, color: colorScheme.onSurfaceVariant),
                 onPressed: _clearSearch,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
@@ -158,19 +143,13 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
               child: Container(
                 width: 44,
                 height: 44,
-                decoration: BoxDecoration(
-                  color: colorScheme.primary,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: colorScheme.primary, shape: BoxShape.circle),
                 child: Center(
                   child: SvgPicture.asset(
                     'assets/icons/categories/arrow_filter_icon.svg',
                     width: 20,
                     height: 20,
-                    colorFilter: ColorFilter.mode(
-                      colorScheme.onPrimary,
-                      BlendMode.srcIn,
-                    ),
+                    colorFilter: ColorFilter.mode(colorScheme.onPrimary, BlendMode.srcIn),
                   ),
                 ),
               ),

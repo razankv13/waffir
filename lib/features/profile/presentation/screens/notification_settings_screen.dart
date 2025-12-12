@@ -1,15 +1,16 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/core/widgets/switches/custom_toggle_switch.dart';
-import 'package:waffir/core/widgets/profile/profile_card.dart';
-import 'package:waffir/core/mock/mock_notification_settings.dart';
+import 'package:waffir/core/widgets/waffir_back_button.dart';
 
-/// Notification Settings Screen
-///
-/// Allows users to configure their notification preferences including
-/// push notifications, email notifications, and specific content categories.
+enum _NotificationType { allOffers, topOffers }
+
 class NotificationSettingsScreen extends ConsumerStatefulWidget {
   const NotificationSettingsScreen({super.key});
 
@@ -18,277 +19,172 @@ class NotificationSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _NotificationSettingsScreenState extends ConsumerState<NotificationSettingsScreen> {
-  late MockNotificationSettings _settings;
-  bool _isLoading = false;
+  bool _pushEnabled = false;
+  bool _emailEnabled = true;
 
-  @override
-  void initState() {
-    super.initState();
-    _settings = defaultMockNotificationSettings;
-  }
+  bool _hotDeals = true;
+  bool _storeOffers = true;
+  bool _bankCardsOffers = true;
 
-  Future<void> _saveSettings() async {
-    setState(() => _isLoading = true);
+  _NotificationType _notificationType = _NotificationType.allOffers;
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
+  bool _isSaving = false;
 
-    setState(() => _isLoading = false);
+  Future<void> _save() async {
+    if (_isSaving) return;
 
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Notification settings saved successfully'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      context.pop();
-    }
+    setState(() => _isSaving = true);
+
+    // Simulate persistence.
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+
+    if (!mounted) return;
+
+    setState(() => _isSaving = false);
+
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    messenger?.clearSnackBars();
+    messenger?.showSnackBar(
+      const SnackBar(
+        content: Text('Saved'),
+        duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+
+    context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
+    final responsive = ResponsiveHelper(context);
+
+    final topInset = MediaQuery.paddingOf(context).top;
+    final backTop = topInset + responsive.scale(20);
+    final contentTop = topInset + responsive.scale(96); // 20 (top spacing) + 44 (back) + 32 (gap)
 
     return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
       body: Stack(
         children: [
-          // Gradient background shape
+          _BackgroundBlurShape(responsive: responsive),
+
+          // Back button
           Positioned(
-            top: -100,
-            left: -40,
-            child: Container(
-              width: 468,
-              height: 461,
-              decoration: BoxDecoration(
-                color: colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(200),
-              ),
-            ),
+            left: responsive.scale(16),
+            top: backTop,
+            child: WaffirBackButton(size: responsive.scale(44)),
           ),
 
-          // Main content
+          // Main content + bottom button (space-between with bottom padding 120)
           Column(
             children: [
-              // App bar
-              SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => context.pop(),
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: colorScheme.onSurface,
-                        ),
-                        style: IconButton.styleFrom(
-                          backgroundColor: colorScheme.surface,
-                          elevation: 2,
-                          shadowColor: Colors.black.withValues(alpha: 0.1),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        'Notifications',
-                        style: textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // Settings list
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.only(
+                    left: responsive.scale(16),
+                    right: responsive.scale(16),
+                    top: contentTop,
+                    bottom: responsive.scale(32),
+                  ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Master switches section
-                      ProfileCard(
+                      _Section(
+                        title: 'Notifications',
+                        responsive: responsive,
                         child: Column(
                           children: [
-                            _buildToggleItem(
+                            _ToggleRow(
                               title: 'Push Notifications',
-                              subtitle: 'Receive notifications on your device',
-                              value: _settings.pushNotificationsEnabled,
-                              onChanged: (value) {
-                                setState(() {
-                                  _settings = _settings.copyWith(pushNotificationsEnabled: value);
-                                });
-                              },
+                              value: _pushEnabled,
+                              responsive: responsive,
+                              onChanged: (value) => setState(() => _pushEnabled = value),
                             ),
-                            const ProfileDivider(),
-                            _buildToggleItem(
+                            SizedBox(height: responsive.scale(12)),
+                            _CheckboxGroup(
+                              responsive: responsive,
+                              enabled: _pushEnabled,
+                              items: [
+                                _CheckboxItemData(
+                                  label: 'Hot Deals',
+                                  value: _hotDeals,
+                                  onChanged: (v) => setState(() => _hotDeals = v),
+                                ),
+                                _CheckboxItemData(
+                                  label: 'Store Offers',
+                                  value: _storeOffers,
+                                  onChanged: (v) => setState(() => _storeOffers = v),
+                                ),
+                                _CheckboxItemData(
+                                  label: 'Bank Cards Offers',
+                                  value: _bankCardsOffers,
+                                  onChanged: (v) => setState(() => _bankCardsOffers = v),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: responsive.scale(12)),
+                            _DividerLine(responsive: responsive),
+                            SizedBox(height: responsive.scale(12)),
+                            _ToggleRow(
                               title: 'Email Notifications',
-                              subtitle: 'Receive notifications via email',
-                              value: _settings.emailNotificationsEnabled,
-                              onChanged: (value) {
-                                setState(() {
-                                  _settings = _settings.copyWith(emailNotificationsEnabled: value);
-                                });
-                              },
+                              value: _emailEnabled,
+                              responsive: responsive,
+                              onChanged: (value) => setState(() => _emailEnabled = value),
                             ),
                           ],
                         ),
                       ),
-
-                      const SizedBox(height: 24),
-
-                      // Content preferences section
-                      ProfileSectionHeader(title: 'Content Preferences'),
-                      const SizedBox(height: 8),
-
-                      ProfileCard(
+                      SizedBox(height: responsive.scale(32)),
+                      _Section(
+                        title: 'Notification Type',
+                        responsive: responsive,
                         child: Column(
                           children: [
-                            _buildToggleItem(
-                              title: 'New Deals',
-                              subtitle: 'Get notified when new deals are available',
-                              value: _settings.newDealsEnabled,
-                              onChanged: (value) {
-                                setState(() {
-                                  _settings = _settings.copyWith(newDealsEnabled: value);
-                                });
-                              },
+                            _RadioRow(
+                              title: 'All Offers',
+                              subtitle: 'Every New Deal',
+                              isSelected: _notificationType == _NotificationType.allOffers,
+                              responsive: responsive,
+                              onTap: () =>
+                                  setState(() => _notificationType = _NotificationType.allOffers),
                             ),
-                            const ProfileDivider(),
-                            _buildToggleItem(
-                              title: 'New Stores',
-                              subtitle: 'Be first to know when new stores join',
-                              value: _settings.newStoresEnabled,
-                              onChanged: (value) {
-                                setState(() {
-                                  _settings = _settings.copyWith(newStoresEnabled: value);
-                                });
-                              },
-                            ),
-                            const ProfileDivider(),
-                            _buildToggleItem(
-                              title: 'Favorite Stores',
-                              subtitle: 'Updates from your favorite stores',
-                              value: _settings.favoriteStoresEnabled,
-                              onChanged: (value) {
-                                setState(() {
-                                  _settings = _settings.copyWith(favoriteStoresEnabled: value);
-                                });
-                              },
-                            ),
-                            const ProfileDivider(),
-                            _buildToggleItem(
-                              title: 'Price Drops',
-                              subtitle: 'Alerts when prices drop on saved deals',
-                              value: _settings.priceDropsEnabled,
-                              onChanged: (value) {
-                                setState(() {
-                                  _settings = _settings.copyWith(priceDropsEnabled: value);
-                                });
-                              },
-                            ),
-                            const ProfileDivider(),
-                            _buildToggleItem(
-                              title: 'Expiring Deals',
-                              subtitle: 'Reminders for deals about to expire',
-                              value: _settings.expiringDealsEnabled,
-                              onChanged: (value) {
-                                setState(() {
-                                  _settings = _settings.copyWith(expiringDealsEnabled: value);
-                                });
-                              },
+                            SizedBox(height: responsive.scale(12)),
+                            _DividerLine(responsive: responsive),
+                            SizedBox(height: responsive.scale(12)),
+                            _RadioRow(
+                              title: 'Top Offers',
+                              subtitle: 'Only notify me when deals are hot (20+ likes)',
+                              isSelected: _notificationType == _NotificationType.topOffers,
+                              responsive: responsive,
+                              onTap: () =>
+                                  setState(() => _notificationType = _NotificationType.topOffers),
                             ),
                           ],
                         ),
                       ),
-
-                      const SizedBox(height: 24),
-
-                      // Marketing section
-                      ProfileSectionHeader(title: 'Marketing'),
-                      const SizedBox(height: 8),
-
-                      ProfileCard(
-                        child: Column(
-                          children: [
-                            _buildToggleItem(
-                              title: 'Weekly Digest',
-                              subtitle: 'Weekly summary of best deals',
-                              value: _settings.weeklyDigestEnabled,
-                              onChanged: (value) {
-                                setState(() {
-                                  _settings = _settings.copyWith(weeklyDigestEnabled: value);
-                                });
-                              },
-                            ),
-                            const ProfileDivider(),
-                            _buildToggleItem(
-                              title: 'Promotional Emails',
-                              subtitle: 'Special offers and promotions',
-                              value: _settings.promotionalEmailsEnabled,
-                              onChanged: (value) {
-                                setState(() {
-                                  _settings = _settings.copyWith(promotionalEmailsEnabled: value);
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Sound & Vibration section
-                      ProfileSectionHeader(title: 'Notification Style'),
-                      const SizedBox(height: 8),
-
-                      ProfileCard(
-                        child: Column(
-                          children: [
-                            _buildToggleItem(
-                              title: 'Sound',
-                              subtitle: 'Play sound for notifications',
-                              value: _settings.soundEnabled,
-                              onChanged: (value) {
-                                setState(() {
-                                  _settings = _settings.copyWith(soundEnabled: value);
-                                });
-                              },
-                            ),
-                            const ProfileDivider(),
-                            _buildToggleItem(
-                              title: 'Vibration',
-                              subtitle: 'Vibrate for notifications',
-                              value: _settings.vibrationEnabled,
-                              onChanged: (value) {
-                                setState(() {
-                                  _settings = _settings.copyWith(vibrationEnabled: value);
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 32),
                     ],
                   ),
                 ),
               ),
-
-              // Save button
-              SafeArea(
-                top: false,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: AppButton.primary(
-                    onPressed: _isLoading ? null : _saveSettings,
-                    isLoading: _isLoading,
-                    child: const Text('Save'),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: responsive.scale(16),
+                  right: responsive.scale(16),
+                  bottom: responsive.scale(120),
+                ),
+                child: Center(
+                  child: SizedBox(
+                    width: responsive.scale(330),
+                    child: AppButton.primary(
+                      text: 'Save',
+                      isLoading: _isSaving,
+                      enabled: !_isSaving,
+                      onPressed: _isSaving ? null : _save,
+                      width: responsive.scale(330),
+                      borderRadius: BorderRadius.circular(responsive.scale(30)),
+                    ),
                   ),
                 ),
               ),
@@ -298,46 +194,379 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
       ),
     );
   }
+}
 
-  Widget _buildToggleItem({
-    required String title,
-    required String subtitle,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    final textTheme = Theme.of(context).textTheme;
+class _BackgroundBlurShape extends StatelessWidget {
+  const _BackgroundBlurShape({required this.responsive});
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-              ],
+  final ResponsiveHelper responsive;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: responsive.scale(-40),
+      top: responsive.scale(-100),
+      child: IgnorePointer(
+        child: ImageFiltered(
+          imageFilter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+          child: Container(
+            width: responsive.scale(467.78),
+            height: responsive.scale(461.3),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(responsive.scale(240)),
+              gradient: const RadialGradient(
+                colors: [Color(0xFFDCFCE7), Color(0x00DCFCE7)],
+                stops: [0.0, 1.0],
+              ),
             ),
           ),
-          const SizedBox(width: 16),
-          CustomToggleSwitch(
-            value: value,
-            onChanged: onChanged,
+        ),
+      ),
+    );
+  }
+}
+
+class _Section extends StatelessWidget {
+  const _Section({required this.title, required this.responsive, required this.child});
+
+  final String title;
+  final ResponsiveHelper responsive;
+  final Widget child;
+
+  static const _kTitleColor = Color(0xFF0F352D);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+            fontSize: responsive.scaleFontSize(20, minSize: 16),
+            height: 1.15,
+            color: _kTitleColor,
           ),
+        ),
+        SizedBox(height: responsive.scale(32)),
+        child,
+      ],
+    );
+  }
+}
+
+class _ToggleRow extends StatelessWidget {
+  const _ToggleRow({
+    required this.title,
+    required this.value,
+    required this.responsive,
+    required this.onChanged,
+  });
+
+  final String title;
+  final bool value;
+  final ResponsiveHelper responsive;
+  final ValueChanged<bool> onChanged;
+
+  static const _kTextColor = Color(0xFF151515);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: responsive.scale(8)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+                fontSize: responsive.scaleFontSize(16, minSize: 14),
+                height: 1.15,
+                color: _kTextColor,
+              ),
+            ),
+          ),
+          _ScaledToggleSwitch(responsive: responsive, value: value, onChanged: onChanged),
         ],
       ),
     );
+  }
+}
+
+class _ScaledToggleSwitch extends StatelessWidget {
+  const _ScaledToggleSwitch({
+    required this.responsive,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final ResponsiveHelper responsive;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: responsive.scale(52),
+      height: responsive.scale(32),
+      child: FittedBox(
+        fit: BoxFit.fill,
+        child: CustomToggleSwitch(value: value, onChanged: onChanged),
+      ),
+    );
+  }
+}
+
+class _CheckboxItemData {
+  const _CheckboxItemData({required this.label, required this.value, required this.onChanged});
+
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+}
+
+class _CheckboxGroup extends StatelessWidget {
+  const _CheckboxGroup({required this.responsive, required this.enabled, required this.items});
+
+  final ResponsiveHelper responsive;
+  final bool enabled;
+  final List<_CheckboxItemData> items;
+
+  static const _kSubtleTextColor = Color(0xFFA3A3A3);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: responsive.scale(12)),
+      child: Column(
+        children: [
+          for (int i = 0; i < items.length; i++) ...[
+            _CheckboxRow(
+              label: items[i].label,
+              value: items[i].value,
+              enabled: enabled,
+              responsive: responsive,
+              textStyle: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w400,
+                fontSize: responsive.scaleFontSize(12, minSize: 10),
+                height: 1.15,
+                color: _kSubtleTextColor,
+              ),
+              onTap: () => items[i].onChanged(!items[i].value),
+            ),
+            if (i != items.length - 1) SizedBox(height: responsive.scale(8)),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _CheckboxRow extends StatelessWidget {
+  const _CheckboxRow({
+    required this.label,
+    required this.value,
+    required this.enabled,
+    required this.responsive,
+    required this.textStyle,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool value;
+  final bool enabled;
+  final ResponsiveHelper responsive;
+  final TextStyle? textStyle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final effectiveOnTap = enabled ? onTap : null;
+
+    return InkWell(
+      onTap: effectiveOnTap,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      child: SizedBox(
+        height: responsive.scale(24),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(child: Text(label, style: textStyle)),
+            _FigmaCheckbox(responsive: responsive, checked: value, enabled: enabled),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FigmaCheckbox extends StatelessWidget {
+  const _FigmaCheckbox({required this.responsive, required this.checked, required this.enabled});
+
+  final ResponsiveHelper responsive;
+  final bool checked;
+  final bool enabled;
+
+  static const _kCheckedFill = Color(0xFF0F352D);
+  static const _kAccentColor = Color(0xFF00FF88);
+  static const _kDisabledFill = Color(0xFFCECECE);
+  static const _kDisabledCheck = Color(0xFFF2F2F2);
+
+  @override
+  Widget build(BuildContext context) {
+    final size = responsive.scale(24);
+
+    final fillColor = enabled ? _kCheckedFill : _kDisabledFill;
+    final checkColor = enabled ? _kAccentColor : _kDisabledCheck;
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: checked ? fillColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(responsive.scale(4)),
+        ),
+        child: checked
+            ? Center(
+                child: Icon(Icons.check, size: responsive.scale(14), color: checkColor),
+              )
+            : const SizedBox.shrink(),
+      ),
+    );
+  }
+}
+
+class _RadioRow extends StatelessWidget {
+  const _RadioRow({
+    required this.title,
+    required this.subtitle,
+    required this.isSelected,
+    required this.responsive,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final bool isSelected;
+  final ResponsiveHelper responsive;
+  final VoidCallback onTap;
+
+  static const _kTextColor = Color(0xFF151515);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return InkWell(
+      onTap: onTap,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: responsive.scale(8)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: responsive.scaleFontSize(16, minSize: 14),
+                      height: 1.15,
+                      color: _kTextColor,
+                    ),
+                  ),
+                  SizedBox(height: responsive.scale(12)),
+                  Text(
+                    subtitle,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w400,
+                      fontSize: responsive.scaleFontSize(11.9, minSize: 10),
+                      height: 1.15,
+                      color: _kTextColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            _FigmaRadio(responsive: responsive, selected: isSelected),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FigmaRadio extends StatelessWidget {
+  const _FigmaRadio({required this.responsive, required this.selected});
+
+  final ResponsiveHelper responsive;
+  final bool selected;
+
+  static const _kRingColor = Color(0xFF0F352D);
+  static const _kDotColor = Color(0xFF00FF88);
+
+  @override
+  Widget build(BuildContext context) {
+    final size = responsive.scale(24);
+
+    if (selected) {
+      return SizedBox(
+        width: size,
+        height: size,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: _kRingColor,
+            borderRadius: BorderRadius.circular(size / 2),
+          ),
+          child: Center(
+            child: Container(
+              width: responsive.scale(8),
+              height: responsive.scale(8),
+              decoration: const BoxDecoration(color: _kDotColor, shape: BoxShape.circle),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(size / 2),
+          border: Border.all(color: _kRingColor, width: responsive.scale(2)),
+        ),
+      ),
+    );
+  }
+}
+
+class _DividerLine extends StatelessWidget {
+  const _DividerLine({required this.responsive});
+
+  final ResponsiveHelper responsive;
+
+  static const _kDividerColor = Color(0xFFF2F2F2);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(width: double.infinity, height: responsive.scale(1), color: _kDividerColor);
   }
 }

@@ -1,10 +1,11 @@
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
-import 'package:waffir/features/products/data/providers/product_providers.dart';
+import 'package:waffir/features/products/domain/entities/product.dart';
+import 'package:waffir/features/products/domain/entities/review.dart';
 import 'package:waffir/features/products/presentation/widgets/product_image_carousel.dart';
 import 'package:waffir/features/products/presentation/widgets/product_price_section.dart';
 import 'package:waffir/features/products/presentation/widgets/product_actions_bar.dart';
@@ -19,7 +20,7 @@ import 'package:waffir/features/products/presentation/widgets/size_color_selecto
 /// - Image carousel: 390px height
 /// - Reviews section: 714.2px height
 /// - Bottom padding: 120px
-class ProductDetailScreen extends ConsumerStatefulWidget {
+class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({
     super.key,
     required this.productId,
@@ -28,145 +29,191 @@ class ProductDetailScreen extends ConsumerStatefulWidget {
   final String productId;
 
   @override
-  ConsumerState<ProductDetailScreen> createState() => _ProductDetailScreenState();
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
 }
 
-class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String? selectedSize;
   String? selectedColor;
+  late final Product staticProduct;
+  late final List<Review> staticReviews;
+  late final double staticAverageRating;
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Static product data aligned with Figma
+    staticProduct = const Product(
+      id: 'demo-1',
+      title: "Nike Men's Air Max 2025 Shoes (3 Colors)",
+      description:
+          'Experience ultimate comfort and style with the Air Max 2025. Engineered cushioning, breathable mesh, and a sleek silhouette make this your go-to for everyday wear.',
+      price: 400.0,
+      originalPrice: 809.0,
+      discountPercentage: 50,
+      imageUrls: [
+        'https://images.unsplash.com/photo-1542293787938-c9e299b88054?q=80&w=1080&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1080&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=1080&auto=format&fit=crop',
+      ],
+      categoryId: 'shoes',
+      brand: 'Nike store',
+      rating: 4.6,
+      reviewCount: 3,
+      availableSizes: ['S', 'M', 'L', 'XL'],
+      availableColors: ['Black', 'White', 'Green'],
+    );
+
+    staticReviews = <Review>[
+      Review(
+        id: 'r1',
+        productId: staticProduct.id,
+        userId: 'u1',
+        rating: 5.0,
+        comment: 'Fantastic shoes! Super comfy and the cushioning is next-level.',
+        userName: 'Omar',
+        isVerifiedPurchase: true,
+        createdAt: DateTime.now().subtract(const Duration(days: 2)),
+      ),
+      Review(
+        id: 'r2',
+        productId: staticProduct.id,
+        userId: 'u2',
+        rating: 4.0,
+        comment: 'Great fit and quality. Runs a bit small, consider sizing up.',
+        userName: 'Sara',
+        createdAt: DateTime.now().subtract(const Duration(days: 7)),
+      ),
+      Review(
+        id: 'r3',
+        productId: staticProduct.id,
+        userId: 'u3',
+        rating: 4.8,
+        comment: 'Love the design and comfort. Perfect for daily wear.',
+        userName: 'Ali',
+        isVerifiedPurchase: true,
+        createdAt: DateTime.now().subtract(const Duration(days: 14)),
+      ),
+    ];
+
+    staticAverageRating = staticReviews.isEmpty
+        ? 0.0
+        : staticReviews.map((r) => r.rating).reduce((a, b) => a + b) /
+            staticReviews.length;
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isRTL = context.locale.languageCode == 'ar';
-
-    // Watch product, reviews, and favorite status
-    final productAsync = ref.watch(productByIdProvider(widget.productId));
-    final reviewsAsync = ref.watch(productReviewsProvider(widget.productId));
-    final averageRatingAsync = ref.watch(productAverageRatingProvider(widget.productId));
-    final favoritesNotifier = ref.watch(favoritesProvider.notifier);
-    final isFavorite = ref.watch(favoritesProvider).contains(widget.productId);
+    final responsive = context.responsive;
 
     return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: colorScheme.surface,
-        body: productAsync.when(
-          data: (product) {
-            if (product == null) {
-              return _buildNotFound(context);
-            }
+        body: Stack(
+          children: [
+            // Main content
+            CustomScrollView(
+              slivers: [
+                // Product image carousel
+                SliverToBoxAdapter(
+                  child: ProductImageCarousel(
+                    imageUrls: staticProduct.imageUrls,
+                    height: responsive.scale(390),
+                  ),
+                ),
 
-            return Stack(
-              children: [
-                // Main content
-                CustomScrollView(
-                  slivers: [
-                    // Product image carousel
-                    SliverToBoxAdapter(
-                      child: ProductImageCarousel(
-                        imageUrls: product.imageUrls,
-                        height: 390,
-                      ),
-                    ),
+                // Body content
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 16)),
+                    child: Column(
+                      children: [
+                        // Product actions (favorite, share, cart)
+                        ProductActionsBar(
+                          isFavorite: isFavorite,
+                          onFavoriteToggle: () {
+                            setState(() => isFavorite = !isFavorite);
+                          },
+                          shareText: 'Check out ${staticProduct.title} on Waffir!',
+                        ),
 
-                    // Body content
-                    SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          // Product actions (favorite, share, cart)
-                          ProductActionsBar(
-                            isFavorite: isFavorite,
-                            onFavoriteToggle: () {
-                              favoritesNotifier.toggle(widget.productId);
+                        // Prices
+                        ProductPriceSection(
+                          price: staticProduct.price,
+                          originalPrice: staticProduct.originalPrice,
+                          discountPercentage: staticProduct.discountPercentage,
+                        ),
+
+                        // Size and color selector
+                        if (staticProduct.availableSizes.isNotEmpty || staticProduct.availableColors.isNotEmpty)
+                          SizeColorSelector(
+                            availableSizes: staticProduct.availableSizes,
+                            availableColors: staticProduct.availableColors,
+                            selectedSize: selectedSize,
+                            selectedColor: selectedColor,
+                            onSizeSelected: (size) {
+                              setState(() => selectedSize = size);
                             },
-                            shareText: 'Check out ${product.title} on Waffir!',
+                            onColorSelected: (color) {
+                              setState(() => selectedColor = color);
+                            },
                           ),
 
-                          // Prices
-                          ProductPriceSection(
-                            price: product.price,
-                            originalPrice: product.originalPrice,
-                            discountPercentage: product.discountPercentage,
-                          ),
+                        // Divider
+                        Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: colorScheme.outline.withOpacity(0.2),
+                        ),
 
-                          // Size and color selector
-                          if (product.availableSizes.isNotEmpty || product.availableColors.isNotEmpty)
-                            SizeColorSelector(
-                              availableSizes: product.availableSizes,
-                              availableColors: product.availableColors,
-                              selectedSize: selectedSize,
-                              selectedColor: selectedColor,
-                              onSizeSelected: (size) {
-                                setState(() => selectedSize = size);
-                              },
-                              onColorSelected: (color) {
-                                setState(() => selectedColor = color);
-                              },
-                            ),
+                        // Product info
+                        ProductInfoSection(
+                          title: staticProduct.title,
+                          description: staticProduct.description,
+                          brand: staticProduct.brand,
+                        ),
 
-                          // Divider
-                          Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: colorScheme.outline.withOpacity(0.2),
-                          ),
+                        // Divider
+                        Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: colorScheme.outline.withOpacity(0.2),
+                        ),
 
-                          // Product info
-                          ProductInfoSection(
-                            title: product.title,
-                            description: product.description,
-                            brand: product.brand,
-                          ),
-
-                          // Divider
-                          Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: colorScheme.outline.withOpacity(0.2),
-                          ),
-
-                          // Reviews section
-                          reviewsAsync.when(
-                            data: (reviews) => ReviewsSection(
-                              reviews: reviews,
-                              averageRating: averageRatingAsync.value,
-                              totalReviews: reviews.length,
-                              height: 714.2,
-                            ),
-                            loading: () => Container(
-                              height: 714.2,
-                              alignment: Alignment.center,
-                              child: const CircularProgressIndicator(),
-                            ),
-                            error: (_, __) => const SizedBox(height: 714.2),
-                          ),
-                        ],
-                      ),
+                        // Reviews section
+                        ReviewsSection(
+                          reviews: staticReviews,
+                          averageRating: staticAverageRating,
+                          totalReviews: staticReviews.length,
+                          height: responsive.scale(714.2),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-
-                // Back button (top left)
-                Positioned(
-                  top: 64,
-                  left: isRTL ? null : 16,
-                  right: isRTL ? 16 : null,
-                  child: _buildBackButton(context),
-                ),
-
-                // Bottom action buttons
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: _buildBottomBar(context, product),
+                  ),
                 ),
               ],
-            );
-          },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => _buildError(context, error.toString()),
+            ),
+
+            // Back button (top left)
+            Positioned(
+              top: responsive.scale(64),
+              left: isRTL ? null : responsive.scale(16),
+              right: isRTL ? responsive.scale(16) : null,
+              child: _buildBackButton(context),
+            ),
+
+            // Bottom action buttons
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: _buildBottomBar(context, staticProduct),
+            ),
+          ],
         ),
       ),
     );
@@ -174,6 +221,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   Widget _buildBackButton(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final responsive = context.responsive;
 
     return Container(
       decoration: BoxDecoration(
@@ -182,8 +230,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         boxShadow: [
           BoxShadow(
             color: const Color(0xFFF2F2F2),
-            blurRadius: 8,
-            spreadRadius: 2,
+            blurRadius: responsive.scale(8),
+            spreadRadius: responsive.scale(2),
           ),
         ],
       ),
@@ -191,7 +239,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         icon: Icon(
           Icons.arrow_back_ios_new,
           color: colorScheme.surface,
-          size: 20,
+          size: responsive.scale(20),
         ),
         onPressed: () {
           HapticFeedback.lightImpact();
@@ -203,16 +251,17 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   Widget _buildBottomBar(BuildContext context, product) {
     final colorScheme = Theme.of(context).colorScheme;
+    final responsive = context.responsive;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: responsive.scalePadding(const EdgeInsets.all(16)),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+            blurRadius: responsive.scale(10),
+            offset: responsive.scaleOffset(const Offset(0, -2)),
           ),
         ],
       ),
@@ -222,17 +271,17 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           children: [
             // Favorite button (circular)
             Container(
-              width: 44,
-              height: 44,
+              width: responsive.scale(44),
+              height: responsive.scale(44),
               decoration: const BoxDecoration(
                 color: Color(0xFF0F352D), // Dark green
                 shape: BoxShape.circle,
               ),
               child: IconButton(
-                icon: const Icon(
+                icon: Icon(
                     Icons.favorite_border,
                     color: Colors.white,
-                    size: 20,
+                    size: responsive.scale(20),
                   ),
                 onPressed: () {
                   HapticFeedback.mediumImpact();
@@ -241,7 +290,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               ),
             ),
 
-            const SizedBox(width: 16),
+            SizedBox(width: responsive.scale(16)),
 
             // Add to cart button
             Expanded(
@@ -257,7 +306,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     ),
                   );
                 },
-                width: 247,
+                width: responsive.scale(247),
               ),
             ),
           ],
@@ -266,60 +315,4 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     );
   }
 
-  Widget _buildNotFound(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.shopping_bag_outlined,
-            size: 64,
-            color: colorScheme.onSurfaceVariant.withOpacity(0.5),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Product not found',
-            style: textTheme.titleLarge?.copyWith(
-              color: colorScheme.onSurface,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildError(BuildContext context, String error) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: colorScheme.error,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Error loading product',
-            style: textTheme.titleLarge?.copyWith(
-              color: colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            error,
-            style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

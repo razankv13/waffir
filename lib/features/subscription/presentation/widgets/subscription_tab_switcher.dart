@@ -14,11 +14,7 @@ import 'package:waffir/core/utils/responsive_helper.dart';
 /// )
 /// ```
 class SubscriptionTabSwitcher extends StatelessWidget {
-  const SubscriptionTabSwitcher({
-    super.key,
-    required this.selectedTab,
-    required this.onTabChanged,
-  });
+  const SubscriptionTabSwitcher({super.key, required this.selectedTab, required this.onTabChanged});
 
   final SubscriptionPeriod selectedTab;
   final ValueChanged<SubscriptionPeriod> onTabChanged;
@@ -26,16 +22,14 @@ class SubscriptionTabSwitcher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
-    final theme = Theme.of(context);
+
 
     return Container(
       height: responsive.scale(64),
       padding: responsive.scalePadding(const EdgeInsets.all(4)),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: responsive.scaleBorderRadius(
-          BorderRadius.circular(9999),
-        ),
+        color: const Color(0xFF151515), // Figma Container fill
+        borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(9999)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -74,7 +68,7 @@ class _TabItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
-    final theme = Theme.of(context);
+    // Removed unused theme dependency as we use constant colors from Figma
 
     return GestureDetector(
       onTap: onTap,
@@ -83,12 +77,8 @@ class _TabItem extends StatelessWidget {
         curve: Curves.easeInOut,
         width: width,
         decoration: BoxDecoration(
-          color: isSelected
-              ? theme.colorScheme.primary
-              : Colors.transparent,
-          borderRadius: responsive.scaleBorderRadius(
-            BorderRadius.circular(9999),
-          ),
+          color: isSelected ? const Color(0xFF0F352D) : Colors.transparent,
+          borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(9999)),
         ),
         alignment: Alignment.center,
         child: Text(
@@ -97,11 +87,10 @@ class _TabItem extends StatelessWidget {
           maxLines: 2,
           overflow: TextOverflow.visible,
           style: AppTypography.labelLarge.copyWith(
+            fontFamily: 'Parkinsans', // Explicitly use Parkinsans
             fontSize: responsive.scaleFontSize(14, minSize: 12),
             fontWeight: FontWeight.w500,
-            color: isSelected
-                ? theme.colorScheme.onPrimary
-                : theme.colorScheme.surface,
+            color: isSelected ? const Color(0xFF00FF88) : Colors.white,
             height: 1.5,
           ),
         ),
@@ -111,7 +100,4 @@ class _TabItem extends StatelessWidget {
 }
 
 /// Subscription period enum
-enum SubscriptionPeriod {
-  monthly,
-  yearly,
-}
+enum SubscriptionPeriod { monthly, yearly }

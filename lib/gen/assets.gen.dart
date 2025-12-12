@@ -31,8 +31,22 @@ class $AssetsIconsGen {
   SvgGenImage get backButton =>
       const SvgGenImage('assets/icons/back_button.svg');
 
+  /// File path: assets/icons/bolt.svg
+  SvgGenImage get bolt => const SvgGenImage('assets/icons/bolt.svg');
+
   /// Directory path: assets/icons/categories
   $AssetsIconsCategoriesGen get categories => const $AssetsIconsCategoriesGen();
+
+  /// File path: assets/icons/chevron_right.svg
+  SvgGenImage get chevronRight =>
+      const SvgGenImage('assets/icons/chevron_right.svg');
+
+  /// File path: assets/icons/comment.svg
+  SvgGenImage get comment => const SvgGenImage('assets/icons/comment.svg');
+
+  /// File path: assets/icons/comment_figma.svg
+  SvgGenImage get commentFigma =>
+      const SvgGenImage('assets/icons/comment_figma.svg');
 
   /// File path: assets/icons/flag_sa.svg
   SvgGenImage get flagSa => const SvgGenImage('assets/icons/flag_sa.svg');
@@ -41,8 +55,32 @@ class $AssetsIconsGen {
   SvgGenImage get googleIcon =>
       const SvgGenImage('assets/icons/google_icon.svg');
 
+  /// File path: assets/icons/like_active.svg
+  SvgGenImage get likeActive =>
+      const SvgGenImage('assets/icons/like_active.svg');
+
+  /// File path: assets/icons/like_inactive.svg
+  SvgGenImage get likeInactive =>
+      const SvgGenImage('assets/icons/like_inactive.svg');
+
   /// Directory path: assets/icons/nav
   $AssetsIconsNavGen get nav => const $AssetsIconsNavGen();
+
+  /// File path: assets/icons/notification_bell.svg
+  SvgGenImage get notificationBell =>
+      const SvgGenImage('assets/icons/notification_bell.svg');
+
+  /// File path: assets/icons/plus.svg
+  SvgGenImage get plus => const SvgGenImage('assets/icons/plus.svg');
+
+  /// Directory path: assets/icons/profile
+  $AssetsIconsProfileGen get profile => const $AssetsIconsProfileGen();
+
+  /// File path: assets/icons/riyal.svg
+  SvgGenImage get riyal => const SvgGenImage('assets/icons/riyal.svg');
+
+  /// File path: assets/icons/tag.svg
+  SvgGenImage get tag => const SvgGenImage('assets/icons/tag.svg');
 
   /// Directory path: assets/icons
   String get path => 'assets/icons';
@@ -53,13 +91,27 @@ class $AssetsIconsGen {
     appleIcon,
     arrowIcon,
     backButton,
+    bolt,
+    chevronRight,
+    comment,
+    commentFigma,
     flagSa,
     googleIcon,
+    likeActive,
+    likeInactive,
+    notificationBell,
+    plus,
+    riyal,
+    tag,
   ];
 }
 
 class $AssetsImagesGen {
   const $AssetsImagesGen();
+
+  /// Directory path: assets/images/credit_cards
+  $AssetsImagesCreditCardsGen get creditCards =>
+      const $AssetsImagesCreditCardsGen();
 
   /// File path: assets/images/login_blur_shape.png
   AssetGenImage get loginBlurShape =>
@@ -231,6 +283,68 @@ class $AssetsIconsNavGen {
     profileIcon,
     storeIcon,
   ];
+}
+
+class $AssetsIconsProfileGen {
+  const $AssetsIconsProfileGen();
+
+  /// File path: assets/icons/profile/icon_language.svg
+  SvgGenImage get iconLanguage =>
+      const SvgGenImage('assets/icons/profile/icon_language.svg');
+
+  /// File path: assets/icons/profile/icon_my_city.svg
+  SvgGenImage get iconMyCity =>
+      const SvgGenImage('assets/icons/profile/icon_my_city.svg');
+
+  /// File path: assets/icons/profile/icon_notifications.svg
+  SvgGenImage get iconNotifications =>
+      const SvgGenImage('assets/icons/profile/icon_notifications.svg');
+
+  /// File path: assets/icons/profile/icon_personal_details.svg
+  SvgGenImage get iconPersonalDetails =>
+      const SvgGenImage('assets/icons/profile/icon_personal_details.svg');
+
+  /// File path: assets/icons/profile/icon_saved_deals.svg
+  SvgGenImage get iconSavedDeals =>
+      const SvgGenImage('assets/icons/profile/icon_saved_deals.svg');
+
+  /// Directory path: assets/icons/profile
+  String get path => 'assets/icons/profile';
+
+  /// List of all assets
+  List<SvgGenImage> get values => [
+    iconLanguage,
+    iconMyCity,
+    iconNotifications,
+    iconPersonalDetails,
+    iconSavedDeals,
+  ];
+}
+
+class $AssetsImagesCreditCardsGen {
+  const $AssetsImagesCreditCardsGen();
+
+  /// File path: assets/images/credit_cards/enbd_card.png
+  AssetGenImage get enbdCard =>
+      const AssetGenImage('assets/images/credit_cards/enbd_card.png');
+
+  /// File path: assets/images/credit_cards/rajhi_card.png
+  AssetGenImage get rajhiCard =>
+      const AssetGenImage('assets/images/credit_cards/rajhi_card.png');
+
+  /// File path: assets/images/credit_cards/sab_card.png
+  AssetGenImage get sabCard =>
+      const AssetGenImage('assets/images/credit_cards/sab_card.png');
+
+  /// File path: assets/images/credit_cards/snb_card.png
+  AssetGenImage get snbCard =>
+      const AssetGenImage('assets/images/credit_cards/snb_card.png');
+
+  /// Directory path: assets/images/credit_cards
+  String get path => 'assets/images/credit_cards';
+
+  /// List of all assets
+  List<AssetGenImage> get values => [enbdCard, rajhiCard, sabCard, snbCard];
 }
 
 class Assets {

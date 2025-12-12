@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
+import 'package:waffir/core/widgets/buttons/back_button.dart';
 import 'package:waffir/core/widgets/buttons/social_auth_button.dart';
 import 'package:waffir/core/widgets/inputs/phone_input_widget.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
@@ -88,11 +89,9 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
     final colorScheme = theme.colorScheme;
     final size = MediaQuery.of(context).size;
     final isTablet = size.width > 600;
-    final isDesktop = size.width > 900;
 
     // Responsive sizing
-    final horizontalPadding = isDesktop ? 48.0 : (isTablet ? 40.0 : 24.0);
-    final maxContentWidth = isTablet ? 500.0 : double.infinity;
+
 
     return Scaffold(
       body: Stack(
@@ -104,31 +103,7 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
           Positioned(
             top: 64,
             right: 16,
-            child: GestureDetector(
-              onTap: () => GoRouterHelper(context).pop(),
-              child: Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.chevron_right,
-                    color: Color(0xFF0F352D),
-                    size: 24,
-                  ),
-                ),
-              ),
-            ),
+            child: AppBackButton(onPressed: () => GoRouterHelper(context).pop()),
           ),
 
           // Content

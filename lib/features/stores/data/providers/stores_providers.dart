@@ -71,3 +71,12 @@ final filteredMallStoresProvider = Provider<List<StoreModel>>((ref) {
 
   return allMall.where((store) => store.category == selectedCategory).toList();
 });
+
+/// Provider for a single store by id
+final storeByIdProvider = Provider.family<StoreModel?, String>((ref, storeId) {
+  try {
+    return StoresMockData.stores.firstWhere((store) => store.id == storeId);
+  } catch (_) {
+    return null;
+  }
+});

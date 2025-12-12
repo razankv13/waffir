@@ -16,7 +16,7 @@ class TestHelpers {
     return ProviderScope(
       child: MaterialApp(
         theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
+        darkTheme: AppTheme.lightTheme,
         themeMode: themeMode,
         locale: locale,
         home: child,
@@ -46,7 +46,7 @@ class TestHelpers {
     return ProviderScope(
       child: MaterialApp(
         theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
+        darkTheme: AppTheme.lightTheme,
         themeMode: themeMode,
         home: Scaffold(body: child),
       ),

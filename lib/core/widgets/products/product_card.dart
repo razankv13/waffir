@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/widgets/products/badge_widget.dart';
 import 'package:waffir/core/widgets/products/card_actions.dart';
 import 'package:waffir/core/widgets/products/discount_tag_pill.dart';
@@ -29,6 +31,7 @@ import 'package:waffir/core/widgets/products/price_pill.dart';
 class ProductCard extends StatelessWidget {
   const ProductCard({
     super.key,
+    this.productId,
     required this.imageUrl,
     required this.title,
     this.salePrice,
@@ -45,6 +48,7 @@ class ProductCard extends StatelessWidget {
     this.isLiked = false,
   });
 
+  final String? productId;
   final String imageUrl;
   final String title;
   final String? salePrice;
@@ -65,7 +69,14 @@ class ProductCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: onTap ??
+          () {
+            if (productId == null) return;
+            context.pushNamed(
+              AppRouteNames.productDetail,
+              pathParameters: {'id': productId!},
+            );
+          },
       child: Container(
         decoration: BoxDecoration(
           color: colorScheme.surface,
@@ -184,12 +195,12 @@ class ProductCard extends StatelessWidget {
         // Title
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'Parkinsans',
             fontSize: 14,
             fontWeight: FontWeight.w700, // Bold from Figma
             height: 1.4, // Line height from Figma
-            color: Color(0xFF151515), // onSurface from Figma
+            color: Theme.of(context).colorScheme.onSurface,
           ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -207,7 +218,7 @@ class ProductCard extends StatelessWidget {
           const SizedBox(height: 12), // Gap from Figma
 
         // Price row with store name
-        _buildPriceRow(),
+        _buildPriceRow(context),
 
         const SizedBox(height: 12), // Gap from Figma
 
@@ -225,7 +236,7 @@ class ProductCard extends StatelessWidget {
   }
 
   /// Build price row with pill-styled prices and store name
-  Widget _buildPriceRow() {
+  Widget _buildPriceRow(BuildContext context) {
     return Row(
       children: [
         // Sale price pill
@@ -252,12 +263,12 @@ class ProductCard extends StatelessWidget {
           Expanded(
             child: Text(
               'At $storeName',
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Parkinsans',
                 fontSize: 12,
                 fontWeight: FontWeight.w500, // Medium
                 height: 1.15, // Line height from Figma
-                color: Color(0xFF595959), // Gray from Figma
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

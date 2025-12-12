@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/themes/extensions/promo_colors_extension.dart';
 
 /// Card actions widget - like and comment actions with counts
 ///
@@ -33,7 +35,8 @@ class CardActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    const Color actionColor = Color(0xFFA3A3A3); // Gray from Figma
+    final promo = Theme.of(context).extension<PromoColors>()!;
+    final Color actionColor = promo.actionCount;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -41,7 +44,7 @@ class CardActions extends StatelessWidget {
         // Like action
         if (likeCount != null)
           _ActionItem(
-            icon: isLiked ? Icons.favorite : Icons.favorite_border,
+            svgAsset: 'assets/icons/like_inactive.svg',
             iconColor: isLiked ? colorScheme.error : actionColor,
             count: likeCount!,
             onTap: onLike,
@@ -53,7 +56,7 @@ class CardActions extends StatelessWidget {
         // Comment action
         if (commentCount != null)
           _ActionItem(
-            icon: Icons.chat_bubble_outline,
+            svgAsset: 'assets/icons/comment.svg',
             iconColor: actionColor,
             count: commentCount!,
             onTap: onComment,
@@ -66,13 +69,13 @@ class CardActions extends StatelessWidget {
 /// Individual action item (like or comment)
 class _ActionItem extends StatelessWidget {
   const _ActionItem({
-    required this.icon,
+    required this.svgAsset,
     required this.iconColor,
     required this.count,
     this.onTap,
   });
 
-  final IconData icon;
+  final String svgAsset;
   final Color iconColor;
   final int count;
   final VoidCallback? onTap;
@@ -88,10 +91,11 @@ class _ActionItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Icon (16×16px from Figma)
-            Icon(
-              icon,
-              size: 16,
-              color: iconColor,
+            SvgPicture.asset(
+              svgAsset,
+              width: 16,
+              height: 16,
+              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
             ),
             const SizedBox(width: 4), // Gap between icon and count
             // Count text
@@ -99,11 +103,11 @@ class _ActionItem extends StatelessWidget {
               width: 15.15, // Width from Figma
               child: Text(
                 count.toString(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'Parkinsans',
                   fontSize: 12,
                   fontWeight: FontWeight.w400, // Regular
-                  color: Color(0xFFA3A3A3), // Gray from Figma
+                  color: iconColor,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.visible,

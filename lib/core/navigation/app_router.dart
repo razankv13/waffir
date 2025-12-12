@@ -12,9 +12,11 @@ import 'package:waffir/features/onboarding/presentation/screens/onboarding_scree
 import 'package:waffir/features/onboarding/presentation/screens/splash_screen.dart';
 import 'package:waffir/features/onboarding/presentation/screens/city_selection_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/profile_screen/profile_screen.dart';
-import 'package:waffir/features/profile/presentation/screens/manage_personal_details_screen.dart';
+import 'package:waffir/features/profile/presentation/screens/my_account.dart';
+import 'package:waffir/features/profile/presentation/screens/manage_personal_details_form_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/notification_settings_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/saved_deals_screen.dart';
+import 'package:waffir/features/profile/presentation/screens/favorites_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/change_city_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/language_selection_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/help_center_screen.dart';
@@ -23,11 +25,12 @@ import 'package:waffir/features/settings/presentation/screens/settings_screen.da
 import 'package:waffir/features/subscription/presentation/screens/paywall_screen.dart';
 import 'package:waffir/features/subscription/presentation/screens/subscription_management_screen.dart';
 import 'package:waffir/features/deals/presentation/screens/hot_deals_screen.dart';
+import 'package:waffir/features/deals/presentation/screens/notifications_screen.dart';
 import 'package:waffir/features/stores/presentation/screens/stores_screen.dart';
 import 'package:waffir/features/credit_cards/presentation/screens/credit_cards_screen.dart';
 import 'package:waffir/features/credit_cards/presentation/screens/add_credit_card_screen.dart';
 import 'package:waffir/features/products/presentation/screens/product_detail_screen.dart';
-import 'package:waffir/features/products/presentation/screens/store_page_screen.dart';
+import 'package:waffir/features/stores/presentation/screens/store_detail_screen/store_detail_screen.dart';
 import 'package:waffir/core/widgets/navigation/custom_bottom_nav.dart';
 
 // Global navigator key
@@ -153,9 +156,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const ProfileEditScreen(),
               ),
               GoRoute(
+                path: '/my-account',
+                name: AppRouteNames.profileMyAccount,
+                builder: (context, state) => const MyAccount(),
+              ),
+              GoRoute(
                 path: '/personal-details',
                 name: AppRouteNames.profilePersonalDetails,
-                builder: (context, state) => const ManagePersonalDetailsScreen(),
+                builder: (context, state) => const ManagePersonalDetailsFormScreen(),
               ),
               GoRoute(
                 path: '/saved-deals',
@@ -163,9 +171,17 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const SavedDealsScreen(),
               ),
               GoRoute(
+                path: '/favorites',
+                name: AppRouteNames.profileFavorites,
+                builder: (context, state) => const FavoritesScreen(),
+              ),
+              GoRoute(
                 path: '/change-city',
                 name: AppRouteNames.profileChangeCity,
-                builder: (context, state) => const ChangeCityScreen(),
+                builder: (context, state) {
+                  final showBackButton = state.extra is bool ? state.extra as bool : true;
+                  return ChangeCityScreen(showBackButton: showBackButton);
+                },
               ),
               GoRoute(
                 path: '/language',
@@ -181,6 +197,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/delete-account',
                 name: AppRouteNames.profileDeleteAccount,
                 builder: (context, state) => const DeleteAccountScreen(),
+              ),
+              GoRoute(
+                path: '/selected-credit-cards',
+                name: AppRouteNames.profileSelectedCreditCards,
+                builder: (context, state) => const CreditCardsScreen(showBackButton: true),
               ),
             ],
           ),
@@ -213,16 +234,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
 
       // Root redirect to Deals (default home)
-      GoRoute(
-        path: '/',
-        redirect: (context, state) => AppRoutes.deals,
-      ),
+      GoRoute(path: '/', redirect: (context, state) => AppRoutes.deals),
 
       // Notifications (Outside shell - full screen experience)
       GoRoute(
         path: AppRoutes.notifications,
         name: AppRouteNames.notifications,
-        builder: (context, state) => const Placeholder(), // TODO: Replace with NotificationsScreen
+        builder: (context, state) => const NotificationsScreen(),
       ),
 
       // Subscription Routes (Outside shell for fullscreen experience)
@@ -251,7 +269,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: AppRouteNames.storeDetail,
         builder: (context, state) {
           final storeId = state.pathParameters['id']!;
-          return StorePageScreen(storeId: storeId);
+          return StoreDetailScreen(storeId: storeId);
         },
       ),
 

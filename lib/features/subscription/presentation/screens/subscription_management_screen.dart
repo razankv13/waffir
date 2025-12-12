@@ -1,13 +1,13 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:waffir/core/constants/app_typography.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
+import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/subscription/presentation/providers/subscription_providers.dart';
 import 'package:waffir/features/subscription/presentation/widgets/subscription_benefit_item.dart';
 import 'package:waffir/features/subscription/presentation/widgets/subscription_option_card.dart';
@@ -21,12 +21,10 @@ class SubscriptionManagementScreen extends ConsumerStatefulWidget {
   const SubscriptionManagementScreen({super.key});
 
   @override
-  ConsumerState<SubscriptionManagementScreen> createState() =>
-      _SubscriptionManagementScreenState();
+  ConsumerState<SubscriptionManagementScreen> createState() => _SubscriptionManagementScreenState();
 }
 
-class _SubscriptionManagementScreenState
-    extends ConsumerState<SubscriptionManagementScreen> {
+class _SubscriptionManagementScreenState extends ConsumerState<SubscriptionManagementScreen> {
   SubscriptionPeriod _selectedPeriod = SubscriptionPeriod.monthly;
   SubscriptionOption _selectedOption = SubscriptionOption.individual;
   final TextEditingController _promoController = TextEditingController();
@@ -45,6 +43,7 @@ class _SubscriptionManagementScreenState
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
+        top: false,
         child: Stack(
           children: [
             // Blurred gradient background shape (matches Figma)
@@ -68,23 +67,15 @@ class _SubscriptionManagementScreenState
                 ),
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.0),
-                    ),
-                  ),
+                  child: Container(decoration: BoxDecoration(color: Colors.white.withOpacity(0.0))),
                 ),
               ),
             ),
             // Main scrollable content
             SingleChildScrollView(
-              padding: responsive.scalePadding(
-                const EdgeInsets.only(top: 108, bottom: 120),
-              ),
+              padding: responsive.scalePadding(const EdgeInsets.only(top: 108, bottom: 120)),
               child: Padding(
-                padding: responsive.scalePadding(
-                  const EdgeInsets.symmetric(horizontal: 16),
-                ),
+                padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
                 child: Column(
                   children: [
                     // Header section
@@ -128,17 +119,8 @@ class _SubscriptionManagementScreenState
               top: 0,
               left: 0,
               child: Padding(
-                padding: responsive.scalePadding(
-                  const EdgeInsets.only(top: 64, left: 16),
-                ),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    size: responsive.scale(24),
-                    color: theme.colorScheme.onSurface,
-                  ),
-                  onPressed: () => context.pop(),
-                ),
+                padding: responsive.scalePadding(const EdgeInsets.only(top: 64, left: 16)),
+                child: WaffirBackButton(onTap: () => context.pop(), size: responsive.scale(44)),
               ),
             ),
 
@@ -149,13 +131,20 @@ class _SubscriptionManagementScreenState
               right: 0,
               child: Container(
                 color: theme.colorScheme.surface,
-                padding: responsive.scalePadding(
-                  const EdgeInsets.all(16),
-                ),
+                padding: responsive.scalePadding(const EdgeInsets.all(16)),
                 child: Center(
-                  child: SizedBox(
+                  child: Container(
                     width: responsive.scale(330),
                     height: responsive.scale(48),
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF0F352D).withOpacity(0.15),
+                          offset: const Offset(0, 8),
+                          blurRadius: 16,
+                        ),
+                      ],
+                    ),
                     child: AppButton.primary(
                       onPressed: _handleProceed,
                       child: Text(
@@ -176,11 +165,7 @@ class _SubscriptionManagementScreenState
     );
   }
 
-  Widget _buildHeader(
-    BuildContext context,
-    ResponsiveHelper responsive,
-    ThemeData theme,
-  ) {
+  Widget _buildHeader(BuildContext context, ResponsiveHelper responsive, ThemeData theme) {
     return Column(
       children: [
         // Title
@@ -212,23 +197,15 @@ class _SubscriptionManagementScreenState
           ),
         ),
       ],
-    )
-        .animate()
-        .fadeIn(duration: 400.ms)
-        .slideY(begin: -0.2, duration: 400.ms);
+    ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.2, duration: 400.ms);
   }
 
-  Widget _buildSubscriptionOptions(
-    BuildContext context,
-    ResponsiveHelper responsive,
-  ) {
+  Widget _buildSubscriptionOptions(BuildContext context, ResponsiveHelper responsive) {
     return Column(
       children: [
         // Individual option
         SubscriptionOptionCard(
-          price: _selectedPeriod == SubscriptionPeriod.monthly
-              ? '4 SAR / month'
-              : '38 SAR / month',
+          price: _selectedPeriod == SubscriptionPeriod.monthly ? '4 SAR / month' : '38 SAR / month',
           userInfo: '1 User',
           isMultiUser: false,
           isSelected: _selectedOption == SubscriptionOption.individual,
@@ -236,10 +213,7 @@ class _SubscriptionManagementScreenState
             setState(() => _selectedOption = SubscriptionOption.individual);
           },
           badges: _getIndividualBadges(),
-        )
-            .animate()
-            .fadeIn(delay: 200.ms, duration: 400.ms)
-            .slideX(begin: -0.2, duration: 400.ms),
+        ).animate().fadeIn(delay: 200.ms, duration: 400.ms).slideX(begin: -0.2, duration: 400.ms),
         SizedBox(height: responsive.scale(24)),
         // Family option
         SubscriptionOptionCard(
@@ -253,33 +227,19 @@ class _SubscriptionManagementScreenState
             setState(() => _selectedOption = SubscriptionOption.family);
           },
           badges: _getFamilyBadges(),
-        )
-            .animate()
-            .fadeIn(delay: 300.ms, duration: 400.ms)
-            .slideX(begin: -0.2, duration: 400.ms),
+        ).animate().fadeIn(delay: 300.ms, duration: 400.ms).slideX(begin: -0.2, duration: 400.ms),
       ],
     );
   }
 
   List<SubscriptionBadge> _getIndividualBadges() {
     if (_selectedPeriod == SubscriptionPeriod.monthly) {
-      return const [
-        SubscriptionBadge(
-          text: '1st Month Free',
-          position: BadgePosition.left,
-        ),
-      ];
+      return const [SubscriptionBadge(text: '1st Month Free', position: BadgePosition.left)];
     } else {
       // Yearly
       return const [
-        SubscriptionBadge(
-          text: '20% OFF',
-          position: BadgePosition.left,
-        ),
-        SubscriptionBadge(
-          text: '1st Month Free',
-          position: BadgePosition.center,
-        ),
+        SubscriptionBadge(text: '20% OFF', position: BadgePosition.left),
+        SubscriptionBadge(text: '1st Month Free', position: BadgePosition.center),
       ];
     }
   }
@@ -292,10 +252,7 @@ class _SubscriptionManagementScreenState
           position: BadgePosition.left,
           isSpecial: true,
         ),
-        SubscriptionBadge(
-          text: '1st Month Free',
-          position: BadgePosition.right,
-        ),
+        SubscriptionBadge(text: '1st Month Free', position: BadgePosition.right),
       ];
     } else {
       // Yearly
@@ -305,22 +262,14 @@ class _SubscriptionManagementScreenState
           position: BadgePosition.left,
           isSpecial: true,
         ),
-        SubscriptionBadge(
-          text: '1st Month Free',
-          position: BadgePosition.right,
-        ),
+        SubscriptionBadge(text: '1st Month Free', position: BadgePosition.right),
       ];
     }
   }
 
-  Widget _buildBenefitsList(
-    BuildContext context,
-    ResponsiveHelper responsive,
-  ) {
+  Widget _buildBenefitsList(BuildContext context, ResponsiveHelper responsive) {
     return Padding(
-      padding: responsive.scalePadding(
-        const EdgeInsets.symmetric(horizontal: 32),
-      ),
+      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 32)),
       child: Column(
         children: [
           const SubscriptionBenefitItem(text: 'Cancel anytime'),
@@ -330,17 +279,10 @@ class _SubscriptionManagementScreenState
           const SubscriptionBenefitItem(text: 'One app for all offers'),
         ],
       ),
-    )
-        .animate()
-        .fadeIn(delay: 400.ms, duration: 400.ms)
-        .slideY(begin: 0.2, duration: 400.ms);
+    ).animate().fadeIn(delay: 400.ms, duration: 400.ms).slideY(begin: 0.2, duration: 400.ms);
   }
 
-  Widget _buildPromoSection(
-    BuildContext context,
-    ResponsiveHelper responsive,
-    ThemeData theme,
-  ) {
+  Widget _buildPromoSection(BuildContext context, ResponsiveHelper responsive, ThemeData theme) {
     return Column(
       children: [
         // Promo question
@@ -366,14 +308,10 @@ class _SubscriptionManagementScreenState
             Container(
               width: responsive.scale(232),
               height: responsive.scale(56),
-              padding: responsive.scalePadding(
-                const EdgeInsets.symmetric(horizontal: 16),
-              ),
+              padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: responsive.scaleBorderRadius(
-                  BorderRadius.circular(16),
-                ),
+                borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(16)),
               ),
               child: Center(
                 child: TextField(
@@ -404,10 +342,7 @@ class _SubscriptionManagementScreenState
               child: Container(
                 width: responsive.scale(44),
                 height: responsive.scale(44),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: theme.colorScheme.primary, shape: BoxShape.circle),
                 child: Icon(
                   Icons.arrow_forward,
                   size: responsive.scale(20),
@@ -418,16 +353,12 @@ class _SubscriptionManagementScreenState
           ],
         ),
       ],
-    )
-        .animate()
-        .fadeIn(delay: 500.ms, duration: 400.ms)
-        .slideY(begin: 0.2, duration: 400.ms);
+    ).animate().fadeIn(delay: 500.ms, duration: 400.ms).slideY(begin: 0.2, duration: 400.ms);
   }
 
   void _handleProceed() {
     // Get subscription notifier
-    final subscriptionNotifier =
-        ref.read(subscriptionNotifierProvider.notifier);
+    final subscriptionNotifier = ref.read(subscriptionNotifierProvider.notifier);
 
     // TODO: Implement actual subscription purchase logic
     // This would involve:
@@ -462,7 +393,4 @@ class _SubscriptionManagementScreenState
 }
 
 /// Subscription option enum
-enum SubscriptionOption {
-  individual,
-  family,
-}
+enum SubscriptionOption { individual, family }

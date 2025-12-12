@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:waffir/core/constants/app_colors.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
 /// Phone number input widget with country selector
@@ -102,7 +103,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
             child: Container(
               height: 56,
               decoration: BoxDecoration(
-                color: colorScheme.surface,
+                color: AppColors.gray01,
                 borderRadius: BorderRadius.circular(16),
               ),
               padding: const EdgeInsets.all(16),
@@ -180,6 +181,7 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget>
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
                         contentPadding: EdgeInsets.zero,
+                        fillColor: AppColors.gray01,
                         isDense: true,
                       ),
                     ),

@@ -27,7 +27,8 @@ dependencies:
     sdk: flutter
 
   # State Management
-  flutter_riverpod:
+  hooks_riverpod: ^3.0.3
+  flutter_hooks: ^0.21.3+1
   riverpod_annotation:
   
   # Code Generation
@@ -142,13 +143,26 @@ flutter:
     - assets/icons/
     - assets/icons/nav/
     - assets/icons/categories/
+    - assets/icons/profile/
     - assets/translations/
+    - assets/images/credit_cards/
 
   # Fonts
   fonts:
     - family: Parkinsans
       fonts:
-        - asset: assets/fonts/Parkinsans[wght].ttf
+        - asset: assets/fonts/parkinsans-light.ttf
+          weight: 300
+        - asset: assets/fonts/parkinsans-regular.ttf
+          weight: 400
+        - asset: assets/fonts/parkinsans-medium.ttf
+          weight: 500
+        - asset: assets/fonts/parkinsans-semibold.ttf
+          weight: 600
+        - asset: assets/fonts/parkinsans-bold.ttf
+          weight: 700
+        - asset: assets/fonts/parkinsans-extrabold.ttf
+          weight: 800
 
 flutter_launcher_icons:
   android: "launcher_icon"

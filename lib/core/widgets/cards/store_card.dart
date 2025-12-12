@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:waffir/core/navigation/routes.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/products/discount_tag_pill.dart';
 
 /// A pixel-perfect card widget for displaying store information
 ///
-/// Specifications from Figma (Node 54:2352):
+/// Specifications from Figma (Node 54:3054):
 ///
 /// **Main Structure:**
 /// - Column layout with 4px gap
@@ -45,6 +48,7 @@ import 'package:waffir/core/widgets/products/discount_tag_pill.dart';
 /// Example usage:
 /// ```dart
 /// StoreCard(
+///   storeId: 'store_001',
 ///   imageUrl: 'https://example.com/store.jpg',
 ///   storeName: 'Levis - Black Friday Online wide Store',
 ///   discountText: '20% off',
@@ -56,11 +60,12 @@ import 'package:waffir/core/widgets/products/discount_tag_pill.dart';
 /// ```
 ///
 /// **Legacy fields (backward compatibility):**
-/// - category: Optional, not in Figma variant 54:2352
-/// - rating: Optional, not in Figma variant 54:2352
+/// - category: Optional, not in Figma variant 54:3054
+/// - rating: Optional, not in Figma variant 54:3054
 class StoreCard extends StatelessWidget {
   const StoreCard({
     super.key,
+    this.storeId,
     required this.imageUrl,
     required this.storeName,
     this.category,
@@ -72,6 +77,7 @@ class StoreCard extends StatelessWidget {
     this.onFavoriteToggle,
   });
 
+  final String? storeId;
   final String imageUrl;
   final String storeName;
 
@@ -94,9 +100,27 @@ class StoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
+    final imageSize = responsive.scale(160);
+    final favoriteOffset = responsive.scale(8);
+    final favoriteSize = responsive.scale(32);
+    final favoriteIconSize = responsive.scale(18);
+    final gapSmall = responsive.scale(4);
+    final gapMedium = responsive.scale(8);
+    final borderWidth = responsive.scaleWithRange(1, min: 1, max: 1.5);
+    final borderColor = Colors.black.withOpacity(0.05);
+
     return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      onTap:
+          onTap ??
+          () {
+            if (storeId == null) return;
+            context.pushNamed(
+              AppRouteNames.storeDetail,
+              pathParameters: {AppRouteParams.id: storeId!},
+            );
+          },
+      borderRadius: BorderRadius.zero,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,75 +128,77 @@ class StoreCard extends StatelessWidget {
           // Image Container (160×160px, padding 8px, white bg, 1px border)
           // Uses Stack to overlay favorite button
           SizedBox(
-            width: 160,
-            height: 160,
+            width: imageSize,
+            height: imageSize,
             child: Stack(
               children: [
                 // Main image container
-                Container(
-                  width: 160,
-                  height: 160,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFFFFF), // White background from Figma
-                    border: Border.all(
-                      color: Colors.black.withValues(alpha: 0.05), // rgba(0,0,0,0.05)
-                      width: 1,
+                ClipRect(
+                  child: Container(
+                    width: imageSize,
+                    height: imageSize,
+                    padding: responsive.scalePadding(const EdgeInsets.all(8)),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFFFFF), // White background from Figma
+                      border: Border.all(
+                        color: borderColor, // rgba(0,0,0,0.05)
+                        width: borderWidth,
+                      ),
+                      borderRadius: BorderRadius.zero, // No border radius per Figma
                     ),
-                    borderRadius: BorderRadius.zero, // No border radius per Figma
-                  ),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.contain, // Contain (not cover) per Figma
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: const Color(0xFFFFFFFF),
-                        child: const Icon(
-                          Icons.store,
-                          size: 32,
-                          color: Color(0xFF9CA3AF),
-                        ),
-                      );
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Container(
-                        color: const Color(0xFFFFFFFF),
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Color(0xFF00D9A3),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.contain, // Contain (not cover) per Figma
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: const Color(0xFFFFFFFF),
+                          child: Icon(
+                            Icons.store,
+                            size: responsive.scale(32),
+                            color: const Color(0xFF9CA3AF),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          color: const Color(0xFFFFFFFF),
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Color(0xFF00D9A3),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
 
                 // Favorite button (top-left corner)
                 if (onFavoriteToggle != null)
                   Positioned(
-                    top: 8,
-                    left: 8,
+                    top: favoriteOffset,
+                    left: favoriteOffset,
                     child: GestureDetector(
                       onTap: onFavoriteToggle,
                       child: Container(
-                        width: 32,
-                        height: 32,
+                        width: favoriteSize,
+                        height: favoriteSize,
                         decoration: BoxDecoration(
                           color: const Color(0xFFF5F5F5), // Light gray background
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: responsive.scale(4),
+                              offset: responsive.scaleOffset(const Offset(0, 2)),
                             ),
                           ],
                         ),
                         child: Icon(
                           isFavorite ? Icons.star : Icons.star_outline,
-                          size: 18,
+                          size: favoriteIconSize,
                           color: isFavorite
                               ? const Color(0xFFFBBF24) // Gold when favorited
                               : const Color(0xFF595959), // Gray when not favorited
@@ -183,12 +209,10 @@ class StoreCard extends StatelessWidget {
               ],
             ),
           ),
-
-          const SizedBox(height: 4), // 4px gap between image and info
-
+          SizedBox(height: gapSmall), // 4px gap between image and info
           // Info Container (160px width, column with 8px gap, NO padding)
           SizedBox(
-            width: 160,
+            width: imageSize,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,12 +225,12 @@ class StoreCard extends StatelessWidget {
                     // Store Name Text
                     Text(
                       storeName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Parkinsans',
-                        fontSize: 14,
+                        fontSize: responsive.scaleFontSize(14),
                         fontWeight: FontWeight.w700, // Bold (700)
                         height: 1.4, // 1.4em line height from Figma
-                        color: Color(0xFF151515), // Exact color from Figma
+                        color: const Color(0xFF151515), // Exact color from Figma
                       ),
                       maxLines: 2, // Allow wrapping (not single line)
                       overflow: TextOverflow.ellipsis,
@@ -216,38 +240,35 @@ class StoreCard extends StatelessWidget {
 
                 // Discount Tag (8px gap from store name via parent column)
                 if (discountText != null) ...[
-                  const SizedBox(height: 8),
-                  DiscountTagPill(
-                    discountText: discountText!,
-                    showIcon: true,
-                  ),
+                  SizedBox(height: gapMedium),
+                  DiscountTagPill(discountText: discountText!, showIcon: true),
                 ],
 
                 // Distance Text (8px gap from previous element)
                 if (distance != null) ...[
-                  const SizedBox(height: 8),
+                  SizedBox(height: gapMedium),
                   Text(
                     distance!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Parkinsans',
-                      fontSize: 12,
+                      fontSize: responsive.scaleFontSize(12),
                       fontWeight: FontWeight.w500,
                       height: 1.15, // 1.15em line height from Figma
-                      color: Color(0xFF595959), // Exact color from Figma
+                      color: const Color(0xFF595959), // Exact color from Figma
                     ),
                   ),
                 ],
 
                 // Legacy: Category and Rating (backward compatibility)
                 if (category != null && distance == null) ...[
-                  const SizedBox(height: 8),
+                  SizedBox(height: gapMedium),
                   Text(
                     category!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Parkinsans',
-                      fontSize: 12,
+                      fontSize: responsive.scaleFontSize(12),
                       fontWeight: FontWeight.w400,
-                      color: Color(0xFFA3A3A3),
+                      color: const Color(0xFFA3A3A3),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -255,22 +276,18 @@ class StoreCard extends StatelessWidget {
                 ],
 
                 if (rating != null) ...[
-                  const SizedBox(height: 8),
+                  SizedBox(height: gapMedium),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.star,
-                        size: 12,
-                        color: Color(0xFFFBBF24),
-                      ),
-                      const SizedBox(width: 4),
+                      Icon(Icons.star, size: responsive.scale(12), color: const Color(0xFFFBBF24)),
+                      SizedBox(width: gapSmall),
                       Text(
                         rating!.toStringAsFixed(1),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Parkinsans',
-                          fontSize: 12,
+                          fontSize: responsive.scaleFontSize(12),
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF151515),
+                          color: const Color(0xFF151515),
                         ),
                       ),
                     ],

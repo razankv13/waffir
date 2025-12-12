@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 
 /// Gender options enum
 enum Gender {
@@ -44,6 +45,13 @@ class GenderSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final responsive = ResponsiveHelper(context);
+    final double optionGap = responsive.scale(80);
+    final double controlGap = responsive.scale(10);
+    final textStyle = theme.textTheme.bodyMedium?.copyWith(
+      fontSize: responsive.scaleFontSize(16, minSize: 14),
+      color: colorScheme.onSurfaceVariant,
+    );
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -56,11 +64,9 @@ class GenderSelector extends StatelessWidget {
             children: [
               Text(
                 femaleLabel,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
+                style: textStyle,
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: controlGap),
               _RoundedSquareCheckbox(
                 isSelected: selectedGender == Gender.female,
                 colorScheme: colorScheme,
@@ -69,7 +75,7 @@ class GenderSelector extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(width: 80),
+        SizedBox(width: optionGap),
 
         // Male option (left side in RTL)
         GestureDetector(
@@ -79,11 +85,9 @@ class GenderSelector extends StatelessWidget {
             children: [
               Text(
                 maleLabel,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
+                style: textStyle,
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: controlGap),
               _RoundedSquareCheckbox(
                 isSelected: selectedGender == Gender.male,
                 colorScheme: colorScheme,
@@ -114,24 +118,28 @@ class _RoundedSquareCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = ResponsiveHelper(context);
+    final double boxSize = responsive.scaleWithRange(24, min: 20, max: 28);
+    final double borderWidth = responsive.scaleWithRange(2, min: 1.5, max: 2.5);
+    final double iconSize = responsive.scaleWithRange(16, min: 12, max: 18);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
-      width: 24,
-      height: 24,
+      width: boxSize,
+      height: boxSize,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(4)),
         color: isSelected ? colorScheme.primary : Colors.transparent,
         border: Border.all(
           color: isSelected ? colorScheme.primary : colorScheme.outline,
-          width: 2,
+          width: borderWidth,
         ),
       ),
       child: isSelected
           ? Icon(
               Icons.check,
-              size: 16,
-              color: colorScheme.onPrimary,
+              size: iconSize,
+              color: colorScheme.secondary,
             )
           : null,
     );

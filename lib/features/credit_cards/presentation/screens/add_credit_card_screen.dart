@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:waffir/core/widgets/switches/custom_toggle_switch.dart';
 import 'package:waffir/features/credit_cards/data/providers/credit_cards_providers.dart';
 import 'package:waffir/features/credit_cards/presentation/widgets/bank_selection_item.dart';
 

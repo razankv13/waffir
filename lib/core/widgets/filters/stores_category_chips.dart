@@ -53,7 +53,7 @@ class StoresCategoryChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 64,
+      height: 66,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -123,7 +123,6 @@ class _CategoryChip extends StatelessWidget {
             ),
 
             const SizedBox(height: 4), // 4px gap per Figma
-
             // Label
             Text(
               label,

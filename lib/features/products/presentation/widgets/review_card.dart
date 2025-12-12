@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:waffir/core/widgets/products/rating_display.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:waffir/features/products/domain/entities/review.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:intl/intl.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 
 /// Review card widget for displaying individual product reviews
 class ReviewCard extends StatelessWidget {
@@ -18,9 +20,10 @@ class ReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final responsive = context.responsive;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: responsive.scalePadding(const EdgeInsets.all(16)),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -37,7 +40,7 @@ class ReviewCard extends StatelessWidget {
             children: [
               // User avatar
               CircleAvatar(
-                radius: 20,
+                radius: responsive.scale(20),
                 backgroundColor: colorScheme.primaryContainer,
                 backgroundImage: review.userAvatarUrl != null
                     ? NetworkImage(review.userAvatarUrl!)
@@ -53,9 +56,9 @@ class ReviewCard extends StatelessWidget {
                     : null,
               ),
 
-              const SizedBox(width: 12),
+              SizedBox(width: responsive.scale(12)),
 
-              // User name and verified badge
+              // User name and date
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,74 +67,66 @@ class ReviewCard extends StatelessWidget {
                       children: [
                         Text(
                           review.userName ?? 'Anonymous',
-                          style: textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: colorScheme.onSurface,
+                          style: const TextStyle(
+                            fontFamily: 'Parkinsans',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF151515),
                           ),
                         ),
-                        if (review.isVerifiedPurchase) ...[
-                          const SizedBox(width: 6),
-                          Icon(
-                            Icons.verified,
-                            size: 16,
-                            color: colorScheme.primary,
-                          ),
-                        ],
                       ],
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: responsive.scale(2)),
                     Text(
-                      review.createdAt != null
-                          ? timeago.format(review.createdAt!)
-                          : 'Recently',
-                      style: textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
+                      review.createdAt != null ? DateFormat('MMM yyyy').format(review.createdAt!) : '',
+                      style: const TextStyle(
+                        fontFamily: 'Parkinsans',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFFA3A3A3),
                       ),
                     ),
                   ],
                 ),
               ),
 
-              // Rating
-              RatingDisplay(
-                rating: review.rating,
-                size: RatingSize.small,
-                showRatingText: false,
-              ),
             ],
           ),
 
-          const SizedBox(height: 12),
+          SizedBox(height: responsive.scale(12)),
 
           // Review comment
           Text(
             review.comment,
-            style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurface,
-              height: 1.5,
+            style: const TextStyle(
+              fontFamily: 'Parkinsans',
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF151515),
+              height: 1.4,
             ),
           ),
 
           // Review images (if any)
           if (review.imageUrls.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            SizedBox(height: responsive.scale(12)),
             SizedBox(
-              height: 80,
+              height: responsive.scale(80),
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: review.imageUrls.length,
-                separatorBuilder: (context, index) => const SizedBox(width: 8),
+                separatorBuilder: (context, index) => SizedBox(width: responsive.scale(8)),
                 itemBuilder: (context, index) {
                   return ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(responsive.scale(8)),
                     child: Image.network(
                       review.imageUrls[index],
-                      width: 80,
-                      height: 80,
+                      width: responsive.scale(80),
+                      height: responsive.scale(80),
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Container(
-                        width: 80,
-                        height: 80,
+                        width: responsive.scale(80),
+                        height: responsive.scale(80),
                         color: colorScheme.surfaceContainerHighest,
                         child: Icon(
                           Icons.image_not_supported_outlined,
@@ -145,32 +140,70 @@ class ReviewCard extends StatelessWidget {
             ),
           ],
 
-          const SizedBox(height: 12),
+          SizedBox(height: responsive.scale(12)),
 
-          // Helpful button
-          InkWell(
-            onTap: onHelpfulTap,
-            borderRadius: BorderRadius.circular(8),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.thumb_up_outlined,
-                    size: 16,
-                    color: colorScheme.onSurfaceVariant,
+          // Bottom row: like/dislike tag pill and relative time
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              InkWell(
+                borderRadius: BorderRadius.circular(1000),
+                onTap: onHelpfulTap,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF2F2F2),
+                    borderRadius: BorderRadius.circular(1000),
                   ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Helpful (${review.helpfulCount})',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  padding: EdgeInsets.symmetric(horizontal: responsive.scale(6)),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: responsive.scale(40),
+                        height: responsive.scale(40),
+                        alignment: Alignment.center,
+                        child: SvgPicture.asset(
+                          'assets/icons/comment_figma.svg',
+                          width: responsive.scale(20),
+                          height: responsive.scale(20),
+                        ),
+                      ),
+                      SizedBox(width: responsive.scale(6)),
+                      Text(
+                        '${review.helpfulCount}',
+                        style: const TextStyle(
+                          fontFamily: 'Parkinsans',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF595959),
+                          height: 1.15,
+                        ),
+                      ),
+                      SizedBox(width: responsive.scale(6)),
+                      Container(
+                        width: responsive.scale(40),
+                        height: responsive.scale(40),
+                        alignment: Alignment.center,
+                        child: SvgPicture.asset(
+                          'assets/icons/comment_figma.svg',
+                          width: responsive.scale(20),
+                          height: responsive.scale(20),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              Text(
+                review.createdAt != null ? timeago.format(review.createdAt!) : '',
+                style: const TextStyle(
+                  fontFamily: 'Parkinsans',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFFA3A3A3),
+                  height: 1.4,
+                ),
+              ),
+            ],
           ),
         ],
       ),

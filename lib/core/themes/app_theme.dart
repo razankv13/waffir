@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:waffir/core/constants/app_colors.dart';
 import 'package:waffir/core/constants/app_spacing.dart';
 import 'package:waffir/core/constants/app_typography.dart';
+import 'package:waffir/core/themes/extensions/promo_colors_extension.dart';
 
 class AppTheme {
   AppTheme._();
@@ -16,6 +17,7 @@ class AppTheme {
 
       // Material 3
       useMaterial3: true,
+      extensions: <ThemeExtension<dynamic>>[PromoColors.light(AppColors.lightColorScheme)],
 
       // Typography
       textTheme: AppTypography.textTheme.apply(
@@ -30,22 +32,16 @@ class AppTheme {
         backgroundColor: AppColors.lightColorScheme.surface,
         foregroundColor: AppColors.lightColorScheme.onSurface,
         surfaceTintColor: AppColors.lightColorScheme.surfaceTint,
-        titleTextStyle: AppTypography.titleLarge.copyWith(
-          color: AppColors.textPrimary,
-        ),
+        titleTextStyle: AppTypography.titleLarge.copyWith(color: AppColors.textPrimary),
         systemOverlayStyle: SystemUiOverlayStyle.dark,
-        iconTheme: const IconThemeData(
-          color: AppColors.textPrimary,
-        ),
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
       ),
 
       // Card Theme
       cardTheme: CardThemeData(
         elevation: AppSpacing.elevation2,
         margin: AppSpacing.paddingSm,
-        shape: const RoundedRectangleBorder(
-          borderRadius: AppSpacing.cardBorderRadius,
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: AppSpacing.cardBorderRadius),
         color: AppColors.lightColorScheme.surface,
       ),
 
@@ -53,13 +49,8 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: AppSpacing.elevation2,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppSpacing.buttonBorderRadius,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          shape: const RoundedRectangleBorder(borderRadius: AppSpacing.buttonBorderRadius),
           textStyle: AppTypography.button,
         ),
       ),
@@ -67,13 +58,8 @@ class AppTheme {
       // Outlined Button Theme
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppSpacing.buttonBorderRadius,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          shape: const RoundedRectangleBorder(borderRadius: AppSpacing.buttonBorderRadius),
           side: BorderSide(color: AppColors.lightColorScheme.outline),
           textStyle: AppTypography.button,
         ),
@@ -82,22 +68,15 @@ class AppTheme {
       // Text Button Theme
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm,
-            vertical: AppSpacing.xs2,
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppSpacing.buttonBorderRadius,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs2),
+          shape: const RoundedRectangleBorder(borderRadius: AppSpacing.buttonBorderRadius),
           textStyle: AppTypography.button,
         ),
       ),
 
       // Icon Button Theme
       iconButtonTheme: IconButtonThemeData(
-        style: IconButton.styleFrom(
-          padding: const EdgeInsets.all(AppSpacing.xs2),
-        ),
+        style: IconButton.styleFrom(padding: const EdgeInsets.all(AppSpacing.xs2)),
       ),
 
       // Input Decoration Theme
@@ -114,10 +93,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: AppSpacing.inputBorderRadius,
-          borderSide: BorderSide(
-            color: AppColors.lightColorScheme.primary,
-            width: 2,
-          ),
+          borderSide: BorderSide(color: AppColors.lightColorScheme.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: AppSpacing.inputBorderRadius,
@@ -125,10 +101,7 @@ class AppTheme {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: AppSpacing.inputBorderRadius,
-          borderSide: BorderSide(
-            color: AppColors.lightColorScheme.error,
-            width: 2,
-          ),
+          borderSide: BorderSide(color: AppColors.lightColorScheme.error, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm,
@@ -160,9 +133,7 @@ class AppTheme {
         indicatorColor: AppColors.lightColorScheme.secondaryContainer,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return AppTypography.labelSmall.copyWith(
-              color: AppColors.lightColorScheme.onSurface,
-            );
+            return AppTypography.labelSmall.copyWith(color: AppColors.lightColorScheme.onSurface);
           }
           return AppTypography.labelSmall.copyWith(
             color: AppColors.lightColorScheme.onSurfaceVariant,
@@ -170,13 +141,9 @@ class AppTheme {
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return IconThemeData(
-              color: AppColors.lightColorScheme.onSecondaryContainer,
-            );
+            return IconThemeData(color: AppColors.lightColorScheme.onSecondaryContainer);
           }
-          return IconThemeData(
-            color: AppColors.lightColorScheme.onSurfaceVariant,
-          );
+          return IconThemeData(color: AppColors.lightColorScheme.onSurfaceVariant);
         }),
       ),
 
@@ -185,10 +152,7 @@ class AppTheme {
         labelColor: AppColors.lightColorScheme.primary,
         unselectedLabelColor: AppColors.lightColorScheme.onSurfaceVariant,
         indicator: UnderlineTabIndicator(
-          borderSide: BorderSide(
-            color: AppColors.lightColorScheme.primary,
-            width: 2,
-          ),
+          borderSide: BorderSide(color: AppColors.lightColorScheme.primary, width: 2),
         ),
         labelStyle: AppTypography.labelLarge,
         unselectedLabelStyle: AppTypography.labelLarge,
@@ -198,15 +162,9 @@ class AppTheme {
       dialogTheme: DialogThemeData(
         elevation: AppSpacing.elevation6,
         backgroundColor: AppColors.lightColorScheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-        ),
-        titleTextStyle: AppTypography.headlineSmall.copyWith(
-          color: AppColors.textPrimary,
-        ),
-        contentTextStyle: AppTypography.bodyMedium.copyWith(
-          color: AppColors.textSecondary,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusXl)),
+        titleTextStyle: AppTypography.headlineSmall.copyWith(color: AppColors.textPrimary),
+        contentTextStyle: AppTypography.bodyMedium.copyWith(color: AppColors.textSecondary),
       ),
 
       // Bottom Sheet Theme
@@ -214,9 +172,7 @@ class AppTheme {
         backgroundColor: AppColors.lightColorScheme.surface,
         elevation: AppSpacing.elevation5,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppSpacing.radiusXl),
-          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(AppSpacing.radiusXl)),
         ),
       ),
 
@@ -228,9 +184,7 @@ class AppTheme {
         ),
         actionTextColor: AppColors.lightColorScheme.inversePrimary,
         elevation: AppSpacing.elevation4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusMd)),
         behavior: SnackBarBehavior.floating,
       ),
 
@@ -239,9 +193,7 @@ class AppTheme {
         backgroundColor: AppColors.lightColorScheme.primaryContainer,
         foregroundColor: AppColors.lightColorScheme.onPrimaryContainer,
         elevation: AppSpacing.elevation3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusXl)),
       ),
 
       // Chip Theme
@@ -250,9 +202,7 @@ class AppTheme {
         selectedColor: AppColors.lightColorScheme.secondaryContainer,
         labelStyle: AppTypography.labelLarge,
         side: BorderSide(color: AppColors.lightColorScheme.outline),
-        shape: const RoundedRectangleBorder(
-          borderRadius: AppSpacing.borderRadiusXl,
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: AppSpacing.borderRadiusXl),
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs3),
       ),
 
@@ -331,9 +281,7 @@ class AppTheme {
           color: AppColors.lightColorScheme.onSurfaceVariant,
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-        shape: const RoundedRectangleBorder(
-          borderRadius: AppSpacing.borderRadiusLg,
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: AppSpacing.borderRadiusLg),
       ),
 
       // Drawer Theme
@@ -341,9 +289,7 @@ class AppTheme {
         backgroundColor: AppColors.lightColorScheme.surface,
         elevation: AppSpacing.elevation1,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.horizontal(
-            right: Radius.circular(AppSpacing.radiusXl),
-          ),
+          borderRadius: BorderRadius.horizontal(right: Radius.circular(AppSpacing.radiusXl)),
         ),
       ),
 
@@ -356,10 +302,7 @@ class AppTheme {
         textStyle: AppTypography.bodySmall.copyWith(
           color: AppColors.lightColorScheme.onInverseSurface,
         ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xs2,
-          vertical: AppSpacing.xs,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs2, vertical: AppSpacing.xs),
       ),
 
       // Banner Theme

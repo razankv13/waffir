@@ -297,7 +297,7 @@ class AppTypography {
   static const TextStyle storeSectionHeader = TextStyle(
     fontFamily: primaryFontFamily,
     fontSize: 16,
-    fontWeight: FontWeight.w700, // Exact: 700 from Figma
+    fontWeight: bold, // Exact: 700 from Figma
     height: 1.0, // Line-height 16px / font-size 16px = 1.0
     letterSpacing: normalLetterSpacing,
   );

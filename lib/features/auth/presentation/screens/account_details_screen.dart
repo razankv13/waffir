@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
-import 'package:waffir/core/widgets/buttons/back_button.dart';
+import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/core/widgets/inputs/gender_selector.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
@@ -65,10 +66,31 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
     final size = MediaQuery.of(context).size;
     final isRTL = context.locale.languageCode == 'ar';
     final isSmallScreen = size.height < 700;
+    final responsive = ResponsiveHelper(context);
+
+    final horizontalPadding = responsive.horizontalPadding(mobile: 16, tablet: 24, desktop: 32);
+    final double headingTopSpacing = responsive.scale(80);
+    final double headerGap = responsive.scale(32);
+    final double labelSpacing = responsive.scale(17);
+    final double fieldSpacing = responsive.scale(16);
+    final double checkboxGap = responsive.scale(10);
+    final double termsSpacing = responsive.scale(105);
+    final double termsToButtonSpacing = responsive.scale(32);
+    final double buttonWidth = responsive.scaleWithRange(330, min: 280, max: 360);
+    final double buttonBottomPadding =
+        isSmallScreen ? responsive.scaleWithMin(60, min: 48) : responsive.scaleWithRange(120, min: 90, max: 140);
+    final double backButtonHorizontalPadding = responsive.scaleWithMin(16, min: 16);
+    final double backButtonTopPadding = responsive.scaleWithMin(64, min: 48);
+    final double genderSelectorHeight = responsive.scaleWithRange(56, min: 48, max: 64);
+    final double blurHorizontalOffset = responsive.scale(40);
+    final double blurTopOffset = responsive.scale(100);
+    final double blurShapeWidth = responsive.scale(467.78);
+    final double blurShapeHeight = responsive.scale(461.3);
 
     return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
+        resizeToAvoidBottomInset: false, // Prevent keyboard from pushing layout
         body: Stack(
           children: [
             // White background
@@ -76,15 +98,15 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
 
             // Blur shape background (positioned top-left, mirrored for RTL)
             Positioned(
-              left: isRTL ? null : -40,
-              right: isRTL ? -40 : null,
-              top: -100,
+              left: isRTL ? null : -blurHorizontalOffset,
+              right: isRTL ? -blurHorizontalOffset : null,
+              top: -blurTopOffset,
               child: Transform.scale(
                 scaleX: isRTL ? -1.0 : 1.0,
                 child: Image.asset(
                   Assets.images.loginBlurShape.path,
-                  width: 467.78,
-                  height: 461.3,
+                  width: blurShapeWidth,
+                  height: blurShapeHeight,
                   fit: BoxFit.contain,
                 ),
               ),
@@ -96,23 +118,28 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                 children: [
                   // Back button (positioned for RTL awareness)
                   Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(children: [AppBackButton(size: 38, showBackground: true)]),
+                    padding: EdgeInsets.only(
+                      left: backButtonHorizontalPadding,
+                      right: backButtonHorizontalPadding,
+                      top: backButtonTopPadding,
+                    ),
+                    child: const Row(children: [WaffirBackButton()]),
                   ),
 
                   // Scrollable content
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.symmetric(horizontal: size.width > 600 ? 24 : 16),
+                      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const SizedBox(height: 80),
+                          SizedBox(height: headingTopSpacing),
 
                           // Title - 20px, Parkinsans 700
                           Text(
                             'تفاصيل الحساب',
                             style: theme.textTheme.titleLarge?.copyWith(
-                              fontSize: 20,
+                              fontSize: responsive.scaleFontSize(20, minSize: 18),
                               fontWeight: FontWeight.w700,
                               height: 1.15,
                               color: colorScheme.onSurface,
@@ -120,7 +147,21 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                             textAlign: TextAlign.center,
                           ),
 
-                          const SizedBox(height: 16),
+                          SizedBox(height: headerGap),
+
+                          Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: Text(
+                              'الاسم',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontSize: responsive.scaleFontSize(16, minSize: 14),
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: labelSpacing),
 
                           // Name input - 16px border radius
                           _PillTextField(
@@ -131,11 +172,11 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                             onChanged: (_) => setState(() {}),
                           ),
 
-                          const SizedBox(height: 11),
+                          SizedBox(height: fieldSpacing),
 
                           // Gender selection
                           SizedBox(
-                            height: 56,
+                            height: genderSelectorHeight,
                             child: Center(
                               child: GenderSelector(
                                 selectedGender: _selectedGender,
@@ -148,7 +189,7 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 11),
+                          SizedBox(height: fieldSpacing),
 
                           // Referral code input - 16px border radius
                           _PillTextField(
@@ -158,8 +199,7 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                             theme: theme,
                           ),
 
-                          const SizedBox(height: 105),
-
+                          SizedBox(height: termsSpacing),
                           // Terms checkbox - 14px text, 4px border radius
                           GestureDetector(
                             onTap: () {
@@ -174,15 +214,40 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                                   isSelected: _acceptedTerms,
                                   colorScheme: colorScheme,
                                 ),
-                                const SizedBox(width: 10),
+                                SizedBox(width: checkboxGap),
                                 Flexible(
-                                  child: Text(
-                                    'أوافق على الشروط وسياسة الخصوصية',
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.4,
-                                      color: colorScheme.onSurfaceVariant,
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'أوافق على الشروط ',
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            fontSize: responsive.scaleFontSize(14, minSize: 12),
+                                            fontWeight: FontWeight.w400,
+                                            height: 1.4,
+                                            color: colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: 'و',
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            fontSize: responsive.scaleFontSize(14, minSize: 12),
+                                            fontWeight: FontWeight.w400,
+                                            height: 1.4,
+                                            color: colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: 'سياسة الخصوصية',
+                                          style: theme.textTheme.bodySmall?.copyWith(
+                                            fontSize: responsive.scaleFontSize(14, minSize: 12),
+                                            fontWeight: FontWeight.w700, // Bold
+                                            height: 1.4,
+                                            color: colorScheme.onSurfaceVariant,
+                                            decoration: TextDecoration.underline,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -190,7 +255,7 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 40),
+                          SizedBox(height: termsToButtonSpacing),
                         ],
                       ),
                     ),
@@ -198,13 +263,17 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
 
                   // Confirm button - 330x48, 30px border radius
                   Padding(
-                    padding: EdgeInsets.only(left: 16, right: 16, bottom: isSmallScreen ? 60 : 120),
+                    padding: EdgeInsets.only(
+                      left: horizontalPadding,
+                      right: horizontalPadding,
+                      bottom: buttonBottomPadding,
+                    ),
                     child: Center(
                       child: AppButton.primary(
                         text: 'تأكيد',
                         onPressed: _isFormValid ? _confirm : null,
-                        width: 330,
-                        borderRadius: BorderRadius.circular(30),
+                        width: buttonWidth,
+                        borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
                       ),
                     ),
                   ),
@@ -236,26 +305,28 @@ class _PillTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = ResponsiveHelper(context);
+    final double fieldHeight = responsive.scaleWithRange(56, min: 48, max: 64);
     return Container(
-      height: 56,
+      height: fieldHeight,
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(16), // Changed from 30 to 16
+        borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(16)), // Changed from 30 to 16
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 22),
+      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 22)),
       child: Center(
         child: TextField(
           controller: controller,
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium?.copyWith(
-            fontSize: 16, // Explicit 16px
+            fontSize: responsive.scaleFontSize(16, minSize: 14), // Explicit 16px
             fontWeight: FontWeight.w500, // Parkinsans 500
             color: colorScheme.onSurface,
           ),
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: theme.textTheme.bodyMedium?.copyWith(
-              fontSize: 16, // Explicit 16px
+              fontSize: responsive.scaleFontSize(16, minSize: 14), // Explicit 16px
               fontWeight: FontWeight.w500, // Parkinsans 500
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
             ),
@@ -283,20 +354,24 @@ class _RoundedSquareCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = ResponsiveHelper(context);
+    final double boxSize = responsive.scaleWithRange(24, min: 20, max: 28);
+    final double borderWidth = responsive.scaleWithRange(2, min: 1.5, max: 2.5);
+    final double iconSize = responsive.scaleWithRange(16, min: 12, max: 18);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
-      width: 24,
-      height: 24,
+      width: boxSize,
+      height: boxSize,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4), // Changed from 6 to 4
+        borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(4)), // Changed from 6 to 4
         color: isSelected ? colorScheme.primary : Colors.transparent,
-        border: Border.all(color: isSelected ? colorScheme.primary : colorScheme.outline, width: 2),
+        border: Border.all(color: isSelected ? colorScheme.primary : colorScheme.outline, width: borderWidth),
       ),
       child: isSelected
           ? Icon(
               Icons.check,
-              size: 16,
+              size: iconSize,
               color: colorScheme.secondary, // Changed to secondary (#00FF88)
             )
           : null,

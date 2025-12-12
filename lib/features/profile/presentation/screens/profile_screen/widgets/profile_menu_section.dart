@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:waffir/core/extensions/context_extensions.dart';
+import 'package:waffir/gen/assets.gen.dart';
 import 'package:waffir/core/widgets/profile/profile_card.dart';
 import 'package:waffir/core/widgets/profile/profile_menu_item.dart';
 
@@ -61,42 +63,62 @@ class ProfileMenuSection extends StatelessWidget {
         children: [
           // Personal Details
           ProfileMenuItem(
-            icon: const Icon(Icons.person_outline, size: 24),
-            label: 'Personal Details',
+            icon: Assets.icons.profile.iconPersonalDetails.svg(
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(context.colorScheme.primary, BlendMode.srcIn),
+            ),
+            label: 'My Account',
             onTap: onPersonalDetailsTap,
           ),
 
           // Saved Deals
           ProfileMenuItem(
-            icon: const Icon(Icons.favorite_outline, size: 24),
-            label: 'Saved Deals',
+            icon: Assets.icons.profile.iconSavedDeals.svg(
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(context.colorScheme.primary, BlendMode.srcIn),
+            ),
+            label: 'Favourites',
             onTap: onSavedDealsTap,
           ),
 
           // My City
           ProfileMenuItem(
-            icon: const Icon(Icons.location_on_outlined, size: 24),
-            label: 'My City',
+            icon: Assets.icons.profile.iconMyCity.svg(
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(context.colorScheme.primary, BlendMode.srcIn),
+            ),
+            label: 'Change City',
             onTap: onMyCityTap,
           ),
 
           // Notifications
           ProfileMenuItem(
-            icon: const Icon(Icons.notifications_outlined, size: 24),
+            icon: Assets.icons.profile.iconNotifications.svg(
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(context.colorScheme.primary, BlendMode.srcIn),
+            ),
             label: 'Notifications',
             onTap: onNotificationsTap,
           ),
 
           // Language
           ProfileMenuItem(
-            icon: const Icon(Icons.language, size: 24),
+            icon: Assets.icons.profile.iconLanguage.svg(
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(context.colorScheme.primary, BlendMode.srcIn),
+            ),
             label: 'Language',
             onTap: onLanguageTap,
           ),
 
           // Help Center (no divider on last item)
           ProfileMenuItem(
-            icon: const Icon(Icons.help_outline, size: 24),
+            icon: Icon(Icons.help_outline, size: 24, color: context.colorScheme.primary),
             label: 'Help Center',
             onTap: onHelpCenterTap,
             showDivider: false, // Last item has no divider

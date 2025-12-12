@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/themes/extensions/promo_colors_extension.dart';
 
 /// Discount tag pill widget - pill-shaped discount badge
 ///
@@ -23,10 +25,11 @@ class DiscountTagPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final promo = Theme.of(context).extension<PromoColors>()!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: const Color(0xFFDCFCE7), // Light green from Figma
+        color: promo.discountBg,
         borderRadius: BorderRadius.circular(100), // Fully rounded pill
       ),
       child: Row(
@@ -34,21 +37,22 @@ class DiscountTagPill extends StatelessWidget {
         children: [
           if (showIcon) ...[
             // Tag icon (16×16px)
-            const Icon(
-              Icons.local_offer,
-              size: 16,
-              color: Color(0xFF0F352D),
+            SvgPicture.asset(
+              'assets/icons/tag.svg',
+              width: 16,
+              height: 16,
+              colorFilter: ColorFilter.mode(promo.discountText, BlendMode.srcIn),
             ),
             const SizedBox(width: 4), // Gap between icon and text
           ],
           Text(
             discountText,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Parkinsans',
               fontSize: 12,
               fontWeight: FontWeight.w500, // Medium
               height: 1.15, // Line height from Figma
-              color: Color(0xFF0F352D), // Dark green from Figma
+              color: promo.discountText,
             ),
           ),
         ],
