@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:waffir/core/constants/app_colors.dart';
 import 'package:waffir/core/constants/app_spacing.dart';
 import 'package:waffir/core/constants/app_typography.dart';
+import 'package:waffir/core/themes/extensions/notifications_alerts_theme.dart';
 import 'package:waffir/core/themes/extensions/promo_colors_extension.dart';
 import 'package:waffir/core/themes/figma_product_page/product_page_theme.dart';
 
@@ -22,6 +23,7 @@ class AppTheme {
       extensions: <ThemeExtension<dynamic>>[
         PromoColors.light(AppColors.lightColorScheme),
         ProductPageTheme.light,
+        NotificationsAlertsTheme.light(),
       ],
 
       // Typography

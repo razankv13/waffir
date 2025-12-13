@@ -1,124 +1,114 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/themes/extensions/notifications_alerts_theme.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 
-/// A card widget for displaying deal alerts in notifications
+/// Deal alert card for notifications screen (Figma component 7774:4257)
+///
+/// Displays a minimal deal alert with:
+/// - 64×64 avatar tile with letter/initial
+/// - Title and subtitle text
+/// - Chevron-right indicator
 ///
 /// Example usage:
 /// ```dart
 /// DealCard(
-///   title: 'New Deal Alert',
-///   description: 'Nike Air Max 2025 - 20% OFF',
-///   timestamp: '2 hours ago',
-///   imageUrl: 'https://example.com/product.jpg',
+///   initial: 'A',
+///   title: 'Apple iPhone 16',
+///   subtitle: 'Rating.. +10 likes',
 ///   onTap: () => navigateToDeal(),
 /// )
 /// ```
 class DealCard extends StatelessWidget {
   const DealCard({
     super.key,
+    required this.initial,
     required this.title,
-    required this.description,
-    this.timestamp,
-    this.imageUrl,
+    required this.subtitle,
     this.onTap,
-    this.isRead = false,
   });
 
+  final String initial;
   final String title;
-  final String description;
-  final String? timestamp;
-  final String? imageUrl;
+  final String subtitle;
   final VoidCallback? onTap;
-  final bool isRead;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final naTheme = Theme.of(context).extension<NotificationsAlertsTheme>()!;
+    final responsive = ResponsiveHelper(context);
 
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: responsive.scalePadding(const EdgeInsets.symmetric(vertical: 8)),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Deal Image (optional)
-            if (imageUrl != null)
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: colorScheme.surfaceContainerHighest,
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    imageUrl!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Icon(
-                        Icons.local_fire_department,
-                        size: 24,
-                        color: colorScheme.onSurfaceVariant,
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-            // Gap
-            if (imageUrl != null) const SizedBox(width: 12),
-
-            // Deal Info
+            // Left: Avatar tile + texts
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  Text(
-                    title,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontSize: 14,
-                      fontWeight: isRead ? FontWeight.w500 : FontWeight.w700,
-                      color: colorScheme.onSurface,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (timestamp != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      timestamp!,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: colorScheme.onSurfaceVariant,
+                  // Avatar tile with initial letter
+                  Container(
+                    width: responsive.scale(64),
+                    height: responsive.scale(64),
+                    decoration: BoxDecoration(
+                      color: naTheme.dealTileBackground,
+                      borderRadius: BorderRadius.circular(responsive.scale(8)),
+                      border: Border.all(
+                        color: naTheme.dealTileBorder,
+                        width: responsive.scale(1.600000023841858),
                       ),
                     ),
-                  ],
+                    alignment: Alignment.center,
+                    child: Text(
+                      initial,
+                      style: naTheme.dealLetterStyle.copyWith(
+                        color: naTheme.dealTileLetterColor,
+                        fontSize: responsive.scaleFontSize(20, minSize: 16),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(width: responsive.scale(12)),
+
+                  // Title and subtitle column
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: naTheme.dealTitleStyle.copyWith(
+                            color: naTheme.textPrimary,
+                            fontSize: responsive.scaleFontSize(16, minSize: 14),
+                          ),
+                        ),
+                        SizedBox(height: responsive.scale(12)),
+                        Text(
+                          subtitle,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: naTheme.dealSubtitleStyle.copyWith(
+                            color: naTheme.textPrimary,
+                            fontSize: responsive.scaleFontSize(12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
 
-            // Unread indicator
-            if (!isRead)
-              Container(
-                width: 8,
-                height: 8,
-                margin: const EdgeInsets.only(top: 8),
-                decoration: BoxDecoration(color: colorScheme.primary, shape: BoxShape.circle),
-              ),
+            // Right: Chevron indicator
+            SvgPicture.asset(
+              'assets/icons/chevron_right.svg',
+              width: responsive.scale(24),
+              height: responsive.scale(24),
+              colorFilter: ColorFilter.mode(naTheme.chevronColor, BlendMode.srcIn),
+            ),
           ],
         ),
       ),

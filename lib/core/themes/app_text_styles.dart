@@ -135,4 +135,102 @@ class AppTextStyles {
     fontSize: 14,
     height: 1.0,
   );
+
+  // --- Notifications & Alerts Screen (Figma node: 7774:3441) ---
+
+  // Section title ("My deal alerts", "Popular Alerts")
+  static const TextStyle notificationsSectionTitle = TextStyle(
+    fontFamily: 'Parkinsans',
+    fontWeight: FontWeight.w700,
+    fontSize: 16,
+    height: 1.0,
+  );
+
+  // Filter selected state
+  static const TextStyle notificationsFilterSelected = TextStyle(
+    fontFamily: 'Parkinsans',
+    fontWeight: FontWeight.w700,
+    fontSize: 14,
+    height: 1.4,
+  );
+
+  // Filter unselected state
+  static const TextStyle notificationsFilterUnselected = TextStyle(
+    fontFamily: 'Parkinsans',
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    height: 1.4,
+  );
+
+  // Main title ("Don't miss out!")
+  static const TextStyle notificationsTitle = TextStyle(
+    fontFamily: 'Parkinsans',
+    fontWeight: FontWeight.w700,
+    fontSize: 18,
+    height: 1.0,
+  );
+
+  // Subtitle ("Get notified when great deals drop!")
+  static const TextStyle notificationsSubtitle = TextStyle(
+    fontFamily: 'Parkinsans',
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    height: 1.149999976158142,
+  );
+
+  // Deal card title
+  static const TextStyle notificationsDealTitle = TextStyle(
+    fontFamily: 'Parkinsans',
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+    height: 1.149999976158142,
+  );
+
+  // Deal card subtitle
+  static const TextStyle notificationsDealSubtitle = TextStyle(
+    fontFamily: 'Parkinsans',
+    fontWeight: FontWeight.w400,
+    fontSize: 11.899999618530273,
+    height: 1.1499999919859298,
+  );
+
+  // Deal card letter/initial
+  static const TextStyle notificationsDealLetter = TextStyle(
+    fontFamily: 'Parkinsans',
+    fontWeight: FontWeight.w800,
+    fontSize: 20,
+    height: 1.15,
+  );
+
+  // Alert card title
+  static const TextStyle notificationsAlertTitle = TextStyle(
+    fontFamily: 'Parkinsans',
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+    height: 1.149999976158142,
+  );
+
+  // Add button text
+  static const TextStyle notificationsAddButton = TextStyle(
+    fontFamily: 'Parkinsans',
+    fontWeight: FontWeight.w500,
+    fontSize: 12,
+    height: 1.1499999364217122,
+  );
+
+  // Search label
+  static const TextStyle notificationsSearchLabel = TextStyle(
+    fontFamily: 'Parkinsans',
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    height: 1.2857142857142858,
+  );
+
+  // Search placeholder
+  static const TextStyle notificationsSearchPlaceholder = TextStyle(
+    fontFamily: 'Parkinsans',
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+    height: 1.3333333333333333,
+  );
 }

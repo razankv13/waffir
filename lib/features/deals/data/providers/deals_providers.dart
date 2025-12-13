@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:waffir/features/deals/data/mock_data/alerts_mock_data.dart';
 import 'package:waffir/features/deals/data/mock_data/deals_mock_data.dart';
+import 'package:waffir/features/deals/data/mock_data/system_notifications_mock_data.dart';
 import 'package:waffir/features/deals/data/models/deal_model.dart';
 import 'package:waffir/features/deals/domain/entities/alert.dart';
 
@@ -73,4 +74,27 @@ final dealNotificationsProvider = Provider<List<DealNotification>>((ref) {
 /// Provider for unread notifications count
 final unreadNotificationsCountProvider = Provider<int>((ref) {
   return DealNotificationsMockData.unreadNotifications.length;
+});
+
+/// Provider for system notifications
+final systemNotificationsProvider = Provider<List<SystemNotification>>((ref) {
+  return SystemNotificationsMockData.notifications;
+});
+
+/// Provider for unread system notifications count
+final unreadSystemNotificationsCountProvider = Provider<int>((ref) {
+  return SystemNotificationsMockData.unreadNotifications.length;
+});
+
+/// State notifier for notifications screen filter toggle
+class NotificationsFilterNotifier extends StateNotifier<bool> {
+  NotificationsFilterNotifier() : super(true); // true = Deal Alerts, false = Notifications
+
+  void showDealAlerts() => state = true;
+  void showNotifications() => state = false;
+}
+
+/// Provider for notifications filter toggle
+final notificationsFilterProvider = StateNotifierProvider<NotificationsFilterNotifier, bool>((ref) {
+  return NotificationsFilterNotifier();
 });

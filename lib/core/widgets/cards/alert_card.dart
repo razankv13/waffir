@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/themes/extensions/notifications_alerts_theme.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 
-/// A card widget for displaying popular alerts
+/// Alert card for notifications screen (Figma component 7774:4697 + 7774:6283)
+///
+/// Displays a popular alert with:
+/// - 48×48 image tile
+/// - Alert title
+/// - "Add" button with plus icon
 ///
 /// Example usage:
 /// ```dart
 /// AlertCard(
-///   title: 'Electronics Sale',
-///   description: 'Get notified when electronics go on sale',
-///   icon: Icons.phone_android,
+///   title: 'Laptops',
+///   imageUrl: 'https://example.com/laptop.png',
 ///   isSubscribed: false,
 ///   onToggle: (value) => print('Subscribed: $value'),
 /// )
@@ -16,100 +23,107 @@ class AlertCard extends StatelessWidget {
   const AlertCard({
     super.key,
     required this.title,
-    required this.description,
-    this.icon,
+    this.imageUrl,
     this.isSubscribed = false,
     this.onToggle,
   });
 
   final String title;
-  final String description;
-  final IconData? icon;
+  final String? imageUrl;
   final bool isSubscribed;
   final ValueChanged<bool>? onToggle;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final naTheme = Theme.of(context).extension<NotificationsAlertsTheme>()!;
+    final responsive = ResponsiveHelper(context);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: responsive.scalePadding(const EdgeInsets.all(16)),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
+        color: naTheme.alertCardBackground,
+        borderRadius: BorderRadius.circular(responsive.scale(8)),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Icon
-          if (icon != null)
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: colorScheme.surface,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                icon,
-                size: 24,
-                color: colorScheme.primary,
-              ),
-            ),
-
-          // Gap
-          if (icon != null) const SizedBox(width: 12),
-
-          // Alert Info
+          // Left: Image tile + title
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Text(
-                  title,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
+                // Image tile (48×48)
+                Container(
+                  width: responsive.scale(48),
+                  height: responsive.scale(48),
+                  decoration: BoxDecoration(
+                    color: naTheme.addButtonBackground,
+                    borderRadius: BorderRadius.circular(responsive.scale(8)),
+                    border: Border.all(color: naTheme.alertImageBorder, width: responsive.scale(1)),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  child: imageUrl != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(responsive.scale(8)),
+                          child: Image.network(
+                            imageUrl!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const SizedBox.shrink();
+                            },
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: colorScheme.onSurfaceVariant,
+
+                SizedBox(width: responsive.scale(12)),
+
+                // Alert title
+                Expanded(
+                  child: Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: naTheme.alertTitleStyle.copyWith(
+                      color: naTheme.textPrimary,
+                      fontSize: responsive.scaleFontSize(16, minSize: 14),
+                    ),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
 
-          // Subscribe/Unsubscribe Button
-          TextButton(
-            onPressed: () => onToggle?.call(!isSubscribed),
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              backgroundColor: isSubscribed
-                  ? colorScheme.primary
-                  : colorScheme.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+          // Right: Add button
+          InkWell(
+            onTap: () => onToggle?.call(!isSubscribed),
+            borderRadius: BorderRadius.circular(responsive.scale(100)),
+            child: Container(
+              height: responsive.scale(40),
+              padding: responsive.scalePadding(
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               ),
-            ),
-            child: Text(
-              isSubscribed ? 'Subscribed' : 'Subscribe',
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: isSubscribed
-                    ? colorScheme.onPrimary
-                    : colorScheme.primary,
+              decoration: BoxDecoration(
+                color: naTheme.addButtonBackground,
+                borderRadius: BorderRadius.circular(responsive.scale(100)),
+                border: Border.all(color: naTheme.addButtonBorder, width: responsive.scale(1)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Add',
+                    style: naTheme.addButtonTextStyle.copyWith(
+                      color: naTheme.textPrimary,
+                      fontSize: responsive.scaleFontSize(12, minSize: 10),
+                    ),
+                  ),
+                  SizedBox(width: responsive.scale(4)),
+                  SvgPicture.asset(
+                    'assets/icons/plus.svg',
+                    width: responsive.scale(16),
+                    height: responsive.scale(16),
+                    colorFilter: ColorFilter.mode(naTheme.plusIconColor, BlendMode.srcIn),
+                  ),
+                ],
               ),
             ),
           ),
