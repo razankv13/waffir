@@ -73,11 +73,19 @@ class $AssetsIconsGen {
   /// File path: assets/icons/plus.svg
   SvgGenImage get plus => const SvgGenImage('assets/icons/plus.svg');
 
+  /// Directory path: assets/icons/product_page
+  $AssetsIconsProductPageGen get productPage =>
+      const $AssetsIconsProductPageGen();
+
   /// Directory path: assets/icons/profile
   $AssetsIconsProfileGen get profile => const $AssetsIconsProfileGen();
 
   /// File path: assets/icons/riyal.svg
   SvgGenImage get riyal => const SvgGenImage('assets/icons/riyal.svg');
+
+  /// Directory path: assets/icons/store_detail
+  $AssetsIconsStoreDetailGen get storeDetail =>
+      const $AssetsIconsStoreDetailGen();
 
   /// File path: assets/icons/tag.svg
   SvgGenImage get tag => const SvgGenImage('assets/icons/tag.svg');
@@ -113,6 +121,10 @@ class $AssetsImagesGen {
   $AssetsImagesCreditCardsGen get creditCards =>
       const $AssetsImagesCreditCardsGen();
 
+  /// File path: assets/images/language_switch_shape.svg
+  SvgGenImage get languageSwitchShape =>
+      const SvgGenImage('assets/images/language_switch_shape.svg');
+
   /// File path: assets/images/login_blur_shape.png
   AssetGenImage get loginBlurShape =>
       const AssetGenImage('assets/images/login_blur_shape.png');
@@ -141,7 +153,8 @@ class $AssetsImagesGen {
   String get path => 'assets/images';
 
   /// List of all assets
-  List<AssetGenImage> get values => [
+  List<dynamic> get values => [
+    languageSwitchShape,
     loginBlurShape,
     onboardingGradient,
     onboardingShape,
@@ -285,6 +298,51 @@ class $AssetsIconsNavGen {
   ];
 }
 
+class $AssetsIconsProductPageGen {
+  const $AssetsIconsProductPageGen();
+
+  /// File path: assets/icons/product_page/back_button.svg
+  SvgGenImage get backButton =>
+      const SvgGenImage('assets/icons/product_page/back_button.svg');
+
+  /// File path: assets/icons/product_page/comment.svg
+  SvgGenImage get comment =>
+      const SvgGenImage('assets/icons/product_page/comment.svg');
+
+  /// File path: assets/icons/product_page/like_active.svg
+  SvgGenImage get likeActive =>
+      const SvgGenImage('assets/icons/product_page/like_active.svg');
+
+  /// File path: assets/icons/product_page/like_inactive.svg
+  SvgGenImage get likeInactive =>
+      const SvgGenImage('assets/icons/product_page/like_inactive.svg');
+
+  /// File path: assets/icons/product_page/riyal.svg
+  SvgGenImage get riyal =>
+      const SvgGenImage('assets/icons/product_page/riyal.svg');
+
+  /// File path: assets/icons/product_page/share_ios.svg
+  SvgGenImage get shareIos =>
+      const SvgGenImage('assets/icons/product_page/share_ios.svg');
+
+  /// File path: assets/icons/product_page/tag.svg
+  SvgGenImage get tag => const SvgGenImage('assets/icons/product_page/tag.svg');
+
+  /// Directory path: assets/icons/product_page
+  String get path => 'assets/icons/product_page';
+
+  /// List of all assets
+  List<SvgGenImage> get values => [
+    backButton,
+    comment,
+    likeActive,
+    likeInactive,
+    riyal,
+    shareIos,
+    tag,
+  ];
+}
+
 class $AssetsIconsProfileGen {
   const $AssetsIconsProfileGen();
 
@@ -318,6 +376,56 @@ class $AssetsIconsProfileGen {
     iconNotifications,
     iconPersonalDetails,
     iconSavedDeals,
+  ];
+}
+
+class $AssetsIconsStoreDetailGen {
+  const $AssetsIconsStoreDetailGen();
+
+  /// File path: assets/icons/store_detail/back_button.svg
+  SvgGenImage get backButton =>
+      const SvgGenImage('assets/icons/store_detail/back_button.svg');
+
+  /// File path: assets/icons/store_detail/comment.svg
+  SvgGenImage get comment =>
+      const SvgGenImage('assets/icons/store_detail/comment.svg');
+
+  /// File path: assets/icons/store_detail/error.svg
+  SvgGenImage get error =>
+      const SvgGenImage('assets/icons/store_detail/error.svg');
+
+  /// File path: assets/icons/store_detail/like_active.svg
+  SvgGenImage get likeActive =>
+      const SvgGenImage('assets/icons/store_detail/like_active.svg');
+
+  /// File path: assets/icons/store_detail/plus.svg
+  SvgGenImage get plus =>
+      const SvgGenImage('assets/icons/store_detail/plus.svg');
+
+  /// File path: assets/icons/store_detail/share_ios.svg
+  SvgGenImage get shareIos =>
+      const SvgGenImage('assets/icons/store_detail/share_ios.svg');
+
+  /// File path: assets/icons/store_detail/star.svg
+  SvgGenImage get star =>
+      const SvgGenImage('assets/icons/store_detail/star.svg');
+
+  /// File path: assets/icons/store_detail/tag.svg
+  SvgGenImage get tag => const SvgGenImage('assets/icons/store_detail/tag.svg');
+
+  /// Directory path: assets/icons/store_detail
+  String get path => 'assets/icons/store_detail';
+
+  /// List of all assets
+  List<SvgGenImage> get values => [
+    backButton,
+    comment,
+    error,
+    likeActive,
+    plus,
+    shareIos,
+    star,
+    tag,
   ];
 }
 

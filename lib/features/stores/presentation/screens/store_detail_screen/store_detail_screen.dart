@@ -39,10 +39,8 @@ class StoreDetailScreen extends HookConsumerWidget {
                 store: store,
                 isRTL: isRTL,
                 isFavorite: uiState.isFavorite,
-                isFollowing: uiState.isFollowing,
                 testimonials: uiState.testimonials,
                 onToggleFavorite: controller.toggleFavorite,
-                onToggleFollow: controller.toggleFollowing,
               ),
       ),
     );

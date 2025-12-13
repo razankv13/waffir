@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/features/products/domain/entities/review.dart';
 import 'package:waffir/features/products/presentation/widgets/review_card.dart';
-import 'package:waffir/core/utils/responsive_helper.dart';
 
-/// Reviews section widget for displaying product reviews/comments
+/// Reviews section widget as slivers.
 ///
-/// Matches Figma specifications:
-/// - Height: 714.2px (fixed)
-/// - 16px padding
-/// - 12px gap between reviews
+/// Use inside a `CustomScrollView(slivers: ...)`.
+///
+/// Note: this is intentionally sliver-based (no nested `ListView`).
 class ReviewsSection extends StatelessWidget {
   const ReviewsSection({
     super.key,
@@ -26,96 +25,57 @@ class ReviewsSection extends StatelessWidget {
   final int? totalReviews;
   final Function(String reviewId)? onReviewHelpful;
   final VoidCallback? onViewAllReviews;
+
+  /// Kept for backwards compatibility with the Figma spec, but not enforced in sliver mode.
   final double height;
 
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      height: height,
+    final hasReviews = reviews.isNotEmpty;
+
+    // Layout:
+    // 0 composer
+    // 1 spacer
+    // 2 emptyState OR list(ReviewCard + separators)
+    final listChildCount = hasReviews ? (reviews.length * 2 - 1) : 1;
+    final totalChildCount = 2 + listChildCount;
+
+    return SliverPadding(
       padding: responsive.scalePadding(const EdgeInsets.all(16)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Composer row (avatar, input pill, send button)
-          Row(
-            children: [
-              // Avatar 64x64
-              CircleAvatar(
-                radius: responsive.scale(32),
-                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                child: Icon(
-                  Icons.person_outline,
-                  size: responsive.scale(28),
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-              SizedBox(width: responsive.scale(12)),
-              // Input pill 232x56 (use Expanded to avoid overflow on small screens)
-              Expanded(
-                child: Container(
-                  height: responsive.scale(56),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF2F2F2),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    'Write your comment',
-                    style: TextStyle(
-                      fontFamily: 'Parkinsans',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFFA3A3A3),
-                      height: 1.15,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: responsive.scale(11)),
-              // Send button 44x44
-              InkWell(
-                borderRadius: BorderRadius.circular(1000),
-                onTap: () {},
-                child: Container(
-                  width: responsive.scale(44),
-                  height: responsive.scale(44),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0F352D),
-                    borderRadius: BorderRadius.circular(1000),
-                  ),
-                  alignment: Alignment.center,
-                  child: SvgPicture.asset(
-                    'assets/icons/arrow_icon.svg',
-                    width: responsive.scale(20),
-                    height: responsive.scale(20),
-                    colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                  ),
-                ),
-              ),
-            ],
-          ),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            if (index == 0) {
+              return _ComposerRow(colorScheme: colorScheme);
+            }
 
-          SizedBox(height: responsive.scale(12)),
+            if (index == 1) {
+              return SizedBox(height: responsive.scale(12));
+            }
 
-          // Reviews list
-          Expanded(
-            child: reviews.isEmpty
-                ? _buildEmptyState(context)
-                : ListView.separated(
-                    padding: EdgeInsets.zero,
-                    itemCount: reviews.length,
-                    separatorBuilder: (context, index) => SizedBox(height: responsive.scale(12)),
-                    itemBuilder: (context, index) {
-                      return ReviewCard(
-                        review: reviews[index],
-                        onHelpfulTap: () => onReviewHelpful?.call(reviews[index].id),
-                      );
-                    },
-                  ),
-          ),
-        ],
+            if (!hasReviews) {
+              return _buildEmptyState(context);
+            }
+
+            // Reviews list starts at index 2.
+            final listIndex = index - 2;
+            if (listIndex.isOdd) {
+              return SizedBox(height: responsive.scale(12));
+            }
+
+            final reviewIndex = listIndex ~/ 2;
+            final review = reviews[reviewIndex];
+
+            return ReviewCard(
+              review: review,
+              onHelpfulTap: () => onReviewHelpful?.call(review.id),
+            );
+          },
+          childCount: totalChildCount,
+        ),
       ),
     );
   }
@@ -125,31 +85,102 @@ class ReviewsSection extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final responsive = context.responsive;
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.rate_review_outlined,
-            size: responsive.scale(64),
-            color: colorScheme.onSurfaceVariant.withOpacity(0.5),
-          ),
-          SizedBox(height: responsive.scale(16)),
-          Text(
-            'No reviews yet',
-            style: textTheme.titleMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: responsive.scale(32)),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.rate_review_outlined,
+              size: responsive.scale(64),
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
             ),
-          ),
-          SizedBox(height: responsive.scale(8)),
-          Text(
-            'Be the first to review this product',
-            style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant.withOpacity(0.7),
+            SizedBox(height: responsive.scale(16)),
+            Text(
+              'No reviews yet',
+              style: textTheme.titleMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: responsive.scale(8)),
+            Text(
+              'Be the first to review this product',
+              style: textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class _ComposerRow extends StatelessWidget {
+  const _ComposerRow({required this.colorScheme});
+
+  final ColorScheme colorScheme;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = context.responsive;
+
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: responsive.scale(32),
+          backgroundColor: colorScheme.surfaceContainerHighest,
+          child: Icon(
+            Icons.person_outline,
+            size: responsive.scale(28),
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+        SizedBox(width: responsive.scale(12)),
+        Expanded(
+          child: Container(
+            height: responsive.scale(56),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(responsive.scale(16)),
+            ),
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+            child: Text(
+              'Write your comment',
+              style: const TextStyle(
+                fontFamily: 'Parkinsans',
+                fontWeight: FontWeight.w500,
+                height: 1.15,
+              ).copyWith(
+                fontSize: responsive.scaleFontSize(16, minSize: 10),
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: responsive.scale(11)),
+        InkWell(
+          borderRadius: BorderRadius.circular(responsive.scale(1000)),
+          onTap: () {},
+          child: Container(
+            width: responsive.scale(44),
+            height: responsive.scale(44),
+            decoration: BoxDecoration(
+              color: colorScheme.primary,
+              borderRadius: BorderRadius.circular(responsive.scale(1000)),
+            ),
+            alignment: Alignment.center,
+            child: SvgPicture.asset(
+              'assets/icons/arrow_icon.svg',
+              width: responsive.scale(20),
+              height: responsive.scale(20),
+              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

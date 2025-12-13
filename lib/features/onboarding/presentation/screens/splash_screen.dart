@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:waffir/core/constants/app_colors.dart';
-import 'package:waffir/core/storage/settings_service.dart';
 import 'package:waffir/core/navigation/routes.dart';
+import 'package:waffir/core/storage/settings_service.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -71,7 +69,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       // Figma design: Dark green background #0F352D (Waffir-Green-04)
-      backgroundColor: AppColors.primaryColorDarkest,
+      backgroundColor: AppColors.waffirGreen04,
       body: SafeArea(
         child: Center(
           child: FadeTransition(
@@ -117,7 +115,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 fontFamily: 'Parkinsans',
                 fontSize: 52, // Proportional to Figma design
                 fontWeight: FontWeight.w900, // ExtraBold
-                color: AppColors.primaryColor, // #00FF88 (green wafir)
+                color: AppColors.waffirGreen02, // #00FF88 (green wafir)
                 height: 1.0,
               ),
               textAlign: TextAlign.center,
@@ -131,7 +129,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 fontFamily: 'Parkinsans',
                 fontSize: 40, // Based on Figma proportions (93px total height)
                 fontWeight: FontWeight.w700, // Bold
-                color: AppColors.primaryColor, // #00FF88 (green wafir)
+                color: AppColors.waffirGreen02, // #00FF88 (green wafir)
                 height: 1.0,
                 letterSpacing: 0.5,
               ),

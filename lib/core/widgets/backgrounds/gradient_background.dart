@@ -72,8 +72,8 @@ class GradientBackground extends StatelessWidget {
       case GradientType.solidBlue:
         return const LinearGradient(
           colors: [
-            AppColors.primaryColorDark, // Blue wafir
-            AppColors.primaryColorDark,
+            AppColors.waffirGreen03, // Blue wafir
+            AppColors.waffirGreen03,
           ],
         );
     }

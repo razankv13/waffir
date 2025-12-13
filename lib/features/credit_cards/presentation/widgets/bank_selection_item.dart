@@ -115,7 +115,7 @@ class BankSelectionItem extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.primaryColorLight, // Light green background
+        color: AppColors.waffirGreen01, // Light green background
         borderRadius: BorderRadius.circular(responsive.scale(8)),
       ),
       child: Center(
@@ -125,7 +125,7 @@ class BankSelectionItem extends StatelessWidget {
             fontFamily: 'Parkinsans',
             fontWeight: FontWeight.bold,
             fontSize: responsive.scaleFontSize(20, minSize: 18),
-            color: AppColors.primaryColor,
+            color: AppColors.waffirGreen02,
           ),
         ),
       ),

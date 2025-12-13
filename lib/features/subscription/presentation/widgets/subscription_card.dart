@@ -134,7 +134,7 @@ class SubscriptionCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 4),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.primary, AppColors.primaryColorDark],
+            colors: [AppColors.primary, AppColors.waffirGreen03],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

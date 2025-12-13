@@ -10,11 +10,31 @@ class AppColors {
   // - Secondary Button: white background, primaryColorDarkest (#0F352D) 2px border, black text
   // - Tertiary Button: white background, gray02 (#CECECE) 1px border, black text
   // - Disabled Button: gray02 (#CECECE) background, gray03 (#A3A3A3) text
-  static const Color primaryColor = Color(0xFF00FF88); // Waffir-Green-02 (bright green)
-  static const Color primaryColorLight = Color(0xFFDCFCE7); // Waffir-Green-01 (very light)
-  static const Color primaryColorDark = Color(0xFF00C531); // Waffir-Green-03 (medium)
-  static const Color primaryColorDarkest = Color(0xFF0F352D); // Waffir-Green-04 (darkest - used for primary button)
-  static const Color accentColor = Color(0xFF00C531); // Using Waffir-Green-03 for accent
+  // Figma Color-Palettes (node `34:5062`) - canonical token names
+  static const Color waffirGreen01 = Color(0xFFDCFCE7); // Very light
+  static const Color waffirGreen02 = Color(0xFF00FF88); // Bright green
+  static const Color waffirGreen03 = Color(0xFF00C531); // Medium green
+  static const Color waffirGreen04 = Color(0xFF0F352D); // Darkest green
+
+  static const Color indigo = Color(0xFF3A2D98);
+  static const Color red = Color(0xFFFF0000);
+  static const List<Color> goldGradient = [Color(0xFFFFD900), Color(0xFFFF9A03)];
+
+  // Backwards-compatible aliases (deprecated)
+  @Deprecated('Use waffirGreen02')
+  static const Color primaryColor = waffirGreen02; // Waffir-Green-02 (bright green)
+
+  @Deprecated('Use waffirGreen01')
+  static const Color primaryColorLight = waffirGreen01; // Waffir-Green-01 (very light)
+
+  @Deprecated('Use waffirGreen03')
+  static const Color primaryColorDark = waffirGreen03; // Waffir-Green-03 (medium)
+
+  @Deprecated('Use waffirGreen04')
+  static const Color primaryColorDarkest = waffirGreen04; // Waffir-Green-04 (darkest - used for primary button)
+
+  @Deprecated('Use indigo')
+  static const Color accentColor = indigo;
 
   // E-commerce Specific Colors (kept for functionality)
   static const Color saleRed = Color(0xFFFF3B30); // Sale/discount badges
@@ -38,7 +58,7 @@ class AppColors {
   // Semantic Colors (kept for UX)
   static const Color success = Color(0xFF10B981);
   static const Color warning = Color(0xFFF59E0B);
-  static const Color error = Color(0xFFEF4444);
+  static const Color error = red;
   static const Color info = Color(0xFF3B82F6);
 
   // Background Colors - Waffir Design System
@@ -59,33 +79,24 @@ class AppColors {
 
   // Gradient Colors - Waffir Design System
   static const List<Color> primaryGradient = [
-    Color(0xFF00FF88), // Waffir-Green-02
-    Color(0xFF00C531), // Waffir-Green-03
+    waffirGreen02,
+    waffirGreen03,
   ];
 
   static const List<Color> backgroundGradient = [
-    Color(0xFFDCFCE7), // Waffir-Green-01
-    Color(0xFFFFFFFF), // White
+    waffirGreen01,
+    white,
   ];
 
-  static const List<Color> successGradient = [
-    Color(0xFF10B981),
-    Color(0xFF059669),
-  ];
+  static const List<Color> successGradient = [Color(0xFF10B981), Color(0xFF059669)];
 
-  static const List<Color> warningGradient = [
-    Color(0xFFF59E0B),
-    Color(0xFFD97706),
-  ];
+  static const List<Color> warningGradient = [Color(0xFFF59E0B), Color(0xFFD97706)];
 
-  static const List<Color> errorGradient = [
-    Color(0xFFEF4444),
-    Color(0xFFDC2626),
-  ];
+  static const List<Color> errorGradient = [Color(0xFFEF4444), Color(0xFFDC2626)];
 
   // Convenience getters for consistent naming
-  static Color get primary => primaryColor;
-  static Color get accent => accentColor;
+  static Color get primary => waffirGreen02;
+  static Color get accent => indigo;
   static Color get onSurface => textPrimary;
   static Color get outline => border;
 
@@ -94,22 +105,20 @@ class AppColors {
     brightness: Brightness.light,
 
     // Primary colors (Waffir Green) - Updated to match Figma button design
-    primary: primaryColorDarkest, // Waffir-Green-04 #0F352D (dark green for primary button)
+    primary: waffirGreen04, // Waffir-Green-04 #0F352D (dark green for primary button)
     onPrimary: white, // White text on dark green
-    primaryContainer: primaryColorLight, // Waffir-Green-01 #DCFCE7
-    onPrimaryContainer: primaryColorDarkest, // Waffir-Green-04 for text
-
+    primaryContainer: waffirGreen01, // Waffir-Green-01 #DCFCE7
+    onPrimaryContainer: waffirGreen04, // Waffir-Green-04 for text
     // Secondary colors (using bright green)
-    secondary: primaryColor, // Waffir-Green-02 #00FF88 (bright green moved from primary)
+    secondary: waffirGreen02, // Waffir-Green-02 #00FF88
     onSecondary: black,
-    secondaryContainer: primaryColorLight, // Waffir-Green-01
-    onSecondaryContainer: primaryColorDarkest, // Waffir-Green-04
-
+    secondaryContainer: waffirGreen01, // Waffir-Green-01
+    onSecondaryContainer: waffirGreen04, // Waffir-Green-04
     // Tertiary colors (accent)
-    tertiary: accentColor, // Waffir-Green-03
+    tertiary: indigo,
     onTertiary: white,
-    tertiaryContainer: primaryColorLight,
-    onTertiaryContainer: primaryColorDarkest,
+    tertiaryContainer: waffirGreen01,
+    onTertiaryContainer: waffirGreen04,
 
     // Error colors
     error: error,
@@ -122,21 +131,18 @@ class AppColors {
     onSurface: textPrimary, // Black
     surfaceContainerHighest: gray01, // #F2F2F2
     onSurfaceVariant: textSecondary, // Gray-04
-
     // Outline colors
     outline: border, // Gray-02
     outlineVariant: borderLight, // Gray-01
-
     // Shadow and scrim
     shadow: shadow,
     scrim: Color(0x66000000),
 
     // Inverse colors
-    inverseSurface: primaryColorDarkest, // Waffir-Green-04
+    inverseSurface: waffirGreen04, // Waffir-Green-04
     onInverseSurface: white,
-    inversePrimary: primaryColor, // Waffir-Green-02
-
+    inversePrimary: waffirGreen02, // Waffir-Green-02
     // Surface tint
-    surfaceTint: primaryColor,
+    surfaceTint: waffirGreen02,
   );
 }

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/themes/app_text_styles.dart';
+import 'package:waffir/core/themes/extensions/promo_colors_extension.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/store_detail_controller.dart';
 
+/// Product actions row (Figma node 54:5549 / 54:5550).
 class StoreActionsSection extends StatelessWidget {
   const StoreActionsSection({
     super.key,
@@ -16,44 +20,49 @@ class StoreActionsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
-    final textColor = Theme.of(context).colorScheme.outline;
+    final colorScheme = Theme.of(context).colorScheme;
+    final promoColors = Theme.of(context).extension<PromoColors>();
 
+    // Outer container is provided by parent padding (12px 16px in StoreDetailView).
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: Wrap(
-            spacing: responsive.scale(16),
-            runSpacing: responsive.scale(12),
+          child: Row(
             children: [
-              StoreReactionPill(
-                count: 21,
-                isActive: isFavorite,
-                onToggle: () {
+              StoreLikeDislikePill(
+                countText: '21',
+                isLiked: isFavorite,
+                onTap: () {
                   HapticFeedback.lightImpact();
                   onToggleFavorite();
                 },
               ),
-              const StoreIconCountPill(
-                icon: Icons.mode_comment_outlined,
+              SizedBox(width: responsive.scale(16)),
+              StoreIconCountPill(
+                iconAsset: 'assets/icons/store_detail/comment.svg',
                 label: '45',
+                textColor: colorScheme.onSurfaceVariant,
+                countColor: colorScheme.onSurfaceVariant,
               ),
-              const StoreIconOnlyPill(icon: Icons.star_rate_rounded),
+              SizedBox(width: responsive.scale(16)),
+              StoreIconOnlyPill(
+                iconAsset: 'assets/icons/store_detail/star.svg',
+                iconColor: promoColors?.actionCount ?? colorScheme.onSurfaceVariant,
+              ),
             ],
           ),
         ),
         SizedBox(width: responsive.scale(8)),
-        Flexible(
+        Align(
+          alignment: Alignment.centerRight,
           child: Text(
             '3 hours ago',
             textAlign: TextAlign.right,
-            style: TextStyle(
-              fontFamily: 'Parkinsans',
-              fontSize: responsive.scaleFontSize(12),
-              fontWeight: FontWeight.w400,
-              color: textColor,
-              height: 1.4,
+            style: AppTextStyles.storePageTimestamp.copyWith(
+              color: promoColors?.actionCount ?? const Color(0xFFA3A3A3),
             ),
+            maxLines: 1,
+            overflow: TextOverflow.clip,
           ),
         ),
       ],
@@ -61,61 +70,46 @@ class StoreActionsSection extends StatelessWidget {
   }
 }
 
-class StoreReactionPill extends StatelessWidget {
-  const StoreReactionPill({
+class StoreLikeDislikePill extends StatelessWidget {
+  const StoreLikeDislikePill({
     super.key,
-    required this.count,
-    required this.onToggle,
-    required this.isActive,
+    required this.countText,
+    required this.isLiked,
+    this.onTap,
   });
 
-  final int count;
-  final VoidCallback onToggle;
-  final bool isActive;
+  final String countText;
+  final bool isLiked;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
     final colorScheme = Theme.of(context).colorScheme;
-    final capsuleRadius = BorderRadius.circular(responsive.scale(1000));
-    final iconColor = colorScheme.onSurfaceVariant;
 
     return Material(
-      color: colorScheme.surfaceContainerHigh,
-      borderRadius: capsuleRadius,
+      color: colorScheme.surfaceContainerHighest, // #F2F2F2
+      borderRadius: BorderRadius.circular(responsive.scale(1000)),
       child: InkWell(
-        borderRadius: capsuleRadius,
-        onTap: onToggle,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: responsive.scale(44)),
+        borderRadius: BorderRadius.circular(responsive.scale(1000)),
+        onTap: onTap,
+        child: SizedBox(
+          height: responsive.scale(44),
           child: Padding(
-            padding: responsive.scalePadding(
-              const EdgeInsets.symmetric(horizontal: 12),
-            ),
+            padding: EdgeInsets.symmetric(horizontal: responsive.scale(6)),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.thumb_up_alt_rounded,
-                  size: responsive.scale(18),
-                  color: isActive ? colorScheme.primary : iconColor,
+                _ActionIconBox(
+                  assetPath: 'assets/icons/like_active.svg',
                 ),
                 SizedBox(width: responsive.scale(6)),
                 Text(
-                  '$count',
-                  style: TextStyle(
-                    fontFamily: 'Parkinsans',
-                    fontSize: responsive.scaleFontSize(14),
-                    fontWeight: FontWeight.w500,
-                    color: iconColor,
-                  ),
+                  countText,
+                  style: AppTextStyles.storePageActionCount.copyWith(color: colorScheme.onSurfaceVariant),
                 ),
                 SizedBox(width: responsive.scale(6)),
-                Icon(
-                  Icons.thumb_down_alt_outlined,
-                  size: responsive.scale(18),
-                  color: iconColor,
-                ),
+                const _ActionIconBox(assetPath: 'assets/icons/product_page/like_inactive.svg'),
               ],
             ),
           ),
@@ -125,106 +119,153 @@ class StoreReactionPill extends StatelessWidget {
   }
 }
 
+class _ActionIconBox extends StatelessWidget {
+  const _ActionIconBox({required this.assetPath});
+
+  final String assetPath;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = context.responsive;
+
+    return SizedBox(
+      width: responsive.scale(40),
+      height: responsive.scale(40),
+      child: Center(
+        child: SizedBox(
+          width: responsive.scale(24),
+          height: responsive.scale(24),
+          child: SvgPicture.asset(assetPath, fit: BoxFit.contain),
+        ),
+      ),
+    );
+  }
+}
+
 class StoreIconCountPill extends StatelessWidget {
   const StoreIconCountPill({
     super.key,
-    required this.icon,
+    required this.iconAsset,
     required this.label,
+    required this.textColor,
+    required this.countColor,
   });
 
-  final IconData icon;
+  final String iconAsset;
   final String label;
+  final Color textColor;
+  final Color countColor;
 
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
     final colorScheme = Theme.of(context).colorScheme;
-    return Container(
+
+    return DecoratedBox(
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHigh,
+        color: colorScheme.surfaceContainerHighest, // #F2F2F2
         borderRadius: BorderRadius.circular(responsive.scale(1000)),
       ),
-      padding: responsive.scalePadding(
-        const EdgeInsets.symmetric(horizontal: 16),
-      ),
-      constraints: BoxConstraints(minHeight: responsive.scale(44)),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: responsive.scale(20),
-            color: colorScheme.onSurfaceVariant,
-          ),
-          SizedBox(width: responsive.scale(6)),
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'Parkinsans',
-              fontSize: responsive.scaleFontSize(14),
-              fontWeight: FontWeight.w500,
-              color: colorScheme.onSurfaceVariant,
+      child: Padding(
+        padding: responsive.scalePadding(const EdgeInsets.all(12)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: responsive.scale(20),
+              height: responsive.scale(20),
+              child: SvgPicture.asset(iconAsset, fit: BoxFit.contain),
             ),
-          ),
-        ],
+            SizedBox(width: responsive.scale(6)),
+            Text(
+              label,
+              style: AppTextStyles.storePageActionCount.copyWith(color: countColor),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class StoreIconOnlyPill extends StatelessWidget {
-  const StoreIconOnlyPill({super.key, required this.icon});
+  const StoreIconOnlyPill({
+    super.key,
+    required this.iconAsset,
+    required this.iconColor,
+  });
 
-  final IconData icon;
+  final String iconAsset;
+  final Color iconColor;
 
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      width: responsive.scale(44),
-      height: responsive.scale(44),
+    return DecoratedBox(
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHigh,
-        shape: BoxShape.circle,
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(responsive.scale(1000)),
       ),
-      alignment: Alignment.center,
-      child: Icon(
-        icon,
-        size: responsive.scale(20),
-        color: colorScheme.onSurfaceVariant,
+      child: Padding(
+        padding: responsive.scalePadding(const EdgeInsets.all(12)),
+        child: SizedBox(
+          width: responsive.scale(20),
+          height: responsive.scale(20),
+          child: SvgPicture.asset(
+            iconAsset,
+            fit: BoxFit.contain,
+            colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+          ),
+        ),
       ),
     );
   }
 }
 
-class StoreTestimonialsSection extends StatelessWidget {
-  const StoreTestimonialsSection({super.key, required this.testimonials});
+/// Comments section (Figma node 54:5588).
+class StoreCommentsSection extends StatelessWidget {
+  const StoreCommentsSection({super.key, required this.testimonials});
 
   final List<StoreTestimonial> testimonials;
 
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
-    final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(responsive.scale(24)),
-        color: colorScheme.surfaceContainerHighest,
-      ),
+    final hasTestimonials = testimonials.isNotEmpty;
+    final trailingCount = hasTestimonials ? (1 + (testimonials.length * 2 - 1)) : 0;
+    final childCount = 1 + trailingCount; // composer + (spacer + testimonial + separators)
+
+    return SliverPadding(
       padding: responsive.scalePadding(const EdgeInsets.all(16)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const StoreCommentComposer(),
-          SizedBox(height: responsive.scale(16)),
-          for (final testimonial in testimonials) ...[
-            StoreTestimonialCard(testimonial: testimonial),
-            SizedBox(height: responsive.scale(16)),
-          ],
-        ],
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            if (index == 0) {
+              return const StoreCommentComposer();
+            }
+
+            if (!hasTestimonials) {
+              // childCount == 1 in this case, so this should never be reached.
+              return const SizedBox.shrink();
+            }
+
+            if (index == 1) {
+              return SizedBox(height: responsive.scale(12));
+            }
+
+            final m = index - 2;
+            if (m.isOdd) {
+              return SizedBox(height: responsive.scale(16));
+            }
+
+            final testimonialIndex = m ~/ 2;
+            return StoreTestimonialStack(testimonial: testimonials[testimonialIndex]);
+          },
+          childCount: childCount,
+        ),
       ),
     );
   }
@@ -237,53 +278,79 @@ class StoreCommentComposer extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsive = context.responsive;
     final colorScheme = Theme.of(context).colorScheme;
+    final promoColors = Theme.of(context).extension<PromoColors>();
 
     return Row(
       children: [
-        CircleAvatar(
-          radius: responsive.scale(28),
-          backgroundColor: colorScheme.primary.withOpacity(0.1),
-          child: Icon(
-            Icons.person_outline,
-            color: colorScheme.primary,
-            size: responsive.scale(24),
+        Container(
+          width: responsive.scale(64),
+          height: responsive.scale(64),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: colorScheme.onPrimary.withValues(alpha: 0.4),
+              width: responsive.scale(1.6),
+            ),
+          ),
+          child: CircleAvatar(
+            backgroundColor: colorScheme.surface,
+            child: Icon(Icons.person_outline, color: colorScheme.onSurface),
           ),
         ),
         SizedBox(width: responsive.scale(12)),
         Expanded(
-          child: Container(
-            height: responsive.scale(56),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(responsive.scale(16)),
-              color: const Color(0xFFF2F2F2),
-            ),
-            padding: responsive.scalePadding(
-              const EdgeInsets.symmetric(horizontal: 16),
-            ),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Share your experience with this store...',
-              style: TextStyle(
-                fontFamily: 'Parkinsans',
-                fontSize: responsive.scaleFontSize(13),
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF595959),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: responsive.scale(232)),
+            child: SizedBox(
+              height: responsive.scale(56),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest, // #F2F2F2
+                  borderRadius: BorderRadius.circular(responsive.scale(16)),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+                  child: Center(
+                    child: Text(
+                      'Write your comment',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.storePageCommentPlaceholder.copyWith(
+                        color: promoColors?.actionCount ?? const Color(0xFFA3A3A3),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
         ),
-        SizedBox(width: responsive.scale(12)),
-        Container(
+        SizedBox(width: responsive.scale(11)),
+        SizedBox(
           width: responsive.scale(44),
           height: responsive.scale(44),
-          decoration: const BoxDecoration(
-            color: Color(0xFF0F352D),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.arrow_upward_rounded,
-            color: Colors.white,
-            size: responsive.scale(18),
+          child: Material(
+            color: colorScheme.primary, // #0F352D
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () {
+                HapticFeedback.lightImpact();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Comment send tapped')),
+                );
+              },
+              child: Center(
+                child: SizedBox(
+                  width: responsive.scale(20),
+                  height: responsive.scale(20),
+                  child: SvgPicture.asset(
+                    'assets/icons/arrow_icon.svg',
+                    fit: BoxFit.contain,
+                    colorFilter: ColorFilter.mode(colorScheme.onPrimary, BlendMode.srcIn),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ],
@@ -291,8 +358,8 @@ class StoreCommentComposer extends StatelessWidget {
   }
 }
 
-class StoreTestimonialCard extends StatelessWidget {
-  const StoreTestimonialCard({super.key, required this.testimonial});
+class StoreTestimonialStack extends StatelessWidget {
+  const StoreTestimonialStack({super.key, required this.testimonial});
 
   final StoreTestimonial testimonial;
 
@@ -300,57 +367,57 @@ class StoreTestimonialCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsive = context.responsive;
     final colorScheme = Theme.of(context).colorScheme;
+    final promoColors = Theme.of(context).extension<PromoColors>();
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           children: [
-            Container(
+            SizedBox(
               width: responsive.scale(40),
               height: responsive.scale(40),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: colorScheme.primary.withOpacity(0.08),
+              child: CircleAvatar(
+                backgroundColor: colorScheme.surface,
+                child: Icon(Icons.person_outline, color: colorScheme.onSurface),
               ),
-              child: Icon(Icons.person_outline, color: colorScheme.primary),
             ),
-            SizedBox(width: responsive.scale(12)),
+            SizedBox(width: responsive.scale(10.699578285217285)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   testimonial.author,
-                  style: TextStyle(
-                    fontFamily: 'Parkinsans',
-                    fontSize: responsive.scaleFontSize(14),
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF151515),
-                  ),
+                  style: AppTextStyles.storePageTestimonialAuthor.copyWith(color: colorScheme.onSurface),
                 ),
+                SizedBox(height: responsive.scale(2)),
                 Text(
                   testimonial.location,
-                  style: TextStyle(
-                    fontFamily: 'Parkinsans',
-                    fontSize: responsive.scaleFontSize(12),
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF595959),
+                  style: AppTextStyles.storePageTestimonialDate.copyWith(
+                    color: promoColors?.actionCount ?? const Color(0xFFA3A3A3),
                   ),
                 ),
               ],
             ),
           ],
         ),
-        SizedBox(height: responsive.scale(12)),
+        SizedBox(height: responsive.scale(12.482841491699219)),
         Text(
           testimonial.body,
-          style: TextStyle(
-            fontFamily: 'Parkinsans',
-            fontSize: responsive.scaleFontSize(12),
-            fontWeight: FontWeight.w500,
-            color: const Color(0xFF151515),
-            height: 1.4,
-          ),
+          style: AppTextStyles.storePageTestimonialBody.copyWith(color: colorScheme.onSurface),
+        ),
+        SizedBox(height: responsive.scale(12.482841491699219)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            StoreLikeDislikePill(countText: '21', isLiked: false),
+            Text(
+              '3 hours ago',
+              style: AppTextStyles.storePageTimestamp.copyWith(
+                color: promoColors?.actionCount ?? const Color(0xFFA3A3A3),
+              ),
+            ),
+          ],
         ),
       ],
     );

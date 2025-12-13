@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
-import 'package:waffir/features/products/presentation/widgets/product_image_carousel.dart';
 import 'package:waffir/features/stores/data/models/store_model.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/store_detail_controller.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/widgets/store_detail_cta.dart';
@@ -13,149 +12,132 @@ class StoreDetailView extends StatelessWidget {
     required this.store,
     required this.isRTL,
     required this.isFavorite,
-    required this.isFollowing,
     required this.testimonials,
     required this.onToggleFavorite,
-    required this.onToggleFollow,
   });
 
   final StoreModel store;
   final bool isRTL;
   final bool isFavorite;
-  final bool isFollowing;
   final List<StoreTestimonial> testimonials;
   final VoidCallback onToggleFavorite;
-  final VoidCallback onToggleFollow;
 
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
-    final heroImages = <String>[
-      if (store.bannerUrl != null && store.bannerUrl!.isNotEmpty) store.bannerUrl!,
-      if (store.imageUrl.isNotEmpty) store.imageUrl,
-    ];
 
-    final description =
+    final heroUrl = (store.bannerUrl != null && store.bannerUrl!.isNotEmpty)
+        ? store.bannerUrl!
+        : store.imageUrl;
+
+    final detailsBody =
         store.description ??
-        'Discover curated apparel, footwear, and accessories with limited-time savings and bilingual support.';
+        'Levis has a 20% discount on selected items and 10% discount on discontinued items.';
+
     final sanitizedId = store.id.replaceAll(RegExp('[^A-Za-z0-9]'), '').toUpperCase();
-    final promoCode = (sanitizedId.isEmpty ? 'WAFFI' : sanitizedId.padRight(5, '0')).substring(
+    final promoCode = (sanitizedId.isEmpty ? 'LEVI2' : sanitizedId.padRight(5, '0')).substring(
       0,
       5,
     );
+
     final featuresBody =
-        'Use promo code: $promoCode when checking out. Offers are valid for Saudi Arabia residents. Discount runs while supplies last.';
+        'Use Promo code: $promoCode when checking out, offers are online valid for Saudi Arabia residents. '
+        'Discount will expire on the 23rd of Oct, 2026 or while products last.';
 
     return Stack(
       children: [
-        CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: ProductImageCarousel(
-                imageUrls: heroImages.isEmpty ? [store.imageUrl] : heroImages,
-                height: responsive.scale(390),
-                showIndicators: heroImages.length > 1,
+        NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverToBoxAdapter(child: _StoreHeroImage(imageUrl: heroUrl)),
+              SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+            ];
+          },
+          body: CustomScrollView(
+            slivers: [
+              const SliverToBoxAdapter(child: StoreOutletBanner()),
+              SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+              SliverPadding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: responsive.scale(16),
+                  vertical: responsive.scale(12),
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: StoreActionsSection(
+                    isFavorite: isFavorite,
+                    onToggleFavorite: onToggleFavorite,
+                  ),
+                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: responsive.scale(16),
-                      vertical: responsive.scale(16),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const StoreOutletBanner(),
-                        SizedBox(height: responsive.scale(8)),
-                        StoreActionsSection(
-                          isFavorite: isFavorite,
-                          onToggleFavorite: onToggleFavorite,
-                        ),
-                        SizedBox(height: responsive.scale(16)),
-                        StorePromoHighlight(store: store),
-                        SizedBox(height: responsive.scale(16)),
-                        const StoreAdditionalActions(),
-                        SizedBox(height: responsive.scale(16)),
-                        const StoreSectionDivider(),
-                        SizedBox(height: responsive.scale(16)),
-                        StoreDetailsBlock(
-                          title: 'Details:',
-                          body: description,
-                          titleStyle: TextStyle(
-                            fontFamily: 'Parkinsans',
-                            fontSize: responsive.scaleFontSize(16),
-                            fontWeight: FontWeight.w400,
-                            color: const Color(0xFF151515),
-                            height: 1.34,
-                          ),
-                          bodyStyle: TextStyle(
-                            fontFamily: 'Parkinsans',
-                            fontSize: responsive.scaleFontSize(14),
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFF151515),
-                            height: 1.4,
-                          ),
-                        ),
-                        SizedBox(height: responsive.scale(16)),
-                        const StoreSectionDivider(),
-                        SizedBox(height: responsive.scale(16)),
-                        StoreDetailsBlock(
-                          title: 'Features:',
-                          body: featuresBody,
-                          titleStyle: TextStyle(
-                            fontFamily: 'Parkinsans',
-                            fontSize: responsive.scaleFontSize(16),
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF151515),
-                            height: 1.11,
-                          ),
-                          bodyStyle: TextStyle(
-                            fontFamily: 'Parkinsans',
-                            fontSize: responsive.scaleFontSize(14),
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFF151515),
-                            height: 1.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
-                    child: const StoreSectionDivider(),
-                  ),
-                  SizedBox(height: responsive.scale(16)),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
-                    child: StoreTestimonialsSection(testimonials: testimonials),
-                  ),
-                  SizedBox(height: responsive.scale(120)),
-                ],
+              SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+              SliverToBoxAdapter(child: StorePricesSection(store: store)),
+              SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+              const SliverToBoxAdapter(child: StoreAdditionalActions()),
+              SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+              const SliverToBoxAdapter(child: StoreSectionDivider()),
+              SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+              SliverToBoxAdapter(
+                child: StoreProductInfoSection(detailsBody: detailsBody, featuresBody: featuresBody),
               ),
-            ),
-          ],
+              SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+              const SliverToBoxAdapter(child: StoreSectionDivider()),
+              SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+              StoreCommentsSection(testimonials: testimonials),
+              SliverToBoxAdapter(
+                child: SizedBox(height: responsive.scale(96) + responsive.bottomSafeArea + responsive.scale(32)),
+              ),
+            ],
+          ),
         ),
-        Positioned(
-          top: responsive.scale(64),
-          left: isRTL ? null : responsive.scale(16),
-          right: isRTL ? responsive.scale(16) : null,
-          child: const StoreDetailBackButton(),
-        ),
+        Positioned(top: 0, left: 0, right: 0, child: StorePageHeaderOverlay(isRTL: isRTL)),
+        Positioned(bottom: 0, left: 0, right: 0, child: StorePageBottomCta(storeName: store.name)),
+        // Retain this invisible area so taps/scroll don’t fight the bottom overlay.
         Positioned(
           bottom: 0,
           left: 0,
           right: 0,
-          child: StoreDetailBottomBar(
-            store: store,
-            isFollowing: isFollowing,
-            onToggleFollow: onToggleFollow,
+          child: IgnorePointer(
+            child: SizedBox(height: responsive.scale(0), width: double.infinity),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _StoreHeroImage extends StatelessWidget {
+  const _StoreHeroImage({required this.imageUrl});
+
+  final String imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = context.responsive;
+
+    return SizedBox(
+      height: responsive.scale(390),
+      child: Container(
+        padding: responsive.scalePadding(const EdgeInsets.all(16)),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Colors.black.withValues(alpha: 0.05),
+            width: responsive.scale(1),
+          ),
+        ),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: SizedBox.expand(
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.fill,
+              errorBuilder: (context, error, stackTrace) {
+                return const ColoredBox(color: Colors.white);
+              },
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -165,11 +147,8 @@ class StoreSectionDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: responsive.scale(0)),
-      height: 1,
-      decoration: const BoxDecoration(color: Color(0xFFF2F2F2)),
-    );
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return SizedBox(height: 1, child: ColoredBox(color: colorScheme.surfaceContainerHighest));
   }
 }

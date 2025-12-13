@@ -117,7 +117,7 @@ class ProductCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      width: 120,
+      width: 140,
       height: 120,
       padding: const EdgeInsets.all(8), // Padding from Figma
       decoration: BoxDecoration(
@@ -135,8 +135,8 @@ class ProductCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Container(
-              width: double.infinity,
-              height: double.infinity,
+              width: 140,
+              height: 120,
               color: colorScheme.surfaceContainerHighest,
               child: Image.network(
                 imageUrl,

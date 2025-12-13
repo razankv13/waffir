@@ -102,7 +102,7 @@ class _CategoryChip extends StatelessWidget {
           border: isSelected
               ? const Border(
                   bottom: BorderSide(
-                    color: AppColors.primaryColorDark, // #00C531 bright green
+                    color: AppColors.waffirGreen03, // #00C531 bright green
                     width: 2,
                   ),
                 )
@@ -117,7 +117,7 @@ class _CategoryChip extends StatelessWidget {
               width: 24,
               height: 24,
               colorFilter: ColorFilter.mode(
-                isSelected ? AppColors.primaryColorDark : AppColors.gray03,
+                isSelected ? AppColors.waffirGreen03 : AppColors.gray03,
                 BlendMode.srcIn,
               ),
             ),
@@ -130,7 +130,7 @@ class _CategoryChip extends StatelessWidget {
                 fontFamily: 'Parkinsans',
                 fontSize: 14,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? AppColors.primaryColorDark : AppColors.gray03,
+                color: isSelected ? AppColors.waffirGreen03 : AppColors.gray03,
                 height: 1.4, // Line height from Figma
               ),
               textAlign: TextAlign.center,

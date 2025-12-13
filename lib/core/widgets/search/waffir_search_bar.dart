@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:waffir/core/constants/app_colors.dart';
 import 'package:waffir/core/constants/app_typography.dart';
-import 'package:waffir/gen/assets.gen.dart';
 
 /// Waffir-branded search bar with exact Figma specifications
 ///
@@ -84,7 +83,7 @@ class _WaffirSearchBarState extends State<WaffirSearchBar> {
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16), // Exact: 16px per Figma
         border: Border.all(
-          color: AppColors.primaryColorDark, // #00C531 bright green
+          color: AppColors.waffirGreen03, // #00C531 bright green
           width: 1,
         ),
       ),
@@ -165,7 +164,7 @@ class _WaffirSearchBarState extends State<WaffirSearchBar> {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: AppColors.primaryColorDarkest, // #0F352D dark green
+                  color: AppColors.waffirGreen04, // #0F352D dark green
                   shape: BoxShape.circle,
                 ),
                 child: Center(

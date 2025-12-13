@@ -61,6 +61,12 @@ class StoreDetailUiState {
               'Nice assortment with good availability. Communication with the store team was quick and friendly.',
           location: 'Dammam, Saudi Arabia',
         ),
+        StoreTestimonial(
+          author: 'Emma',
+          body:
+              'We were only sad not to stay longer. We hope to be back to explore Nantes some more and would love to stay again! :)',
+          location: 'May 2023',
+        ),
       ],
     );
   }

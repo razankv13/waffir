@@ -141,6 +141,8 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/icons/store_detail/
+    - assets/icons/product_page/
     - assets/icons/nav/
     - assets/icons/categories/
     - assets/icons/profile/
