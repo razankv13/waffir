@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/constants/app_colors.dart';
 import 'package:waffir/core/themes/figma_product_page/product_page_theme.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/gen/assets.gen.dart';
 
 class ProductPagePricesSection extends StatelessWidget {
-  const ProductPagePricesSection({
-    super.key,
-    required this.theme,
-  });
+  const ProductPagePricesSection({super.key, required this.theme});
 
   final ProductPageTheme theme;
 
@@ -40,7 +39,10 @@ class ProductPagePricesSection extends StatelessWidget {
             "Nike Men’s Air Max 2025 Shoes (3 Colors)",
             style: theme.textStyles.title.copyWith(
               color: theme.colors.textPrimary,
-              fontSize: responsive.scaleFontSize(theme.textStyles.title.fontSize ?? 18, minSize: 12),
+              fontSize: responsive.scaleFontSize(
+                theme.textStyles.title.fontSize ?? 18,
+                minSize: 12,
+              ),
             ),
           ),
           SizedBox(height: responsive.scale(16)),
@@ -59,7 +61,10 @@ class ProductPagePricesSection extends StatelessWidget {
                           height: responsive.scale(20),
                           child: SvgPicture.asset(
                             'assets/icons/product_page/riyal.svg',
-                            fit: BoxFit.contain,
+                            colorFilter: ColorFilter.mode(
+                              theme.colors.brandBrightGreen,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
                         SizedBox(width: responsive.scale(4)),
@@ -67,7 +72,10 @@ class ProductPagePricesSection extends StatelessWidget {
                           '400',
                           style: theme.textStyles.price.copyWith(
                             color: theme.colors.brandBrightGreen,
-                            fontSize: responsive.scaleFontSize(theme.textStyles.price.fontSize ?? 20, minSize: 12),
+                            fontSize: responsive.scaleFontSize(
+                              theme.textStyles.price.fontSize ?? 20,
+                              minSize: 12,
+                            ),
                           ),
                         ),
                       ],
@@ -83,17 +91,19 @@ class ProductPagePricesSection extends StatelessWidget {
                           width: responsive.scale(14),
                           height: responsive.scale(14),
                           child: SvgPicture.asset(
-                            'assets/icons/product_page/riyal.svg',
-                            fit: BoxFit.contain,
+                            Assets.icons.productPage.riyal.path,
+                            colorFilter: const ColorFilter.mode(AppColors.red, BlendMode.srcIn),
                           ),
                         ),
                         SizedBox(width: responsive.scale(4)),
                         Text(
                           '809',
                           style: theme.textStyles.originalPrice.copyWith(
-                            color: const Color(0xFFFF0000),
+                            color: AppColors.red,
                             decoration: TextDecoration.lineThrough,
-                            fontSize: responsive.scaleFontSize(theme.textStyles.originalPrice.fontSize ?? 16, minSize: 10),
+                            fontSize: responsive.scaleFontSize(
+                              theme.textStyles.originalPrice.fontSize ?? 16,
+                            ),
                           ),
                         ),
                       ],
@@ -103,7 +113,6 @@ class ProductPagePricesSection extends StatelessWidget {
                   pill(
                     background: theme.colors.badgeMint,
                     radius: BorderRadius.circular(responsive.scale(26.726573944091797)),
-                    padding: const EdgeInsets.all(8),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -111,22 +120,25 @@ class ProductPagePricesSection extends StatelessWidget {
                           width: responsive.scale(16),
                           height: responsive.scale(16),
                           child: SvgPicture.asset(
-                            'assets/icons/product_page/tag.svg',
-                            fit: BoxFit.contain,
-                            colorFilter: ColorFilter.mode(theme.colors.brandDarkGreen, BlendMode.srcIn),
+                            Assets.icons.productPage.tag.path,
+                            colorFilter: ColorFilter.mode(
+                              theme.colors.brandDarkGreen,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
                         SizedBox(width: responsive.scale(4)),
                         Text(
                           '13% off',
-                          style: const TextStyle(
-                            fontFamily: 'Parkinsans',
-                            fontWeight: FontWeight.w500,
-                            height: 1.149999976158142,
-                          ).copyWith(
-                            fontSize: responsive.scaleFontSize(16, minSize: 10),
-                            color: theme.colors.brandDarkGreen,
-                          ),
+                          style:
+                              const TextStyle(
+                                fontFamily: 'Parkinsans',
+                                fontWeight: FontWeight.w500,
+                                height: 1.149999976158142,
+                              ).copyWith(
+                                fontSize: responsive.scaleFontSize(16),
+                                color: theme.colors.brandDarkGreen,
+                              ),
                         ),
                       ],
                     ),
@@ -139,7 +151,6 @@ class ProductPagePricesSection extends StatelessWidget {
                   color: theme.colors.textPrimary,
                   fontSize: responsive.scaleFontSize(
                     theme.textStyles.storeLine.fontSize ?? 14.266104698181152,
-                    minSize: 10,
                   ),
                 ),
               ),

@@ -63,7 +63,7 @@ class ProductPageProductInfo extends StatelessWidget {
         children: [
           section(
             label: 'Details:',
-            labelStyle: theme.textStyles.sectionLabelRegular,
+            labelStyle: theme.textStyles.sectionLabelBold,
             body: detailsText,
             bodyStyle: theme.textStyles.body,
           ),

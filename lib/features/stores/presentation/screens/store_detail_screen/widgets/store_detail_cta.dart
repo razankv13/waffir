@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:waffir/core/themes/app_text_styles.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/widgets/store_purchase_bottom_sheet.dart';
 
 /// Pixel-perfect header overlay for Store Page (Figma node 7783:7861).
@@ -30,10 +30,7 @@ class StorePageHeaderOverlay extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           stops: const [0.71, 1.0],
-          colors: [
-            colorScheme.surface,
-            colorScheme.surface.withValues(alpha: 0.0),
-          ],
+          colors: [colorScheme.surface, colorScheme.surface.withValues(alpha: 0.0)],
         ),
       ),
       padding: EdgeInsets.only(
@@ -44,42 +41,9 @@ class StorePageHeaderOverlay extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _BackCircleButton(isRTL: isRTL),
+          WaffirBackButton(size: responsive.scale(44), padding: EdgeInsets.zero),
           _StorePill(shadow: shadow),
         ],
-      ),
-    );
-  }
-}
-
-class _BackCircleButton extends StatelessWidget {
-  const _BackCircleButton({required this.isRTL});
-
-  final bool isRTL;
-
-  @override
-  Widget build(BuildContext context) {
-    final responsive = context.responsive;
-
-    return SizedBox(
-      width: responsive.scale(44),
-      height: responsive.scale(44),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            context.pop();
-          },
-          child: Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.diagonal3Values(isRTL ? -1 : 1, 1, 1),
-            child: SvgPicture.asset(
-              'assets/icons/store_detail/back_button.svg',
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -102,9 +66,7 @@ class _StorePill extends StatelessWidget {
         boxShadow: [shadow],
       ),
       child: Padding(
-        padding: responsive.scalePadding(
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        ),
+        padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
         child: Text(
           'Store',
           style: AppTextStyles.storePageHeaderLabel.copyWith(color: colorScheme.onSurface),
@@ -132,10 +94,7 @@ class StorePageBottomCta extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           stops: const [0.0, 0.49],
-          colors: [
-            colorScheme.surface.withValues(alpha: 0.0),
-            colorScheme.surface,
-          ],
+          colors: [colorScheme.surface.withValues(alpha: 0.0), colorScheme.surface],
         ),
       ),
       padding: EdgeInsets.only(
@@ -192,9 +151,9 @@ class StorePageBottomCta extends StatelessWidget {
                 customBorder: const CircleBorder(),
                 onTap: () {
                   HapticFeedback.mediumImpact();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Share tapped')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('Share tapped')));
                 },
                 child: Center(
                   child: SizedBox(
@@ -203,10 +162,7 @@ class StorePageBottomCta extends StatelessWidget {
                     child: SvgPicture.asset(
                       'assets/icons/store_detail/share_ios.svg',
                       fit: BoxFit.contain,
-                      colorFilter: ColorFilter.mode(
-                        colorScheme.onPrimary,
-                        BlendMode.srcIn,
-                      ),
+                      colorFilter: ColorFilter.mode(colorScheme.onPrimary, BlendMode.srcIn),
                     ),
                   ),
                 ),

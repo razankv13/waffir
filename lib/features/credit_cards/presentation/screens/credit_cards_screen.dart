@@ -6,6 +6,7 @@ import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/search/search_bar_widget.dart';
 import 'package:waffir/core/widgets/switches/custom_toggle_switch.dart';
+import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
 /// Credit Cards Screen - Choose Bank Cards (Figma node: 34:9127)
@@ -92,7 +93,7 @@ class _CreditCardsScreenState extends ConsumerState<CreditCardsScreen> {
       backgroundColor: theme.colorScheme.surface,
       body: Stack(
         children: [
-          _buildBackgroundShape(responsive, theme),
+          const BlurredBackground(),
           SafeArea(
             bottom: false,
             child: NestedScrollView(
@@ -151,19 +152,16 @@ class _CreditCardsScreenState extends ConsumerState<CreditCardsScreen> {
                     collapsedHeight: headerHeight,
                     expandedHeight: headerHeight,
                     elevation: 0,
-                    backgroundColor: theme.colorScheme.surface,
+                    backgroundColor: Colors.transparent,
                     surfaceTintColor: Colors.transparent,
-                    flexibleSpace: Container(
-                      color: theme.colorScheme.surface,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            SizedBox(height: topSpacer),
-                            _buildHeader(theme, responsive),
-                          ],
-                        ),
+                    flexibleSpace: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(height: topSpacer),
+                          _buildHeader(theme, responsive),
+                        ],
                       ),
                     ),
                   ),
@@ -196,9 +194,7 @@ class _CreditCardsScreenState extends ConsumerState<CreditCardsScreen> {
                         top: responsive.scale(32),
                         bottom: responsive.scale(120),
                       ),
-                      children: [
-                        _buildEmptyState(theme, responsive),
-                      ],
+                      children: [_buildEmptyState(theme, responsive)],
                     )
                   : ListView.separated(
                       padding: EdgeInsets.only(
@@ -209,8 +205,7 @@ class _CreditCardsScreenState extends ConsumerState<CreditCardsScreen> {
                       ),
                       physics: const BouncingScrollPhysics(),
                       itemCount: filteredBanks.length,
-                      separatorBuilder: (context, index) =>
-                          SizedBox(height: responsive.scale(16)),
+                      separatorBuilder: (context, index) => SizedBox(height: responsive.scale(16)),
                       itemBuilder: (context, index) {
                         final option = filteredBanks[index];
                         final isSelected = _selectedBankIds.contains(option.id);
@@ -223,7 +218,7 @@ class _CreditCardsScreenState extends ConsumerState<CreditCardsScreen> {
                       },
                     ),
             ),
-                    ),
+          ),
           if (widget.showBackButton)
             Positioned(
               left: responsive.scale(16),
@@ -234,37 +229,7 @@ class _CreditCardsScreenState extends ConsumerState<CreditCardsScreen> {
       ),
     );
   }
-
-  Widget _buildBackgroundShape(ResponsiveHelper responsive, ThemeData theme) {
-    final blurColor = theme.colorScheme.secondary;
-    return Positioned(
-      left: responsive.scale(-40),
-      top: responsive.scale(-100),
-      child: IgnorePointer(
-        child: Container(
-          width: responsive.scale(467.78),
-          height: responsive.scale(461.3),
-          decoration: BoxDecoration(
-            gradient: RadialGradient(
-              colors: [
-                blurColor.withValues(alpha: 0.35),
-                theme.colorScheme.primaryContainer.withValues(alpha: 0.2),
-                Colors.transparent,
-              ],
-              stops: const [0.0, 0.55, 1.0],
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(responsive.scale(240)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
-              child: const SizedBox.expand(),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+ 
 
   Widget _buildHeader(ThemeData theme, ResponsiveHelper responsive) {
     final titleStyle = theme.textTheme.titleLarge?.copyWith(

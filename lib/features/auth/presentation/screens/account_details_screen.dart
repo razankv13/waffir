@@ -5,9 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
-import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/core/widgets/inputs/gender_selector.dart';
-import 'package:waffir/gen/assets.gen.dart';
+import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 
 /// Account details screen (pixel-perfect to Figma node `34:5441`)
 ///
@@ -65,7 +64,6 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
     final responsive = ResponsiveHelper(context);
 
     final horizontalPadding = responsive.scale(16);
-    final double backButtonTopPadding = responsive.scaleWithRange(64, min: 56, max: 72);
     final double contentVerticalGap = responsive.scale(32);
     final double labelToFieldSpacing = responsive.scale(16);
     final double optionGap = responsive.scale(80);
@@ -76,10 +74,6 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
     final double buttonBottomPadding = isSmallScreen
         ? responsive.scaleWithRange(80, min: 64, max: 90)
         : responsive.scaleWithRange(120, min: 100, max: 140);
-    final double blurHorizontalOffset = responsive.scale(40);
-    final double blurTopOffset = responsive.scale(100);
-    final double blurShapeWidth = responsive.scale(467.78);
-    final double blurShapeHeight = responsive.scale(461.3);
 
     return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
@@ -87,23 +81,10 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
         body: Stack(
           children: [
             // White background
-            Container(color: colorScheme.surface),
+            ColoredBox(color: colorScheme.surface),
 
-            // Blur shape background (positioned top-left, mirrored for RTL)
-            Positioned(
-              left: isRTL ? null : -blurHorizontalOffset,
-              right: isRTL ? -blurHorizontalOffset : null,
-              top: -blurTopOffset,
-              child: Transform.scale(
-                scaleX: isRTL ? -1.0 : 1.0,
-                child: Image.asset(
-                  Assets.images.loginBlurShape.path,
-                  width: blurShapeWidth,
-                  height: blurShapeHeight,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
+            // Blurred background
+            const BlurredBackground(),
 
             // Main content
             SafeArea(
@@ -122,15 +103,12 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.only(top: backButtonTopPadding),
-                                  child: const Row(children: [WaffirBackButton()]),
-                                ),
+                                SizedBox(height: responsive.scale(context.responsive.topSafeArea)),
                                 Align(
                                   alignment: AlignmentDirectional.centerStart,
                                   child: Text(
@@ -180,6 +158,7 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                                 ),
                               ],
                             ),
+                            SizedBox(height: context.responsive.screenHeight * .2),
                             Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [

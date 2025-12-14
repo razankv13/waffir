@@ -53,7 +53,10 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     final backTopPadding = (responsive.scale(64) - safeAreaInsets.top).clamp(0.0, double.infinity);
 
     // Figma: screen bottom padding is 120px.
-    final bottomPadding = (responsive.scale(120) - safeAreaInsets.bottom).clamp(0.0, double.infinity);
+    final bottomPadding = (responsive.scale(120) - safeAreaInsets.bottom).clamp(
+      0.0,
+      double.infinity,
+    );
 
     final titleStyle = (textTheme.bodyLarge ?? const TextStyle()).copyWith(
       fontSize: responsive.scaleFontSize(16, minSize: 12),
@@ -202,7 +205,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
 
 class _LanguagePillButton extends StatelessWidget {
   const _LanguagePillButton({
-    required this.label,    required this.width,
+    required this.label,
+    required this.width,
     required this.height,
     required this.borderColor,
     required this.borderWidth,
@@ -233,9 +237,7 @@ class _LanguagePillButton extends StatelessWidget {
           backgroundColor: colorScheme.surface,
           foregroundColor: colorScheme.onSurface,
           side: BorderSide(color: borderColor, width: borderWidth),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
         ),
         child: Text(label, style: textStyle),
       ),

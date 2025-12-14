@@ -98,170 +98,164 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Stack(
-          children: [
-            const Positioned.fill(child: BlurredBackground()),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final responsive = context.responsive;
-
-                double s(double value) =>
-                    responsive.scaleWithMax(value, max: value); // downscale-only
-                double sf(double value, {double min = 10.0}) =>
-                    responsive.scaleWithRange(value, min: min, max: value); // downscale-only
-
-                final contentWidth = s(ResponsiveHelper.figmaWidth);
-
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: Stack(
+            children: [
+              const BlurredBackground(),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final responsive = context.responsive;
+        
+                  double s(double value) =>
+                      responsive.scaleWithMax(value, max: value); // downscale-only
+                  double sf(double value, {double min = 10.0}) =>
+                      responsive.scaleWithRange(value, min: min, max: value); // downscale-only
+        
+                  return SingleChildScrollView(
                     child: Center(
-                      child: SizedBox(
-                        width: contentWidth,
-                        child: Column(
-                          children: [
-                            // Back container (node `50:5556`): 393×108 with padding top=64 right=16.
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: WaffirBackButton(size: responsive.scale(44)),
-                            ),
-                            // Waffir icon (node `50:3060`): 177×175.
-                            SizedBox(
-                              height: s(175),
-                              child: Center(
-                                child: Image.asset(
-                                  Assets.images.waffirIconLogin.path,
-                                  width: s(177),
-                                  height: s(175),
-                                  fit: BoxFit.contain,
-                                ),
+                      child: Column(
+                        children: [
+                          // Back button top right
+                          WaffirBackButton(size: responsive.scale(44)),
+                            
+                          // Waffir icon (node `50:3060`): 177×175.
+                          SizedBox(
+                            height: s(175),
+                            child: Center(
+                              child: Image.asset(
+                                Assets.images.waffirIconLogin.path,
+                                width: s(177),
+                                height: s(175),
+                                fit: BoxFit.contain,
                               ),
                             ),
-
-                            // Bottom container (node `50:3061`): height=449, padding horizontal=16, gap=40.
-                            SizedBox(
-                              height: s(449),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: s(16)),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    // Top group (node `50:3062`): gap=32.
-                                    Column(
-                                      children: [
-                                        // Title/subtitle group (node `50:3063`): gap=16.
-                                        SizedBox(
-                                          width: s(361),
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                'مرحباً بكم في وفــــر',
-                                                style: PhoneLoginTextStyles.title.copyWith(
-                                                  fontSize: sf(20, min: 14),
-                                                ),
-                                                textAlign: TextAlign.center,
+                          ),
+                            
+                          // Bottom container (node `50:3061`): height=449, padding horizontal=16, gap=40.
+                          SizedBox(
+                            height: s(449),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: s(16)),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  // Top group (node `50:3062`): gap=32.
+                                  Column(
+                                    children: [
+                                      // Title/subtitle group (node `50:3063`): gap=16.
+                                      SizedBox(
+                                        width: s(361),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              'مرحباً بكم في وفــــر',
+                                              style: PhoneLoginTextStyles.title.copyWith(
+                                                fontSize: sf(20, min: 14),
                                               ),
-                                              SizedBox(height: s(16)),
-                                              Text(
-                                                'سجّل الدخول أو أنشئ حساباً للمتابعة',
-                                                style: PhoneLoginTextStyles.subtitle.copyWith(
-                                                  fontSize: sf(16, min: 12),
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-
-                                        SizedBox(height: s(32)),
-
-                                        // Phone input (node `50:3067`): width=361.
-                                        SizedBox(
-                                          width: s(361),
-                                          child: PhoneInputWidget(
-                                            controller: _phoneController,
-                                            countryCode: _selectedDialCode,
-                                            hintText: 'Phone Number',
-                                            isLoading: _isLoading,
-                                            isValid: _isPhoneValid,
-                                            onSubmit: _submitPhone,
-                                            onCountryChanged: _onCountryChanged,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    SizedBox(height: s(40)),
-
-                                    // Divider (node `50:3068`): gap=16, line color #F2F2F2.
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                            height: s(1),
-                                            color: PhoneLoginColors.surface,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: s(16)),
-                                          child: Text(
-                                            'أو',
-                                            style: PhoneLoginTextStyles.divider.copyWith(
-                                              fontSize: sf(14, min: 12),
+                                              textAlign: TextAlign.center,
                                             ),
+                                            SizedBox(height: s(16)),
+                                            Text(
+                                              'سجّل الدخول أو أنشئ حساباً للمتابعة',
+                                              style: PhoneLoginTextStyles.subtitle.copyWith(
+                                                fontSize: sf(16, min: 12),
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                            
+                                      SizedBox(height: s(32)),
+                            
+                                      // Phone input (node `50:3067`): width=361.
+                                      SizedBox(
+                                        width: s(361),
+                                        child: PhoneInputWidget(
+                                          controller: _phoneController,
+                                          countryCode: _selectedDialCode,
+                                          hintText: 'Phone Number',
+                                          isLoading: _isLoading,
+                                          isValid: _isPhoneValid,
+                                          onSubmit: _submitPhone,
+                                          onCountryChanged: _onCountryChanged,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                            
+                                  SizedBox(height: s(40)),
+                            
+                                  // Divider (node `50:3068`): gap=16, line color #F2F2F2.
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          height: s(1),
+                                          color: PhoneLoginColors.surface,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: s(16)),
+                                        child: Text(
+                                          'أو',
+                                          style: PhoneLoginTextStyles.divider.copyWith(
+                                            fontSize: sf(14, min: 12),
                                           ),
                                         ),
-                                        Expanded(
-                                          child: Container(
-                                            height: s(1),
-                                            color: PhoneLoginColors.surface,
-                                          ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          height: s(1),
+                                          color: PhoneLoginColors.surface,
                                         ),
-                                      ],
-                                    ),
-
-                                    SizedBox(height: s(40)),
-
-                                    // Social buttons (node `50:3072`): gap=24; each button 361×48.
-                                    Column(
-                                      children: [
-                                        SizedBox(
-                                          width: s(361),
-                                          child: SocialAuthButton(
-                                            provider: SocialAuthProvider.google,
-                                            label: 'تابع باستخدام Google',
-                                            onTap: _signInWithGoogle,
-                                          ),
+                                      ),
+                                    ],
+                                  ),
+                            
+                                  SizedBox(height: s(40)),
+                            
+                                  // Social buttons (node `50:3072`): gap=24; each button 361×48.
+                                  Column(
+                                    children: [
+                                      SizedBox(
+                                        width: s(361),
+                                        child: SocialAuthButton(
+                                          provider: SocialAuthProvider.google,
+                                          label: 'تابع باستخدام Google',
+                                          onTap: _signInWithGoogle,
                                         ),
-                                        SizedBox(height: s(24)),
-                                        SizedBox(
-                                          width: s(361),
-                                          child: SocialAuthButton(
-                                            provider: SocialAuthProvider.apple,
-                                            label: 'تابع باستخدام Apple',
-                                            onTap: _signInWithApple,
-                                          ),
+                                      ),
+                                      SizedBox(height: s(24)),
+                                      SizedBox(
+                                        width: s(361),
+                                        child: SocialAuthButton(
+                                          provider: SocialAuthProvider.apple,
+                                          label: 'تابع باستخدام Apple',
+                                          onTap: _signInWithApple,
                                         ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-
-                            // Root bottom padding (node `50:3051`): 120.
-                            SizedBox(height: s(120)),
-                          ],
-                        ),
+                          ),
+                            
+                          // Root bottom padding (node `50:3051`): 120.
+                          SizedBox(height: s(120)),
+                        ],
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

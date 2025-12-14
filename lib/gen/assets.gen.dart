@@ -37,6 +37,10 @@ class $AssetsIconsGen {
   /// Directory path: assets/icons/categories
   $AssetsIconsCategoriesGen get categories => const $AssetsIconsCategoriesGen();
 
+  /// File path: assets/icons/chevron_down.svg
+  SvgGenImage get chevronDown =>
+      const SvgGenImage('assets/icons/chevron_down.svg');
+
   /// File path: assets/icons/chevron_right.svg
   SvgGenImage get chevronRight =>
       const SvgGenImage('assets/icons/chevron_right.svg');
@@ -100,6 +104,7 @@ class $AssetsIconsGen {
     arrowIcon,
     backButton,
     bolt,
+    chevronDown,
     chevronRight,
     comment,
     commentFigma,
@@ -116,6 +121,9 @@ class $AssetsIconsGen {
 
 class $AssetsImagesGen {
   const $AssetsImagesGen();
+
+  /// File path: assets/images/EXPORT_BLUR_SHAPE_HERE.txt
+  String get exportBlurShapeHere => 'assets/images/EXPORT_BLUR_SHAPE_HERE.txt';
 
   /// Directory path: assets/images/credit_cards
   $AssetsImagesCreditCardsGen get creditCards =>
@@ -154,6 +162,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<dynamic> get values => [
+    exportBlurShapeHere,
     languageSwitchShape,
     loginBlurShape,
     onboardingGradient,
@@ -317,6 +326,10 @@ class $AssetsIconsProductPageGen {
   SvgGenImage get likeInactive =>
       const SvgGenImage('assets/icons/product_page/like_inactive.svg');
 
+  /// File path: assets/icons/product_page/report.svg
+  SvgGenImage get report =>
+      const SvgGenImage('assets/icons/product_page/report.svg');
+
   /// File path: assets/icons/product_page/riyal.svg
   SvgGenImage get riyal =>
       const SvgGenImage('assets/icons/product_page/riyal.svg');
@@ -337,6 +350,7 @@ class $AssetsIconsProductPageGen {
     comment,
     likeActive,
     likeInactive,
+    report,
     riyal,
     shareIos,
     tag,

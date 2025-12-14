@@ -80,7 +80,7 @@ class AppTextStyles {
   // Info blocks
   static const TextStyle storePageDetailsTitle = TextStyle(
     fontFamily: 'Parkinsans',
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w700,
     fontSize: 16,
     height: 1.3374472856521606,
   );

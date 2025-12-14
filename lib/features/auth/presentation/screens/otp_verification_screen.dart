@@ -6,12 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
-import 'package:vector_math/vector_math_64.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
-import 'package:waffir/core/widgets/buttons/back_button.dart';
+import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/core/widgets/widgets.dart';
-import 'package:waffir/gen/assets.gen.dart';
+import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 
 class OtpVerificationScreen extends ConsumerStatefulWidget {
   const OtpVerificationScreen({
@@ -147,7 +146,6 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     final isSmallScreen = responsive.screenHeight < 700;
 
     final horizontalPadding = responsive.scaleWithRange(16, min: 16, max: 32);
-    final topPadding = responsive.scaleWithRange(64, min: 48, max: 88);
     final bottomPadding = responsive.scaleWithRange(isSmallScreen ? 60 : 120, min: 40, max: 160);
     final contentWidth = responsive.scaleWithMax(309, max: 420);
     final buttonWidth = responsive.scaleWithMax(330, max: 420);
@@ -198,106 +196,56 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: colorScheme.surface,
-        body: SafeArea(
-          top: false,
-          child: Stack(
-            children: [
-              // Background shape image (matching Figma design)
-              Positioned(
-                left: isRTL ? null : -responsive.scaleWithMax(40, max: 60),
-                right: isRTL ? -responsive.scaleWithMax(40, max: 60) : null,
-                top: -responsive.scaleWithMax(100, max: 140),
-                child: Transform(
-                  alignment: Alignment.center,
-                  transform: isRTL
-                      ? Matrix4.identity().scaledByVector3(Vector3(-1.0, 1.0, 1.0))
-                      : Matrix4.identity(),
-                  child: Image.asset(
-                    Assets.images.onboardingShape.path,
-                    width: responsive.scaleWithMax(467.78, max: 560),
-                    height: responsive.scaleWithMax(461.3, max: 555),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+        body: Stack(
+          children: [
+            // Background shape image (matching Figma design)
+            const BlurredBackground(),
+            // Back button (RTL-aware)
+            WaffirBackButton(size: responsive.scale(44)),
+            // Main content
+            Padding(
+              padding: EdgeInsets.only(
+                left: horizontalPadding,
+                right: horizontalPadding,
+                bottom: bottomPadding,
               ),
-
-              // Back button (RTL-aware)
-              Padding(
-                padding: responsive.scalePadding(
-                  EdgeInsets.only(
-                    top: topPadding,
-                    left: horizontalPadding,
-                    right: horizontalPadding,
-                  ),
-                ),
-                child: Align(
-                  alignment: AlignmentDirectional.topStart,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: colorScheme.shadow.withValues(alpha: 0.06),
-                          blurRadius: responsive.scale(8),
-                          spreadRadius: responsive.scale(2),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: contentWidth),
+                          child: _buildHeader(textTheme, colorScheme, responsive),
+                        ),
+                        SizedBox(
+                          height: responsive.scaleWithRange(
+                            isSmallScreen ? 24 : 32,
+                            min: 16,
+                            max: 40,
+                          ),
+                        ),
+                        _buildOtpInput(
+                          defaultPinTheme,
+                          focusedPinTheme,
+                          submittedPinTheme,
+                          errorPinTheme,
+                        ),
+                        SizedBox(height: responsive.scaleWithRange(32, min: 20, max: 40)),
+                        ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: contentWidth),
+                          child: _buildActionLinks(textTheme, colorScheme, responsive),
                         ),
                       ],
-                      borderRadius: BorderRadius.circular(responsive.scale(22)),
-                    ),
-                    child: AppBackButton(
-                      size: responsive.scale(44),
-                      backgroundColor: colorScheme.surface,
-                      foregroundColor: colorScheme.onSurface,
-                      showBackground: true,
                     ),
                   ),
-                ),
+                  _buildVerifyButton(buttonWidth),
+                ],
               ),
-
-              // Main content
-              Padding(
-                padding: EdgeInsets.only(
-                  left: horizontalPadding,
-                  right: horizontalPadding,
-                  bottom: bottomPadding,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: contentWidth),
-                            child: _buildHeader(textTheme, colorScheme, responsive),
-                          ),
-                          SizedBox(
-                            height: responsive.scaleWithRange(
-                              isSmallScreen ? 24 : 32,
-                              min: 16,
-                              max: 40,
-                            ),
-                          ),
-                          _buildOtpInput(
-                            defaultPinTheme,
-                            focusedPinTheme,
-                            submittedPinTheme,
-                            errorPinTheme,
-                          ),
-                          SizedBox(height: responsive.scaleWithRange(32, min: 20, max: 40)),
-                          ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: contentWidth),
-                            child: _buildActionLinks(textTheme, colorScheme, responsive),
-                          ),
-                        ],
-                      ),
-                    ),
-                    _buildVerifyButton(buttonWidth),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

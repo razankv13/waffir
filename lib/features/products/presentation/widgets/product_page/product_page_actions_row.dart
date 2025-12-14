@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/constants/app_colors.dart';
 import 'package:waffir/core/themes/figma_product_page/product_page_theme.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/gen/assets.gen.dart';
 
 class ProductPageActionsRow extends StatelessWidget {
   const ProductPageActionsRow({super.key, required this.theme});
@@ -47,10 +49,7 @@ class ProductPageActionsRow extends StatelessWidget {
                         '21',
                         style: theme.textStyles.count.copyWith(
                           color: theme.colors.textMid,
-                          fontSize: responsive.scaleFontSize(
-                            theme.textStyles.count.fontSize ?? 14,
-                            minSize: 10,
-                          ),
+                          fontSize: responsive.scaleFontSize(theme.textStyles.count.fontSize ?? 14),
                         ),
                       ),
                       SizedBox(width: responsive.scale(6)),
@@ -82,10 +81,7 @@ class ProductPageActionsRow extends StatelessWidget {
                             'assets/icons/product_page/comment.svg',
                             width: responsive.scale(17.22),
                             height: responsive.scale(17.22),
-                            colorFilter: ColorFilter.mode(
-                              theme.colors.textPrimary,
-                              BlendMode.srcIn,
-                            ),
+                            colorFilter: const ColorFilter.mode(AppColors.gray03, BlendMode.srcIn),
                           ),
                         ),
                       ),
@@ -94,10 +90,7 @@ class ProductPageActionsRow extends StatelessWidget {
                         '45',
                         style: theme.textStyles.count.copyWith(
                           color: theme.colors.textMid,
-                          fontSize: responsive.scaleFontSize(
-                            theme.textStyles.count.fontSize ?? 14,
-                            minSize: 10,
-                          ),
+                          fontSize: responsive.scaleFontSize(theme.textStyles.count.fontSize ?? 14),
                         ),
                       ),
                     ],
@@ -118,10 +111,10 @@ class ProductPageActionsRow extends StatelessWidget {
                     height: responsive.scale(20),
                     child: Center(
                       child: SvgPicture.asset(
-                        'assets/icons/product_page/comment.svg',
+                        Assets.icons.productPage.tag.path,
                         width: responsive.scale(19.17),
                         height: responsive.scale(18.31),
-                        colorFilter: ColorFilter.mode(theme.colors.textPrimary, BlendMode.srcIn),
+                        colorFilter: const ColorFilter.mode(AppColors.gray03, BlendMode.srcIn),
                       ),
                     ),
                   ),
@@ -133,10 +126,7 @@ class ProductPageActionsRow extends StatelessWidget {
             '3 hours ago',
             style: theme.textStyles.timestamp.copyWith(
               color: theme.colors.textSecondary,
-              fontSize: responsive.scaleFontSize(
-                theme.textStyles.timestamp.fontSize ?? 12,
-                minSize: 10,
-              ),
+              fontSize: responsive.scaleFontSize(theme.textStyles.timestamp.fontSize ?? 12),
             ),
           ),
         ],
@@ -167,7 +157,7 @@ class ProductPageIconBubble extends StatelessWidget {
           asset,
           width: responsive.scale(24),
           height: responsive.scale(24),
-          color: theme.colors.textPrimary,
+          colorFilter: const ColorFilter.mode(AppColors.gray03, BlendMode.srcIn),
         ),
       ),
     );

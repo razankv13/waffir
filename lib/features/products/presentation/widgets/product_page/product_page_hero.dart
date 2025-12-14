@@ -28,10 +28,7 @@ class ProductPageHero extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(responsive.scale(0)),
-        child: Image.asset(
-          imageAssetPath,
-          fit: BoxFit.cover,
-        ),
+        child: Image.asset(imageAssetPath, fit: BoxFit.cover),
       ),
     );
   }

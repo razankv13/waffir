@@ -179,7 +179,7 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
       itemCount: _cities.length,
       itemBuilder: (context, index) {
         final city = _cities[index];
-        final cityName = city['ar']!;
+        final cityName = city['en']!;
         return Padding(
           padding: const EdgeInsets.only(bottom: 11),
           child: CityListItem(

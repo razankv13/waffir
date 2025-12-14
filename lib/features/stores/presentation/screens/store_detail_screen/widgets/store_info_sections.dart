@@ -5,6 +5,7 @@ import 'package:waffir/core/themes/app_text_styles.dart';
 import 'package:waffir/core/themes/extensions/promo_colors_extension.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/features/stores/data/models/store_model.dart';
+import 'package:waffir/gen/assets.gen.dart';
 
 /// Outlet banner (Figma node 54:5744).
 class StoreOutletBanner extends StatelessWidget {
@@ -20,9 +21,7 @@ class StoreOutletBanner extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(color: colorScheme.primary),
         child: Padding(
-          padding: responsive.scalePadding(
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          ),
+          padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -40,7 +39,9 @@ class StoreOutletBanner extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       child: Text(
                         'Take Me to Nearest Outlet',
-                        style: AppTextStyles.storePageOutletRight.copyWith(color: colorScheme.onPrimary),
+                        style: AppTextStyles.storePageOutletRight.copyWith(
+                          color: colorScheme.onPrimary,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.clip,
                         textAlign: TextAlign.right,
@@ -152,10 +153,7 @@ class StoreDiscountTag extends StatelessWidget {
               ),
             ),
             SizedBox(width: responsive.scale(4)),
-            Text(
-              label,
-              style: AppTextStyles.storePageDiscountLabel.copyWith(color: textColor),
-            ),
+            Text(label, style: AppTextStyles.storePageDiscountLabel.copyWith(color: textColor)),
           ],
         ),
       ),
@@ -173,23 +171,24 @@ class StoreAdditionalActions extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: responsive.scale(16), vertical: responsive.scale(8)),
+      padding: EdgeInsets.symmetric(
+        horizontal: responsive.scale(16),
+        vertical: responsive.scale(8),
+      ),
       child: InkWell(
         onTap: () {
           HapticFeedback.mediumImpact();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Thanks! We’ll inspect this offer.')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Thanks! We’ll inspect this offer.')));
         },
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
               width: responsive.scale(24),
               height: responsive.scale(24),
               child: SvgPicture.asset(
-                'assets/icons/store_detail/error.svg',
-                fit: BoxFit.contain,
+                Assets.icons.storeDetail.error.path,
                 colorFilter: ColorFilter.mode(colorScheme.onSurface, BlendMode.srcIn),
               ),
             ),
@@ -207,11 +206,7 @@ class StoreAdditionalActions extends StatelessWidget {
 
 /// Product info section (Figma node 54:5578).
 class StoreProductInfoSection extends StatelessWidget {
-  const StoreProductInfoSection({
-    super.key,
-    required this.detailsBody,
-    required this.featuresBody,
-  });
+  const StoreProductInfoSection({super.key, required this.detailsBody, required this.featuresBody});
 
   final String detailsBody;
   final String featuresBody;

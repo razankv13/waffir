@@ -113,7 +113,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Top spacer (gradient height from Figma)
-                          SizedBox(height: ResponsiveHelper(context).scale(256.0)),
+                          SizedBox(height: ResponsiveHelper(context).scale(87.0)),
 
                           // Content sections
                           Column(

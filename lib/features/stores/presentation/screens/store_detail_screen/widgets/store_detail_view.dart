@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:waffir/core/themes/figma_product_page/product_page_theme.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/product_page_comments_section.dart';
 import 'package:waffir/features/stores/data/models/store_model.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/store_detail_controller.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/widgets/store_detail_cta.dart';
@@ -25,6 +27,20 @@ class StoreDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
+    final productTheme = Theme.of(context).extension<ProductPageTheme>() ?? ProductPageTheme.light;
+
+    final storeComments = testimonials
+        .map(
+          (testimonial) => ProductPageComment(
+            author: testimonial.author,
+            subtitle: testimonial.location,
+            body: testimonial.body,
+            timeText: '3 hours ago',
+            helpfulCount: 21,
+            avatarAssetPath: 'assets/images/product_page/avatar.png',
+          ),
+        )
+        .toList();
 
     final heroUrl = (store.bannerUrl != null && store.bannerUrl!.isNotEmpty)
         ? store.bannerUrl!
@@ -82,7 +98,11 @@ class StoreDetailView extends StatelessWidget {
               SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
               const SliverToBoxAdapter(child: StoreSectionDivider()),
               SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
-              StoreCommentsSection(testimonials: testimonials),
+              ProductPageCommentsSection(
+                theme: productTheme,
+                comments: storeComments,
+                defaultAvatarAssetPath: 'assets/images/product_page/avatar.png',
+              ),
               SliverToBoxAdapter(
                 child: SizedBox(height: responsive.scale(96) + responsive.bottomSafeArea + responsive.scale(32)),
               ),
