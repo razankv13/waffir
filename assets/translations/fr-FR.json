@@ -38,11 +38,11 @@
     "phoneNumber": "Numéro de Téléphone",
     "enterPhoneNumber": "Entrez votre numéro de téléphone",
     "otpTitle": "Entrez le code de vérification",
-    "otpSubtitle": "Entrez le code à 6 chiffres envoyé à {contact}",
+    "otpSubtitle": "Entrez le code à 5 chiffres envoyé à\\n{contact}",
     "changeNumber": "Changer le numéro",
     "resendCode": "Renvoyer le code",
     "verify": "Vérifier",
-    "resendCodeIn": "Renvoyer le code dans {seconds}s",
+    "resendCodeIn": "Renvoyer le code {time}",
     "codeSentSuccess": "Code de vérification envoyé avec succès"
   },
   "validation": {

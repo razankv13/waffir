@@ -1,5 +1,5 @@
-import '../models/bank_model.dart';
-import '../models/credit_card_model.dart';
+import 'package:waffir/features/credit_cards/data/models/bank_model.dart';
+import 'package:waffir/features/credit_cards/data/models/credit_card_model.dart';
 
 /// Mock data for banks
 class BanksMockData {

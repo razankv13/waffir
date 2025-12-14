@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
 /// Blurred background for phone login screen matching Figma design
@@ -24,24 +25,27 @@ class BlurredBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
+
+    double s(double value) => responsive.scaleWithMax(value, max: value); // downscale-only
     return Container(
       color: const Color(0xFFFFFFFF), // Pure white background per Figma
       child: Stack(
         children: [
           // Blurred shape positioned at (-40, -100) per Figma spec
           Positioned(
-            left: -40,
-            top: -100,
+            left: -s(40),
+            top: -s(100),
             child: ImageFiltered(
               imageFilter: ImageFilter.blur(
-                sigmaX: 100,
-                sigmaY: 100,
+                sigmaX: s(100),
+                sigmaY: s(100),
                 tileMode: TileMode.decal,
               ),
               child: Image.asset(
                 Assets.images.loginBlurShape.path,
-                width: 467.78,
-                height: 461.3,
+                width: s(467.78),
+                height: s(461.3),
                 fit: BoxFit.contain,
               ),
             ),

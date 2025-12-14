@@ -1,12 +1,16 @@
 import 'dart:async';
 
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
-import 'package:waffir/core/widgets/buttons/back_button.dart';
+import 'package:waffir/core/themes/phone_login/app_colors.dart';
+import 'package:waffir/core/themes/phone_login/app_text_styles.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/social_auth_button.dart';
 import 'package:waffir/core/widgets/inputs/phone_input_widget.dart';
+import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
@@ -31,6 +35,7 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
   final TextEditingController _phoneController = TextEditingController();
   bool _isLoading = false;
   bool _isPhoneValid = false;
+  String _selectedDialCode = '+966';
 
   @override
   void initState() {
@@ -63,12 +68,19 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
     if (mounted) {
       setState(() => _isLoading = false);
       // Navigate to OTP screen
+      final phoneNumber = '$_selectedDialCode${_phoneController.text.trim()}';
       unawaited(
         GoRouterHelper(
           context,
-        ).push(AppRoutes.otpVerification, extra: {'phoneNumber': _phoneController.text}),
+        ).push(AppRoutes.otpVerification, extra: {'phoneNumber': phoneNumber}),
       );
     }
+  }
+
+  void _onCountryChanged(CountryCode countryCode) {
+    setState(() {
+      _selectedDialCode = countryCode.dialCode ?? _selectedDialCode;
+    });
   }
 
   void _signInWithGoogle() {
@@ -85,141 +97,172 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final size = MediaQuery.of(context).size;
-    final isTablet = size.width > 600;
-
-    // Responsive sizing
-
-
     return Scaffold(
-      body: Stack(
-        children: [
-          // Blurred background matching Figma design
-          const Positioned.fill(child: BlurredBackground()),
+      body: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Stack(
+          children: [
+            const Positioned.fill(child: BlurredBackground()),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final responsive = context.responsive;
 
-          // Back button (top right per Figma) with white circular background
-          Positioned(
-            top: 64,
-            right: 16,
-            child: AppBackButton(onPressed: () => GoRouterHelper(context).pop()),
-          ),
+                double s(double value) =>
+                    responsive.scaleWithMax(value, max: value); // downscale-only
+                double sf(double value, {double min = 10.0}) =>
+                    responsive.scaleWithRange(value, min: min, max: value); // downscale-only
 
-          // Content
-          SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: isTablet ? 500.0 : double.infinity),
-                  child: Column(
-                    children: [
-                      SizedBox(height: isTablet ? 80 : 60),
+                final contentWidth = s(ResponsiveHelper.figmaWidth);
 
-                      // Hero section: Waffir icon - 177x175px per Figma
-                      Image.asset(
-                        Assets.images.waffirIconLogin.path,
-                        width: 177,
-                        height: 175,
-                        fit: BoxFit.contain,
-                      ),
-
-                      SizedBox(height: isTablet ? 42 : 40),
-
-                      // Title - Parkinsans 20px bold (all bold, no mixed weights)
-                      const Text(
-                        'مرحباً بكم في وفــــر',
-                        style: TextStyle(
-                          fontFamily: 'Parkinsans',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          height: 1.0,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // Subtitle - Parkinsans 16px regular
-                      const Text(
-                        'سجّل الدخول أو أنشئ حساباً للمتابعة',
-                        style: TextStyle(
-                          fontFamily: 'Parkinsans',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          height: 1.25,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-
-                      const SizedBox(height: 32),
-
-                      // Phone input with validation - 361px width per Figma
-                      SizedBox(
-                        width: 361,
-                        child: PhoneInputWidget(
-                          controller: _phoneController,
-                          hintText: 'Phone Number', // Match Figma placeholder
-                          isLoading: _isLoading,
-                          isValid: _isPhoneValid,
-                          onSubmit: _submitPhone,
-                        ),
-                      ),
-
-                      const SizedBox(height: 40),
-
-                      // "or" divider - Parkinsans 14px weight 500
-                      Row(
-                        children: [
-                          Expanded(child: Container(height: 1, color: colorScheme.surface)),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              'أو',
-                              style: TextStyle(
-                                fontFamily: 'Parkinsans',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                height: 1.25,
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: Center(
+                      child: SizedBox(
+                        width: contentWidth,
+                        child: Column(
+                          children: [
+                            // Back container (node `50:5556`): 393×108 with padding top=64 right=16.
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: WaffirBackButton(size: responsive.scale(44)),
+                            ),
+                            // Waffir icon (node `50:3060`): 177×175.
+                            SizedBox(
+                              height: s(175),
+                              child: Center(
+                                child: Image.asset(
+                                  Assets.images.waffirIconLogin.path,
+                                  width: s(177),
+                                  height: s(175),
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                             ),
-                          ),
-                          Expanded(child: Container(height: 1, color: colorScheme.surface)),
-                        ],
-                      ),
 
-                      const SizedBox(height: 40),
+                            // Bottom container (node `50:3061`): height=449, padding horizontal=16, gap=40.
+                            SizedBox(
+                              height: s(449),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: s(16)),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    // Top group (node `50:3062`): gap=32.
+                                    Column(
+                                      children: [
+                                        // Title/subtitle group (node `50:3063`): gap=16.
+                                        SizedBox(
+                                          width: s(361),
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                'مرحباً بكم في وفــــر',
+                                                style: PhoneLoginTextStyles.title.copyWith(
+                                                  fontSize: sf(20, min: 14),
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              SizedBox(height: s(16)),
+                                              Text(
+                                                'سجّل الدخول أو أنشئ حساباً للمتابعة',
+                                                style: PhoneLoginTextStyles.subtitle.copyWith(
+                                                  fontSize: sf(16, min: 12),
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
 
-                      // Social auth buttons - 361px width per Figma
-                      SizedBox(
-                        width: 361,
-                        child: SocialAuthButton(
-                          provider: SocialAuthProvider.google,
-                          label: 'تابع باستخدام Google',
-                          onTap: _signInWithGoogle,
+                                        SizedBox(height: s(32)),
+
+                                        // Phone input (node `50:3067`): width=361.
+                                        SizedBox(
+                                          width: s(361),
+                                          child: PhoneInputWidget(
+                                            controller: _phoneController,
+                                            countryCode: _selectedDialCode,
+                                            hintText: 'Phone Number',
+                                            isLoading: _isLoading,
+                                            isValid: _isPhoneValid,
+                                            onSubmit: _submitPhone,
+                                            onCountryChanged: _onCountryChanged,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    SizedBox(height: s(40)),
+
+                                    // Divider (node `50:3068`): gap=16, line color #F2F2F2.
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            height: s(1),
+                                            color: PhoneLoginColors.surface,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: s(16)),
+                                          child: Text(
+                                            'أو',
+                                            style: PhoneLoginTextStyles.divider.copyWith(
+                                              fontSize: sf(14, min: 12),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            height: s(1),
+                                            color: PhoneLoginColors.surface,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    SizedBox(height: s(40)),
+
+                                    // Social buttons (node `50:3072`): gap=24; each button 361×48.
+                                    Column(
+                                      children: [
+                                        SizedBox(
+                                          width: s(361),
+                                          child: SocialAuthButton(
+                                            provider: SocialAuthProvider.google,
+                                            label: 'تابع باستخدام Google',
+                                            onTap: _signInWithGoogle,
+                                          ),
+                                        ),
+                                        SizedBox(height: s(24)),
+                                        SizedBox(
+                                          width: s(361),
+                                          child: SocialAuthButton(
+                                            provider: SocialAuthProvider.apple,
+                                            label: 'تابع باستخدام Apple',
+                                            onTap: _signInWithApple,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                            // Root bottom padding (node `50:3051`): 120.
+                            SizedBox(height: s(120)),
+                          ],
                         ),
                       ),
-
-                      const SizedBox(height: 24),
-
-                      SizedBox(
-                        width: 361,
-                        child: SocialAuthButton(
-                          provider: SocialAuthProvider.apple,
-                          label: 'تابع باستخدام Apple',
-                          onTap: _signInWithApple,
-                        ),
-                      ),
-
-                      SizedBox(height: isTablet ? 120 : 120),
-                    ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

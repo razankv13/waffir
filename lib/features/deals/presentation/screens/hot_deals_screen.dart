@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
-import 'package:waffir/core/widgets/buttons/app_button.dart';
+import 'package:waffir/core/widgets/bottom_login_overlay.dart';
 import 'package:waffir/core/widgets/products/badge_widget.dart';
 import 'package:waffir/core/widgets/products/product_card.dart';
 import 'package:waffir/core/widgets/search/category_filter_chips.dart';
@@ -199,9 +199,7 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                         right: 16,
                         bottom: 280, // Extra space for gradient overlay + bottom nav
                       ),
-                      children: [
-                        _buildEmptyState(context),
-                      ],
+                      children: [_buildEmptyState(context)],
                     )
                   : ListView.builder(
                       physics: const AlwaysScrollableScrollPhysics(),
@@ -246,7 +244,9 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                           title: deal.title,
                           salePrice: salePrice,
                           originalPrice: originalPriceStr,
-                          discountPercentage: deal.hasDiscount ? deal.calculatedDiscountPercentage : null,
+                          discountPercentage: deal.hasDiscount
+                              ? deal.calculatedDiscountPercentage
+                              : null,
                           storeName: deal.brand ?? 'Store',
                           badge: badgeText,
                           badgeType: badgeType,
@@ -271,45 +271,7 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
           ),
 
           // Bottom Gradient CTA Overlay
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 88, // Above bottom navigation bar
-            child: IgnorePointer(
-              ignoring: false,
-              child: Container(
-                height: 215,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      colorScheme.surface.withValues(alpha: 0.0),
-                      colorScheme.surface.withValues(alpha: 0.8),
-                      colorScheme.surface,
-                    ],
-                    stops: const [0.0, 0.5, 1.0],
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: AppButton.primary(
-                      text: 'Login to view full deal details',
-                      onPressed: () {
-                        // Navigate to login screen
-                        context.push('/login');
-                      },
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          const BottomLoginOverlay(),
         ],
       ),
     );

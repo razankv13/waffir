@@ -1,4 +1,4 @@
-import '../../domain/entities/alert.dart';
+import 'package:waffir/features/deals/domain/entities/alert.dart';
 
 /// Mock data for alerts
 class AlertsMockData {

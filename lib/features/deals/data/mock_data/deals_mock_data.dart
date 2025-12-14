@@ -1,4 +1,4 @@
-import '../models/deal_model.dart';
+import 'package:waffir/features/deals/data/models/deal_model.dart';
 
 /// Mock data for deals/products
 class DealsMockData {

@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:waffir/core/extensions/context_extensions.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/storage/settings_service.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
@@ -53,14 +54,22 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final colorScheme = theme.colorScheme;
 
     // Responsive horizontal padding
-    final horizontalPadding = context.responsive<double>(mobile: 16.0, tablet: 32.0, desktop: 48.0);
+    final horizontalPadding = ResponsiveHelper(
+      context,
+    ).horizontalPadding(mobile: 16.0, tablet: 32.0, desktop: 48.0);
 
     // Responsive spacing
-    final sectionGap = context.responsive<double>(mobile: 40.0, tablet: 48.0, desktop: 56.0);
+    final sectionGap = ResponsiveHelper(
+      context,
+    ).verticalPadding(mobile: 40.0, tablet: 48.0, desktop: 56.0);
 
-    final contentGap = context.responsive<double>(mobile: 64.0, tablet: 80.0, desktop: 96.0);
+    final contentGap = ResponsiveHelper(
+      context,
+    ).verticalPadding(mobile: 64.0, tablet: 80.0, desktop: 96.0);
 
-    final bottomPadding = context.responsive<double>(mobile: 120.0, tablet: 80.0, desktop: 60.0);
+    final bottomPadding = ResponsiveHelper(
+      context,
+    ).verticalPadding(mobile: 120.0, tablet: 80.0, desktop: 60.0);
 
     // Pixel-perfect values from Figma (393x852)
     const double titleFontSize = 20.0;
@@ -73,16 +82,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             // Responsive shape dimensions
-            final shapeWidth = context.responsive<double>(
-              mobile: 467.78,
-              tablet: 550.0,
-              desktop: 600.0,
-            );
-            final shapeHeight = context.responsive<double>(
-              mobile: 461.3,
-              tablet: 540.0,
-              desktop: 590.0,
-            );
+            final shapeWidth = ResponsiveHelper(context).scale(467.78);
+            final shapeHeight = ResponsiveHelper(context).scale(461.3);
 
             return Stack(
               children: [
@@ -112,13 +113,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Top spacer (gradient height from Figma)
-                          SizedBox(
-                            height: context.responsive<double>(
-                              mobile: 256.0,
-                              tablet: 200.0,
-                              desktop: 180.0,
-                            ),
-                          ),
+                          SizedBox(height: ResponsiveHelper(context).scale(256.0)),
 
                           // Content sections
                           Column(

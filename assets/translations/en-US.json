@@ -37,12 +37,12 @@
     "continueWithApple": "Continue with Apple",
     "phoneNumber": "Phone Number",
     "enterPhoneNumber": "Enter phone number",
-    "otpTitle": "Enter verification code",
-    "otpSubtitle": "Enter the 6-digit code sent to {contact}",
-    "changeNumber": "Change number",
-    "resendCode": "Resend code",
+    "otpTitle": "Enter Verification Code",
+    "otpSubtitle": "Enter the 5-digit code that was sent to\\n{contact}",
+    "changeNumber": "Change Number",
+    "resendCode": "Resend Code",
     "verify": "Verify",
-    "resendCodeIn": "Resend code in {seconds}s",
+    "resendCodeIn": "Resend Code {time}",
     "codeSentSuccess": "Verification code sent successfully"
   },
   "validation": {

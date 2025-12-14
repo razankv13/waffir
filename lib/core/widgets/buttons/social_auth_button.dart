@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:waffir/core/constants/app_colors.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
 /// Social authentication provider types
@@ -83,35 +83,58 @@ class _SocialAuthButtonState extends State<SocialAuthButton> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final responsive = context.responsive;
+
+    double s(double value) => responsive.scaleWithMax(value, max: value); // downscale-only
+    double sf(double value, {double min = 10.0}) => responsive.scaleWithRange(value, min: min, max: value); // downscale-only
+
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
     return ScaleTransition(
       scale: _scaleAnimation,
       child: GestureDetector(
         onTap: _handleTap,
         child: Container(
-          height: 48,
+          height: s(48),
           decoration: BoxDecoration(
-            color: AppColors.gray01,
-            borderRadius: BorderRadius.circular(30),
+            color: colorScheme.surfaceContainerHighest, // #F2F2F2 (Figma)
+            borderRadius: BorderRadius.circular(s(30)),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          alignment: Alignment.center,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Icon from Figma assets - 23.64x23.64px
-              SvgPicture.asset(_iconPath, width: 23.64, height: 23.64),
-              const SizedBox(width: 11),
-              // Label - Parkinsans 14px weight 600
-              Text(
-                widget.label,
-                style: const TextStyle(
-                  fontFamily: 'Parkinsans',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  height: 1.0,
-                ),
-                textDirection: TextDirection.rtl,
-              ),
-            ],
+            mainAxisSize: MainAxisSize.min,
+            children: isRtl
+                ? [
+                    Text(
+                      widget.label,
+                      style: TextStyle(
+                        fontFamily: 'Parkinsans',
+                        fontSize: sf(14, min: 12),
+                        fontWeight: FontWeight.w600,
+                        height: 1.0,
+                        color: colorScheme.onSurface,
+                      ),
+                      textDirection: TextDirection.rtl,
+                    ),
+                    SizedBox(width: s(11)),
+                    SvgPicture.asset(_iconPath, width: s(23.64), height: s(23.64)),
+                  ]
+                : [
+                    SvgPicture.asset(_iconPath, width: s(23.64), height: s(23.64)),
+                    SizedBox(width: s(11)),
+                    Text(
+                      widget.label,
+                      style: TextStyle(
+                        fontFamily: 'Parkinsans',
+                        fontSize: sf(14, min: 12),
+                        fontWeight: FontWeight.w600,
+                        height: 1.0,
+                        color: colorScheme.onSurface,
+                      ),
+                      textDirection: TextDirection.ltr,
+                    ),
+                  ],
           ),
         ),
       ),

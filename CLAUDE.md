@@ -1,8 +1,3 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-
 ## 🔧 MCP Tool Usage (REQUIRED)
 
 **ALWAYS use the following MCP tools automatically - they are optimized for this codebase:**
@@ -520,6 +515,35 @@ if (responsive.screenWidth < 400) {
 - NEVER use raw numbers for dimensions, padding, or fonts
 - NEVER ignore responsive scaling (breaks tablet/desktop)
 - NEVER create custom scaling logic (use ResponsiveHelper)
+
+### Colors (Design Tokens)
+
+**Source of truth**
+- In widget code, prefer `Theme.of(context).colorScheme.*`.
+- Do not import `AppColors` in widgets. Only theme/config code should read `AppColors` directly.
+
+**Palette (Figma Color-Palettes) → `AppColors`**
+
+- `AppColors.waffirGreen01` = `#DCFCE7`
+- `AppColors.waffirGreen02` = `#00FF88`
+- `AppColors.waffirGreen03` = `#00C531`
+- `AppColors.waffirGreen04` = `#0F352D`
+- `AppColors.gray01` = `#F2F2F2`
+- `AppColors.gray02` = `#CECECE`
+- `AppColors.gray03` = `#A3A3A3`
+- `AppColors.gray04` = `#595959`
+- `AppColors.black` = `#151515`
+- `AppColors.white` = `#FFFFFF`
+- `AppColors.white40` = `rgba(255,255,255,0.4)`
+- `AppColors.indigo` = `#3A2D98`
+- `AppColors.red` = `#FF0000`
+- `AppColors.goldGradient` = `#FFD900 → #FF9A03`
+
+**Theme mapping (preferred in UI)**
+- `Theme.of(context).colorScheme.primary` (Waffir green 04)
+- `Theme.of(context).colorScheme.secondary` (Waffir green 02)
+- `Theme.of(context).colorScheme.tertiary` (Indigo)
+- `Theme.of(context).colorScheme.error` (Red)
 
 ### Testing Responsive Layouts
 

@@ -31,9 +31,6 @@ class CategoryFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -42,9 +39,9 @@ class CategoryFilterChip extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           border: isSelected
-              ? Border(
+              ? const Border(
                   bottom: BorderSide(
-                    color: const Color(0xFF00C531), // Primary green from Figma
+                    color: Color(0xFF00C531), // Primary green from Figma
                     width: 2,
                   ),
                 )

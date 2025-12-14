@@ -38,11 +38,11 @@
     "phoneNumber": "رقم الجوال",
     "enterPhoneNumber": "أدخل رقم الجوال",
     "otpTitle": "أدخل رمز التحقق",
-    "otpSubtitle": "أدخل الرمز المكوّن من ٦ أرقام الذي تم إرساله إلى {contact}",
+    "otpSubtitle": "أدخل الرمز المكوّن من ٥ أرقام الذي تم إرساله إلى\\n{contact}",
     "changeNumber": "تغيير الرقم",
     "resendCode": "إعادة إرسال الرمز",
     "verify": "تحقق",
-    "resendCodeIn": "إعادة إرسال الرمز في {seconds}ث",
+    "resendCodeIn": "إعادة إرسال الرمز خلال {time}",
     "codeSentSuccess": "تم إرسال رمز التحقق بنجاح"
   },
   "validation": {

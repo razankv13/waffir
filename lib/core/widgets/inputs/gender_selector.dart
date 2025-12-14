@@ -34,23 +34,29 @@ class GenderSelector extends StatelessWidget {
     required this.onChanged,
     this.maleLabel = 'ذكر',
     this.femaleLabel = 'أنثى',
+    this.optionGap,
+    this.controlGap,
   });
 
   final Gender? selectedGender;
   final ValueChanged<Gender> onChanged;
   final String maleLabel;
   final String femaleLabel;
+  final double? optionGap;
+  final double? controlGap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final responsive = ResponsiveHelper(context);
-    final double optionGap = responsive.scale(80);
-    final double controlGap = responsive.scale(10);
+    final double computedOptionGap = optionGap ?? responsive.scale(80);
+    final double computedControlGap = controlGap ?? responsive.scale(10);
     final textStyle = theme.textTheme.bodyMedium?.copyWith(
       fontSize: responsive.scaleFontSize(16, minSize: 14),
-      color: colorScheme.onSurfaceVariant,
+      fontWeight: FontWeight.w400,
+      height: 1,
+      color: colorScheme.onSurface,
     );
 
     return Row(
@@ -62,20 +68,20 @@ class GenderSelector extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                femaleLabel,
-                style: textStyle,
-              ),
-              SizedBox(width: controlGap),
               _RoundedSquareCheckbox(
                 isSelected: selectedGender == Gender.female,
                 colorScheme: colorScheme,
+              ),
+              SizedBox(width: computedControlGap),
+              Text(
+                femaleLabel,
+                style: textStyle,
               ),
             ],
           ),
         ),
 
-        SizedBox(width: optionGap),
+        SizedBox(width: computedOptionGap),
 
         // Male option (left side in RTL)
         GestureDetector(
@@ -83,14 +89,14 @@ class GenderSelector extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                maleLabel,
-                style: textStyle,
-              ),
-              SizedBox(width: controlGap),
               _RoundedSquareCheckbox(
                 isSelected: selectedGender == Gender.male,
                 colorScheme: colorScheme,
+              ),
+              SizedBox(width: computedControlGap),
+              Text(
+                maleLabel,
+                style: textStyle,
               ),
             ],
           ),
@@ -103,7 +109,7 @@ class GenderSelector extends StatelessWidget {
 /// Custom rounded square checkbox widget
 ///
 /// Creates a Material 3 compliant checkbox with:
-/// - Rounded square shape (24x24 with 6px border radius)
+/// - Rounded square shape (24x24 with 4px border radius)
 /// - Selected state: Primary color fill with white checkmark
 /// - Unselected state: Outline border with transparent fill
 /// - Smooth visual transitions
@@ -121,7 +127,7 @@ class _RoundedSquareCheckbox extends StatelessWidget {
     final responsive = ResponsiveHelper(context);
     final double boxSize = responsive.scaleWithRange(24, min: 20, max: 28);
     final double borderWidth = responsive.scaleWithRange(2, min: 1.5, max: 2.5);
-    final double iconSize = responsive.scaleWithRange(16, min: 12, max: 18);
+    final double iconSize = responsive.scaleWithRange(12.15, min: 10, max: 14);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
@@ -131,7 +137,7 @@ class _RoundedSquareCheckbox extends StatelessWidget {
         borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(4)),
         color: isSelected ? colorScheme.primary : Colors.transparent,
         border: Border.all(
-          color: isSelected ? colorScheme.primary : colorScheme.outline,
+          color: colorScheme.primary,
           width: borderWidth,
         ),
       ),

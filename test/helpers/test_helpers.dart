@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:network_image_mock/network_image_mock.dart';
@@ -23,6 +24,7 @@ class TestHelpers {
         localizationsDelegates: const [
           DefaultMaterialLocalizations.delegate,
           DefaultWidgetsLocalizations.delegate,
+          CountryLocalizations.delegate,
         ],
         supportedLocales: const [
           Locale('en', 'US'),
@@ -68,9 +70,11 @@ class TestHelpers {
 
   /// Finds a widget by text with case-insensitive matching
   static Finder findTextIgnoringCase(String text) {
-    return find.byWidgetPredicate((widget) =>
-        widget is Text &&
-        widget.data?.toLowerCase().contains(text.toLowerCase()) == true);
+    return find.byWidgetPredicate(
+      (widget) =>
+          widget is Text &&
+          widget.data?.toLowerCase().contains(text.toLowerCase()) == true,
+    );
   }
 
   /// Finds a button by its text
@@ -189,7 +193,8 @@ class TestDataFactory {
       'productId': productId ?? TestConstants.mockProductId,
       'isActive': isActive ?? true,
       'purchaseDate': DateTime.now().toIso8601String(),
-      'expiresAt': (expiresAt ?? DateTime.now().add(const Duration(days: 30))).toIso8601String(),
+      'expiresAt': (expiresAt ?? DateTime.now().add(const Duration(days: 30)))
+          .toIso8601String(),
       'transactionId': TestConstants.mockTransactionId,
     };
   }

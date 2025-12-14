@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:waffir/core/navigation/app_router.dart';
@@ -14,23 +15,25 @@ class App extends ConsumerWidget {
 
     return MaterialApp.router(
       title: F.title,
-    
+
       // Waffir Design System Theme
       theme: AppTheme.lightTheme,
-    //  darkTheme: AppTheme.darkTheme,
+      //  darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light, // Can be changed to ThemeMode.system
-    
       // Localization & RTL Support
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      localizationsDelegates: context.localizationDelegates,
+      localizationsDelegates: [
+        ...context.localizationDelegates,
+        CountryLocalizations.delegate,
+      ],
 
       routerConfig: router,
-    
+
       builder: (context, child) {
         return _flavorBanner(child: child ?? const SizedBox.shrink());
       },
-    
+
       debugShowCheckedModeBanner: false,
     );
   }

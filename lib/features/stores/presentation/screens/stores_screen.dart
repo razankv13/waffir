@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:waffir/core/constants/app_typography.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/bottom_login_overlay.dart';
 import 'package:waffir/core/widgets/cards/store_card.dart';
 import 'package:waffir/core/widgets/filters/stores_category_chips.dart';
-import 'package:waffir/core/widgets/overlays/bottom_gradient_cta.dart';
 import 'package:waffir/core/widgets/search/waffir_search_bar.dart';
 import 'package:waffir/features/stores/data/models/store_model.dart';
 import 'package:waffir/features/stores/data/providers/stores_providers.dart';
@@ -99,185 +99,172 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
             child: NestedScrollView(
               floatHeaderSlivers: true,
               headerSliverBuilder: (context, _) {
-              // Keep responsive scaling for the header area (repo rule).
-              final headerHorizontalPadding = responsive.scale(16);
-              final headerVerticalPadding = responsive.scale(12);
-              final logoHeight = responsive.scale(56);
-              final notificationSize = responsive.scale(44);
-              final notificationIconSize = responsive.scale(22);
-              final notificationSplashRadius = responsive.scale(24);
+                // Keep responsive scaling for the header area (repo rule).
+                final headerHorizontalPadding = responsive.scale(16);
+                final headerVerticalPadding = responsive.scale(12);
+                final logoHeight = responsive.scale(56);
+                final notificationSize = responsive.scale(44);
+                final notificationIconSize = responsive.scale(22);
+                final notificationSplashRadius = responsive.scale(24);
 
-              // WaffirSearchBar has a fixed height of 68px by design.
-              const searchBarHeight = 68.0;
-              final searchPadding = responsive.scale(16);
+                // WaffirSearchBar has a fixed height of 68px by design.
+                const searchBarHeight = 68.0;
+                final searchPadding = responsive.scale(16);
 
-              final rowHeight = logoHeight > notificationSize ? logoHeight : notificationSize;
-              final headerSearchHeight =
-                  (headerVerticalPadding * 2) + rowHeight + (searchPadding * 2) + searchBarHeight;
+                final rowHeight = logoHeight > notificationSize ? logoHeight : notificationSize;
+                final headerSearchHeight =
+                    (headerVerticalPadding * 2) + rowHeight + (searchPadding * 2) + searchBarHeight;
 
-              // StoresCategoryChips has a fixed height of 66px currently.
-              const chipsHeight = 66.0;
-              final chipsTopSpacing = responsive.scale(6);
-              final chipsHeaderHeight = chipsTopSpacing + chipsHeight;
+                // StoresCategoryChips has a fixed height of 66px currently.
+                const chipsHeight = 66.0;
+                final chipsTopSpacing = responsive.scale(6);
+                final chipsHeaderHeight = chipsTopSpacing + chipsHeight;
 
-              return [
-                // Header + Search (hides on scroll up, snaps back on scroll down)
-                SliverAppBar(
-                  floating: true,
-                  snap: true,
-                  toolbarHeight: 0,
-                  collapsedHeight: headerSearchHeight,
-                  expandedHeight: headerSearchHeight,
-                  elevation: 0,
-                  backgroundColor: colorScheme.surface,
-                  surfaceTintColor: Colors.transparent,
-                  flexibleSpace: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Header row (logo + notifications)
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: headerHorizontalPadding,
-                          vertical: headerVerticalPadding,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Image.asset(
-                              'assets/images/splash_logo.png',
-                              height: logoHeight,
-                              fit: BoxFit.contain,
-                            ),
-
-                            // Notification Icon with soft background
-                            Container(
-                              width: notificationSize,
-                              height: notificationSize,
-                              decoration: BoxDecoration(
-                                color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-                                shape: BoxShape.circle,
-                              ),
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.notifications,
-                                  size: notificationIconSize,
-                                  color: colorScheme.primary,
-                                ),
-                                onPressed: () {
-                                  context.pushNamed(AppRouteNames.notifications);
-                                },
-                                padding: EdgeInsets.zero,
-                                splashRadius: notificationSplashRadius,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Search Bar (Waffir branded with exact Figma specs)
-                      Padding(
-                        padding: EdgeInsets.all(searchPadding),
-                        child: WaffirSearchBar(
-                          hintText: 'Search stores...',
-                          onChanged: _handleSearch,
-                          onSearch: _handleSearch,
-                          onFilterTap: _handleFilterTap,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Category Filters (always visible + sticky)
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: _StickyCategoryChipsHeaderDelegate(
-                    height: chipsHeaderHeight,
-                    topSpacing: chipsTopSpacing,
+                return [
+                  // Header + Search (hides on scroll up, snaps back on scroll down)
+                  SliverAppBar(
+                    floating: true,
+                    snap: true,
+                    toolbarHeight: 0,
+                    collapsedHeight: headerSearchHeight,
+                    expandedHeight: headerSearchHeight,
+                    elevation: 0,
                     backgroundColor: colorScheme.surface,
-                    child: StoresCategoryChips(
-                      categories: _categories,
-                      selectedCategory: selectedCategory,
-                      onCategorySelected: (category) {
-                        ref.read(selectedStoreCategoryProvider.notifier).selectCategory(category);
-                      },
+                    surfaceTintColor: Colors.transparent,
+                    flexibleSpace: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Header row (logo + notifications)
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: headerHorizontalPadding,
+                            vertical: headerVerticalPadding,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Image.asset(
+                                'assets/images/splash_logo.png',
+                                height: logoHeight,
+                                fit: BoxFit.contain,
+                              ),
+
+                              // Notification Icon with soft background
+                              Container(
+                                width: notificationSize,
+                                height: notificationSize,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.notifications,
+                                    size: notificationIconSize,
+                                    color: colorScheme.primary,
+                                  ),
+                                  onPressed: () {
+                                    context.pushNamed(AppRouteNames.notifications);
+                                  },
+                                  padding: EdgeInsets.zero,
+                                  splashRadius: notificationSplashRadius,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Search Bar (Waffir branded with exact Figma specs)
+                        Padding(
+                          padding: EdgeInsets.all(searchPadding),
+                          child: WaffirSearchBar(
+                            hintText: 'Search stores...',
+                            onChanged: _handleSearch,
+                            onSearch: _handleSearch,
+                            onFilterTap: _handleFilterTap,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ];
-            },
-            body: !hasResults
-                ? ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.only(
-                      left: responsive.scale(16),
-                      right: responsive.scale(16),
-                      top: responsive.scale(16),
-                      bottom: responsive.scale(300), // CTA overlay + nav
-                    ),
-                    children: [
-                      SizedBox(height: responsive.scale(120)),
-                      _buildEmptyState(context),
-                    ],
-                  )
-                : ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.only(
-                      left: responsive.scale(16),
-                      right: responsive.scale(16),
-                      top: responsive.scale(
-                        16,
-                      ), // Space below sticky chips (was SizedBox before ListView)
-                      bottom: responsive.scale(300), // CTA overlay + nav
-                    ),
-                    children: [
-                      // Near You Section
-                      if (filteredNearYou.isNotEmpty) ...[
-                        _buildSectionHeader(
-                          context,
-                          'Near to you',
-                          'قريب منك',
-                          filteredNearYou.length,
-                        ),
-                        SizedBox(height: responsive.scale(12)),
-                        _buildStoreCarousel(context, filteredNearYou),
-                        SizedBox(height: responsive.scale(24)),
-                      ],
 
-                      // Mall Stores Sections
-                      if (filteredMall.isNotEmpty) ...[
-                        for (final entry in mallStoresByMall.entries) ...[
+                  // Category Filters (always visible + sticky)
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _StickyCategoryChipsHeaderDelegate(
+                      height: chipsHeaderHeight,
+                      topSpacing: chipsTopSpacing,
+                      backgroundColor: colorScheme.surface,
+                      child: StoresCategoryChips(
+                        categories: _categories,
+                        selectedCategory: selectedCategory,
+                        onCategorySelected: (category) {
+                          ref.read(selectedStoreCategoryProvider.notifier).selectCategory(category);
+                        },
+                      ),
+                    ),
+                  ),
+                ];
+              },
+              body: !hasResults
+                  ? ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.only(
+                        left: responsive.scale(16),
+                        right: responsive.scale(16),
+                        top: responsive.scale(16),
+                        bottom: responsive.scale(300), // CTA overlay + nav
+                      ),
+                      children: [
+                        SizedBox(height: responsive.scale(120)),
+                        _buildEmptyState(context),
+                      ],
+                    )
+                  : ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.only(
+                        left: responsive.scale(16),
+                        right: responsive.scale(16),
+                        top: responsive.scale(
+                          16,
+                        ), // Space below sticky chips (was SizedBox before ListView)
+                        bottom: responsive.scale(300), // CTA overlay + nav
+                      ),
+                      children: [
+                        // Near You Section
+                        if (filteredNearYou.isNotEmpty) ...[
                           _buildSectionHeader(
                             context,
-                            'In Mall shops near to you',
-                            entry.key, // Arabic mall name
-                            entry.value.length,
+                            'Near to you',
+                            'قريب منك',
+                            filteredNearYou.length,
                           ),
                           SizedBox(height: responsive.scale(12)),
-                          _buildStoreCarousel(context, entry.value),
+                          _buildStoreCarousel(context, filteredNearYou),
                           SizedBox(height: responsive.scale(24)),
                         ],
+
+                        // Mall Stores Sections
+                        if (filteredMall.isNotEmpty) ...[
+                          for (final entry in mallStoresByMall.entries) ...[
+                            _buildSectionHeader(
+                              context,
+                              'In Mall shops near to you',
+                              entry.key, // Arabic mall name
+                              entry.value.length,
+                            ),
+                            SizedBox(height: responsive.scale(12)),
+                            _buildStoreCarousel(context, entry.value),
+                            SizedBox(height: responsive.scale(24)),
+                          ],
+                        ],
                       ],
-                    ],
-                  ),
+                    ),
             ),
           ),
 
           // Bottom Gradient CTA Overlay
-          Positioned(
-            bottom: 88, // Above bottom nav (88px = nav height)
-            left: 0,
-            right: 0,
-            child: BottomGradientCTA(
-              buttonText: 'Login to view full deal details',
-              onButtonPressed: () {
-                // TODO: Navigate to login screen
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('Navigate to login')));
-              },
-            ),
-          ),
+          const BottomLoginOverlay(),
         ],
       ),
     );

@@ -6,8 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
-import 'package:waffir/core/constants/app_spacing.dart';
+import 'package:vector_math/vector_math_64.dart';
 import 'package:waffir/core/navigation/routes.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/back_button.dart';
 import 'package:waffir/core/widgets/widgets.dart';
 import 'package:waffir/gen/assets.gen.dart';
@@ -29,6 +30,9 @@ class OtpVerificationScreen extends ConsumerStatefulWidget {
 }
 
 class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
+  static const int _otpLength = 5;
+  static const int _resendCountdownSeconds = 180;
+
   final TextEditingController _pinController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
@@ -38,7 +42,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
   Timer? _countdownTimer;
 
   String get _otpCode => _pinController.text;
-  bool get _isOtpComplete => _otpCode.length == 6;
+  bool get _isOtpComplete => _otpCode.length == _otpLength;
 
   @override
   void initState() {
@@ -59,7 +63,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
   }
 
   void _startResendCountdown() {
-    _resendCountdown = 60;
+    _resendCountdown = _resendCountdownSeconds;
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _resendCountdown--;
@@ -68,6 +72,12 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
         }
       });
     });
+  }
+
+  String _formatCountdown(int totalSeconds) {
+    final minutes = totalSeconds ~/ 60;
+    final seconds = totalSeconds % 60;
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
   Future<void> _verifyOtp() async {
@@ -133,21 +143,29 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
     final isRTL = context.locale.languageCode == 'ar';
-    final size = MediaQuery.of(context).size;
-    final isSmallScreen = size.height < 700;
+    final responsive = context.responsive;
+    final isSmallScreen = responsive.screenHeight < 700;
+
+    final horizontalPadding = responsive.scaleWithRange(16, min: 16, max: 32);
+    final topPadding = responsive.scaleWithRange(64, min: 48, max: 88);
+    final bottomPadding = responsive.scaleWithRange(isSmallScreen ? 60 : 120, min: 40, max: 160);
+    final contentWidth = responsive.scaleWithMax(309, max: 420);
+    final buttonWidth = responsive.scaleWithMax(330, max: 420);
+    final pinBoxSize = responsive.scaleWithRange(50, min: 44, max: 60);
+    final pinRadius = responsive.scaleWithRange(16, min: 12, max: 20);
 
     // Pinput theme matching Figma design
     final defaultPinTheme = PinTheme(
-      width: 50,
-      height: 50,
+      width: pinBoxSize,
+      height: pinBoxSize,
       textStyle: textTheme.headlineSmall?.copyWith(
         color: colorScheme.onSurface,
         fontWeight: FontWeight.bold,
       ),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: colorScheme.surfaceContainerHighest,
         border: Border.all(color: colorScheme.outline.withValues(alpha: 0.3), width: 1.5),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(pinRadius),
       ),
     );
 
@@ -157,8 +175,8 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
         boxShadow: [
           BoxShadow(
             color: colorScheme.primary.withValues(alpha: 0.2),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            blurRadius: responsive.scale(12),
+            offset: Offset(0, responsive.scale(4)),
           ),
         ],
       ),
@@ -181,43 +199,66 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
       child: Scaffold(
         backgroundColor: colorScheme.surface,
         body: SafeArea(
+          top: false,
           child: Stack(
             children: [
               // Background shape image (matching Figma design)
               Positioned(
-                left: isRTL ? null : -40,
-                right: isRTL ? -40 : null,
-                top: -100,
+                left: isRTL ? null : -responsive.scaleWithMax(40, max: 60),
+                right: isRTL ? -responsive.scaleWithMax(40, max: 60) : null,
+                top: -responsive.scaleWithMax(100, max: 140),
                 child: Transform(
                   alignment: Alignment.center,
-                  transform: isRTL ? Matrix4.identity().scaled(-1.0, 1.0) : Matrix4.identity(),
+                  transform: isRTL
+                      ? Matrix4.identity().scaledByVector3(Vector3(-1.0, 1.0, 1.0))
+                      : Matrix4.identity(),
                   child: Image.asset(
                     Assets.images.onboardingShape.path,
-                    width: 467.78,
-                    height: 461.3,
+                    width: responsive.scaleWithMax(467.78, max: 560),
+                    height: responsive.scaleWithMax(461.3, max: 555),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
 
-              // Back button (top-right for RTL, top-left for LTR)
-              Positioned(
-                top: 16,
-                right: isRTL ? 16 : null,
-                left: isRTL ? null : 16,
-                child: const AppBackButton(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  showBackground: true,
+              // Back button (RTL-aware)
+              Padding(
+                padding: responsive.scalePadding(
+                  EdgeInsets.only(
+                    top: topPadding,
+                    left: horizontalPadding,
+                    right: horizontalPadding,
+                  ),
+                ),
+                child: Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorScheme.shadow.withValues(alpha: 0.06),
+                          blurRadius: responsive.scale(8),
+                          spreadRadius: responsive.scale(2),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(responsive.scale(22)),
+                    ),
+                    child: AppBackButton(
+                      size: responsive.scale(44),
+                      backgroundColor: colorScheme.surface,
+                      foregroundColor: colorScheme.onSurface,
+                      showBackground: true,
+                    ),
+                  ),
                 ),
               ),
 
               // Main content
               Padding(
                 padding: EdgeInsets.only(
-                  left: AppSpacing.lg,
-                  right: AppSpacing.lg,
-                  bottom: isSmallScreen ? 60 : 120,
+                  left: horizontalPadding,
+                  right: horizontalPadding,
+                  bottom: bottomPadding,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -226,20 +267,32 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildHeader(textTheme, colorScheme),
-                          SizedBox(height: isSmallScreen ? AppSpacing.xl : AppSpacing.xl3),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: contentWidth),
+                            child: _buildHeader(textTheme, colorScheme, responsive),
+                          ),
+                          SizedBox(
+                            height: responsive.scaleWithRange(
+                              isSmallScreen ? 24 : 32,
+                              min: 16,
+                              max: 40,
+                            ),
+                          ),
                           _buildOtpInput(
                             defaultPinTheme,
                             focusedPinTheme,
                             submittedPinTheme,
                             errorPinTheme,
                           ),
-                          const SizedBox(height: AppSpacing.lg),
-                          _buildActionLinks(textTheme, colorScheme),
+                          SizedBox(height: responsive.scaleWithRange(32, min: 20, max: 40)),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: contentWidth),
+                            child: _buildActionLinks(textTheme, colorScheme, responsive),
+                          ),
                         ],
                       ),
                     ),
-                    _buildVerifyButton(colorScheme, textTheme),
+                    _buildVerifyButton(buttonWidth),
                   ],
                 ),
               ),
@@ -250,27 +303,27 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     );
   }
 
-  Widget _buildHeader(TextTheme textTheme, ColorScheme colorScheme) {
+  Widget _buildHeader(TextTheme textTheme, ColorScheme colorScheme, ResponsiveHelper responsive) {
     return Column(
       children: [
         Text(
           'auth.otpTitle'.tr(),
           style: textTheme.headlineLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize: responsive.scaleFontSize(20, minSize: 18),
             color: colorScheme.onSurface,
             letterSpacing: -0.5,
             height: 1.15,
           ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: responsive.scaleWithRange(16, min: 12, max: 20)),
         Text(
           'auth.otpSubtitle'.tr(namedArgs: {'contact': widget.phoneNumber}),
           style: textTheme.bodyLarge?.copyWith(
-            fontSize: 16,
+            fontSize: responsive.scaleFontSize(16, minSize: 14),
             color: colorScheme.onSurfaceVariant,
-            height: 1.6,
+            height: 1.2,
             letterSpacing: 0.1,
           ),
           textAlign: TextAlign.center,
@@ -289,20 +342,16 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
       child: Pinput(
         controller: _pinController,
         focusNode: _focusNode,
-        length: 6,
+        length: _otpLength,
         defaultPinTheme: defaultPinTheme,
         focusedPinTheme: focusedPinTheme,
         submittedPinTheme: submittedPinTheme,
         errorPinTheme: errorPinTheme,
-        pinAnimationType: PinAnimationType.scale,
         animationDuration: const Duration(milliseconds: 300),
         animationCurve: Curves.easeInOut,
         enabled: !_isLoading,
         autofocus: true,
         hapticFeedbackType: HapticFeedbackType.lightImpact,
-        closeKeyboardWhenCompleted: false,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         onCompleted: (pin) {
           HapticFeedback.mediumImpact();
           _verifyOtp();
@@ -317,16 +366,45 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     );
   }
 
-  Widget _buildActionLinks(TextTheme textTheme, ColorScheme colorScheme) {
+  Widget _buildActionLinks(
+    TextTheme textTheme,
+    ColorScheme colorScheme,
+    ResponsiveHelper responsive,
+  ) {
+    final isResendEnabled = _resendCountdown <= 0 && !_isResending;
+    final resendTextStyle = textTheme.bodyMedium?.copyWith(
+      fontSize: responsive.scaleFontSize(14, minSize: 12),
+      color: isResendEnabled ? colorScheme.onSurface : colorScheme.onSurfaceVariant,
+      fontWeight: FontWeight.w400,
+    );
+
+    final changeNumberTextStyle = textTheme.bodyMedium?.copyWith(
+      fontSize: responsive.scaleFontSize(14, minSize: 12),
+      color: colorScheme.onSurface,
+      fontWeight: FontWeight.w700,
+    );
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         TextButton(
-          onPressed: _resendCountdown > 0 || _isResending ? null : _resendCode,
+          onPressed: _onChangeNumber,
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          child: Text('auth.changeNumber'.tr(), style: changeNumberTextStyle),
+        ),
+        TextButton(
+          onPressed: isResendEnabled ? _resendCode : null,
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
           child: _isResending
               ? SizedBox(
-                  height: 16,
-                  width: 16,
+                  height: responsive.scaleWithRange(16, min: 14, max: 20),
+                  width: responsive.scaleWithRange(16, min: 14, max: 20),
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
@@ -334,33 +412,18 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
                 )
               : Text(
                   _resendCountdown > 0
-                      ? 'auth.resendCodeIn'.tr(namedArgs: {'seconds': _resendCountdown.toString()})
+                      ? 'auth.resendCodeIn'.tr(
+                          namedArgs: {'time': _formatCountdown(_resendCountdown)},
+                        )
                       : 'auth.resendCode'.tr(),
-                  style: textTheme.bodyMedium?.copyWith(
-                    fontSize: 14,
-                    color: _resendCountdown > 0
-                        ? colorScheme.onSurfaceVariant
-                        : colorScheme.primary,
-                    fontWeight: FontWeight.w400,
-                  ),
+                  style: resendTextStyle,
                 ),
-        ),
-        TextButton(
-          onPressed: _onChangeNumber,
-          child: Text(
-            'auth.changeNumber'.tr(),
-            style: textTheme.bodyMedium?.copyWith(
-              fontSize: 14,
-              color: colorScheme.primary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
         ),
       ],
     );
   }
 
-  Widget _buildVerifyButton(ColorScheme colorScheme, TextTheme textTheme) {
+  Widget _buildVerifyButton(double width) {
     final isEnabled = !_isLoading && _isOtpComplete;
 
     return AppButton.primary(
@@ -368,7 +431,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
       onPressed: isEnabled ? _verifyOtp : null,
       isLoading: _isLoading,
       enabled: isEnabled,
-      width: 330,
+      width: width,
     );
   }
 }
