@@ -10,6 +10,7 @@ import 'package:waffir/features/auth/presentation/screens/account_details_screen
 import 'package:waffir/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:waffir/features/auth/presentation/screens/otp_verification_screen.dart';
 import 'package:waffir/features/auth/presentation/screens/phone_login_screen.dart';
+import 'package:waffir/features/auth/presentation/screens/signup_screen.dart';
 import 'package:waffir/features/credit_cards/presentation/screens/add_credit_card_screen.dart';
 import 'package:waffir/features/credit_cards/presentation/screens/credit_cards_screen.dart';
 import 'package:waffir/features/deals/presentation/screens/hot_deals_screen.dart';
@@ -67,6 +68,12 @@ List<RouteBase> buildAppRoutes({required GlobalKey<NavigatorState> shellNavigato
       path: AppRoutes.login,
       name: AppRouteNames.login,
       builder: (context, state) => const PhoneLoginScreen(),
+    ),
+
+    GoRoute(
+      path: AppRoutes.signup,
+      name: AppRouteNames.signup,
+      builder: (context, state) => const SignupScreen(),
     ),
 
     GoRoute(

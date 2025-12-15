@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
-import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/core/widgets/inputs/gender_selector.dart';
+import 'package:waffir/core/widgets/widgets.dart';
+import 'package:waffir/features/auth/data/providers/auth_providers.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 
 /// Account details screen (pixel-perfect to Figma node `34:5441`)
@@ -33,6 +34,7 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
   final TextEditingController _nameController = TextEditingController();
   Gender? _selectedGender;
   bool _acceptedTerms = false;
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -41,11 +43,41 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
   }
 
   /// Validates and confirms account details
-  void _confirm() {
-    if (_selectedGender != null && _acceptedTerms && _nameController.text.trim().isNotEmpty) {
-      // Save user details
-      // Navigate to home
+  Future<void> _confirm() async {
+    if (!_isFormValid || _isSubmitting) return;
+
+    setState(() => _isSubmitting = true);
+    try {
+      final user = ref.read(activeUserProvider);
+      if (user == null) {
+        throw Exception('Not signed in');
+      }
+
+      final fullName = _nameController.text.trim();
+      final nameParts = fullName.split(RegExp(r'\\s+')).where((p) => p.isNotEmpty).toList();
+      final firstName = nameParts.isNotEmpty ? nameParts.first : null;
+      final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : null;
+
+      final updated = user.copyWith(
+        displayName: fullName,
+        firstName: firstName,
+        lastName: lastName,
+        gender: _selectedGender?.name,
+        preferences: <String, dynamic>{
+          ...user.preferences,
+          'acceptedTerms': _acceptedTerms,
+        },
+      );
+
+      final authController = ref.read(authControllerProvider.notifier);
+      await authController.updateUserData(updated);
+
+      if (!mounted) return;
       context.go(AppRoutes.home);
+    } catch (e) {
+      if (mounted) context.showErrorSnackBar(message: e.toString());
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
@@ -194,7 +226,9 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                                 SizedBox(height: termsButtonGap),
                                 AppButton.primary(
                                   text: 'Continue',
-                                  onPressed: _isFormValid ? _confirm : null,
+                                  onPressed: _isFormValid && !_isSubmitting ? _confirm : null,
+                                  isLoading: _isSubmitting,
+                                  enabled: _isFormValid && !_isSubmitting,
                                   width: buttonWidth,
                                   borderRadius: responsive.scaleBorderRadius(
                                     BorderRadius.circular(30),

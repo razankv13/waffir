@@ -1,28 +1,39 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:waffir/core/config/environment_config.dart';
+import 'package:waffir/core/storage/hive_service.dart';
 import 'package:waffir/features/auth/domain/entities/auth_state.dart';
 import 'package:waffir/features/auth/domain/entities/user_model.dart';
 import 'package:waffir/features/auth/domain/repositories/auth_repository.dart';
-import 'package:waffir/features/auth/data/repositories/firebase_auth_repository.dart';
-import 'package:waffir/core/services/auth/firebase_auth_service.dart';
+import 'package:waffir/features/auth/data/datasources/mock_auth_session_storage.dart';
+import 'package:waffir/features/auth/data/datasources/mock_auth_store.dart';
+import 'package:waffir/features/auth/data/repositories/cloud_functions_auth_repository.dart';
+import 'package:waffir/features/auth/data/repositories/mock_auth_repository.dart';
 
 // Re-export the auth controller provider
 export '../../presentation/controllers/auth_controller.dart' show authControllerProvider;
 
-// Firebase Auth Service Provider
-final firebaseAuthServiceProvider = Provider<FirebaseAuthService>((ref) {
-  return FirebaseAuthService.instance;
-});
-
-// Firebase Auth Instance Provider
-final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
-  return FirebaseAuth.instance;
+final mockAuthStoreProvider = Provider<MockAuthStore>((ref) {
+  final store = MockAuthStore();
+  final sessionStorage = MockAuthSessionStorage(HiveService.instance);
+  final persisted = sessionStorage.load();
+  if (persisted != null) {
+    store.restoreAuthenticated(persisted);
+  }
+  ref.onDispose(() => unawaited(store.dispose()));
+  return store;
 });
 
 // Auth Repository Provider
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  final authService = ref.watch(firebaseAuthServiceProvider);
-  return FirebaseAuthRepository(authService);
+  if (EnvironmentConfig.useMockAuth) {
+    final store = ref.watch(mockAuthStoreProvider);
+    final sessionStorage = MockAuthSessionStorage(HiveService.instance);
+    return MockAuthRepository(store, sessionStorage);
+  }
+
+  return const CloudFunctionsAuthRepository();
 });
 
 // Auth State Stream Provider
@@ -34,11 +45,18 @@ final authStateProvider = StreamProvider<AuthState>((ref) {
 // Current User Provider
 final currentUserProvider = Provider<UserModel?>((ref) {
   final authState = ref.watch(authStateProvider);
-  return authState.when(
-    data: (state) => state.user,
-    loading: () => null,
-    error: (_, __) => null,
-  );
+  return authState.when(data: (state) => state.user, loading: () => null, error: (_, __) => null);
+});
+
+/// Active user provider.
+///
+/// When mock auth is enabled, this reads directly from the mock store so screens
+/// can access the "mocked user" even if the auth state stream wiring changes.
+final activeUserProvider = Provider<UserModel?>((ref) {
+  if (EnvironmentConfig.useMockAuth) {
+    return ref.watch(mockAuthStoreProvider).currentUser;
+  }
+  return ref.watch(currentUserProvider);
 });
 
 // Authentication Status Provider

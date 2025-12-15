@@ -187,6 +187,18 @@ class EnvironmentConfig {
   static String? get supabaseUrl => getString('SUPABASE_URL');
   static String? get supabaseAnonKey => getString('SUPABASE_ANON_KEY');
 
+  /// Feature flags
+  ///
+  /// When `true`, the app uses mocked auth flows (OTP/OAuth/profile) without calling backend endpoints.
+  /// When `false`, repositories should call the real backend (e.g. cloud functions).
+  static bool get useMockAuth => getBool('USE_MOCK_AUTH', defaultValue: true);
+
+  /// Feature flag to use mock Deals backend (until Supabase is deployed).
+  static bool get useMockDeals => getBool('USE_MOCK_DEALS', defaultValue: true);
+
+  /// Feature flag to use mock Stores backend (until Supabase is deployed).
+  static bool get useMockStores => getBool('USE_MOCK_STORES', defaultValue: true);
+
   /// Firebase Configuration
   static String get firebaseOptionsName => getString('FIREBASE_OPTIONS_NAME', defaultValue: 'dev')!;
 

@@ -7,10 +7,12 @@ import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/themes/phone_login/app_colors.dart';
 import 'package:waffir/core/themes/phone_login/app_text_styles.dart';
+import 'package:waffir/core/utils/logger.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
-import 'package:waffir/core/widgets/buttons/social_auth_button.dart';
-import 'package:waffir/core/widgets/inputs/phone_input_widget.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
+import 'package:waffir/core/widgets/widgets.dart';
+import 'package:waffir/features/auth/data/providers/auth_providers.dart';
+import 'package:waffir/features/auth/domain/entities/auth_state.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
@@ -62,18 +64,41 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
 
     setState(() => _isLoading = true);
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (mounted) {
-      setState(() => _isLoading = false);
-      // Navigate to OTP screen
-      final phoneNumber = '$_selectedDialCode${_phoneController.text.trim()}';
-      unawaited(
-        GoRouterHelper(
-          context,
-        ).push(AppRoutes.otpVerification, extra: {'phoneNumber': phoneNumber}),
+    final phoneNumber = '$_selectedDialCode${_phoneController.text.trim()}';
+    try {
+      final authController = ref.read(authControllerProvider.notifier);
+      await authController.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        codeSent: (verificationId) {
+          if (!mounted) return;
+          setState(() => _isLoading = false);
+          unawaited(
+            GoRouterHelper(context).push(
+              AppRoutes.otpVerification,
+              extra: {'phoneNumber': phoneNumber, 'verificationId': verificationId},
+            ),
+          );
+        },
+        verificationFailed: (error) {
+          if (!mounted) return;
+          setState(() => _isLoading = false);
+          context.showErrorSnackBar(message: error);
+        },
+        codeAutoRetrievalTimeout: () {
+          if (!mounted) return;
+          setState(() => _isLoading = false);
+          context.showInfoSnackBar(message: 'Code timeout. Please try again.');
+        },
       );
+    } catch (e, stackTrace) {
+      AppLogger.error(
+        '❌ Phone verification failed: ${e.toString()}',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      context.showErrorSnackBar(message: e.toString());
     }
   }
 
@@ -83,16 +108,48 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
     });
   }
 
-  void _signInWithGoogle() {
-    // Mock Google sign-in
-    // Navigate to account details after successful auth
-    context.go(AppRoutes.accountDetails);
+  Future<void> _signInWithGoogle() async {
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
+    final authController = ref.read(authControllerProvider.notifier);
+    await authController.signInWithGoogle();
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    final authValue = ref.read(authControllerProvider);
+    authValue.when(
+      data: (state) {
+        if (state.isAuthenticated) {
+          context.go(AppRoutes.accountDetails);
+        } else {
+          context.showErrorSnackBar(message: 'Google sign-in failed.');
+        }
+      },
+      loading: () {},
+      error: (error, _) => context.showErrorSnackBar(message: error.toString()),
+    );
   }
 
-  void _signInWithApple() {
-    // Mock Apple sign-in
-    // Navigate to account details after successful auth
-    context.go(AppRoutes.accountDetails);
+  Future<void> _signInWithApple() async {
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
+    final authController = ref.read(authControllerProvider.notifier);
+    await authController.signInWithApple();
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    final authValue = ref.read(authControllerProvider);
+    authValue.when(
+      data: (state) {
+        if (state.isAuthenticated) {
+          context.go(AppRoutes.accountDetails);
+        } else {
+          context.showErrorSnackBar(message: 'Apple sign-in failed.');
+        }
+      },
+      loading: () {},
+      error: (error, _) => context.showErrorSnackBar(message: error.toString()),
+    );
   }
 
   @override
@@ -109,19 +166,19 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
               LayoutBuilder(
                 builder: (context, constraints) {
                   final responsive = context.responsive;
-        
+
                   double s(double value) =>
                       responsive.scaleWithMax(value, max: value); // downscale-only
                   double sf(double value, {double min = 10.0}) =>
                       responsive.scaleWithRange(value, min: min, max: value); // downscale-only
-        
+
                   return SingleChildScrollView(
                     child: Center(
                       child: Column(
                         children: [
                           // Back button top right
                           WaffirBackButton(size: responsive.scale(44)),
-                            
+
                           // Waffir icon (node `50:3060`): 177×175.
                           SizedBox(
                             height: s(175),
@@ -134,7 +191,7 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                               ),
                             ),
                           ),
-                            
+
                           // Bottom container (node `50:3061`): height=449, padding horizontal=16, gap=40.
                           SizedBox(
                             height: s(449),
@@ -169,9 +226,9 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                                           ],
                                         ),
                                       ),
-                            
+
                                       SizedBox(height: s(32)),
-                            
+
                                       // Phone input (node `50:3067`): width=361.
                                       SizedBox(
                                         width: s(361),
@@ -187,9 +244,9 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                                       ),
                                     ],
                                   ),
-                            
+
                                   SizedBox(height: s(40)),
-                            
+
                                   // Divider (node `50:3068`): gap=16, line color #F2F2F2.
                                   Row(
                                     children: [
@@ -216,9 +273,9 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                                       ),
                                     ],
                                   ),
-                            
+
                                   SizedBox(height: s(40)),
-                            
+
                                   // Social buttons (node `50:3072`): gap=24; each button 361×48.
                                   Column(
                                     children: [
@@ -245,7 +302,7 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                               ),
                             ),
                           ),
-                            
+
                           // Root bottom padding (node `50:3051`): 120.
                           SizedBox(height: s(120)),
                         ],

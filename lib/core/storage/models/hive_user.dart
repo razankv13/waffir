@@ -1,11 +1,12 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:waffir/core/storage/hive_type_ids.dart';
 
 part 'hive_user.freezed.dart';
 part 'hive_user.g.dart';
 
 @freezed
-@HiveType(typeId: 0)
+@HiveType(typeId: HiveTypeIds.hiveUser)
 abstract class HiveUser with _$HiveUser {
   const HiveUser._();
 

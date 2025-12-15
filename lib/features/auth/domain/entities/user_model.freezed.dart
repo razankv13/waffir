@@ -15,8 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserModel {
 
- String get id; String get email; String? get displayName; String? get photoURL; String? get phoneNumber; bool get emailVerified; bool get isAnonymous; DateTime? get createdAt; DateTime? get lastSignInAt; Map<String, dynamic>? get metadata;// Custom fields for app-specific data
- String? get firstName; String? get lastName; String? get dateOfBirth; String? get gender; String? get country; String? get language; String? get timezone; List<String> get roles; Map<String, dynamic> get preferences;
+@HiveField(0) String get id;@HiveField(1) String get email;@HiveField(2) String? get displayName;@HiveField(3) String? get photoURL;@HiveField(4) String? get phoneNumber;@HiveField(5) bool get emailVerified;@HiveField(6) bool get isAnonymous;@HiveField(7) DateTime? get createdAt;@HiveField(8) DateTime? get lastSignInAt;@HiveField(9) Map<String, dynamic>? get metadata;// Custom fields for app-specific data
+@HiveField(10) String? get firstName;@HiveField(11) String? get lastName;@HiveField(12) String? get dateOfBirth;@HiveField(13) String? get gender;@HiveField(14) String? get country;@HiveField(15) String? get language;@HiveField(16) String? get timezone;@HiveField(17) List<String> get roles;@HiveField(18) Map<String, dynamic> get preferences;
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -49,7 +49,7 @@ abstract mixin class $UserModelCopyWith<$Res>  {
   factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) _then) = _$UserModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String email, String? displayName, String? photoURL, String? phoneNumber, bool emailVerified, bool isAnonymous, DateTime? createdAt, DateTime? lastSignInAt, Map<String, dynamic>? metadata, String? firstName, String? lastName, String? dateOfBirth, String? gender, String? country, String? language, String? timezone, List<String> roles, Map<String, dynamic> preferences
+@HiveField(0) String id,@HiveField(1) String email,@HiveField(2) String? displayName,@HiveField(3) String? photoURL,@HiveField(4) String? phoneNumber,@HiveField(5) bool emailVerified,@HiveField(6) bool isAnonymous,@HiveField(7) DateTime? createdAt,@HiveField(8) DateTime? lastSignInAt,@HiveField(9) Map<String, dynamic>? metadata,@HiveField(10) String? firstName,@HiveField(11) String? lastName,@HiveField(12) String? dateOfBirth,@HiveField(13) String? gender,@HiveField(14) String? country,@HiveField(15) String? language,@HiveField(16) String? timezone,@HiveField(17) List<String> roles,@HiveField(18) Map<String, dynamic> preferences
 });
 
 
@@ -172,7 +172,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email,  String? displayName,  String? photoURL,  String? phoneNumber,  bool emailVerified,  bool isAnonymous,  DateTime? createdAt,  DateTime? lastSignInAt,  Map<String, dynamic>? metadata,  String? firstName,  String? lastName,  String? dateOfBirth,  String? gender,  String? country,  String? language,  String? timezone,  List<String> roles,  Map<String, dynamic> preferences)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@HiveField(0)  String id, @HiveField(1)  String email, @HiveField(2)  String? displayName, @HiveField(3)  String? photoURL, @HiveField(4)  String? phoneNumber, @HiveField(5)  bool emailVerified, @HiveField(6)  bool isAnonymous, @HiveField(7)  DateTime? createdAt, @HiveField(8)  DateTime? lastSignInAt, @HiveField(9)  Map<String, dynamic>? metadata, @HiveField(10)  String? firstName, @HiveField(11)  String? lastName, @HiveField(12)  String? dateOfBirth, @HiveField(13)  String? gender, @HiveField(14)  String? country, @HiveField(15)  String? language, @HiveField(16)  String? timezone, @HiveField(17)  List<String> roles, @HiveField(18)  Map<String, dynamic> preferences)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserModel() when $default != null:
 return $default(_that.id,_that.email,_that.displayName,_that.photoURL,_that.phoneNumber,_that.emailVerified,_that.isAnonymous,_that.createdAt,_that.lastSignInAt,_that.metadata,_that.firstName,_that.lastName,_that.dateOfBirth,_that.gender,_that.country,_that.language,_that.timezone,_that.roles,_that.preferences);case _:
@@ -193,7 +193,7 @@ return $default(_that.id,_that.email,_that.displayName,_that.photoURL,_that.phon
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email,  String? displayName,  String? photoURL,  String? phoneNumber,  bool emailVerified,  bool isAnonymous,  DateTime? createdAt,  DateTime? lastSignInAt,  Map<String, dynamic>? metadata,  String? firstName,  String? lastName,  String? dateOfBirth,  String? gender,  String? country,  String? language,  String? timezone,  List<String> roles,  Map<String, dynamic> preferences)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@HiveField(0)  String id, @HiveField(1)  String email, @HiveField(2)  String? displayName, @HiveField(3)  String? photoURL, @HiveField(4)  String? phoneNumber, @HiveField(5)  bool emailVerified, @HiveField(6)  bool isAnonymous, @HiveField(7)  DateTime? createdAt, @HiveField(8)  DateTime? lastSignInAt, @HiveField(9)  Map<String, dynamic>? metadata, @HiveField(10)  String? firstName, @HiveField(11)  String? lastName, @HiveField(12)  String? dateOfBirth, @HiveField(13)  String? gender, @HiveField(14)  String? country, @HiveField(15)  String? language, @HiveField(16)  String? timezone, @HiveField(17)  List<String> roles, @HiveField(18)  Map<String, dynamic> preferences)  $default,) {final _that = this;
 switch (_that) {
 case _UserModel():
 return $default(_that.id,_that.email,_that.displayName,_that.photoURL,_that.phoneNumber,_that.emailVerified,_that.isAnonymous,_that.createdAt,_that.lastSignInAt,_that.metadata,_that.firstName,_that.lastName,_that.dateOfBirth,_that.gender,_that.country,_that.language,_that.timezone,_that.roles,_that.preferences);case _:
@@ -213,7 +213,7 @@ return $default(_that.id,_that.email,_that.displayName,_that.photoURL,_that.phon
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email,  String? displayName,  String? photoURL,  String? phoneNumber,  bool emailVerified,  bool isAnonymous,  DateTime? createdAt,  DateTime? lastSignInAt,  Map<String, dynamic>? metadata,  String? firstName,  String? lastName,  String? dateOfBirth,  String? gender,  String? country,  String? language,  String? timezone,  List<String> roles,  Map<String, dynamic> preferences)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@HiveField(0)  String id, @HiveField(1)  String email, @HiveField(2)  String? displayName, @HiveField(3)  String? photoURL, @HiveField(4)  String? phoneNumber, @HiveField(5)  bool emailVerified, @HiveField(6)  bool isAnonymous, @HiveField(7)  DateTime? createdAt, @HiveField(8)  DateTime? lastSignInAt, @HiveField(9)  Map<String, dynamic>? metadata, @HiveField(10)  String? firstName, @HiveField(11)  String? lastName, @HiveField(12)  String? dateOfBirth, @HiveField(13)  String? gender, @HiveField(14)  String? country, @HiveField(15)  String? language, @HiveField(16)  String? timezone, @HiveField(17)  List<String> roles, @HiveField(18)  Map<String, dynamic> preferences)?  $default,) {final _that = this;
 switch (_that) {
 case _UserModel() when $default != null:
 return $default(_that.id,_that.email,_that.displayName,_that.photoURL,_that.phoneNumber,_that.emailVerified,_that.isAnonymous,_that.createdAt,_that.lastSignInAt,_that.metadata,_that.firstName,_that.lastName,_that.dateOfBirth,_that.gender,_that.country,_that.language,_that.timezone,_that.roles,_that.preferences);case _:
@@ -228,20 +228,20 @@ return $default(_that.id,_that.email,_that.displayName,_that.photoURL,_that.phon
 @JsonSerializable()
 
 class _UserModel implements UserModel {
-  const _UserModel({required this.id, required this.email, this.displayName, this.photoURL, this.phoneNumber, this.emailVerified = false, this.isAnonymous = false, this.createdAt, this.lastSignInAt, final  Map<String, dynamic>? metadata, this.firstName, this.lastName, this.dateOfBirth, this.gender, this.country, this.language, this.timezone, final  List<String> roles = const [], final  Map<String, dynamic> preferences = const {}}): _metadata = metadata,_roles = roles,_preferences = preferences;
+  const _UserModel({@HiveField(0) required this.id, @HiveField(1) required this.email, @HiveField(2) this.displayName, @HiveField(3) this.photoURL, @HiveField(4) this.phoneNumber, @HiveField(5) this.emailVerified = false, @HiveField(6) this.isAnonymous = false, @HiveField(7) this.createdAt, @HiveField(8) this.lastSignInAt, @HiveField(9) final  Map<String, dynamic>? metadata, @HiveField(10) this.firstName, @HiveField(11) this.lastName, @HiveField(12) this.dateOfBirth, @HiveField(13) this.gender, @HiveField(14) this.country, @HiveField(15) this.language, @HiveField(16) this.timezone, @HiveField(17) final  List<String> roles = const <String>[], @HiveField(18) final  Map<String, dynamic> preferences = const <String, dynamic>{}}): _metadata = metadata,_roles = roles,_preferences = preferences;
   factory _UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
-@override final  String id;
-@override final  String email;
-@override final  String? displayName;
-@override final  String? photoURL;
-@override final  String? phoneNumber;
-@override@JsonKey() final  bool emailVerified;
-@override@JsonKey() final  bool isAnonymous;
-@override final  DateTime? createdAt;
-@override final  DateTime? lastSignInAt;
+@override@HiveField(0) final  String id;
+@override@HiveField(1) final  String email;
+@override@HiveField(2) final  String? displayName;
+@override@HiveField(3) final  String? photoURL;
+@override@HiveField(4) final  String? phoneNumber;
+@override@JsonKey()@HiveField(5) final  bool emailVerified;
+@override@JsonKey()@HiveField(6) final  bool isAnonymous;
+@override@HiveField(7) final  DateTime? createdAt;
+@override@HiveField(8) final  DateTime? lastSignInAt;
  final  Map<String, dynamic>? _metadata;
-@override Map<String, dynamic>? get metadata {
+@override@HiveField(9) Map<String, dynamic>? get metadata {
   final value = _metadata;
   if (value == null) return null;
   if (_metadata is EqualUnmodifiableMapView) return _metadata;
@@ -250,22 +250,22 @@ class _UserModel implements UserModel {
 }
 
 // Custom fields for app-specific data
-@override final  String? firstName;
-@override final  String? lastName;
-@override final  String? dateOfBirth;
-@override final  String? gender;
-@override final  String? country;
-@override final  String? language;
-@override final  String? timezone;
+@override@HiveField(10) final  String? firstName;
+@override@HiveField(11) final  String? lastName;
+@override@HiveField(12) final  String? dateOfBirth;
+@override@HiveField(13) final  String? gender;
+@override@HiveField(14) final  String? country;
+@override@HiveField(15) final  String? language;
+@override@HiveField(16) final  String? timezone;
  final  List<String> _roles;
-@override@JsonKey() List<String> get roles {
+@override@JsonKey()@HiveField(17) List<String> get roles {
   if (_roles is EqualUnmodifiableListView) return _roles;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_roles);
 }
 
  final  Map<String, dynamic> _preferences;
-@override@JsonKey() Map<String, dynamic> get preferences {
+@override@JsonKey()@HiveField(18) Map<String, dynamic> get preferences {
   if (_preferences is EqualUnmodifiableMapView) return _preferences;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableMapView(_preferences);
@@ -305,7 +305,7 @@ abstract mixin class _$UserModelCopyWith<$Res> implements $UserModelCopyWith<$Re
   factory _$UserModelCopyWith(_UserModel value, $Res Function(_UserModel) _then) = __$UserModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String email, String? displayName, String? photoURL, String? phoneNumber, bool emailVerified, bool isAnonymous, DateTime? createdAt, DateTime? lastSignInAt, Map<String, dynamic>? metadata, String? firstName, String? lastName, String? dateOfBirth, String? gender, String? country, String? language, String? timezone, List<String> roles, Map<String, dynamic> preferences
+@HiveField(0) String id,@HiveField(1) String email,@HiveField(2) String? displayName,@HiveField(3) String? photoURL,@HiveField(4) String? phoneNumber,@HiveField(5) bool emailVerified,@HiveField(6) bool isAnonymous,@HiveField(7) DateTime? createdAt,@HiveField(8) DateTime? lastSignInAt,@HiveField(9) Map<String, dynamic>? metadata,@HiveField(10) String? firstName,@HiveField(11) String? lastName,@HiveField(12) String? dateOfBirth,@HiveField(13) String? gender,@HiveField(14) String? country,@HiveField(15) String? language,@HiveField(16) String? timezone,@HiveField(17) List<String> roles,@HiveField(18) Map<String, dynamic> preferences
 });
 
 

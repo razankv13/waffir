@@ -1,12 +1,13 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hive_ce/hive.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:waffir/core/storage/hive_type_ids.dart';
 
 part 'app_settings.freezed.dart';
 part 'app_settings.g.dart';
 
 @freezed
-@HiveType(typeId: 1)
+@HiveType(typeId: HiveTypeIds.appSettings)
 abstract class AppSettings with _$AppSettings {
   const AppSettings._();
 

@@ -10,6 +10,8 @@ import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/core/widgets/widgets.dart';
+import 'package:waffir/features/auth/data/providers/auth_providers.dart';
+import 'package:waffir/features/auth/domain/entities/auth_state.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 
 class OtpVerificationScreen extends ConsumerStatefulWidget {
@@ -81,28 +83,36 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
 
   Future<void> _verifyOtp() async {
     if (!_isOtpComplete) return;
+    if (widget.verificationId.trim().isEmpty) {
+      context.showErrorSnackBar(message: 'Missing verificationId. Please request a new code.');
+      return;
+    }
 
     setState(() => _isLoading = true);
 
     try {
-      //   final authController = ref.read(authControllerProvider.notifier);
+      final authController = ref.read(authControllerProvider.notifier);
+      await authController.verifyPhoneWithCode(
+        verificationId: widget.verificationId,
+        smsCode: _otpCode,
+      );
 
-      //   await authController.verifyPhoneWithCode(
-      //     verificationId: widget.verificationId,
-      //     smsCode: _otpCode,
-      //   );
+      if (!mounted) return;
 
-      if (mounted) {
-        context.go(AppRoutes.accountDetails);
-      }
-    } catch (e) {
-      if (mounted) {
-        context.showErrorSnackBar(message: e.toString());
-      }
+      final authValue = ref.read(authControllerProvider);
+      authValue.when(
+        data: (state) {
+          if (state.isAuthenticated) {
+            context.go(AppRoutes.accountDetails);
+          } else {
+            context.showErrorSnackBar(message: 'OTP verification failed.');
+          }
+        },
+        loading: () {},
+        error: (error, _) => context.showErrorSnackBar(message: error.toString()),
+      );
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 

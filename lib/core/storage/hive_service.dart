@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:waffir/core/constants/app_constants.dart';
 import 'package:waffir/core/utils/logger.dart';
 import 'package:waffir/core/storage/models/app_settings.dart';
+import 'package:waffir/features/auth/domain/entities/user_model.dart';
 
 /// Service for managing Hive local storage with encryption
 class HiveService {
@@ -78,6 +79,7 @@ class HiveService {
       // Register AppSettings adapter if not already registered
       if (!Hive.isAdapterRegistered(1)) {
         Hive.registerAdapter(AppSettingsAdapter());
+        Hive.registerAdapter(UserModelAdapter());
         AppLogger.debug('Registered AppSettingsAdapter');
       }
     } catch (e, stackTrace) {

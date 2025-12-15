@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:waffir/features/products/domain/entities/store.dart';
+import 'package:waffir/features/stores/domain/entities/store.dart';
 
 part 'store_model.freezed.dart';
 part 'store_model.g.dart';

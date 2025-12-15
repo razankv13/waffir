@@ -5,11 +5,13 @@
 import 'package:hive_ce/hive.dart';
 import 'package:waffir/core/storage/models/app_settings.dart';
 import 'package:waffir/core/storage/models/hive_user.dart';
+import 'package:waffir/features/auth/domain/entities/user_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(AppSettingsAdapter());
     registerAdapter(HiveUserAdapter());
+    registerAdapter(UserModelAdapter());
   }
 }
 
@@ -17,5 +19,6 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
     registerAdapter(AppSettingsAdapter());
     registerAdapter(HiveUserAdapter());
+    registerAdapter(UserModelAdapter());
   }
 }

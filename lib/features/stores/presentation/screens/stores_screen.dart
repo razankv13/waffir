@@ -8,8 +8,8 @@ import 'package:waffir/core/widgets/bottom_login_overlay.dart';
 import 'package:waffir/core/widgets/cards/store_card.dart';
 import 'package:waffir/core/widgets/filters/stores_category_chips.dart';
 import 'package:waffir/core/widgets/search/waffir_search_bar.dart';
-import 'package:waffir/features/stores/data/models/store_model.dart';
-import 'package:waffir/features/stores/data/providers/stores_providers.dart';
+import 'package:waffir/features/stores/domain/entities/store.dart';
+import 'package:waffir/features/stores/presentation/controllers/stores_controller.dart';
 
 /// Stores Screen - displays stores with category filters and sections
 ///
@@ -26,8 +26,6 @@ class StoresScreen extends ConsumerStatefulWidget {
 }
 
 class _StoresScreenState extends ConsumerState<StoresScreen> {
-  String _searchQuery = '';
-
   /// Available categories for filtering
   static const List<String> _categories = [
     'All',
@@ -42,12 +40,6 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
     'Other',
   ];
 
-  void _handleSearch(String query) {
-    setState(() {
-      _searchQuery = query.toLowerCase();
-    });
-  }
-
   void _handleFilterTap() {
     // TODO: Implement filter dialog
     ScaffoldMessenger.of(
@@ -55,40 +47,15 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
     ).showSnackBar(const SnackBar(content: Text('Filter dialog coming soon')));
   }
 
-  List<StoreModel> _filterStoresBySearch(List<StoreModel> stores) {
-    if (_searchQuery.isEmpty) return stores;
-
-    return stores.where((store) {
-      final nameLower = store.name.toLowerCase();
-      final categoryLower = store.category.toLowerCase();
-      final addressLower = store.address?.toLowerCase() ?? '';
-      return nameLower.contains(_searchQuery) ||
-          categoryLower.contains(_searchQuery) ||
-          addressLower.contains(_searchQuery);
-    }).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final storesState = ref.watch(storesControllerProvider);
+    final storesController = ref.read(storesControllerProvider.notifier);
+    final selectedCategory = storesState.value?.selectedCategory ?? defaultStoresCategory;
+
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final responsive = context.responsive;
-    final selectedCategory = ref.watch(selectedStoreCategoryProvider);
-    final nearYouStores = ref.watch(filteredNearYouStoresProvider);
-    final mallStores = ref.watch(filteredMallStoresProvider);
-
-    // Filter by search query
-    final filteredNearYou = _filterStoresBySearch(nearYouStores);
-    final filteredMall = _filterStoresBySearch(mallStores);
-
-    // Group mall stores by mall name
-    final Map<String, List<StoreModel>> mallStoresByMall = {};
-    for (final store in filteredMall) {
-      final mallName = store.location ?? 'Other Locations';
-      mallStoresByMall.putIfAbsent(mallName, () => []).add(store);
-    }
-
-    final hasResults = filteredNearYou.isNotEmpty || filteredMall.isNotEmpty;
 
     return Scaffold(
       body: Stack(
@@ -179,8 +146,8 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                           padding: EdgeInsets.all(searchPadding),
                           child: WaffirSearchBar(
                             hintText: 'Search stores...',
-                            onChanged: _handleSearch,
-                            onSearch: _handleSearch,
+                            onChanged: storesController.updateSearch,
+                            onSearch: storesController.updateSearch,
                             onFilterTap: _handleFilterTap,
                           ),
                         ),
@@ -198,16 +165,56 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                       child: StoresCategoryChips(
                         categories: _categories,
                         selectedCategory: selectedCategory,
-                        onCategorySelected: (category) {
-                          ref.read(selectedStoreCategoryProvider.notifier).selectCategory(category);
-                        },
+                        onCategorySelected: storesController.updateCategory,
                       ),
                     ),
                   ),
                 ];
               },
-              body: !hasResults
-                  ? ListView(
+              body: RefreshIndicator(
+                onRefresh: storesController.refresh,
+                child: storesState.when(
+                  loading: () => const _StoresLoadingState(),
+                  error: (error, stackTrace) => _StoresErrorState(
+                    message: 'Unable to load stores right now. Please try again.',
+                    onRetry: storesController.refresh,
+                  ),
+                  data: (data) {
+                    if (data.hasError) {
+                      return _StoresErrorState(
+                        message: data.failure?.message ?? 'Unable to load stores right now.',
+                        onRetry: storesController.refresh,
+                      );
+                    }
+
+                    final nearYouStores = data.nearYouStores;
+                    final mallStores = data.mallStores;
+
+                    // Group mall stores by mall name
+                    final Map<String, List<Store>> mallStoresByMall = {};
+                    for (final store in mallStores) {
+                      final mallName = store.location ?? 'Other Locations';
+                      mallStoresByMall.putIfAbsent(mallName, () => []).add(store);
+                    }
+
+                    final hasResults = nearYouStores.isNotEmpty || mallStores.isNotEmpty;
+                    if (!hasResults) {
+                      return ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.only(
+                          left: responsive.scale(16),
+                          right: responsive.scale(16),
+                          top: responsive.scale(16),
+                          bottom: responsive.scale(300), // CTA overlay + nav
+                        ),
+                        children: [
+                          SizedBox(height: responsive.scale(120)),
+                          _buildEmptyState(context, data.searchQuery),
+                        ],
+                      );
+                    }
+
+                    return ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.only(
                         left: responsive.scale(16),
@@ -216,41 +223,26 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                         bottom: responsive.scale(300), // CTA overlay + nav
                       ),
                       children: [
-                        SizedBox(height: responsive.scale(120)),
-                        _buildEmptyState(context),
-                      ],
-                    )
-                  : ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.only(
-                        left: responsive.scale(16),
-                        right: responsive.scale(16),
-                        top: responsive.scale(
-                          16,
-                        ), // Space below sticky chips (was SizedBox before ListView)
-                        bottom: responsive.scale(300), // CTA overlay + nav
-                      ),
-                      children: [
                         // Near You Section
-                        if (filteredNearYou.isNotEmpty) ...[
+                        if (nearYouStores.isNotEmpty) ...[
                           _buildSectionHeader(
                             context,
                             'Near to you',
                             'قريب منك',
-                            filteredNearYou.length,
+                            nearYouStores.length,
                           ),
                           SizedBox(height: responsive.scale(12)),
-                          _buildStoreCarousel(context, filteredNearYou),
+                          _buildStoreCarousel(context, nearYouStores),
                           SizedBox(height: responsive.scale(24)),
                         ],
 
                         // Mall Stores Sections
-                        if (filteredMall.isNotEmpty) ...[
+                        if (mallStores.isNotEmpty) ...[
                           for (final entry in mallStoresByMall.entries) ...[
                             _buildSectionHeader(
                               context,
                               'In Mall shops near to you',
-                              entry.key, // Arabic mall name
+                              entry.key,
                               entry.value.length,
                             ),
                             SizedBox(height: responsive.scale(12)),
@@ -259,7 +251,10 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                           ],
                         ],
                       ],
-                    ),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
 
@@ -285,7 +280,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
     );
   }
 
-  Widget _buildStoreCarousel(BuildContext context, List<StoreModel> stores) {
+  Widget _buildStoreCarousel(BuildContext context, List<Store> stores) {
     final responsive = context.responsive;
     final cardWidth = responsive.scale(160);
     final horizontalSpacing = responsive.scale(
@@ -317,7 +312,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(BuildContext context, String searchQuery) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -340,7 +335,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            _searchQuery.isEmpty
+            searchQuery.isEmpty
                 ? 'Try selecting a different category'
                 : 'Try a different search term',
             style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
@@ -348,6 +343,68 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _StoresLoadingState extends StatelessWidget {
+  const _StoresLoadingState();
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = context.responsive;
+
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.only(
+        top: responsive.scale(24),
+        left: responsive.scale(16),
+        right: responsive.scale(16),
+        bottom: responsive.scale(280),
+      ),
+      children: const [
+        Center(
+          child: Padding(padding: EdgeInsets.only(top: 48), child: CircularProgressIndicator()),
+        ),
+      ],
+    );
+  }
+}
+
+class _StoresErrorState extends StatelessWidget {
+  const _StoresErrorState({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final responsive = context.responsive;
+
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.only(
+        top: responsive.scale(24),
+        left: responsive.scale(16),
+        right: responsive.scale(16),
+        bottom: responsive.scale(280),
+      ),
+      children: [
+        SizedBox(height: responsive.scale(48)),
+        Icon(Icons.error_outline, size: responsive.scale(56), color: colorScheme.error),
+        SizedBox(height: responsive.scale(12)),
+        Text(
+          message,
+          style: theme.textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: responsive.scale(12)),
+        Center(
+          child: TextButton(onPressed: onRetry, child: const Text('Retry')),
+        ),
+      ],
     );
   }
 }

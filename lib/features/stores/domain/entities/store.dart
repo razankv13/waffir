@@ -2,7 +2,10 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'store.freezed.dart';
 
-/// Domain entity for a store
+/// Domain entity for a store.
+///
+/// This mirrors the fields needed by the Stores UI while keeping the domain
+/// independent from any specific backend implementation (mock vs Supabase).
 @freezed
 abstract class Store with _$Store {
   const factory Store({
@@ -13,66 +16,26 @@ abstract class Store with _$Store {
     String? description,
     String? address,
     String? distance,
+    String? logoUrl,
+    String? bannerUrl,
     double? rating,
     int? reviewCount,
+    @Default(0) int followerCount,
+    @Default([]) List<String> productIds,
+    @Default([]) List<String> categories,
+    String? location,
     String? phoneNumber,
+    String? email,
     String? website,
-    bool? isOpen,
-    String? openingHours,
-    bool? isMall,
-    String? mallName,
-    List<String>? tags,
-    double? latitude,
-    double? longitude,
+    String? discountText,
+    @Default(false) bool isVerified,
+    @Default(false) bool isFollowing,
+    @Default(true) bool isActive,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) = _Store;
 
   const Store._();
 
-  /// Check if store has high rating
-  bool get hasHighRating => rating != null && rating! >= 4.0;
-
-  /// Get formatted distance
-  String get formattedDistance {
-    if (distance == null) return '';
-    return distance!;
-  }
-}
-
-/// Store category enum
-enum StoreCategory {
-  all,
-  dining,
-  fashion,
-  electronics,
-  beauty,
-  travel,
-  lifestyle,
-  jewelry,
-  entertainment,
-  other;
-
-  String get displayName {
-    switch (this) {
-      case StoreCategory.all:
-        return 'الكل'; // All in Arabic
-      case StoreCategory.dining:
-        return 'المطاعم'; // Dining
-      case StoreCategory.fashion:
-        return 'ازياء'; // Fashion
-      case StoreCategory.electronics:
-        return 'إلكترونيات'; // Electronics
-      case StoreCategory.beauty:
-        return 'Beauty';
-      case StoreCategory.travel:
-        return 'Travel';
-      case StoreCategory.lifestyle:
-        return 'Lifestyle';
-      case StoreCategory.jewelry:
-        return 'Jewelry';
-      case StoreCategory.entertainment:
-        return 'Entertainment';
-      case StoreCategory.other:
-        return 'Others';
-    }
-  }
+  bool get hasHighRating => rating != null && rating! >= 4.5;
 }

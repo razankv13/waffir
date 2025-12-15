@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/widgets/buttons/back_button.dart';
 import 'package:waffir/core/widgets/widgets.dart';
+import 'package:waffir/features/auth/data/providers/auth_providers.dart';
+import 'package:waffir/features/auth/domain/entities/auth_state.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -249,17 +251,28 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     });
 
     try {
-      // Simulate signup process
-      await Future.delayed(const Duration(seconds: 2));
-      
-      // TODO: Implement actual signup logic
-      
-      if (mounted) {
-        context.showSuccessSnackBar(
-          message: 'Account created successfully!',
-        );
-        context.go(AppRoutes.home);
-      }
+      final authController = ref.read(authControllerProvider.notifier);
+      await authController.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        displayName: _nameController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      final authValue = ref.read(authControllerProvider);
+      authValue.when(
+        data: (state) {
+          if (state.isAuthenticated) {
+            context.showSuccessSnackBar(message: 'Account created successfully!');
+            context.go(AppRoutes.accountDetails);
+          } else {
+            context.showErrorSnackBar(message: 'Signup failed.');
+          }
+        },
+        loading: () {},
+        error: (error, _) => context.showErrorSnackBar(message: error.toString()),
+      );
     } catch (error) {
       if (mounted) {
         context.showErrorSnackBar(

@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:waffir/app.dart';
 import 'package:waffir/core/config/environment_config.dart';
 import 'package:waffir/core/storage/hive_service.dart';
@@ -26,6 +27,15 @@ Future<void> mainCommon(Flavor flavor) async {
     () async {
       // Initialize environment configuration
       await EnvironmentConfig.initialize();
+
+      // Initialize Supabase (optional; requires env vars)
+      final supabaseUrl = EnvironmentConfig.supabaseUrl;
+      final supabaseAnonKey = EnvironmentConfig.supabaseAnonKey;
+      if (supabaseUrl != null && supabaseAnonKey != null) {
+        await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+      } else {
+        AppLogger.warning('Supabase not initialized (missing SUPABASE_URL/SUPABASE_ANON_KEY)');
+      }
 
       // Set preferred orientations
       await SystemChrome.setPreferredOrientations([

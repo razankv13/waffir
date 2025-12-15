@@ -33,7 +33,7 @@ final dealsByCategoryProvider = Provider.family<List<DealModel>, String>((ref, c
 
 /// State notifier for selected category filter
 class SelectedCategoryNotifier extends StateNotifier<String> {
-  SelectedCategoryNotifier() : super('All');
+  SelectedCategoryNotifier() : super('For You');
 
   void selectCategory(String category) {
     state = category;
@@ -48,7 +48,18 @@ final selectedCategoryProvider = StateNotifierProvider<SelectedCategoryNotifier,
 /// Provider for filtered deals based on selected category
 final filteredDealsProvider = Provider<List<DealModel>>((ref) {
   final selectedCategory = ref.watch(selectedCategoryProvider);
-  return DealsMockData.getDealsByCategory(selectedCategory);
+
+  switch (selectedCategory) {
+    case 'Front Page':
+      return DealsMockData.featuredDeals;
+    case 'Popular':
+      final sorted = [...DealsMockData.deals]
+        ..sort((a, b) => (b.rating ?? 0).compareTo(a.rating ?? 0));
+      return sorted;
+    case 'For You':
+    default:
+      return DealsMockData.hotDeals;
+  }
 });
 
 /// Provider for all alerts

@@ -8,16 +8,12 @@ import 'package:waffir/core/widgets/products/badge_widget.dart';
 import 'package:waffir/core/widgets/products/product_card.dart';
 import 'package:waffir/core/widgets/search/category_filter_chips.dart';
 import 'package:waffir/core/widgets/search/search_bar_widget.dart';
-import 'package:waffir/features/deals/data/providers/deals_providers.dart';
+import 'package:waffir/features/deals/presentation/controllers/hot_deals_controller.dart';
 
 /// Hot Deals Screen - displays deals with category filters and search
 ///
-/// Features:
-/// - Search bar with filter button
-/// - Horizontal scrollable category filters
-/// - Product list (vertical scrolling)
-/// - Discount badges
-/// - Price display with original price
+/// The screen now consumes data from HotDealsController, which can be backed by
+/// mock data today and Supabase later without UI changes.
 class HotDealsScreen extends ConsumerStatefulWidget {
   const HotDealsScreen({super.key});
 
@@ -26,8 +22,6 @@ class HotDealsScreen extends ConsumerStatefulWidget {
 }
 
 class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
-  String _searchQuery = '';
-
   /// Available categories for filtering (matches Figma design node 34:6101)
   static const List<String> _categories = ['For You', 'Front Page', 'Popular'];
 
@@ -39,9 +33,7 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
   ];
 
   void _handleSearch(String query) {
-    setState(() {
-      _searchQuery = query.toLowerCase();
-    });
+    ref.read(hotDealsControllerProvider.notifier).updateSearch(query);
   }
 
   void _handleFilterTap() {
@@ -53,23 +45,13 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final hotDealsState = ref.watch(hotDealsControllerProvider);
+    final hotDealsController = ref.read(hotDealsControllerProvider.notifier);
+
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final responsive = context.responsive;
-    final selectedCategory = ref.watch(selectedCategoryProvider);
-    final filteredDeals = ref.watch(filteredDealsProvider);
-
-    // Further filter by search query
-    final deals = _searchQuery.isEmpty
-        ? filteredDeals
-        : filteredDeals.where((deal) {
-            final titleLower = deal.title.toLowerCase();
-            final descLower = deal.description.toLowerCase();
-            final categoryLower = deal.category?.toLowerCase() ?? '';
-            return titleLower.contains(_searchQuery) ||
-                descLower.contains(_searchQuery) ||
-                categoryLower.contains(_searchQuery);
-          }).toList();
+    final selectedCategory = hotDealsState.value?.selectedCategory ?? defaultCategory;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -182,26 +164,44 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                         categories: _categories,
                         categoryIcons: _categoryIcons,
                         selectedCategory: selectedCategory,
-                        onCategorySelected: (category) {
-                          ref.read(selectedCategoryProvider.notifier).selectCategory(category);
-                        },
+                        onCategorySelected: hotDealsController.updateCategory,
                       ),
                     ),
                   ),
                 ];
               },
-              body: deals.isEmpty
-                  ? ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.only(
-                        top: 24,
-                        left: 16,
-                        right: 16,
-                        bottom: 280, // Extra space for gradient overlay + bottom nav
-                      ),
-                      children: [_buildEmptyState(context)],
-                    )
-                  : ListView.builder(
+              body: RefreshIndicator(
+                onRefresh: hotDealsController.refresh,
+                child: hotDealsState.when(
+                  loading: () => const _HotDealsLoadingState(),
+                  error: (error, stackTrace) => _HotDealsErrorState(
+                    message: 'Unable to load deals right now. Please try again.',
+                    onRetry: hotDealsController.refresh,
+                  ),
+                  data: (data) {
+                    if (data.hasError) {
+                      return _HotDealsErrorState(
+                        message: data.failure?.message ?? 'Unable to load deals right now.',
+                        onRetry: hotDealsController.refresh,
+                      );
+                    }
+
+                    final deals = data.deals;
+
+                    if (deals.isEmpty) {
+                      return ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.only(
+                          top: 24,
+                          left: 16,
+                          right: 16,
+                          bottom: 280, // Extra space for gradient overlay + bottom nav
+                        ),
+                        children: [_buildEmptyState(context, data.searchQuery)],
+                      );
+                    }
+
+                    return ListView.builder(
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: const EdgeInsets.only(
                         top: 24,
@@ -266,7 +266,10 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                           },
                         );
                       },
-                    ),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
 
@@ -277,7 +280,7 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(BuildContext context, String searchQuery) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -300,7 +303,7 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            _searchQuery.isEmpty
+            searchQuery.isEmpty
                 ? 'Try selecting a different category'
                 : 'Try a different search term',
             style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
@@ -308,6 +311,55 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _HotDealsLoadingState extends StatelessWidget {
+  const _HotDealsLoadingState();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
+      children: const [
+        Center(
+          child: Padding(padding: EdgeInsets.only(top: 48), child: CircularProgressIndicator()),
+        ),
+      ],
+    );
+  }
+}
+
+class _HotDealsErrorState extends StatelessWidget {
+  const _HotDealsErrorState({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
+      children: [
+        const SizedBox(height: 48),
+        Icon(Icons.error_outline, size: 56, color: colorScheme.error),
+        const SizedBox(height: 12),
+        Text(
+          message,
+          style: theme.textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 12),
+        Center(
+          child: TextButton(onPressed: onRetry, child: const Text('Retry')),
+        ),
+      ],
     );
   }
 }
