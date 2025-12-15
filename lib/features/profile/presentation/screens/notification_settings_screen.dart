@@ -3,11 +3,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/core/widgets/switches/custom_toggle_switch.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
+import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 
 enum _NotificationType { allOffers, topOffers }
 
@@ -61,21 +61,14 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
     final responsive = ResponsiveHelper(context);
 
     final topInset = MediaQuery.paddingOf(context).top;
-    final backTop = topInset + responsive.scale(20);
-    final contentTop = topInset + responsive.scale(96); // 20 (top spacing) + 44 (back) + 32 (gap)
+
+    final contentTop = topInset + responsive.scale(context.responsive.topSafeArea + 8);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       body: Stack(
         children: [
-          _BackgroundBlurShape(responsive: responsive),
-
-          // Back button
-          Positioned(
-            left: responsive.scale(16),
-            top: backTop,
-            child: WaffirBackButton(size: responsive.scale(44)),
-          ),
+          const BlurredBackground(),
 
           // Main content + bottom button (space-between with bottom padding 120)
           Column(
@@ -190,6 +183,9 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
               ),
             ],
           ),
+
+          // Back button
+          WaffirBackButton(size: responsive.scale(44)),
         ],
       ),
     );

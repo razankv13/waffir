@@ -25,6 +25,7 @@ class BlurryEdgeListView extends StatelessWidget {
     super.key,
     required this.itemBuilder,
     required this.itemCount,
+    this.separatorBuilder,
     this.controller,
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
@@ -41,10 +42,11 @@ class BlurryEdgeListView extends StatelessWidget {
     this.topBlurEnabled = true,
     this.bottomBlurEnabled = true,
     this.gradientStops = const <double>[0.0, 1.0],
-    this.overlayColorOpacity = 0.10,
+    this.overlayColorOpacity = 1,
   });
 
   final IndexedWidgetBuilder itemBuilder;
+  final IndexedWidgetBuilder? separatorBuilder;
   final int itemCount;
 
   final ScrollController? controller;
@@ -81,21 +83,38 @@ class BlurryEdgeListView extends StatelessWidget {
 
     return Stack(
       children: <Widget>[
-        ListView.builder(
-          controller: controller,
-          scrollDirection: scrollDirection,
-          reverse: reverse,
-          primary: primary,
-          physics: physics,
-          padding: padding,
-          shrinkWrap: shrinkWrap,
-          keyboardDismissBehavior: keyboardDismissBehavior,
-          clipBehavior: clipBehavior,
-          cacheExtent: cacheExtent,
-          semanticChildCount: semanticChildCount ?? itemCount,
-          itemBuilder: itemBuilder,
-          itemCount: itemCount,
-        ),
+        separatorBuilder != null
+            ? ListView.separated(
+                controller: controller,
+                scrollDirection: scrollDirection,
+                reverse: reverse,
+                primary: primary,
+                physics: physics,
+                padding: padding,
+                shrinkWrap: shrinkWrap,
+                keyboardDismissBehavior: keyboardDismissBehavior,
+                clipBehavior: clipBehavior,
+                cacheExtent: cacheExtent,
+                //  semanticChildCount: semanticChildCount ?? itemCount,
+                itemBuilder: itemBuilder,
+                itemCount: itemCount,
+                separatorBuilder: separatorBuilder!,
+              )
+            : ListView.builder(
+                controller: controller,
+                scrollDirection: scrollDirection,
+                reverse: reverse,
+                primary: primary,
+                physics: physics,
+                padding: padding,
+                shrinkWrap: shrinkWrap,
+                keyboardDismissBehavior: keyboardDismissBehavior,
+                clipBehavior: clipBehavior,
+                cacheExtent: cacheExtent,
+                semanticChildCount: semanticChildCount ?? itemCount,
+                itemBuilder: itemBuilder,
+                itemCount: itemCount,
+              ),
         if (topBlurEnabled)
           Positioned(
             top: 0,

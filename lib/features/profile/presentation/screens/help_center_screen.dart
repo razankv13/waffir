@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:waffir/core/mock/mock_help_content.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/profile/profile_card.dart';
+import 'package:waffir/core/widgets/waffir_back_button.dart';
 
 /// Help Center Screen
 ///
@@ -46,31 +47,15 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
               // App bar
               SafeArea(
                 bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => context.pop(),
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: colorScheme.onSurface,
-                        ),
-                        style: IconButton.styleFrom(
-                          backgroundColor: colorScheme.surface,
-                          elevation: 2,
-                          shadowColor: Colors.black.withValues(alpha: 0.1),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        'Help Center',
-                        style: textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
+                child: Row(
+                  children: [
+                    WaffirBackButton(size: context.responsive.scale(44)),
+                    const SizedBox(width: 16),
+                    Text(
+                      'Help Center',
+                      style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ],
                 ),
               ),
 
@@ -171,10 +156,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest,
                     border: Border(
-                      top: BorderSide(
-                        color: colorScheme.surfaceContainerHighest,
-                        width: 1,
-                      ),
+                      top: BorderSide(color: colorScheme.surfaceContainerHighest, width: 1),
                     ),
                   ),
                   child: Column(
@@ -182,9 +164,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
                     children: [
                       Text(
                         'Still need help?',
-                        style: textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),

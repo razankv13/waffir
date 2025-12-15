@@ -17,7 +17,6 @@ class NotificationsHeader extends StatelessWidget {
     final responsive = ResponsiveHelper(context);
 
     return Container(
-      padding: responsive.scalePadding(const EdgeInsets.only(left: 16, right: 16, bottom: 12)),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(color: naTheme.headerDivider, width: responsive.scale(1)),
@@ -30,36 +29,44 @@ class NotificationsHeader extends StatelessWidget {
             alignment: Alignment.topLeft,
             child: WaffirBackButton(size: responsive.scale(44)),
           ),
-
-          SizedBox(height: responsive.scale(12)),
-
-          // Filter toggle (Deal Alerts / Notifications)
-          const NotificationsFilterToggle(),
-
-          SizedBox(height: responsive.scale(12)),
-
-          // Title & subtitle
-          Text(
-            'Don\'t miss out!',
-            style: naTheme.titleStyle.copyWith(
-              color: naTheme.textPrimary,
-              fontSize: responsive.scaleFontSize(18, minSize: 16),
+          Padding(
+            padding: responsive.scalePadding(
+              const EdgeInsets.only(left: 16, right: 16, bottom: 12),
             ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: responsive.scale(16)),
-          Text(
-            'Get notified when great deals drop!',
-            style: naTheme.subtitleStyle.copyWith(
-              color: naTheme.textPrimary,
-              fontSize: responsive.scaleFontSize(16, minSize: 14),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: responsive.scale(16)),
+            child: Column(
+              children: [
+                SizedBox(height: responsive.scale(12)),
 
-          // Search bar
-          const NotificationsSearchBar(),
+                // Filter toggle (Deal Alerts / Notifications)
+                const NotificationsFilterToggle(),
+
+                SizedBox(height: responsive.scale(12)),
+
+                // Title & subtitle
+                Text(
+                  'Don\'t miss out!',
+                  style: naTheme.titleStyle.copyWith(
+                    color: naTheme.textPrimary,
+                    fontSize: responsive.scaleFontSize(18, minSize: 16),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: responsive.scale(16)),
+                Text(
+                  'Get notified when great deals drop!',
+                  style: naTheme.subtitleStyle.copyWith(
+                    color: naTheme.textPrimary,
+                    fontSize: responsive.scaleFontSize(16, minSize: 14),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: responsive.scale(16)),
+
+                // Search bar
+                const NotificationsSearchBar(),
+              ],
+            ),
+          ),
         ],
       ),
     );

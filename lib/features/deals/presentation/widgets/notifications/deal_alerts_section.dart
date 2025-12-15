@@ -45,9 +45,7 @@ class DealAlertsSection extends ConsumerWidget {
             separatorBuilder: (context, index) => Container(
               height: responsive.scale(1),
               color: naTheme.dividerColor,
-              margin: responsive.scalePadding(
-                const EdgeInsets.symmetric(vertical: 8),
-              ),
+              margin: responsive.scalePadding(const EdgeInsets.symmetric(vertical: 8)),
             ),
             itemBuilder: (context, index) {
               final notification = dealNotifications[index];
@@ -56,9 +54,9 @@ class DealAlertsSection extends ConsumerWidget {
                 title: notification.title,
                 subtitle: notification.description,
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('View: ${notification.title}')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('View: ${notification.title}')));
                 },
               );
             },
@@ -84,9 +82,7 @@ class DealAlertsSection extends ConsumerWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: alerts.length,
-            separatorBuilder: (context, index) => SizedBox(
-              height: responsive.scale(8),
-            ),
+            separatorBuilder: (context, index) => SizedBox(height: responsive.scale(8)),
             itemBuilder: (context, index) {
               final alert = alerts[index];
               return AlertCard(
@@ -111,4 +107,3 @@ class DealAlertsSection extends ConsumerWidget {
     );
   }
 }
-

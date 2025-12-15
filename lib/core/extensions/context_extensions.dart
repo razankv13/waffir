@@ -76,6 +76,8 @@ extension BuildContextExtensions on BuildContext {
   // Navigation
   NavigatorState get navigator => Navigator.of(this);
   bool get canPop => navigator.canPop();
+  Map<String, dynamic>? get pathParameters =>
+      ModalRoute.of(this)?.settings.arguments as Map<String, dynamic>?;
 
   // Navigation methods
   Future<T?> push<T extends Object?>(Route<T> route) => navigator.push(route);

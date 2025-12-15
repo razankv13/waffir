@@ -48,9 +48,6 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
     final responsive = context.responsive;
     final safeAreaInsets = MediaQuery.of(context).padding;
 
-    // Figma: total top padding for back button area is 64px.
-    // We subtract the actual safe area inset so the *total* matches Figma on notched devices.
-    final backTopPadding = (responsive.scale(64) - safeAreaInsets.top).clamp(0.0, double.infinity);
 
     // Figma: screen bottom padding is 120px.
     final bottomPadding = (responsive.scale(120) - safeAreaInsets.bottom).clamp(
@@ -93,16 +90,9 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: responsive.scale(16),
-                    right: responsive.scale(16),
-                    top: backTopPadding,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: WaffirBackButton(size: responsive.scale(44)),
-                  ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: WaffirBackButton(size: responsive.scale(44)),
                 ),
 
                 SizedBox(height: responsive.scale(32)),

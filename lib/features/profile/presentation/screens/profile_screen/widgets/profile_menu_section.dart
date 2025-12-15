@@ -118,7 +118,7 @@ class ProfileMenuSection extends StatelessWidget {
 
           // Help Center (no divider on last item)
           ProfileMenuItem(
-            icon: Icon(Icons.help_outline, size: 24, color: context.colorScheme.primary),
+            icon: Icon(Icons.help_center, size: 24, color: context.colorScheme.primary),
             label: 'Help Center',
             onTap: onHelpCenterTap,
             showDivider: false, // Last item has no divider

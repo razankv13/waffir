@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +5,7 @@ import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/cards/horizontal_store_card.dart';
 import 'package:waffir/core/widgets/products/product_card.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
+import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 import 'package:waffir/features/products/data/providers/product_providers.dart';
 import 'package:waffir/features/products/domain/entities/product.dart';
 import 'package:waffir/features/products/domain/entities/store.dart';
@@ -21,13 +20,11 @@ class FavoritesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+
     final responsive = ResponsiveHelper(context);
 
-    final topInset = MediaQuery.paddingOf(context).top;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
-
-    final headerTopPadding = topInset + responsive.scale(20);
+ 
     final horizontalPadding = responsive.scale(16);
     final bottomPadding = responsive.scale(120) + bottomInset;
 
@@ -52,42 +49,11 @@ class FavoritesScreen extends ConsumerWidget {
       orElse: () => <Store>[],
     );
 
-    // Gradient used in other profile-related screens (derived from theme colors).
-    final gradientStart = colorScheme.secondary;
-    final gradientEnd = Color.lerp(colorScheme.secondary, colorScheme.primary, 0.35) ?? colorScheme.primary;
-
     return Scaffold(
       body: Stack(
         children: [
-          Positioned.fill(child: Container(color: colorScheme.surface)),
-
           // Background blurred shape (same positioning as other Figma-based screens)
-          Positioned(
-            left: responsive.scale(-40),
-            top: responsive.scale(-85.54),
-            child: ImageFiltered(
-              imageFilter: ImageFilter.blur(
-                sigmaX: responsive.scale(100),
-                sigmaY: responsive.scale(100),
-                tileMode: TileMode.decal,
-              ),
-              child: Container(
-                width: responsive.scale(467.78),
-                height: responsive.scale(394.6),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(responsive.scale(200)),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      gradientStart.withValues(alpha: 0.25),
-                      gradientEnd.withValues(alpha: 0.12),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
+          const BlurredBackground(),
 
           SafeArea(
             top: false,
@@ -98,21 +64,9 @@ class FavoritesScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Back button row
-                  Padding(
-                    padding: responsive.scalePadding(
-                      EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        top: headerTopPadding,
-                      ),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: WaffirBackButton(
-                        size: responsive.scale(44),
-                        onTap: () => context.pop(),
-                      ),
-                    ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: WaffirBackButton(size: responsive.scale(44), onTap: () => context.pop()),
                   ),
 
                   SizedBox(height: responsive.scale(32)),
@@ -120,16 +74,7 @@ class FavoritesScreen extends ConsumerWidget {
                   // Title
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                    child: Text(
-                      'Favorites',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontFamily: 'Parkinsans',
-                        fontSize: responsive.scaleFontSize(16, minSize: 14),
-                        fontWeight: FontWeight.w500,
-                        height: 1.15,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
+                    child: Text('Favorites', style: theme.textTheme.titleLarge),
                   ),
 
                   SizedBox(height: responsive.scale(32)),
@@ -183,8 +128,9 @@ class FavoritesScreen extends ConsumerWidget {
                               discountText: store.discountText,
                               distance: store.distance ?? '-,- kilometers',
                               isFavorite: isFavorite,
-                              onFavoriteToggle: () =>
-                                  ref.read(followedStoresNotifierProvider.notifier).toggle(store.id),
+                              onFavoriteToggle: () => ref
+                                  .read(followedStoresNotifierProvider.notifier)
+                                  .toggle(store.id),
                             ),
                           );
                         }
@@ -199,7 +145,8 @@ class FavoritesScreen extends ConsumerWidget {
                         return ListView.separated(
                           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                           itemCount: items.length,
-                          separatorBuilder: (context, index) => SizedBox(height: responsive.scale(16)),
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: responsive.scale(16)),
                           itemBuilder: (context, index) => items[index],
                         );
                       },
@@ -224,10 +171,7 @@ class FavoritesScreen extends ConsumerWidget {
 }
 
 class _EmptyState extends StatelessWidget {
-  const _EmptyState({
-    required this.title,
-    required this.subtitle,
-  });
+  const _EmptyState({required this.title, required this.subtitle});
 
   final String title;
   final String subtitle;
@@ -280,10 +224,7 @@ class _EmptyState extends StatelessWidget {
 }
 
 class _ErrorState extends StatelessWidget {
-  const _ErrorState({
-    required this.message,
-    required this.details,
-  });
+  const _ErrorState({required this.message, required this.details});
 
   final String message;
   final String details;

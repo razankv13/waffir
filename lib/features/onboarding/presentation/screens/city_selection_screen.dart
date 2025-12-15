@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waffir/core/extensions/context_extensions.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/storage/settings_service.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/inputs/city_list_item.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
+import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 
 /// City selection screen
@@ -78,11 +81,18 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final size = MediaQuery.of(context).size;
+    final responsive = context.responsive;
 
     // Responsive dimensions
     final horizontalPadding = size.width > 600 ? 32.0 : 24.0;
     final headerVerticalPadding = size.height > 700 ? 24.0 : 16.0;
     final footerBottomPadding = size.height > 700 ? 48.0 : 32.0;
+
+    bool showBackButton = context.pathParameters is Map<String, dynamic>
+        ? (context.pathParameters as Map<String, dynamic>)['showBackButton'] == 'true'
+              ? true
+              : false
+        : true;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -90,9 +100,10 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
         child: Stack(
           children: [
             // Blurred background matching Figma design
-            const Positioned.fill(child: BlurredBackground()),
+            const BlurredBackground(),
             Column(
               children: [
+                if (showBackButton) WaffirBackButton(size: responsive.scale(44)),
                 // Header section with gradient fade
                 _buildHeaderSection(
                   context,

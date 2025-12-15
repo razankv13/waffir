@@ -41,7 +41,7 @@ class ProfileScreen extends ConsumerWidget {
     final user = currentMockUser;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     final logoutOverlayHeight = responsive.scale(56 + 8 + 16) + bottomInset;
-    final headerHeight = responsive.scale(234) + MediaQuery.paddingOf(context).top;
+    final headerHeight = responsive.scale(150) + MediaQuery.paddingOf(context).top;
 
     return Scaffold(
       body: Stack(
@@ -102,10 +102,13 @@ class ProfileScreen extends ConsumerWidget {
                           context.pushNamed(AppRouteNames.profileMyAccount);
                         },
                         onSavedDealsTap: () {
-                          context.pushNamed(AppRouteNames.profileSavedDeals);
+                          context.pushNamed(AppRouteNames.profileFavorites);
                         },
                         onMyCityTap: () {
-                          context.pushNamed(AppRouteNames.profileChangeCity);
+                          context.pushNamed(
+                            AppRouteNames.citySelection,
+                            queryParameters: {'showBackButton': 'true'},
+                          );
                         },
                         onNotificationsTap: () {
                           context.pushNamed(AppRouteNames.notificationSettings);
