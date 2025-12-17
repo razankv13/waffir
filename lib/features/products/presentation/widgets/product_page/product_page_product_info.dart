@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:waffir/core/themes/figma_product_page/product_page_theme.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
@@ -62,21 +64,21 @@ class ProductPageProductInfo extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           section(
-            label: 'Details:',
+            label: LocaleKeys.productPage.info.details.tr(),
             labelStyle: theme.textStyles.sectionLabelBold,
             body: detailsText,
             bodyStyle: theme.textStyles.body,
           ),
           SizedBox(height: responsive.scale(16)),
           section(
-            label: 'Features:',
+            label: LocaleKeys.productPage.info.features.tr(),
             labelStyle: theme.textStyles.sectionLabelBold,
             body: featuresText,
             bodyStyle: theme.textStyles.body,
           ),
           SizedBox(height: responsive.scale(16)),
           section(
-            label: 'Price Research:',
+            label: LocaleKeys.productPage.info.priceResearch.tr(),
             labelStyle: theme.textStyles.sectionLabelBold,
             body: priceResearchText,
             bodyStyle: theme.textStyles.bodyRegular,

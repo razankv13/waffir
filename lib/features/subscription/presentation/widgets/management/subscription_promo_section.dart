@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:waffir/core/constants/app_typography.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 
 class SubscriptionPromoSection extends StatelessWidget {
@@ -25,7 +27,7 @@ class SubscriptionPromoSection extends StatelessWidget {
         SizedBox(
           width: responsive.scale(243),
           child: Text(
-            'Do you have a promo code?',
+            LocaleKeys.subscription.management.promo.question.tr(),
             textAlign: TextAlign.center,
             style: AppTypography.bodyMedium.copyWith(
               fontSize: responsive.scaleFontSize(16, minSize: 14),
@@ -58,7 +60,7 @@ class SubscriptionPromoSection extends StatelessWidget {
                     color: theme.colorScheme.onSurface,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Apply Promo Code',
+                    hintText: LocaleKeys.subscription.management.promo.placeholder.tr(),
                     hintStyle: AppTypography.bodyMedium.copyWith(
                       fontSize: responsive.scaleFontSize(16, minSize: 14),
                       fontWeight: FontWeight.w500,

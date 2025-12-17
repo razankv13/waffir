@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/core/widgets/inputs/city_selector.dart';
 import 'package:waffir/core/mock/mock_user_data.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 
 /// Change City Screen
 ///
@@ -45,7 +47,7 @@ class _ChangeCityScreenState extends ConsumerState<ChangeCityScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('City changed to ${_selectedCity!.displayName}'),
+          content: Text(LocaleKeys.profile.changeCity.success.tr(args: [_selectedCity!.displayName])),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -102,7 +104,7 @@ class _ChangeCityScreenState extends ConsumerState<ChangeCityScreen> {
                         const SizedBox(width: 16),
                       ],
                       Text(
-                        'Change City',
+                        LocaleKeys.profile.changeCity.title.tr(),
                         style: textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -120,7 +122,7 @@ class _ChangeCityScreenState extends ConsumerState<ChangeCityScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        'Select your city to see relevant deals and offers in your area',
+                        LocaleKeys.profile.changeCity.subtitle.tr(),
                         style: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
@@ -160,7 +162,7 @@ class _ChangeCityScreenState extends ConsumerState<ChangeCityScreen> {
                     child: AppButton.primary(
                       onPressed: _isLoading ? null : _saveCity,
                       isLoading: _isLoading,
-                      child: const Text('Save'),
+                      child: Text(LocaleKeys.buttons.save.tr()),
                     ),
                   ),
                 ),

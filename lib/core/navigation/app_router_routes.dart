@@ -8,6 +8,7 @@ import 'package:waffir/core/navigation/widgets/main_shell.dart';
 
 import 'package:waffir/features/auth/presentation/screens/account_details_screen.dart';
 import 'package:waffir/features/auth/presentation/screens/forgot_password_screen.dart';
+import 'package:waffir/features/auth/presentation/screens/family_invite_link_screen.dart';
 import 'package:waffir/features/auth/presentation/screens/otp_verification_screen.dart';
 import 'package:waffir/features/auth/presentation/screens/phone_login_screen.dart';
 import 'package:waffir/features/auth/presentation/screens/signup_screen.dart';
@@ -55,6 +56,16 @@ List<RouteBase> buildAppRoutes({required GlobalKey<NavigatorState> shellNavigato
       path: AppRoutes.citySelection,
       name: AppRouteNames.citySelection,
       builder: (context, state) => const CitySelectionScreen(),
+    ),
+
+    // Deep link handler for family invites (store inviteId, then authenticate first)
+    GoRoute(
+      path: AppRoutes.familyInviteLink,
+      name: AppRouteNames.familyInviteLink,
+      builder: (context, state) {
+        final inviteId = state.uri.queryParameters['inviteId'] ?? '';
+        return FamilyInviteLinkScreen(inviteId: inviteId);
+      },
     ),
 
     GoRoute(

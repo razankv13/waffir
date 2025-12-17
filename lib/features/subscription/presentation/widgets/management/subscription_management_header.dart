@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:waffir/core/constants/app_typography.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/features/subscription/presentation/widgets/subscription_tab_switcher.dart';
 
@@ -17,7 +19,7 @@ class SubscriptionManagementHeader extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'You just got \"One\" month free',
+          LocaleKeys.subscription.management.title.tr(),
           textAlign: TextAlign.center,
           style: AppTypography.headlineSmall.copyWith(
             fontSize: responsive.scaleFontSize(18, minSize: 16),
@@ -32,7 +34,7 @@ class SubscriptionManagementHeader extends StatelessWidget {
               ? responsive.scale(243)
               : responsive.scale(323),
           child: Text(
-            'Continue to start your free month and confirm your plan.',
+            LocaleKeys.subscription.management.subtitle.tr(),
             textAlign: TextAlign.center,
             style: AppTypography.bodyMedium.copyWith(
               fontSize: responsive.scaleFontSize(16, minSize: 14),

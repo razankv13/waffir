@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/themes/extensions/notifications_alerts_theme.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/cards/alert_card.dart';
@@ -26,7 +28,7 @@ class DealAlertsSection extends ConsumerWidget {
       children: [
         // "My deal alerts" section
         Text(
-          'My deal alerts',
+          LocaleKeys.notifications.sections.myDealAlerts.tr(),
           style: naTheme.sectionTitleStyle.copyWith(
             color: naTheme.textPrimary,
             fontSize: responsive.scaleFontSize(16, minSize: 14),
@@ -36,7 +38,9 @@ class DealAlertsSection extends ConsumerWidget {
 
         // Deal alerts list
         if (dealNotifications.isEmpty)
-          const NotificationsEmptyState(message: 'No deal alerts yet')
+          NotificationsEmptyState(
+            message: LocaleKeys.notifications.empty.dealAlerts.tr(),
+          )
         else
           ListView.separated(
             shrinkWrap: true,
@@ -56,7 +60,14 @@ class DealAlertsSection extends ConsumerWidget {
                 onTap: () {
                   ScaffoldMessenger.of(
                     context,
-                  ).showSnackBar(SnackBar(content: Text('View: ${notification.title}')));
+                  ).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        LocaleKeys.notifications.snackbar.view
+                            .tr(namedArgs: {'title': notification.title}),
+                      ),
+                    ),
+                  );
                 },
               );
             },
@@ -66,7 +77,7 @@ class DealAlertsSection extends ConsumerWidget {
 
         // "Popular Alerts" section
         Text(
-          'Popular Alerts',
+          LocaleKeys.notifications.sections.popularAlerts.tr(),
           style: naTheme.sectionTitleStyle.copyWith(
             color: naTheme.textPrimary,
             fontSize: responsive.scaleFontSize(16, minSize: 14),
@@ -76,7 +87,9 @@ class DealAlertsSection extends ConsumerWidget {
 
         // Popular alerts cards
         if (alerts.isEmpty)
-          const NotificationsEmptyState(message: 'No alerts available')
+          NotificationsEmptyState(
+            message: LocaleKeys.notifications.empty.popularAlerts.tr(),
+          )
         else
           ListView.separated(
             shrinkWrap: true,
@@ -94,8 +107,10 @@ class DealAlertsSection extends ConsumerWidget {
                     SnackBar(
                       content: Text(
                         isSubscribed
-                            ? 'Subscribed to ${alert.title}'
-                            : 'Unsubscribed from ${alert.title}',
+                            ? LocaleKeys.notifications.snackbar.subscribed
+                                .tr(namedArgs: {'title': alert.title})
+                            : LocaleKeys.notifications.snackbar.unsubscribed
+                                .tr(namedArgs: {'title': alert.title}),
                       ),
                     ),
                   );

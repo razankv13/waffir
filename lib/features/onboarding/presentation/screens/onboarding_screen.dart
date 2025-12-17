@@ -32,10 +32,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   void _selectLanguage(String languageCode) {
     HapticFeedback.selectionClick();
+    final supportedLocales = context.supportedLocales;
+    final locale = supportedLocales.firstWhere(
+      (l) => l.languageCode == languageCode,
+      orElse: () => const Locale('en', 'US'),
+    );
     setState(() {
-      _isArabic = languageCode == 'ar';
+      _isArabic = locale.languageCode == 'ar';
     });
-    context.setLocale(Locale(languageCode));
+    context.setLocale(locale);
   }
 
   Future<void> _continue() async {
@@ -184,11 +189,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                     label: _isArabic ? 'العربية، محدد' : 'اختر لغة العربية',
                                     child: SizedBox(
                                       height: 56,
-                                      child: AppButton.secondary(
-                                        text: 'العربية',
-                                        onPressed: () => _selectLanguage('ar'),
-                                        width: double.infinity,
-                                      ),
+                                      child: _isArabic
+                                          ? AppButton.secondary(
+                                              text: 'العربية',
+                                              onPressed: () => _selectLanguage('ar'),
+                                              width: double.infinity,
+                                            )
+                                          : AppButton.tertiary(
+                                              text: 'العربية',
+                                              onPressed: () => _selectLanguage('ar'),
+                                              width: double.infinity,
+                                            ),
                                     ),
                                   ),
 
@@ -203,11 +214,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                         : 'Choose English language',
                                     child: SizedBox(
                                       height: 56,
-                                      child: AppButton.tertiary(
-                                        text: 'English',
-                                        onPressed: () => _selectLanguage('en'),
-                                        width: double.infinity,
-                                      ),
+                                      child: _isArabic
+                                          ? AppButton.tertiary(
+                                              text: 'English',
+                                              onPressed: () => _selectLanguage('en'),
+                                              width: double.infinity,
+                                            )
+                                          : AppButton.secondary(
+                                              text: 'English',
+                                              onPressed: () => _selectLanguage('en'),
+                                              width: double.infinity,
+                                            ),
                                     ),
                                   ),
                                 ],

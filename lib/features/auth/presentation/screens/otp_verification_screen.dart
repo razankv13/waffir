@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
@@ -31,7 +32,7 @@ class OtpVerificationScreen extends ConsumerStatefulWidget {
 }
 
 class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
-  static const int _otpLength = 5;
+  static const int _otpLength = 6;
   static const int _resendCountdownSeconds = 180;
 
   final TextEditingController _pinController = TextEditingController();
@@ -84,7 +85,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
   Future<void> _verifyOtp() async {
     if (!_isOtpComplete) return;
     if (widget.verificationId.trim().isEmpty) {
-      context.showErrorSnackBar(message: 'Missing verificationId. Please request a new code.');
+      context.showErrorSnackBar(message: LocaleKeys.auth.verificationIdMissing.tr());
       return;
     }
 
@@ -103,9 +104,9 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
       authValue.when(
         data: (state) {
           if (state.isAuthenticated) {
-            context.go(AppRoutes.accountDetails);
+            context.go(AppRoutes.splash);
           } else {
-            context.showErrorSnackBar(message: 'OTP verification failed.');
+            context.showErrorSnackBar(message: LocaleKeys.auth.otpVerificationFailed.tr());
           }
         },
         loading: () {},
@@ -122,7 +123,19 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     setState(() => _isResending = true);
 
     try {
-      context.showInfoSnackBar(message: 'auth.codeSentSuccess'.tr());
+      final authController = ref.read(authControllerProvider.notifier);
+      await authController.verifyPhoneNumber(
+        phoneNumber: widget.phoneNumber,
+        codeSent: (_) {
+          if (mounted) context.showInfoSnackBar(message: LocaleKeys.auth.codeSentSuccess.tr());
+        },
+        verificationFailed: (error) {
+          if (mounted) context.showErrorSnackBar(message: error);
+        },
+        codeAutoRetrievalTimeout: () {
+          if (mounted) context.showInfoSnackBar(message: LocaleKeys.auth.codeTimeout.tr());
+        },
+      );
 
       if (mounted) {
         _startResendCountdown();
@@ -265,7 +278,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     return Column(
       children: [
         Text(
-          'auth.otpTitle'.tr(),
+          LocaleKeys.auth.otpTitle.tr(),
           style: textTheme.headlineLarge?.copyWith(
             fontWeight: FontWeight.bold,
             fontSize: responsive.scaleFontSize(20, minSize: 18),
@@ -277,7 +290,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
         ),
         SizedBox(height: responsive.scaleWithRange(16, min: 12, max: 20)),
         Text(
-          'auth.otpSubtitle'.tr(namedArgs: {'contact': widget.phoneNumber}),
+          LocaleKeys.auth.otpSubtitle.tr(namedArgs: {'contact': widget.phoneNumber}),
           style: textTheme.bodyLarge?.copyWith(
             fontSize: responsive.scaleFontSize(16, minSize: 14),
             color: colorScheme.onSurfaceVariant,
@@ -351,7 +364,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
             padding: EdgeInsets.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          child: Text('auth.changeNumber'.tr(), style: changeNumberTextStyle),
+          child: Text(LocaleKeys.auth.changeNumber.tr(), style: changeNumberTextStyle),
         ),
         TextButton(
           onPressed: isResendEnabled ? _resendCode : null,
@@ -370,10 +383,10 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
                 )
               : Text(
                   _resendCountdown > 0
-                      ? 'auth.resendCodeIn'.tr(
+                      ? LocaleKeys.auth.resendCodeIn.tr(
                           namedArgs: {'time': _formatCountdown(_resendCountdown)},
                         )
-                      : 'auth.resendCode'.tr(),
+                      : LocaleKeys.auth.resendCode.tr(),
                   style: resendTextStyle,
                 ),
         ),
@@ -385,7 +398,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     final isEnabled = !_isLoading && _isOtpComplete;
 
     return AppButton.primary(
-      text: 'auth.verify'.tr(),
+      text: LocaleKeys.auth.verify.tr(),
       onPressed: isEnabled ? _verifyOtp : null,
       isLoading: _isLoading,
       enabled: isEnabled,

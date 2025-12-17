@@ -2,14 +2,15 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:waffir/core/config/environment_config.dart';
+import 'package:waffir/core/providers/supabase_providers.dart';
 import 'package:waffir/core/storage/hive_service.dart';
 import 'package:waffir/features/auth/domain/entities/auth_state.dart';
 import 'package:waffir/features/auth/domain/entities/user_model.dart';
 import 'package:waffir/features/auth/domain/repositories/auth_repository.dart';
 import 'package:waffir/features/auth/data/datasources/mock_auth_session_storage.dart';
 import 'package:waffir/features/auth/data/datasources/mock_auth_store.dart';
-import 'package:waffir/features/auth/data/repositories/cloud_functions_auth_repository.dart';
 import 'package:waffir/features/auth/data/repositories/mock_auth_repository.dart';
+import 'package:waffir/features/auth/data/repositories/supabase_auth_repository.dart';
 
 // Re-export the auth controller provider
 export '../../presentation/controllers/auth_controller.dart' show authControllerProvider;
@@ -33,7 +34,8 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
     return MockAuthRepository(store, sessionStorage);
   }
 
-  return const CloudFunctionsAuthRepository();
+  final client = ref.watch(supabaseClientProvider);
+  return SupabaseAuthRepository(client);
 });
 
 // Auth State Stream Provider

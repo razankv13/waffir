@@ -1,8 +1,28 @@
 {
+  "productPage": {
+    "cta": {
+      "seeDeal": "See the deal at {}"
+    },
+    "availability": {
+      "online": "Online"
+    },
+    "actions": {
+      "reportExpired": "Report Expired"
+    },
+    "info": {
+      "details": "Details:",
+      "features": "Features:",
+      "priceResearch": "Price Research:"
+    },
+    "comments": {
+      "writeComment": "Write your comment",
+      "noComments": "No comments yet"
+    }
+  },
   "app": {
-    "name": "وفر",
-    "welcome": "مرحباً بكم في وفر",
-    "description": "تطبيق وفر - تسوق بذكاء ووفر أكثر"
+    "name": "Flutter Template",
+    "welcome": "Welcome to Flutter Template",
+    "description": "A production-ready Flutter app template with clean architecture"
   },
   "navigation": {
     "home": "الرئيسية",
@@ -12,53 +32,65 @@
   },
   "auth": {
     "login": "تسجيل الدخول",
-    "register": "إنشاء حساب",
+    "register": "تسجيل",
     "logout": "تسجيل الخروج",
-    "forgotPassword": "نسيت كلمة المرور؟",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
     "email": "البريد الإلكتروني",
     "password": "كلمة المرور",
     "confirmPassword": "تأكيد كلمة المرور",
     "firstName": "الاسم الأول",
     "lastName": "اسم العائلة",
-    "signInWithGoogle": "تابع باستخدام Google",
-    "signInWithApple": "تابع باستخدام Apple",
+    "signInWithGoogle": "تسجيل الدخول باستخدام Google",
+    "signInWithApple": "تسجيل الدخول باستخدام Apple",
+    "googleSignInFailed": "فشل تسجيل الدخول باستخدام Google.",
+    "appleSignInFailed": "فشل تسجيل الدخول باستخدام Apple.",
     "dontHaveAccount": "ليس لديك حساب؟",
-    "alreadyHaveAccount": "لديك حساب بالفعل؟",
+    "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
     "resetPassword": "إعادة تعيين كلمة المرور",
     "backToLogin": "العودة لتسجيل الدخول",
     "loginSuccessful": "تم تسجيل الدخول بنجاح!",
-    "registrationSuccessful": "تم إنشاء الحساب بنجاح!",
-    "resetPasswordEmailSent": "تم إرسال رابط إعادة تعيين كلمة المرور!",
-    "welcomeToWaffir": "مرحباً بكم في وفر",
-    "loginSubtitle": "سجّل الدخول أو أنشئ حساباً للمتابعة",
-    "phoneHint": "رقم الجوال",
+    "registrationSuccessful": "تم التسجيل بنجاح!",
+    "resetPasswordEmailSent": "تم إرسال بريد إعادة تعيين كلمة المرور!",
+    "welcomeToWaffir": "مرحبًا بك في وفّر",
+    "loginSubtitle": "سجل الدخول أو أنشئ حسابًا للمتابعة",
+    "phoneHint": "رقم الهاتف",
     "or": "أو",
-    "continueWithGoogle": "تابع باستخدام Google",
-    "continueWithApple": "تابع باستخدام Apple",
-    "phoneNumber": "رقم الجوال",
-    "enterPhoneNumber": "أدخل رقم الجوال",
+    "continueWithGoogle": "المتابعة باستخدام Google",
+    "continueWithApple": "المتابعة باستخدام Apple",
+    "phoneNumber": "رقم الهاتف",
+    "enterPhoneNumber": "أدخل رقم الهاتف",
     "otpTitle": "أدخل رمز التحقق",
-    "otpSubtitle": "أدخل الرمز المكوّن من ٥ أرقام الذي تم إرساله إلى\\n{contact}",
+    "otpSubtitle": "أدخل الرمز المكون من 6 أرقام الذي تم إرساله إلى \\n{contact}",
     "changeNumber": "تغيير الرقم",
     "resendCode": "إعادة إرسال الرمز",
     "verify": "تحقق",
     "resendCodeIn": "إعادة إرسال الرمز خلال {time}",
-    "codeSentSuccess": "تم إرسال رمز التحقق بنجاح"
+    "codeSentSuccess": "تم إرسال رمز التحقق بنجاح",
+    "otpVerificationFailed": "فشل التحقق من الرمز. يرجى المحاولة مرة أخرى.",
+    "verificationIdMissing": "معرف التحقق مفقود. يرجى طلب رمز جديد.",
+    "codeTimeout": "انتهت صلاحية الرمز. يرجى المحاولة مرة أخرى.",
+    "accountDetails": {
+      "nameLabel": "الاسم",
+      "nameHint": "الاسم الكامل",
+      "detailsTitle": "تفاصيل الحساب",
+      "termsAcceptance": "أوافق على شروط الاستخدام وسياسة الخصوصية"
+    }
   },
   "validation": {
     "required": "هذا الحقل مطلوب",
-    "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح",
+    "invalidEmail": "يرجى إدخال بريد إلكتروني صالح",
     "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
     "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
-    "invalidPhone": "يرجى إدخال رقم هاتف صحيح",
-    "phoneTooShort": "رقم الهاتف قصير جداً",
-    "phoneTooLong": "رقم الهاتف طويل جداً"
+    "invalidPhone": "يرجى إدخال رقم هاتف صالح",
+    "phoneTooShort": "رقم الهاتف قصير جدًا",
+    "phoneTooLong": "رقم الهاتف طويل جدًا",
+    "selectCity": "يرجى اختيار مدينة للمتابعة"
   },
   "buttons": {
     "save": "حفظ",
     "cancel": "إلغاء",
     "delete": "حذف",
-    "edit": "تعديل",
+    "edit": "تحرير",
     "update": "تحديث",
     "submit": "إرسال",
     "confirm": "تأكيد",
@@ -67,7 +99,10 @@
     "close": "إغلاق",
     "next": "التالي",
     "previous": "السابق",
-    "finish": "إنهاء"
+    "finish": "إنهاء",
+    "accept": "قبول",
+    "reject": "رفض",
+    "continueBtn": "استمر"
   },
   "settings": {
     "title": "الإعدادات",
@@ -85,30 +120,256 @@
   },
   "errors": {
     "networkError": "يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى",
-    "serverError": "حدث خطأ ما. يرجى المحاولة مرة أخرى لاحقاً",
+    "serverError": "حدث خطأ من جانبنا. يرجى المحاولة لاحقًا",
     "unknownError": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى",
     "timeoutError": "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى",
-    "unauthorizedError": "غير مصرح لك بتنفيذ هذا الإجراء"
+    "unauthorizedError": "ليس لديك صلاحية للقيام بهذا الإجراء",
+    "saveSelection": "حدث خطأ أثناء حفظ اختيارك. يرجى المحاولة مرة أخرى"
   },
   "success": {
     "dataSaved": "تم حفظ البيانات بنجاح",
+    "saved": "تم الحفظ",
     "profileUpdated": "تم تحديث الملف الشخصي بنجاح",
     "settingsUpdated": "تم تحديث الإعدادات بنجاح"
   },
   "dialogs": {
     "confirmation": "تأكيد",
     "areYouSure": "هل أنت متأكد؟",
-    "deleteConfirmation": "هل أنت متأكد من حذف هذا العنصر؟",
-    "logoutConfirmation": "هل أنت متأكد من تسجيل الخروج؟",
+    "deleteConfirmation": "هل أنت متأكد أنك تريد حذف هذا العنصر؟",
+    "logoutConfirmation": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
     "yes": "نعم",
     "no": "لا"
   },
   "loading": {
     "pleaseWait": "يرجى الانتظار...",
-    "loading": "جار التحميل",
-    "saving": "جار الحفظ...",
-    "updating": "جار التحديث...",
-    "processing": "جار المعالجة..."
+    "loading": "جاري التحميل",
+    "saving": "جاري الحفظ...",
+    "updating": "جاري التحديث...",
+    "processing": "جاري المعالجة..."
   },
-  "choose_language": "يرجى اختيار لغتك"
+  "deals": {
+    "title": "العروض الساخنة",
+    "searchHint": "ابحث عن العروض...",
+    "filterComingSoon": "نافذة التصفية قادمة قريبًا",
+    "loadError": "تعذر تحميل العروض الآن. يرجى المحاولة مرة أخرى.",
+    "loadErrorShort": "تعذر تحميل العروض الآن.",
+    "storeFallback": "المتجر",
+    "categories": {
+      "forYou": "لك",
+      "frontPage": "الصفحة الرئيسية",
+      "popular": "الأكثر شيوعًا"
+    },
+    "badges": {
+      "hot": "رائج",
+      "new": "جديد",
+      "featured": "مميز"
+    },
+    "actions": {
+      "likeComingSoon": "ميزة الإعجاب قادمة قريبًا",
+      "commentComingSoon": "ميزة التعليق قادمة قريبًا"
+    },
+    "empty": {
+      "title": "لا توجد عروض",
+      "categorySuggestion": "جرب اختيار فئة مختلفة",
+      "searchSuggestion": "جرب استخدام مصطلح بحث مختلف"
+    }
+  },
+  "notifications": {
+    "header": {
+      "title": "لا تفوت الفرصة!",
+      "subtitle": "احصل على تنبيهات عند نزول عروض رائعة!"
+    },
+    "filter": {
+      "dealAlerts": "تنبيهات العروض",
+      "notifications": "الإشعارات"
+    },
+    "search": {
+      "label": "بحث",
+      "placeholder": "أحذية، أجهزة لوحية، ماكبوك، تلفزيون..."
+    },
+    "sections": {
+      "myDealAlerts": "تنبيهات عروضك",
+      "popularAlerts": "التنبيهات الشائعة"
+    },
+    "empty": {
+      "dealAlerts": "لا توجد تنبيهات عروض بعد",
+      "popularAlerts": "لا توجد تنبيهات متاحة",
+      "systemNotifications": "لا توجد إشعارات بعد"
+    },
+    "snackbar": {
+      "view": "عرض: {title}",
+      "subscribed": "تم الاشتراك في {title}",
+      "unsubscribed": "تم إلغاء الاشتراك في {title}"
+    }
+  },
+  "stores": {
+    "searchHint": "ابحث عن المتاجر...",
+    "filterComingSoon": "نافذة التصفية قادمة قريبًا",
+    "loadError": "تعذر تحميل المتاجر الآن. يرجى المحاولة مرة أخرى.",
+    "loadErrorShort": "تعذر تحميل المتاجر الآن.",
+    "otherLocations": "مواقع أخرى",
+    "section": {
+      "nearYou": "قريب منك",
+      "mallPrefix": "متاجر {mallName} القريبة منك"
+    },
+    "empty": {
+      "title": "لا توجد متاجر",
+      "categorySuggestion": "جرب اختيار فئة مختلفة",
+      "searchSuggestion": "جرب استخدام مصطلح بحث مختلف"
+    },
+    "categories": {
+      "all": "الكل",
+      "dining": "طعام",
+      "fashion": "أزياء",
+      "electronics": "إلكترونيات",
+      "beauty": "جمال",
+      "entertainment": "ترفيه",
+      "lifestyle": "أسلوب حياة",
+      "jewelry": "مجوهرات",
+      "travel": "سفر",
+      "other": "أخرى"
+    },
+    "count": {
+      "one": "{count} store",
+      "other": "{count} stores"
+    },
+    "detail": {
+      "notFound": "Store not found",
+      "banner": {
+        "seeAllOutlets": "See All Outlets",
+        "nearestOutlet": "Take Me to Nearest Outlet"
+      },
+      "discountTitle": "{} 20% Discount on Selected items.",
+      "discountTag": "20% Off",
+      "atStore": "At {} store",
+      "actions": {
+        "reportSuccess": "Thanks! We’ll inspect this offer.",
+        "shareTapped": "Share tapped"
+      },
+      "header": {
+        "storePill": "Store"
+      },
+      "comments": {
+        "timeAgo": "3 hours ago"
+      }
+    }
+  },
+  "creditCards": {
+    "title": "اختر بطاقتك\\nالائتمانية/الخصم",
+    "subtitle": "يرجى الملاحظة: كل ما عليك هو اختيار نوع بطاقتك - لن يُطلب منك تقديم أي تفاصيل أخرى.",
+    "searchHint": "اسم البطاقة أو البنك",
+    "filterComingSoon": "ميزة التصفية قادمة قريبًا",
+    "empty": {
+      "title": "لم يتم العثور على بنوك",
+      "description": "جرّب مصطلح بحث مختلف"
+    }
+  },
+  "profile": {
+    "premiumPlan": "خطة بريميوم",
+    "freePlan": "الخطة المجانية",
+    "validUntil": "صالح حتى {date}",
+    "manageSubscription": "إدارة الاشتراك",
+    "upgradeToPremium": "الترقية إلى بريميوم",
+    "menu": {
+      "myAccount": "حسابي",
+      "favourites": "المفضلة",
+      "changeCity": "تغيير المدينة",
+      "helpCenter": "مركز المساعدة"
+    },
+    "favorites": {
+      "title": "المفضلة",
+      "emptyTitle": "لا توجد مفضلات بعد",
+      "emptySubtitle": "ابدأ بحفظ المنتجات والمتاجر للعثور عليها هنا بسرعة.",
+      "loadError": "فشل تحميل المفضلات. يرجى المحاولة مرة أخرى."
+    },
+    "changeCity": {
+      "title": "تغيير المدينة",
+      "subtitle": "اختر مدينتك لرؤية العروض والصفقات ذات الصلة في منطقتك",
+      "success": "تم تغيير المدينة إلى {}"
+    },
+    "notificationSettings": {
+      "title": "الإشعارات",
+      "pushNotifications": "إشعارات الدفع",
+      "hotDeals": "العروض الساخنة",
+      "storeOffers": "عروض المتاجر",
+      "bankCardsOffers": "عروض البطاقات البنكية",
+      "emailNotifications": "إشعارات البريد الإلكتروني",
+      "typeTitle": "نوع الإشعار",
+      "allOffers": "كل العروض",
+      "allOffersSubtitle": "كل صفقة جديدة",
+      "topOffers": "أفضل العروض",
+      "topOffersSubtitle": "تنبيهي فقط عندما تكون العروض ساخنة (أكثر من 20 إعجاب)"
+    }
+  },
+  "subscription": {
+    "management": {
+      "title": "لقد حصلت للتو على شهر مجاني واحد",
+      "subtitle": "تابع لبدء شهرك المجاني وتأكيد خطتك.",
+      "tabs": {
+        "monthly": "شهري",
+        "yearlySaveMore": "سنوي\\n(وفر أكثر)"
+      },
+      "options": {
+        "individual": {
+          "name": "فردي",
+          "priceMonthly": "4 SAR / شهريًا",
+          "priceYearly": "38 SAR / شهريًا",
+          "users": "مستخدم واحد"
+        },
+        "family": {
+          "name": "عائلي",
+          "priceMonthly": "12 SAR / شهريًا",
+          "priceYearly": "100 SAR / شهريًا",
+          "users": "حتى 4 أفراد من العائلة"
+        }
+      },
+      "badges": {
+        "firstMonthFree": "الشهر الأول مجانًا",
+        "discount20": "خصم 20٪",
+        "bestValue25": "أفضل قيمة - خصم 25٪",
+        "bestValue30": "أفضل قيمة - خصم 30٪"
+      },
+      "benefits": {
+        "cancelAnytime": "إلغاء في أي وقت",
+        "dailyVerified": "خصومات يومية موثقة",
+        "oneApp": "تطبيق واحد لكل العروض"
+      },
+      "promo": {
+        "question": "هل لديك رمز ترويجي؟",
+        "placeholder": "تطبيق الرمز الترويجي",
+        "applied": "تم تطبيق الرمز الترويجي \"{code}\"!"
+      },
+      "proceed": "متابعة",
+      "selection": "تم الاختيار: {period} - {option}"
+    }
+  },
+  "choose_language": "يرجى اختيار لغتك",
+  "onboarding": {
+    "familyInvite": {
+      "title": "دعوة عائلية",
+      "message": "لديك دعوة عائلية معلقة.\nمعرف الدعوة: {}",
+      "inviteAccepted": "تم قبول الدعوة",
+      "inviteRejected": "تم رفض الدعوة"
+    },
+    "citySelection": {
+      "title": "اختر مدينتك",
+      "subtitle": "سنعرض لك جميع الخصومات المتوفرة من البنوك والبطاقات من حولك."
+    }
+  },
+  "cities": {
+    "riyadh": "الرياض",
+    "jeddah": "جدة",
+    "mecca": "مكة",
+    "medina": "المدينة المنورة",
+    "khobar": "الخبر",
+    "dammam": "الدمام",
+    "tabuk": "تبوك",
+    "abha": "ابها",
+    "taif": "الطائف",
+    "qassim": "القسيم",
+    "yanbu": "ينبع",
+    "jubail": "الجبيل",
+    "najran": "نجران",
+    "jizan": "جيزان"
+  }
 }

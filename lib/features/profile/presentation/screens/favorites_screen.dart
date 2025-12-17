@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,7 @@ import 'package:waffir/features/auth/presentation/widgets/blurred_background.dar
 import 'package:waffir/features/products/data/providers/product_providers.dart';
 import 'package:waffir/features/products/domain/entities/product.dart';
 import 'package:waffir/features/products/domain/entities/store.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 
 /// Favorites Screen
 ///
@@ -74,7 +76,7 @@ class FavoritesScreen extends ConsumerWidget {
                   // Title
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                    child: Text('Favorites', style: theme.textTheme.titleLarge),
+                    child: Text(LocaleKeys.profile.favorites.title.tr(), style: theme.textTheme.titleLarge),
                   ),
 
                   SizedBox(height: responsive.scale(32)),
@@ -94,7 +96,7 @@ class FavoritesScreen extends ConsumerWidget {
 
                         if (productsError != null || storesError != null) {
                           return _ErrorState(
-                            message: 'Failed to load favorites. Please try again.',
+                            message: LocaleKeys.profile.favorites.loadError.tr(),
                             details: '${productsError ?? ''}${storesError ?? ''}',
                           );
                         }
@@ -136,9 +138,9 @@ class FavoritesScreen extends ConsumerWidget {
                         }
 
                         if (items.isEmpty) {
-                          return const _EmptyState(
-                            title: 'No favorites yet',
-                            subtitle: 'Start saving products and stores to find them here quickly.',
+                          return _EmptyState(
+                            title: LocaleKeys.profile.favorites.emptyTitle.tr(),
+                            subtitle: LocaleKeys.profile.favorites.emptySubtitle.tr(),
                           );
                         }
 

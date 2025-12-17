@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/themes/extensions/notifications_alerts_theme.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 
@@ -30,19 +32,19 @@ class NotificationsSearchBar extends StatelessWidget {
         children: [
           // Left: Search text stack
           Expanded(
-            child: Column(
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Search',
+                  LocaleKeys.notifications.search.label.tr(),
                   style: naTheme.searchLabelStyle.copyWith(
                     color: naTheme.textPrimary,
                     fontSize: responsive.scaleFontSize(14, minSize: 12),
                   ),
                 ),
                 Text(
-                  'Shoes, Tablets, Macbook, TV...',
+                  LocaleKeys.notifications.search.placeholder.tr(),
                   style: naTheme.searchPlaceholderStyle.copyWith(
                     color: naTheme.unselectedColor,
                     fontSize: responsive.scaleFontSize(12, minSize: 10),
@@ -85,4 +87,3 @@ class NotificationsSearchBar extends StatelessWidget {
     );
   }
 }
-

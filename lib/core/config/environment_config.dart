@@ -7,15 +7,10 @@ import 'package:waffir/core/utils/logger.dart';
 import 'package:waffir/flavors.dart';
 
 /// Environment configuration types
-enum Environment {
-  development,
-  staging,
-  production,
-}
+enum Environment { development, staging, production }
 
 /// Service for managing environment configuration
 class EnvironmentConfig {
-
   EnvironmentConfig._internal();
   static EnvironmentConfig? _instance;
   static Environment _currentEnvironment = Environment.development;
@@ -112,7 +107,7 @@ class EnvironmentConfig {
   /// Load appropriate environment file
   static Future<void> _loadEnvironmentFile() async {
     String envFile;
-    
+
     switch (_currentEnvironment) {
       case Environment.production:
         envFile = '.env.production';
@@ -121,7 +116,7 @@ class EnvironmentConfig {
         envFile = '.env.staging';
         break;
       case Environment.development:
-      envFile = '.env.dev';
+        envFile = '.env.dev';
         break;
     }
 
@@ -190,7 +185,7 @@ class EnvironmentConfig {
   /// Feature flags
   ///
   /// When `true`, the app uses mocked auth flows (OTP/OAuth/profile) without calling backend endpoints.
-  /// When `false`, repositories should call the real backend (e.g. cloud functions).
+  /// When `false`, repositories should call the real backend (Supabase).
   static bool get useMockAuth => getBool('USE_MOCK_AUTH', defaultValue: true);
 
   /// Feature flag to use mock Deals backend (until Supabase is deployed).
@@ -206,89 +201,129 @@ class EnvironmentConfig {
   static String? get revenueCatApiKey => getString('REVENUECAT_API_KEY');
 
   /// Google AdMob Configuration
-  static String get adMobAppIdAndroid => getString('ADMOB_APP_ID_ANDROID', defaultValue: _getTestAdMobAppId('android'))!;
-  static String get adMobAppIdIOS => getString('ADMOB_APP_ID_IOS', defaultValue: _getTestAdMobAppId('ios'))!;
+  static String get adMobAppIdAndroid =>
+      getString('ADMOB_APP_ID_ANDROID', defaultValue: _getTestAdMobAppId('android'))!;
+  static String get adMobAppIdIOS =>
+      getString('ADMOB_APP_ID_IOS', defaultValue: _getTestAdMobAppId('ios'))!;
 
   // Banner Ad Unit IDs
-  static String get bannerAdUnitIdAndroid => getString('BANNER_AD_UNIT_ID_ANDROID', defaultValue: _getTestAdUnitId('banner', 'android'))!;
-  static String get bannerAdUnitIdIOS => getString('BANNER_AD_UNIT_ID_IOS', defaultValue: _getTestAdUnitId('banner', 'ios'))!;
+  static String get bannerAdUnitIdAndroid =>
+      getString('BANNER_AD_UNIT_ID_ANDROID', defaultValue: _getTestAdUnitId('banner', 'android'))!;
+  static String get bannerAdUnitIdIOS =>
+      getString('BANNER_AD_UNIT_ID_IOS', defaultValue: _getTestAdUnitId('banner', 'ios'))!;
 
   // Interstitial Ad Unit IDs
-  static String get interstitialAdUnitIdAndroid => getString('INTERSTITIAL_AD_UNIT_ID_ANDROID', defaultValue: _getTestAdUnitId('interstitial', 'android'))!;
-  static String get interstitialAdUnitIdIOS => getString('INTERSTITIAL_AD_UNIT_ID_IOS', defaultValue: _getTestAdUnitId('interstitial', 'ios'))!;
+  static String get interstitialAdUnitIdAndroid => getString(
+    'INTERSTITIAL_AD_UNIT_ID_ANDROID',
+    defaultValue: _getTestAdUnitId('interstitial', 'android'),
+  )!;
+  static String get interstitialAdUnitIdIOS => getString(
+    'INTERSTITIAL_AD_UNIT_ID_IOS',
+    defaultValue: _getTestAdUnitId('interstitial', 'ios'),
+  )!;
 
   // Rewarded Ad Unit IDs
-  static String get rewardedAdUnitIdAndroid => getString('REWARDED_AD_UNIT_ID_ANDROID', defaultValue: _getTestAdUnitId('rewarded', 'android'))!;
-  static String get rewardedAdUnitIdIOS => getString('REWARDED_AD_UNIT_ID_IOS', defaultValue: _getTestAdUnitId('rewarded', 'ios'))!;
+  static String get rewardedAdUnitIdAndroid => getString(
+    'REWARDED_AD_UNIT_ID_ANDROID',
+    defaultValue: _getTestAdUnitId('rewarded', 'android'),
+  )!;
+  static String get rewardedAdUnitIdIOS =>
+      getString('REWARDED_AD_UNIT_ID_IOS', defaultValue: _getTestAdUnitId('rewarded', 'ios'))!;
 
   // Native Ad Unit IDs
-  static String get nativeAdUnitIdAndroid => getString('NATIVE_AD_UNIT_ID_ANDROID', defaultValue: _getTestAdUnitId('native', 'android'))!;
-  static String get nativeAdUnitIdIOS => getString('NATIVE_AD_UNIT_ID_IOS', defaultValue: _getTestAdUnitId('native', 'ios'))!;
+  static String get nativeAdUnitIdAndroid =>
+      getString('NATIVE_AD_UNIT_ID_ANDROID', defaultValue: _getTestAdUnitId('native', 'android'))!;
+  static String get nativeAdUnitIdIOS =>
+      getString('NATIVE_AD_UNIT_ID_IOS', defaultValue: _getTestAdUnitId('native', 'ios'))!;
 
   /// Sentry Configuration
   static String? get sentryDsn => getString('SENTRY_DSN');
-  static String get sentryEnvironment => getString('SENTRY_ENVIRONMENT', defaultValue: _currentEnvironment.name)!;
+  static String get sentryEnvironment =>
+      getString('SENTRY_ENVIRONMENT', defaultValue: _currentEnvironment.name)!;
 
   /// Clarity Configuration
   static String? get clarityProjectId => getString('CLARITY_PROJECT_ID');
   static bool get enableClarity => getBool('ENABLE_CLARITY', defaultValue: true);
 
   /// Feature Flags
-  static bool get enableAnalytics => getBool('ENABLE_ANALYTICS', defaultValue: AppConstants.enableAnalytics);
-  static bool get enableCrashReporting => getBool('ENABLE_CRASH_REPORTING', defaultValue: AppConstants.enableCrashReporting);
-  static bool get enablePerformanceMonitoring => getBool('ENABLE_PERFORMANCE_MONITORING', defaultValue: AppConstants.enablePerformanceMonitoring);
-  static bool get enableDebugMode => getBool('ENABLE_DEBUG_MODE', defaultValue: AppConstants.enableDebugMode);
-  static bool get enableBiometrics => getBool('ENABLE_BIOMETRICS', defaultValue: AppConstants.enableBiometrics);
-  static bool get enableNotifications => getBool('ENABLE_NOTIFICATIONS', defaultValue: AppConstants.enableNotifications);
-  static bool get enableRemoteConfig => getBool('ENABLE_REMOTE_CONFIG', defaultValue: AppConstants.enableRemoteConfig);
+  static bool get enableAnalytics =>
+      getBool('ENABLE_ANALYTICS', defaultValue: AppConstants.enableAnalytics);
+  static bool get enableCrashReporting =>
+      getBool('ENABLE_CRASH_REPORTING', defaultValue: AppConstants.enableCrashReporting);
+  static bool get enablePerformanceMonitoring => getBool(
+    'ENABLE_PERFORMANCE_MONITORING',
+    defaultValue: AppConstants.enablePerformanceMonitoring,
+  );
+  static bool get enableDebugMode =>
+      getBool('ENABLE_DEBUG_MODE', defaultValue: AppConstants.enableDebugMode);
+  static bool get enableBiometrics =>
+      getBool('ENABLE_BIOMETRICS', defaultValue: AppConstants.enableBiometrics);
+  static bool get enableNotifications =>
+      getBool('ENABLE_NOTIFICATIONS', defaultValue: AppConstants.enableNotifications);
+  static bool get enableRemoteConfig =>
+      getBool('ENABLE_REMOTE_CONFIG', defaultValue: AppConstants.enableRemoteConfig);
 
   /// Ad Configuration Flags
   static bool get enableAds => getBool('ENABLE_ADS', defaultValue: true);
   static bool get enableAdPersonalization => getBool('ENABLE_AD_PERSONALIZATION');
   static bool get enableTestAds => getBool('ENABLE_TEST_ADS', defaultValue: !isProduction);
   static bool get requireConsentForAds => getBool('REQUIRE_CONSENT_FOR_ADS', defaultValue: true);
-  static int get interstitialAdFrequency => getInt('INTERSTITIAL_AD_FREQUENCY', defaultValue: 3); // Show every 3rd time
+  static int get interstitialAdFrequency =>
+      getInt('INTERSTITIAL_AD_FREQUENCY', defaultValue: 3); // Show every 3rd time
 
   /// Social Login Configuration
-  static String get googleClientIdAndroid => getString('GOOGLE_CLIENT_ID_ANDROID', defaultValue: AppConstants.googleClientIdAndroid)!;
-  static String get googleClientIdIOS => getString('GOOGLE_CLIENT_ID_IOS', defaultValue: AppConstants.googleClientIdIOS)!;
-  static String get appleClientId => getString('APPLE_CLIENT_ID', defaultValue: AppConstants.appleClientId)!;
+  static String get googleClientIdAndroid =>
+      getString('GOOGLE_CLIENT_ID_ANDROID', defaultValue: AppConstants.googleClientIdAndroid)!;
+  static String get googleClientIdIOS =>
+      getString('GOOGLE_CLIENT_ID_IOS', defaultValue: AppConstants.googleClientIdIOS)!;
+  static String get googleClientIdWeb =>
+      getString('GOOGLE_CLIENT_ID_WEB', defaultValue: AppConstants.googleClientIdWeb)!;
+  static String get appleClientId =>
+      getString('APPLE_CLIENT_ID', defaultValue: AppConstants.appleClientId)!;
 
   /// Deep Links
-  static String get deepLinkScheme => getString('DEEP_LINK_SCHEME', defaultValue: AppConstants.deepLinkScheme)!;
-  static String get deepLinkHost => getString('DEEP_LINK_HOST', defaultValue: AppConstants.deepLinkHost)!;
+  static String get deepLinkScheme =>
+      getString('DEEP_LINK_SCHEME', defaultValue: AppConstants.deepLinkScheme)!;
+  static String get deepLinkHost =>
+      getString('DEEP_LINK_HOST', defaultValue: AppConstants.deepLinkHost)!;
 
   /// External URLs
-  static String get privacyPolicyUrl => getString('PRIVACY_POLICY_URL', defaultValue: AppConstants.privacyPolicyUrl)!;
-  static String get termsOfServiceUrl => getString('TERMS_OF_SERVICE_URL', defaultValue: AppConstants.termsOfServiceUrl)!;
+  static String get privacyPolicyUrl =>
+      getString('PRIVACY_POLICY_URL', defaultValue: AppConstants.privacyPolicyUrl)!;
+  static String get termsOfServiceUrl =>
+      getString('TERMS_OF_SERVICE_URL', defaultValue: AppConstants.termsOfServiceUrl)!;
   static String get supportUrl => getString('SUPPORT_URL', defaultValue: AppConstants.supportUrl)!;
   static String get websiteUrl => getString('WEBSITE_URL', defaultValue: AppConstants.websiteUrl)!;
 
   /// App Store Configuration
-  static String get androidAppId => getString('ANDROID_APP_ID', defaultValue: AppConstants.androidAppId)!;
+  static String get androidAppId =>
+      getString('ANDROID_APP_ID', defaultValue: AppConstants.androidAppId)!;
   static String get iosAppId => getString('IOS_APP_ID', defaultValue: AppConstants.iosAppId)!;
-  static String get appStoreUrl => getString('APP_STORE_URL', defaultValue: AppConstants.appStoreUrl)!;
-  static String get playStoreUrl => getString('PLAY_STORE_URL', defaultValue: AppConstants.playStoreUrl)!;
+  static String get appStoreUrl =>
+      getString('APP_STORE_URL', defaultValue: AppConstants.appStoreUrl)!;
+  static String get playStoreUrl =>
+      getString('PLAY_STORE_URL', defaultValue: AppConstants.playStoreUrl)!;
 
   /// Development Tools
   static bool get enableInspector => getBool('ENABLE_INSPECTOR', defaultValue: !kReleaseMode);
   static bool get enablePerformanceOverlay => getBool('ENABLE_PERFORMANCE_OVERLAY');
-  static String get logLevel => getString('LOG_LEVEL', defaultValue: kDebugMode ? 'debug' : 'info')!;
+  static String get logLevel =>
+      getString('LOG_LEVEL', defaultValue: kDebugMode ? 'debug' : 'info')!;
 
   /// Get app package name based on environment
   static String get packageName {
     final platform = Platform.isAndroid ? 'android' : 'ios';
-    final envMap = platform == 'android' 
-        ? AppConstants.androidPackageName 
+    final envMap = platform == 'android'
+        ? AppConstants.androidPackageName
         : AppConstants.iosBundleId;
-    
+
     switch (_currentEnvironment) {
       case Environment.production:
         return envMap['production'] ?? envMap['dev'] ?? '';
       case Environment.staging:
         return envMap['staging'] ?? envMap['dev'] ?? '';
       case Environment.development:
-      return envMap['dev'] ?? '';
+        return envMap['dev'] ?? '';
     }
   }
 
@@ -318,11 +353,11 @@ class EnvironmentConfig {
     AppLogger.info('  Debug Mode: $enableDebugMode');
     AppLogger.info('  Analytics: $enableAnalytics');
     AppLogger.info('  Crash Reporting: $enableCrashReporting');
-    
+
     if (supabaseUrl != null) {
       AppLogger.info('  Supabase URL: ${supabaseUrl!.replaceRange(20, null, '...')}');
     }
-    
+
     if (sentryDsn != null) {
       AppLogger.info('  Sentry DSN: ${sentryDsn!.substring(0, 20)}...');
     }

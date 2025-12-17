@@ -1,4 +1,24 @@
 {
+  "productPage": {
+    "cta": {
+      "seeDeal": "See the deal at {}"
+    },
+    "availability": {
+      "online": "Online"
+    },
+    "actions": {
+      "reportExpired": "Report Expired"
+    },
+    "info": {
+      "details": "Details:",
+      "features": "Features:",
+      "priceResearch": "Price Research:"
+    },
+    "comments": {
+      "writeComment": "Write your comment",
+      "noComments": "No comments yet"
+    }
+  },
   "app": {
     "name": "Flutter Template",
     "welcome": "Welcome to Flutter Template",
@@ -22,6 +42,8 @@
     "lastName": "Last Name",
     "signInWithGoogle": "Sign in with Google",
     "signInWithApple": "Sign in with Apple",
+    "googleSignInFailed": "Google sign-in failed.",
+    "appleSignInFailed": "Apple sign-in failed.",
     "dontHaveAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
     "resetPassword": "Reset Password",
@@ -38,12 +60,21 @@
     "phoneNumber": "Phone Number",
     "enterPhoneNumber": "Enter phone number",
     "otpTitle": "Enter Verification Code",
-    "otpSubtitle": "Enter the 5-digit code that was sent to\\n{contact}",
+    "otpSubtitle": "Enter the 6-digit code that was sent to\\n{contact}",
     "changeNumber": "Change Number",
     "resendCode": "Resend Code",
     "verify": "Verify",
     "resendCodeIn": "Resend Code {time}",
-    "codeSentSuccess": "Verification code sent successfully"
+    "codeSentSuccess": "Verification code sent successfully",
+    "otpVerificationFailed": "OTP verification failed. Please try again.",
+    "verificationIdMissing": "Missing verification ID. Please request a new code.",
+    "codeTimeout": "Code timeout. Please try again.",
+    "accountDetails": {
+      "nameLabel": "Name",
+      "nameHint": "Full Name",
+      "detailsTitle": "Account Details",
+      "termsAcceptance": "I accept the Terms of Use and Privacy Policy"
+    }
   },
   "validation": {
     "required": "This field is required",
@@ -52,7 +83,8 @@
     "passwordsDoNotMatch": "Passwords do not match",
     "invalidPhone": "Please enter a valid phone number",
     "phoneTooShort": "Phone number is too short",
-    "phoneTooLong": "Phone number is too long"
+    "phoneTooLong": "Phone number is too long",
+    "selectCity": "Please select a city to continue"
   },
   "buttons": {
     "save": "Save",
@@ -67,7 +99,10 @@
     "close": "Close",
     "next": "Next",
     "previous": "Previous",
-    "finish": "Finish"
+    "finish": "Finish",
+    "accept": "Accept",
+    "reject": "Reject",
+    "continueBtn": "Continue"
   },
   "settings": {
     "title": "Settings",
@@ -88,10 +123,12 @@
     "serverError": "Something went wrong on our end. Please try again later",
     "unknownError": "An unexpected error occurred. Please try again",
     "timeoutError": "Request timed out. Please try again",
-    "unauthorizedError": "You are not authorized to perform this action"
+    "unauthorizedError": "You are not authorized to perform this action",
+    "saveSelection": "An error occurred while saving your selection. Please try again"
   },
   "success": {
     "dataSaved": "Data saved successfully",
+    "saved": "Saved",
     "profileUpdated": "Profile updated successfully",
     "settingsUpdated": "Settings updated successfully"
   },
@@ -110,5 +147,240 @@
     "updating": "Updating...",
     "processing": "Processing..."
   },
-  "choose_language": "Please choose your language"
+  "deals": {
+    "title": "Hot Deals",
+    "searchHint": "Search deals...",
+    "filterComingSoon": "Filter dialog coming soon",
+    "loadError": "Unable to load deals right now. Please try again.",
+    "loadErrorShort": "Unable to load deals right now.",
+    "storeFallback": "Store",
+    "categories": {
+      "forYou": "For You",
+      "frontPage": "Front Page",
+      "popular": "Popular"
+    },
+    "badges": {
+      "hot": "HOT",
+      "new": "NEW",
+      "featured": "FEATURED"
+    },
+    "actions": {
+      "likeComingSoon": "Like functionality coming soon",
+      "commentComingSoon": "Comment functionality coming soon"
+    },
+    "empty": {
+      "title": "No deals found",
+      "categorySuggestion": "Try selecting a different category",
+      "searchSuggestion": "Try a different search term"
+    }
+  },
+  "notifications": {
+    "header": {
+      "title": "Don't miss out!",
+      "subtitle": "Get notified when great deals drop!"
+    },
+    "filter": {
+      "dealAlerts": "Deal Alerts",
+      "notifications": "Notifications"
+    },
+    "search": {
+      "label": "Search",
+      "placeholder": "Shoes, Tablets, Macbook, TV..."
+    },
+    "sections": {
+      "myDealAlerts": "My deal alerts",
+      "popularAlerts": "Popular Alerts"
+    },
+    "empty": {
+      "dealAlerts": "No deal alerts yet",
+      "popularAlerts": "No alerts available",
+      "systemNotifications": "No notifications yet"
+    },
+    "snackbar": {
+      "view": "View: {title}",
+      "subscribed": "Subscribed to {title}",
+      "unsubscribed": "Unsubscribed from {title}"
+    }
+  },
+  "stores": {
+    "searchHint": "Search stores...",
+    "filterComingSoon": "Filter dialog coming soon",
+    "loadError": "Unable to load stores right now. Please try again.",
+    "loadErrorShort": "Unable to load stores right now.",
+    "otherLocations": "Other Locations",
+    "section": {
+      "nearYou": "Near to you",
+      "mallPrefix": "In {mallName} shops near to you"
+    },
+    "empty": {
+      "title": "No stores found",
+      "categorySuggestion": "Try selecting a different category",
+      "searchSuggestion": "Try a different search term"
+    },
+    "categories": {
+      "all": "All",
+      "dining": "Dining",
+      "fashion": "Fashion",
+      "electronics": "Electronics",
+      "beauty": "Beauty",
+      "entertainment": "Entertainment",
+      "lifestyle": "Lifestyle",
+      "jewelry": "Jewelry",
+      "travel": "Travel",
+      "other": "Other"
+    },
+    "count": {
+      "one": "{count} store",
+      "other": "{count} stores"
+    },
+    "detail": {
+      "notFound": "Store not found",
+      "banner": {
+        "seeAllOutlets": "See All Outlets",
+        "nearestOutlet": "Take Me to Nearest Outlet"
+      },
+      "discountTitle": "{} 20% Discount on Selected items.",
+      "discountTag": "20% Off",
+      "atStore": "At {} store",
+      "actions": {
+        "reportSuccess": "Thanks! We’ll inspect this offer.",
+        "shareTapped": "Share tapped"
+      },
+      "header": {
+        "storePill": "Store"
+      },
+      "comments": {
+        "timeAgo": "3 hours ago"
+      }
+    }
+  },
+  "creditCards": {
+    "title": "Select Your\\nCredit Card/Debit Card",
+    "subtitle": "Please note: you only need to select your card type - you will not be asked to provide any other details.",
+    "searchHint": "Card, or Bank Name",
+    "filterComingSoon": "Filter functionality coming soon",
+    "empty": {
+      "title": "No banks found",
+      "description": "Try a different search term"
+    }
+  },
+  "profile": {
+    "premiumPlan": "Premium Plan",
+    "freePlan": "Free Plan",
+    "validUntil": "Valid until {date}",
+    "manageSubscription": "Manage Subscription",
+    "upgradeToPremium": "Upgrade to Premium",
+    "menu": {
+      "myAccount": "My Account",
+      "favourites": "Favourites",
+      "changeCity": "Change City",
+      "helpCenter": "Help Center"
+    },
+    "myAccount": {
+      "welcome": "Welcome",
+      "likes": "{count} Like",
+      "comments": "{count} Comment",
+      "votes": "{count} Votes",
+      "managePersonalDetails": "Manage Personal Details",
+      "selectedCreditCards": "Selected Credit Cards",
+      "deleteAccount": "Delete Account",
+      "deleteDescription": "Once you delete your account, your profile, user name, and comments are permanently removed from Waffir.",
+      "confirmDelete": "Yes, Delete"
+    },
+    "favorites": {
+      "title": "Favorites",
+      "emptyTitle": "No favorites yet",
+      "emptySubtitle": "Start saving products and stores to find them here quickly.",
+      "loadError": "Failed to load favorites. Please try again."
+    },
+    "notificationSettings": {
+      "title": "Notifications",
+      "pushNotifications": "Push Notifications",
+      "hotDeals": "Hot Deals",
+      "storeOffers": "Store Offers",
+      "bankCardsOffers": "Bank Cards Offers",
+      "emailNotifications": "Email Notifications",
+      "typeTitle": "Notification Type",
+      "allOffers": "All Offers",
+      "allOffersSubtitle": "Every New Deal",
+      "topOffers": "Top Offers",
+      "topOffersSubtitle": "Only notify me when deals are hot (20+ likes)"
+    },
+    "changeCity": {
+      "title": "Change City",
+      "subtitle": "Select your city to see relevant deals and offers in your area",
+      "success": "City changed to {}"
+    }
+  },
+  "subscription": {
+    "management": {
+      "title": "You just got \"One\" month free",
+      "subtitle": "Continue to start your free month and confirm your plan.",
+      "tabs": {
+        "monthly": "Monthly",
+        "yearlySaveMore": "Yearly\\n(Save more)"
+      },
+      "options": {
+        "individual": {
+          "name": "Individual",
+          "priceMonthly": "4 SAR / month",
+          "priceYearly": "38 SAR / month",
+          "users": "1 User"
+        },
+        "family": {
+          "name": "Family",
+          "priceMonthly": "12 SAR / month",
+          "priceYearly": "100 SAR / month",
+          "users": "Up to 4 Family Members"
+        }
+      },
+      "badges": {
+        "firstMonthFree": "1st Month Free",
+        "discount20": "20% OFF",
+        "bestValue25": "Best Value - 25% OFF",
+        "bestValue30": "Best Value - 30% OFF"
+      },
+      "benefits": {
+        "cancelAnytime": "Cancel anytime",
+        "dailyVerified": "Daily verified discounts",
+        "oneApp": "One app for all offers"
+      },
+      "promo": {
+        "question": "Do you have a promo code?",
+        "placeholder": "Apply Promo Code",
+        "applied": "Promo code \"{code}\" applied!"
+      },
+      "proceed": "Proceed",
+      "selection": "Selected: {period} - {option}"
+    }
+  },
+  "choose_language": "Please choose your language",
+  "onboarding": {
+    "familyInvite": {
+      "title": "Family invite",
+      "message": "You have a pending family invite.\nInvite ID: {}",
+      "inviteAccepted": "Invite accepted",
+      "inviteRejected": "Invite rejected"
+    },
+    "citySelection": {
+      "title": "Choose your city",
+      "subtitle": "We will show you all available discounts from banks and cards around you."
+    }
+  },
+  "cities": {
+    "riyadh": "Riyadh",
+    "jeddah": "Jeddah",
+    "mecca": "Mecca",
+    "medina": "Medina",
+    "khobar": "Khobar",
+    "dammam": "Dammam",
+    "tabuk": "Tabuk",
+    "abha": "Abha",
+    "taif": "Taif",
+    "qassim": "Qassim",
+    "yanbu": "Yanbu",
+    "jubail": "Jubail",
+    "najran": "Najran",
+    "jizan": "Jizan"
+  }
 }

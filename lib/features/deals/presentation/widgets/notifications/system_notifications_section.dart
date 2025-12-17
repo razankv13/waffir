@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/themes/extensions/notifications_alerts_theme.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/cards/system_notification_card.dart';
@@ -20,7 +22,9 @@ class SystemNotificationsSection extends ConsumerWidget {
     final systemNotifications = ref.watch(systemNotificationsProvider);
 
     if (systemNotifications.isEmpty) {
-      return const NotificationsEmptyState(message: 'No notifications yet');
+      return NotificationsEmptyState(
+        message: LocaleKeys.notifications.empty.systemNotifications.tr(),
+      );
     }
 
     return ListView.separated(
@@ -44,7 +48,12 @@ class SystemNotificationsSection extends ConsumerWidget {
           isRead: notification.isRead,
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('View: ${notification.title}')),
+              SnackBar(
+                content: Text(
+                  LocaleKeys.notifications.snackbar.view
+                      .tr(namedArgs: {'title': notification.title}),
+                ),
+              ),
             );
           },
         );
@@ -52,4 +61,3 @@ class SystemNotificationsSection extends ConsumerWidget {
     );
   }
 }
-

@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/constants/app_typography.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
@@ -41,10 +43,39 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
   ];
 
   void _handleFilterTap() {
-    // TODO: Implement filter dialog
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Filter dialog coming soon')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(LocaleKeys.stores.filterComingSoon.tr()),
+      ),
+    );
+  }
+
+  String _resolveCategoryLabel(BuildContext context, String category) {
+    switch (category) {
+      case 'All':
+      case 'الكل':
+        return LocaleKeys.stores.categories.all.tr();
+      case 'Dining':
+        return LocaleKeys.stores.categories.dining.tr();
+      case 'Fashion':
+        return LocaleKeys.stores.categories.fashion.tr();
+      case 'Electronics':
+        return LocaleKeys.stores.categories.electronics.tr();
+      case 'Beauty':
+        return LocaleKeys.stores.categories.beauty.tr();
+      case 'Entertainment':
+        return LocaleKeys.stores.categories.entertainment.tr();
+      case 'Lifestyle':
+        return LocaleKeys.stores.categories.lifestyle.tr();
+      case 'Jewelry':
+        return LocaleKeys.stores.categories.jewelry.tr();
+      case 'Travel':
+        return LocaleKeys.stores.categories.travel.tr();
+      case 'Other':
+        return LocaleKeys.stores.categories.other.tr();
+      default:
+        return category;
+    }
   }
 
   @override
@@ -145,7 +176,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                         Padding(
                           padding: EdgeInsets.all(searchPadding),
                           child: WaffirSearchBar(
-                            hintText: 'Search stores...',
+                            hintText: LocaleKeys.stores.searchHint.tr(),
                             onChanged: storesController.updateSearch,
                             onSearch: storesController.updateSearch,
                             onFilterTap: _handleFilterTap,
@@ -166,6 +197,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                         categories: _categories,
                         selectedCategory: selectedCategory,
                         onCategorySelected: storesController.updateCategory,
+                        labelBuilder: (category) => _resolveCategoryLabel(context, category),
                       ),
                     ),
                   ),
@@ -176,13 +208,13 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                 child: storesState.when(
                   loading: () => const _StoresLoadingState(),
                   error: (error, stackTrace) => _StoresErrorState(
-                    message: 'Unable to load stores right now. Please try again.',
+                    message: LocaleKeys.stores.loadError.tr(),
                     onRetry: storesController.refresh,
                   ),
                   data: (data) {
                     if (data.hasError) {
                       return _StoresErrorState(
-                        message: data.failure?.message ?? 'Unable to load stores right now.',
+                        message: data.failure?.message ?? LocaleKeys.stores.loadErrorShort.tr(),
                         onRetry: storesController.refresh,
                       );
                     }
@@ -193,7 +225,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                     // Group mall stores by mall name
                     final Map<String, List<Store>> mallStoresByMall = {};
                     for (final store in mallStores) {
-                      final mallName = store.location ?? 'Other Locations';
+                      final mallName = store.location ?? LocaleKeys.stores.otherLocations.tr();
                       mallStoresByMall.putIfAbsent(mallName, () => []).add(store);
                     }
 
@@ -227,8 +259,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                         if (nearYouStores.isNotEmpty) ...[
                           _buildSectionHeader(
                             context,
-                            'Near to you',
-                            'قريب منك',
+                            LocaleKeys.stores.section.nearYou,
                             nearYouStores.length,
                           ),
                           SizedBox(height: responsive.scale(12)),
@@ -241,9 +272,9 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                           for (final entry in mallStoresByMall.entries) ...[
                             _buildSectionHeader(
                               context,
-                              'In Mall shops near to you',
-                              entry.key,
+                              LocaleKeys.stores.section.mallPrefix,
                               entry.value.length,
+                              namedArgs: {'mallName': entry.key},
                             ),
                             SizedBox(height: responsive.scale(12)),
                             _buildStoreCarousel(context, entry.value),
@@ -265,15 +296,28 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
     );
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title, String titleAr, int count) {
+  Widget _buildSectionHeader(
+    BuildContext context,
+    String titleKey,
+    int count, {
+    Map<String, String>? namedArgs,
+  }) {
     final colorScheme = Theme.of(context).colorScheme;
+    final title = titleKey.tr(namedArgs: namedArgs);
+    final countLabel = LocaleKeys.stores.count.plural(
+      count,
+      namedArgs: {'count': '$count'},
+    );
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: AppTypography.storeSectionHeader.copyWith(color: colorScheme.onSurface)),
         Text(
-          '$count ${count == 1 ? 'store' : 'stores'}',
+          title,
+          style: AppTypography.storeSectionHeader.copyWith(color: colorScheme.onSurface),
+        ),
+        Text(
+          countLabel,
           style: AppTypography.bodyMedium.copyWith(color: colorScheme.onSurfaceVariant),
         ),
       ],
@@ -327,7 +371,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No stores found',
+            LocaleKeys.stores.empty.title.tr(),
             style: theme.textTheme.titleLarge?.copyWith(
               color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
@@ -336,8 +380,8 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
           const SizedBox(height: 8),
           Text(
             searchQuery.isEmpty
-                ? 'Try selecting a different category'
-                : 'Try a different search term',
+                ? LocaleKeys.stores.empty.categorySuggestion.tr()
+                : LocaleKeys.stores.empty.searchSuggestion.tr(),
             style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
@@ -402,7 +446,10 @@ class _StoresErrorState extends StatelessWidget {
         ),
         SizedBox(height: responsive.scale(12)),
         Center(
-          child: TextButton(onPressed: onRetry, child: const Text('Retry')),
+          child: TextButton(
+            onPressed: onRetry,
+            child: Text(LocaleKeys.buttons.retry).tr(),
+          ),
         ),
       ],
     );

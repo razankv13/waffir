@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -52,7 +54,7 @@ class ProductPageBottomCtaOverlay extends StatelessWidget {
                   onCtaTap();
                 },
                 child: Text(
-                  'See the deal at (store name)',
+                  LocaleKeys.productPage.cta.seeDeal.tr(args: ['(store name)']),
                   textAlign: TextAlign.center,
                   style: theme.textStyles.cta.copyWith(
                     color: theme.colors.background,

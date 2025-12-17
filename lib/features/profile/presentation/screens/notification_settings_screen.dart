@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/core/widgets/switches/custom_toggle_switch.dart';
@@ -43,11 +45,10 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
     setState(() => _isSaving = false);
 
     final messenger = ScaffoldMessenger.maybeOf(context);
-    messenger?.clearSnackBars();
     messenger?.showSnackBar(
-      const SnackBar(
-        content: Text('Saved'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(LocaleKeys.success.saved.tr()),
+        duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -85,12 +86,12 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _Section(
-                        title: 'Notifications',
+                        title: LocaleKeys.profile.notificationSettings.title.tr(),
                         responsive: responsive,
                         child: Column(
                           children: [
                             _ToggleRow(
-                              title: 'Push Notifications',
+                              title: LocaleKeys.profile.notificationSettings.pushNotifications.tr(),
                               value: _pushEnabled,
                               responsive: responsive,
                               onChanged: (value) => setState(() => _pushEnabled = value),
@@ -101,17 +102,17 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                               enabled: _pushEnabled,
                               items: [
                                 _CheckboxItemData(
-                                  label: 'Hot Deals',
+                                  label: LocaleKeys.profile.notificationSettings.hotDeals.tr(),
                                   value: _hotDeals,
                                   onChanged: (v) => setState(() => _hotDeals = v),
                                 ),
                                 _CheckboxItemData(
-                                  label: 'Store Offers',
+                                  label: LocaleKeys.profile.notificationSettings.storeOffers.tr(),
                                   value: _storeOffers,
                                   onChanged: (v) => setState(() => _storeOffers = v),
                                 ),
                                 _CheckboxItemData(
-                                  label: 'Bank Cards Offers',
+                                  label: LocaleKeys.profile.notificationSettings.bankCardsOffers.tr(),
                                   value: _bankCardsOffers,
                                   onChanged: (v) => setState(() => _bankCardsOffers = v),
                                 ),
@@ -121,7 +122,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                             _DividerLine(responsive: responsive),
                             SizedBox(height: responsive.scale(12)),
                             _ToggleRow(
-                              title: 'Email Notifications',
+                              title: LocaleKeys.profile.notificationSettings.emailNotifications.tr(),
                               value: _emailEnabled,
                               responsive: responsive,
                               onChanged: (value) => setState(() => _emailEnabled = value),
@@ -131,13 +132,13 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                       ),
                       SizedBox(height: responsive.scale(32)),
                       _Section(
-                        title: 'Notification Type',
+                        title: LocaleKeys.profile.notificationSettings.typeTitle.tr(),
                         responsive: responsive,
                         child: Column(
                           children: [
                             _RadioRow(
-                              title: 'All Offers',
-                              subtitle: 'Every New Deal',
+                              title: LocaleKeys.profile.notificationSettings.allOffers.tr(),
+                              subtitle: LocaleKeys.profile.notificationSettings.allOffersSubtitle.tr(),
                               isSelected: _notificationType == _NotificationType.allOffers,
                               responsive: responsive,
                               onTap: () =>
@@ -147,8 +148,8 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                             _DividerLine(responsive: responsive),
                             SizedBox(height: responsive.scale(12)),
                             _RadioRow(
-                              title: 'Top Offers',
-                              subtitle: 'Only notify me when deals are hot (20+ likes)',
+                              title: LocaleKeys.profile.notificationSettings.topOffers.tr(),
+                              subtitle: LocaleKeys.profile.notificationSettings.topOffersSubtitle.tr(),
                               isSelected: _notificationType == _NotificationType.topOffers,
                               responsive: responsive,
                               onTap: () =>
@@ -171,7 +172,7 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                   child: SizedBox(
                     width: responsive.scale(330),
                     child: AppButton.primary(
-                      text: 'Save',
+                      text: LocaleKeys.buttons.save.tr(),
                       isLoading: _isSaving,
                       enabled: !_isSaving,
                       onPressed: _isSaving ? null : _save,
@@ -187,36 +188,6 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
           // Back button
           WaffirBackButton(size: responsive.scale(44)),
         ],
-      ),
-    );
-  }
-}
-
-class _BackgroundBlurShape extends StatelessWidget {
-  const _BackgroundBlurShape({required this.responsive});
-
-  final ResponsiveHelper responsive;
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: responsive.scale(-40),
-      top: responsive.scale(-100),
-      child: IgnorePointer(
-        child: ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
-          child: Container(
-            width: responsive.scale(467.78),
-            height: responsive.scale(461.3),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(responsive.scale(240)),
-              gradient: const RadialGradient(
-                colors: [Color(0xFFDCFCE7), Color(0x00DCFCE7)],
-                stops: [0.0, 1.0],
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

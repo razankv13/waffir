@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:waffir/core/constants/app_typography.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 
 /// Subscription period tab switcher (Monthly/Yearly)
@@ -22,7 +24,8 @@ class SubscriptionTabSwitcher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
-
+    final monthlyLabel = LocaleKeys.subscription.management.tabs.monthly.tr();
+    final yearlyLabel = LocaleKeys.subscription.management.tabs.yearlySaveMore.tr();
 
     return Container(
       height: responsive.scale(64),
@@ -35,13 +38,13 @@ class SubscriptionTabSwitcher extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _TabItem(
-            label: 'Monthly',
+            label: monthlyLabel,
             isSelected: selectedTab == SubscriptionPeriod.monthly,
             onTap: () => onTabChanged(SubscriptionPeriod.monthly),
             width: responsive.scale(120),
           ),
           _TabItem(
-            label: 'Yearly\n(Save more)',
+            label: yearlyLabel,
             isSelected: selectedTab == SubscriptionPeriod.yearly,
             onTap: () => onTabChanged(SubscriptionPeriod.yearly),
             width: responsive.scale(120),

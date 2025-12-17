@@ -1,3 +1,31 @@
+# Waffir AI Agent Guide (for Codex / LLMs)
+
+This file is the **single source of truth** for how an AI coding agent should operate in this repository.
+
+## How to Read This (Priority Order)
+
+When making decisions, follow this precedence (highest → lowest):
+
+1. **Non‑negotiable rules (MUST/NEVER) in this file**
+2. **Codebase memory**: `.serena/memories/` (existing architecture + project conventions)
+3. **Existing code patterns** already present in the repo
+4. **Upstream package docs** (always fetched via Context7)
+
+If two rules conflict, prefer **more specific / more local** guidance (project > repo patterns > upstream docs).
+
+## ✅ Non‑Negotiables (Quick Checklist)
+
+- **Search & navigation:** use **Serena MCP** tools (never basic grep/glob).
+- **Context first:** read `.serena/memories/` before implementing.
+- **Packages:** use **Context7** before touching any library APIs.
+- **UI state & lifecycle:** **Flutter Hooks first** (avoid `StatefulWidget` / `ConsumerStatefulWidget`).
+- **Theming:** use `Theme.of(context)` / `colorScheme` in widgets (no `AppColors` imports in UI).
+- **Responsive UI:** use `ResponsiveHelper` for **all** sizing/padding/fonts (no hardcoded pixels).
+- **Generated code:** never edit `*.g.dart` / `*.freezed.dart`; run build_runner after annotated changes.
+- **Flavors:** run using flavors; default `flutter run` uses production flavor.
+
+---
+
 ## 🔧 MCP Tool Usage (REQUIRED)
 
 **ALWAYS use the following MCP tools automatically - they are optimized for this codebase:**
@@ -60,6 +88,61 @@ Waffir - A production-ready Flutter application with clean architecture, Supabas
 - **Tests**: 9 test files provide examples/patterns. Expand coverage for production use.
 - **Theme System**: **CRITICAL** - ALWAYS use `Theme.of(context)` to access colors and styles. NEVER directly import or use `AppColors` in widget files. The theme system ensures proper light/dark mode support and Material 3 consistency.
 - **Responsive Design**: **MANDATORY** - ALWAYS use `ResponsiveHelper` for ALL dimensions, padding, spacing, and font sizes. See Responsive Design Guidelines below.
+- **Flutter Hooks**: **CRITICAL** - ALWAYS prefer `HookWidget` / `HookConsumerWidget` over `StatefulWidget` for any UI state or lifecycle.
+
+## 🪝 Flutter Hooks First (CRITICAL)
+
+**Rule:** If a widget needs **local UI state** or **lifecycle** (init/dispose, controllers, listeners, animations), you MUST use **Flutter Hooks** instead of `StatefulWidget` / `ConsumerStatefulWidget`.
+
+### Preferred Widget Types
+
+- **`HookWidget`**: UI-only widgets that need hooks.
+- **`HookConsumerWidget`** (from `hooks_riverpod`): when you need both **hooks** and **Riverpod `WidgetRef`**.
+- **`HookConsumer(builder: ...)`**: for small hook+ref islands inside a bigger widget.
+
+> Use `StatefulWidget` only when there is no practical hooks-based equivalent. If you *must* do that, add a short comment explaining why.
+
+### Which State Goes Where?
+
+- **Local, ephemeral UI state** (toggles, selected tab, animations, scroll position): **hooks**
+- **Shared / business state** (auth, profile, remote data, feature state): **Riverpod** (`AsyncNotifier`, `Provider`, etc.)
+
+### Common Hook Mappings
+
+- `initState` / `dispose` → `useEffect(() { ...; return () { cleanup }; }, [deps])`
+- `setState` → `useState<T>()`
+- `TextEditingController` → `useTextEditingController()`
+- `ScrollController` → `useScrollController()`
+- `FocusNode` → `useFocusNode()`
+- `TickerProviderStateMixin` / animation setup → `useSingleTickerProvider()` + `useAnimationController()`
+
+### Tiny Example (StatefulWidget → HookWidget)
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+
+class Counter extends HookWidget {
+  const Counter({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final count = useState(0);
+
+    return Row(
+      children: [
+        Text('Count: ${count.value}'),
+        IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () => count.value++,
+        ),
+      ],
+    );
+  }
+}
+```
+
+---
 
 ## 📋 Code Generation Rules (CRITICAL)
 
@@ -975,7 +1058,7 @@ Useful extension methods in `lib/core/extensions/`:
 
 ## Documentation Files
 
-- **CLAUDE.md** - AI assistance guide (this file)
+- **AGENTS.md / CLAUDE.md** - AI assistance guide (this file)
 - **FIREBASE_SETUP.md** - Firebase configuration instructions
 - **requirements.md** - Original project requirements
 - **scripts/README.md** - Deployment scripts documentation

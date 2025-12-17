@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/themes/app_text_styles.dart';
 import 'package:waffir/core/themes/extensions/promo_colors_extension.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
@@ -26,7 +28,7 @@ class StoreOutletBanner extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'See All Outlets',
+                LocaleKeys.stores.detail.banner.seeAllOutlets.tr(),
                 style: AppTextStyles.storePageOutletLeft.copyWith(color: colorScheme.onPrimary),
               ),
               Row(
@@ -38,7 +40,7 @@ class StoreOutletBanner extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        'Take Me to Nearest Outlet',
+                        LocaleKeys.stores.detail.banner.nearestOutlet.tr(),
                         style: AppTextStyles.storePageOutletRight.copyWith(
                           color: colorScheme.onPrimary,
                         ),
@@ -86,7 +88,7 @@ class StorePricesSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            '${store.name} 20% Discount on Selected items.',
+            LocaleKeys.stores.detail.discountTitle.tr(args: [store.name]),
             style: AppTextStyles.storePageDealHeadline.copyWith(color: colorScheme.onSurface),
           ),
           SizedBox(height: responsive.scale(16)),
@@ -95,14 +97,14 @@ class StorePricesSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               StoreDiscountTag(
-                label: '20% Off',
+                label: LocaleKeys.stores.detail.discountTag.tr(),
                 backgroundColor: promoColors?.discountBg ?? colorScheme.primaryContainer,
                 textColor: promoColors?.discountText ?? colorScheme.primary,
               ),
               SizedBox(width: responsive.scale(8)),
               Expanded(
                 child: Text(
-                  'At ${store.name} store',
+                  LocaleKeys.stores.detail.atStore.tr(args: [store.name]),
                   style: AppTextStyles.storePageAtStore.copyWith(color: colorScheme.onSurface),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -180,7 +182,7 @@ class StoreAdditionalActions extends StatelessWidget {
           HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(const SnackBar(content: Text('Thanks! We’ll inspect this offer.')));
+          ).showSnackBar(SnackBar(content: Text(LocaleKeys.stores.detail.actions.reportSuccess.tr())));
         },
         child: Row(
           children: [
@@ -194,7 +196,7 @@ class StoreAdditionalActions extends StatelessWidget {
             ),
             SizedBox(width: responsive.scale(4)),
             Text(
-              'Report Expired',
+              LocaleKeys.productPage.actions.reportExpired.tr(),
               style: AppTextStyles.storePageReportExpired.copyWith(color: colorScheme.onSurface),
             ),
           ],
@@ -222,14 +224,14 @@ class StoreProductInfoSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           StoreDetailsBlock(
-            title: 'Details:',
+            title: LocaleKeys.productPage.info.details.tr(),
             body: detailsBody,
             titleStyle: AppTextStyles.storePageDetailsTitle.copyWith(color: colorScheme.onSurface),
             bodyStyle: AppTextStyles.storePageInfoBody.copyWith(color: colorScheme.onSurface),
           ),
           SizedBox(height: responsive.scale(16)),
           StoreDetailsBlock(
-            title: 'Features:',
+            title: LocaleKeys.productPage.info.features.tr(),
             body: featuresBody,
             titleStyle: AppTextStyles.storePageFeaturesTitle.copyWith(color: colorScheme.onSurface),
             bodyStyle: AppTextStyles.storePageInfoBody.copyWith(color: colorScheme.onSurface),

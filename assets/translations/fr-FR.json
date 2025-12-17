@@ -1,8 +1,28 @@
 {
+  "productPage": {
+    "cta": {
+      "seeDeal": "See the deal at {}"
+    },
+    "availability": {
+      "online": "Online"
+    },
+    "actions": {
+      "reportExpired": "Report Expired"
+    },
+    "info": {
+      "details": "Details:",
+      "features": "Features:",
+      "priceResearch": "Price Research:"
+    },
+    "comments": {
+      "writeComment": "Write your comment",
+      "noComments": "No comments yet"
+    }
+  },
   "app": {
-    "name": "Modèle Flutter",
-    "welcome": "Bienvenue dans Modèle Flutter",
-    "description": "Un modèle d'application Flutter prêt pour la production avec une architecture propre"
+    "name": "Flutter Template",
+    "welcome": "Welcome to Flutter Template",
+    "description": "A production-ready Flutter app template with clean architecture"
   },
   "navigation": {
     "home": "Accueil",
@@ -11,63 +31,78 @@
     "about": "À propos"
   },
   "auth": {
-    "login": "Se Connecter",
+    "login": "Connexion",
     "register": "S'inscrire",
-    "logout": "Se Déconnecter",
+    "logout": "Déconnexion",
     "forgotPassword": "Mot de passe oublié ?",
-    "email": "Adresse Email",
-    "password": "Mot de Passe",
-    "confirmPassword": "Confirmer le Mot de Passe",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
     "firstName": "Prénom",
-    "lastName": "Nom de Famille",
+    "lastName": "Nom",
     "signInWithGoogle": "Se connecter avec Google",
     "signInWithApple": "Se connecter avec Apple",
+    "googleSignInFailed": "Échec de la connexion avec Google.",
+    "appleSignInFailed": "Échec de la connexion avec Apple.",
     "dontHaveAccount": "Vous n'avez pas de compte ?",
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
-    "resetPassword": "Réinitialiser le Mot de Passe",
-    "backToLogin": "Retour à la Connexion",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "backToLogin": "Retour à la connexion",
     "loginSuccessful": "Connexion réussie !",
     "registrationSuccessful": "Inscription réussie !",
-    "resetPasswordEmailSent": "Email de réinitialisation de mot de passe envoyé !",
-    "welcomeToWaffir": "Bienvenue chez Waffir",
+    "resetPasswordEmailSent": "Email de réinitialisation envoyé !",
+    "welcomeToWaffir": "Bienvenue sur Waffir",
     "loginSubtitle": "Connectez-vous ou créez un compte pour continuer",
     "phoneHint": "Numéro de téléphone",
     "or": "OU",
     "continueWithGoogle": "Continuer avec Google",
     "continueWithApple": "Continuer avec Apple",
-    "phoneNumber": "Numéro de Téléphone",
+    "phoneNumber": "Numéro de téléphone",
     "enterPhoneNumber": "Entrez votre numéro de téléphone",
     "otpTitle": "Entrez le code de vérification",
-    "otpSubtitle": "Entrez le code à 5 chiffres envoyé à\\n{contact}",
-    "changeNumber": "Changer le numéro",
+    "otpSubtitle": "Entrez le code à 6 chiffres envoyé au \\n{contact}",
+    "changeNumber": "Changer de numéro",
     "resendCode": "Renvoyer le code",
     "verify": "Vérifier",
-    "resendCodeIn": "Renvoyer le code {time}",
-    "codeSentSuccess": "Code de vérification envoyé avec succès"
+    "resendCodeIn": "Renvoyer le code dans {time}",
+    "codeSentSuccess": "Code de vérification envoyé avec succès",
+    "otpVerificationFailed": "La vérification du code a échoué. Veuillez réessayer.",
+    "verificationIdMissing": "ID de vérification manquant. Veuillez demander un nouveau code.",
+    "codeTimeout": "Le code a expiré. Veuillez réessayer.",
+    "accountDetails": {
+      "nameLabel": "Nom",
+      "nameHint": "Nom complet",
+      "detailsTitle": "Détails du compte",
+      "termsAcceptance": "J’accepte les Conditions d’utilisation et la Politique de confidentialité"
+    }
   },
   "validation": {
-    "required": "Ce champ est obligatoire",
+    "required": "Ce champ est requis",
     "invalidEmail": "Veuillez entrer une adresse email valide",
     "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
     "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
     "invalidPhone": "Veuillez entrer un numéro de téléphone valide",
     "phoneTooShort": "Le numéro de téléphone est trop court",
-    "phoneTooLong": "Le numéro de téléphone est trop long"
+    "phoneTooLong": "Le numéro de téléphone est trop long",
+    "selectCity": "Veuillez sélectionner une ville pour continuer"
   },
   "buttons": {
-    "save": "Sauvegarder",
+    "save": "Enregistrer",
     "cancel": "Annuler",
     "delete": "Supprimer",
     "edit": "Modifier",
-    "update": "Mettre à Jour",
-    "submit": "Soumettre",
+    "update": "Mettre à jour",
+    "submit": "Envoyer",
     "confirm": "Confirmer",
     "getStarted": "Commencer",
     "retry": "Réessayer",
     "close": "Fermer",
     "next": "Suivant",
     "previous": "Précédent",
-    "finish": "Terminer"
+    "finish": "Terminer",
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "continueBtn": "Continuer"
   },
   "settings": {
     "title": "Paramètres",
@@ -81,17 +116,19 @@
     "privacy": "Confidentialité",
     "about": "À propos",
     "version": "Version",
-    "themeSettings": "Paramètres de Thème"
+    "themeSettings": "Paramètres du thème"
   },
   "errors": {
     "networkError": "Veuillez vérifier votre connexion internet et réessayer",
-    "serverError": "Quelque chose s'est mal passé de notre côté. Veuillez réessayer plus tard",
-    "unknownError": "Une erreur inattendue s'est produite. Veuillez réessayer",
-    "timeoutError": "La demande a expiré. Veuillez réessayer",
-    "unauthorizedError": "Vous n'êtes pas autorisé à effectuer cette action"
+    "serverError": "Une erreur est survenue de notre côté. Veuillez réessayer plus tard",
+    "unknownError": "Une erreur inattendue est survenue. Veuillez réessayer",
+    "timeoutError": "Délai d'attente dépassé. Veuillez réessayer",
+    "unauthorizedError": "Vous n'êtes pas autorisé à effectuer cette action",
+    "saveSelection": "Une erreur s'est produite lors de l'enregistrement de votre sélection. Veuillez réessayer"
   },
   "success": {
-    "dataSaved": "Données sauvegardées avec succès",
+    "dataSaved": "Données enregistrées avec succès",
+    "saved": "Enregistré",
     "profileUpdated": "Profil mis à jour avec succès",
     "settingsUpdated": "Paramètres mis à jour avec succès"
   },
@@ -106,9 +143,233 @@
   "loading": {
     "pleaseWait": "Veuillez patienter...",
     "loading": "Chargement",
-    "saving": "Sauvegarde...",
+    "saving": "Enregistrement...",
     "updating": "Mise à jour...",
     "processing": "Traitement..."
   },
-  "choose_language": "Veuillez choisir votre langue"
+  "deals": {
+    "title": "Offres en vedette",
+    "searchHint": "Rechercher des offres...",
+    "filterComingSoon": "La fenêtre de filtre arrive bientôt",
+    "loadError": "Impossible de charger les offres pour le moment. Veuillez réessayer.",
+    "loadErrorShort": "Impossible de charger les offres pour le moment.",
+    "storeFallback": "Boutique",
+    "categories": {
+      "forYou": "Pour vous",
+      "frontPage": "À la une",
+      "popular": "Populaires"
+    },
+    "badges": {
+      "hot": "HOT",
+      "new": "NOUVEAU",
+      "featured": "EN VEDETTE"
+    },
+    "actions": {
+      "likeComingSoon": "La fonctionnalité J'aime arrive bientôt",
+      "commentComingSoon": "La fonctionnalité de commentaires arrive bientôt"
+    },
+    "empty": {
+      "title": "Aucune offre trouvée",
+      "categorySuggestion": "Essayez de sélectionner une autre catégorie",
+      "searchSuggestion": "Essayez un autre terme de recherche"
+    }
+  },
+  "notifications": {
+    "header": {
+      "title": "Ne passez rien !",
+      "subtitle": "Recevez une alerte quand de bonnes offres arrivent !"
+    },
+    "filter": {
+      "dealAlerts": "Alertes d'offres",
+      "notifications": "Notifications"
+    },
+    "search": {
+      "label": "Rechercher",
+      "placeholder": "Chaussures, tablettes, MacBook, TV..."
+    },
+    "sections": {
+      "myDealAlerts": "Mes alertes d'offres",
+      "popularAlerts": "Alertes populaires"
+    },
+    "empty": {
+      "dealAlerts": "Aucune alerte d'offres pour le moment",
+      "popularAlerts": "Aucune alerte disponible",
+      "systemNotifications": "Aucune notification pour le moment"
+    },
+    "snackbar": {
+      "view": "Voir : {title}",
+      "subscribed": "Abonné à {title}",
+      "unsubscribed": "Désabonné de {title}"
+    }
+  },
+  "stores": {
+    "searchHint": "Rechercher des boutiques...",
+    "filterComingSoon": "La fenêtre de filtre arrive bientôt",
+    "loadError": "Impossible de charger les boutiques pour le moment. Veuillez réessayer.",
+    "loadErrorShort": "Impossible de charger les boutiques pour le moment.",
+    "otherLocations": "Autres emplacements",
+    "section": {
+      "nearYou": "Près de chez vous",
+      "mallPrefix": "Boutiques de {mallName} près de chez vous"
+    },
+    "empty": {
+      "title": "Aucune boutique trouvée",
+      "categorySuggestion": "Essayez de sélectionner une autre catégorie",
+      "searchSuggestion": "Essayez un autre terme de recherche"
+    },
+    "categories": {
+      "all": "Toutes",
+      "dining": "Restauration",
+      "fashion": "Mode",
+      "electronics": "Électronique",
+      "beauty": "Beauté",
+      "entertainment": "Divertissement",
+      "lifestyle": "Art de vivre",
+      "jewelry": "Bijouterie",
+      "travel": "Voyage",
+      "other": "Autres"
+    },
+    "count": {
+      "one": "{count} store",
+      "other": "{count} stores"
+    },
+    "detail": {
+      "notFound": "Store not found",
+      "banner": {
+        "seeAllOutlets": "See All Outlets",
+        "nearestOutlet": "Take Me to Nearest Outlet"
+      },
+      "discountTitle": "{} 20% Discount on Selected items.",
+      "discountTag": "20% Off",
+      "atStore": "At {} store",
+      "actions": {
+        "reportSuccess": "Thanks! We’ll inspect this offer.",
+        "shareTapped": "Share tapped"
+      },
+      "header": {
+        "storePill": "Store"
+      },
+      "comments": {
+        "timeAgo": "3 hours ago"
+      }
+    }
+  },
+  "creditCards": {
+    "title": "Choisissez votre\\ncarte de crédit/débit",
+    "subtitle": "Vous devez seulement choisir votre type de carte ; aucune autre information ne sera demandée.",
+    "searchHint": "Carte ou nom de banque",
+    "filterComingSoon": "La fonction de filtrage arrive bientôt",
+    "empty": {
+      "title": "Aucune banque trouvée",
+      "description": "Essayez un autre terme de recherche"
+    }
+  },
+  "profile": {
+    "premiumPlan": "Forfait Premium",
+    "freePlan": "Forfait gratuit",
+    "validUntil": "Valide jusqu'au {date}",
+    "manageSubscription": "Gérer l'abonnement",
+    "upgradeToPremium": "Passer en Premium",
+    "menu": {
+      "myAccount": "Mon compte",
+      "favourites": "Favoris",
+      "changeCity": "Changer de ville",
+      "helpCenter": "Centre d'aide"
+    },
+    "favorites": {
+      "title": "Favoris",
+      "emptyTitle": "Pas encore de favoris",
+      "emptySubtitle": "Commencez à enregistrer des produits et des boutiques pour les retrouver rapidement ici.",
+      "loadError": "Échec du chargement des favoris. Veuillez réessayer."
+    },
+    "changeCity": {
+      "title": "Changer de ville",
+      "subtitle": "Sélectionnez votre ville pour voir les offres pertinentes dans votre région",
+      "success": "Ville changée à {}"
+    },
+    "notificationSettings": {
+      "title": "Notifications",
+      "pushNotifications": "Notifications push",
+      "hotDeals": "Offres en vedette",
+      "storeOffers": "Offres des boutiques",
+      "bankCardsOffers": "Offres des cartes bancaires",
+      "emailNotifications": "Notifications par email",
+      "typeTitle": "Type de notification",
+      "allOffers": "Toutes les offres",
+      "allOffersSubtitle": "Chaque nouvelle offre",
+      "topOffers": "Meilleures offres",
+      "topOffersSubtitle": "M'avertir seulement quand les offres sont populaires (20+ j'aime)"
+    }
+  },
+  "subscription": {
+    "management": {
+      "title": "Vous venez d'obtenir un mois gratuit",
+      "subtitle": "Continuez pour démarrer votre mois gratuit et confirmer votre formule.",
+      "tabs": {
+        "monthly": "Mensuel",
+        "yearlySaveMore": "Annuel\\n(Économisez plus)"
+      },
+      "options": {
+        "individual": {
+          "name": "Individuel",
+          "priceMonthly": "4 SAR / mois",
+          "priceYearly": "38 SAR / mois",
+          "users": "1 utilisateur"
+        },
+        "family": {
+          "name": "Famille",
+          "priceMonthly": "12 SAR / mois",
+          "priceYearly": "100 SAR / mois",
+          "users": "Jusqu'à 4 membres de la famille"
+        }
+      },
+      "badges": {
+        "firstMonthFree": "1er mois gratuit",
+        "discount20": "20 % de réduction",
+        "bestValue25": "Meilleure offre - 25 % de réduction",
+        "bestValue30": "Meilleure offre - 30 % de réduction"
+      },
+      "benefits": {
+        "cancelAnytime": "Annulez à tout moment",
+        "dailyVerified": "Réductions vérifiées chaque jour",
+        "oneApp": "Une seule app pour toutes les offres"
+      },
+      "promo": {
+        "question": "Vous avez un code promo ?",
+        "placeholder": "Appliquer le code promo",
+        "applied": "Code promo \"{code}\" appliqué !"
+      },
+      "proceed": "Continuer",
+      "selection": "Sélectionné : {period} - {option}"
+    }
+  },
+  "choose_language": "Veuillez choisir votre langue",
+  "onboarding": {
+    "familyInvite": {
+      "title": "Invitation familiale",
+      "message": "Vous avez une invitation familiale en attente.\nID de l'invitation : {}",
+      "inviteAccepted": "Invitation acceptée",
+      "inviteRejected": "Invitation refusée"
+    },
+    "citySelection": {
+      "title": "Choisissez votre ville",
+      "subtitle": "Nous vous montrerons toutes les réductions disponibles auprès des banques et des cartes autour de vous."
+    }
+  },
+  "cities": {
+    "riyadh": "Riyadh",
+    "jeddah": "Jeddah",
+    "mecca": "Mecca",
+    "medina": "Medina",
+    "khobar": "Khobar",
+    "dammam": "Dammam",
+    "tabuk": "Tabuk",
+    "abha": "Abha",
+    "taif": "Taif",
+    "qassim": "Qassim",
+    "yanbu": "Yanbu",
+    "jubail": "Jubail",
+    "najran": "Najran",
+    "jizan": "Jizan"
+  }
 }

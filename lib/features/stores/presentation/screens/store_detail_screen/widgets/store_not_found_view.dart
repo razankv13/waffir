@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 
 class StoreNotFoundView extends StatelessWidget {
   const StoreNotFoundView({super.key});
@@ -19,7 +21,7 @@ class StoreNotFoundView extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Store not found',
+            LocaleKeys.stores.detail.notFound.tr(),
             style: textTheme.titleLarge?.copyWith(
               color: colorScheme.onSurface,
             ),

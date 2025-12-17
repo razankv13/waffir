@@ -1,7 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:waffir/core/constants/app_colors.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/themes/app_text_styles.dart';
 import 'package:waffir/core/themes/extensions/promo_colors_extension.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
@@ -53,7 +55,7 @@ class StoreActionsSection extends StatelessWidget {
         Align(
           alignment: Alignment.centerRight,
           child: Text(
-            '3 hours ago',
+            LocaleKeys.stores.detail.comments.timeAgo.tr(),
             textAlign: TextAlign.right,
             style: AppTextStyles.storePageTimestamp.copyWith(
               color: promoColors?.actionCount ?? const Color(0xFFA3A3A3),

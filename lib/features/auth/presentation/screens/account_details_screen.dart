@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/inputs/gender_selector.dart';
@@ -23,71 +25,64 @@ import 'package:waffir/features/auth/presentation/widgets/blurred_background.dar
 /// - Primary button 330x48 with 30px radius (Parkinsans 600, 14px)
 /// - RTL aware layout and responsive scaling via ResponsiveHelper
 /// - Theme-based coloring (no AppColors imports in widgets)
-class AccountDetailsScreen extends ConsumerStatefulWidget {
+class AccountDetailsScreen extends HookConsumerWidget {
   const AccountDetailsScreen({super.key});
 
   @override
-  ConsumerState<AccountDetailsScreen> createState() => _AccountDetailsScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final nameController = useTextEditingController();
+    useListenable(nameController);
 
-class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
-  final TextEditingController _nameController = TextEditingController();
-  Gender? _selectedGender;
-  bool _acceptedTerms = false;
-  bool _isSubmitting = false;
+    final selectedGender = useState<Gender?>(null);
+    final acceptedTerms = useState(false);
+    final isSubmitting = useState(false);
 
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
-  }
-
-  /// Validates and confirms account details
-  Future<void> _confirm() async {
-    if (!_isFormValid || _isSubmitting) return;
-
-    setState(() => _isSubmitting = true);
-    try {
-      final user = ref.read(activeUserProvider);
-      if (user == null) {
-        throw Exception('Not signed in');
-      }
-
-      final fullName = _nameController.text.trim();
-      final nameParts = fullName.split(RegExp(r'\\s+')).where((p) => p.isNotEmpty).toList();
-      final firstName = nameParts.isNotEmpty ? nameParts.first : null;
-      final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : null;
-
-      final updated = user.copyWith(
-        displayName: fullName,
-        firstName: firstName,
-        lastName: lastName,
-        gender: _selectedGender?.name,
-        preferences: <String, dynamic>{
-          ...user.preferences,
-          'acceptedTerms': _acceptedTerms,
-        },
-      );
-
-      final authController = ref.read(authControllerProvider.notifier);
-      await authController.updateUserData(updated);
-
-      if (!mounted) return;
-      context.go(AppRoutes.home);
-    } catch (e) {
-      if (mounted) context.showErrorSnackBar(message: e.toString());
-    } finally {
-      if (mounted) setState(() => _isSubmitting = false);
+    bool isFormValid() {
+      return selectedGender.value != null &&
+          acceptedTerms.value &&
+          nameController.text.trim().isNotEmpty;
     }
-  }
 
-  /// Checks if form is valid and button should be enabled
-  bool get _isFormValid {
-    return _selectedGender != null && _acceptedTerms && _nameController.text.trim().isNotEmpty;
-  }
+    /// Validates and confirms account details
+    Future<void> confirm() async {
+      final isFormValidNow = isFormValid();
+      if (!isFormValidNow || isSubmitting.value) return;
 
-  @override
-  Widget build(BuildContext context) {
+      isSubmitting.value = true;
+      try {
+        final user = ref.read(activeUserProvider);
+        if (user == null) {
+          throw Exception(tr(LocaleKeys.errors.unauthorizedError));
+        }
+
+        final fullName = nameController.text.trim();
+        final nameParts = fullName.split(RegExp('\\s+')).where((p) => p.isNotEmpty).toList();
+        final firstName = nameParts.isNotEmpty ? nameParts.first : null;
+        final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : null;
+
+        final updated = user.copyWith(
+          displayName: fullName,
+          firstName: firstName,
+          lastName: lastName,
+          gender: selectedGender.value?.name,
+          preferences: <String, dynamic>{
+            ...user.preferences,
+            'acceptedTerms': acceptedTerms.value,
+          },
+        );
+
+        final authController = ref.read(authControllerProvider.notifier);
+        await authController.updateUserData(updated);
+
+        if (!context.mounted) return;
+        context.go(AppRoutes.home);
+      } catch (e) {
+        if (context.mounted) context.showErrorSnackBar(message: e.toString());
+      } finally {
+        if (context.mounted) isSubmitting.value = false;
+      }
+    }
+
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final size = MediaQuery.of(context).size;
@@ -106,6 +101,7 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
     final double buttonBottomPadding = isSmallScreen
         ? responsive.scaleWithRange(80, min: 64, max: 90)
         : responsive.scaleWithRange(120, min: 100, max: 140);
+    final isFormValidValue = isFormValid();
 
     return Directionality(
       textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
@@ -144,7 +140,7 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                                 Align(
                                   alignment: AlignmentDirectional.centerStart,
                                   child: Text(
-                                    'Name',
+                                    tr(LocaleKeys.accountDetails.nameLabel),
                                     style: theme.textTheme.titleLarge?.copyWith(
                                       fontSize: responsive.scaleFontSize(20, minSize: 18),
                                       fontWeight: FontWeight.w700,
@@ -155,17 +151,16 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                                 ),
                                 SizedBox(height: labelToFieldSpacing),
                                 _PillTextField(
-                                  controller: _nameController,
-                                  hintText: 'Full Name',
+                                  controller: nameController,
+                                  hintText: tr(LocaleKeys.accountDetails.nameHint),
                                   colorScheme: colorScheme,
                                   theme: theme,
-                                  onChanged: (_) => setState(() {}),
                                 ),
                                 SizedBox(height: contentVerticalGap),
                                 Align(
                                   alignment: AlignmentDirectional.centerStart,
                                   child: Text(
-                                    'Account Details',
+                                    tr(LocaleKeys.accountDetails.detailsTitle),
                                     style: theme.textTheme.titleLarge?.copyWith(
                                       fontSize: responsive.scaleFontSize(20, minSize: 18),
                                       fontWeight: FontWeight.w700,
@@ -178,12 +173,8 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                                 Container(
                                   padding: EdgeInsets.symmetric(vertical: responsive.scale(12)),
                                   child: GenderSelector(
-                                    selectedGender: _selectedGender,
-                                    onChanged: (gender) {
-                                      setState(() {
-                                        _selectedGender = gender;
-                                      });
-                                    },
+                                    selectedGender: selectedGender.value,
+                                    onChanged: (gender) => selectedGender.value = gender,
                                     optionGap: optionGap,
                                     controlGap: genderControlGap,
                                   ),
@@ -196,21 +187,19 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    setState(() {
-                                      _acceptedTerms = !_acceptedTerms;
-                                    });
+                                    acceptedTerms.value = !acceptedTerms.value;
                                   },
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       _RoundedSquareCheckbox(
-                                        isSelected: _acceptedTerms,
+                                        isSelected: acceptedTerms.value,
                                         colorScheme: colorScheme,
                                       ),
                                       SizedBox(width: termsCheckboxGap),
                                       Flexible(
                                         child: Text(
-                                          'Accept of terms and use of Privacy Policy',
+                                          tr(LocaleKeys.accountDetails.termsAcceptance),
                                           style: theme.textTheme.bodySmall?.copyWith(
                                             fontSize: responsive.scaleFontSize(14, minSize: 12),
                                             fontWeight: FontWeight.w400,
@@ -225,10 +214,10 @@ class _AccountDetailsScreenState extends ConsumerState<AccountDetailsScreen> {
                                 ),
                                 SizedBox(height: termsButtonGap),
                                 AppButton.primary(
-                                  text: 'Continue',
-                                  onPressed: _isFormValid && !_isSubmitting ? _confirm : null,
-                                  isLoading: _isSubmitting,
-                                  enabled: _isFormValid && !_isSubmitting,
+                                  text: tr(LocaleKeys.buttons.continueBtn),
+                                  onPressed: isFormValidValue && !isSubmitting.value ? confirm : null,
+                                  isLoading: isSubmitting.value,
+                                  enabled: isFormValidValue && !isSubmitting.value,
                                   width: buttonWidth,
                                   borderRadius: responsive.scaleBorderRadius(
                                     BorderRadius.circular(30),

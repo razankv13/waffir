@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 
@@ -50,7 +52,7 @@ class ProfileLogoutButton extends StatelessWidget {
           height: responsive.scale(56), // Exact height from Figma
           child: AppButton.primary(
             onPressed: onLogoutTap,
-            child: const Text('Logout'),
+            child: Text(LocaleKeys.auth.logout.tr()),
           ),
         ),
       ),

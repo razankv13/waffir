@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/themes/app_text_styles.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
@@ -68,7 +70,7 @@ class _StorePill extends StatelessWidget {
       child: Padding(
         padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
         child: Text(
-          'Store',
+          LocaleKeys.stores.detail.header.storePill.tr(),
           style: AppTextStyles.storePageHeaderLabel.copyWith(color: colorScheme.onSurface),
         ),
       ),
@@ -132,7 +134,7 @@ class StorePageBottomCta extends StatelessWidget {
                 },
                 child: Center(
                   child: Text(
-                    'See the deal at ($storeName)',
+                    LocaleKeys.productPage.cta.seeDeal.tr(args: [storeName]),
                     textAlign: TextAlign.center,
                     style: AppTextStyles.storePageCta.copyWith(color: colorScheme.onPrimary),
                   ),
@@ -153,7 +155,7 @@ class StorePageBottomCta extends StatelessWidget {
                   HapticFeedback.mediumImpact();
                   ScaffoldMessenger.of(
                     context,
-                  ).showSnackBar(const SnackBar(content: Text('Share tapped')));
+                  ).showSnackBar(SnackBar(content: Text(LocaleKeys.stores.detail.actions.shareTapped.tr())));
                 },
                 child: Center(
                   child: SizedBox(

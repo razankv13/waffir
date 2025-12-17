@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,7 @@ import 'package:waffir/core/mock/mock_user_data.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 
 /// Manage Personal Details (Form)
 ///
@@ -59,7 +62,7 @@ class _ManagePersonalDetailsFormScreenState extends ConsumerState<ManagePersonal
 
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Saved'), duration: Duration(seconds: 2)));
+    ).showSnackBar(SnackBar(content: Text(LocaleKeys.success.saved.tr()), duration: const Duration(seconds: 2)));
     context.pop();
   }
 
@@ -166,7 +169,7 @@ class _ManagePersonalDetailsFormScreenState extends ConsumerState<ManagePersonal
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text('Manage Personal Details', style: titleStyle),
+                        Text(LocaleKeys.profile.myAccount.managePersonalDetails.tr(), style: titleStyle),
                         SizedBox(height: responsive.scale(24)),
 
                         // Fields (gap 8)
@@ -212,7 +215,7 @@ class _ManagePersonalDetailsFormScreenState extends ConsumerState<ManagePersonal
                           isLoading: _isSaving,
                           borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
                           child: Text(
-                            'Save',
+                            LocaleKeys.buttons.save.tr(),
                             style: theme.textTheme.labelLarge?.copyWith(
                               fontFamily: 'Parkinsans',
                               fontSize: responsive.scaleFontSize(14, minSize: 12),

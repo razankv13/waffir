@@ -1,11 +1,12 @@
-import 'dart:ui';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:waffir/core/widgets/waffir_back_button.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/search/search_bar_widget.dart';
 import 'package:waffir/core/widgets/switches/custom_toggle_switch.dart';
+import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
@@ -16,7 +17,7 @@ import 'package:waffir/gen/assets.gen.dart';
 /// - Two-line header
 /// - Search container with inline label and CTA
 /// - Bank card rows with image tiles and toggle switches
-class CreditCardsScreen extends ConsumerStatefulWidget {
+class CreditCardsScreen extends HookConsumerWidget {
   const CreditCardsScreen({super.key, this.showBackButton = false});
 
   /// When true, shows a top-left back button (used when navigating from Profile/My Account).
@@ -25,69 +26,114 @@ class CreditCardsScreen extends ConsumerStatefulWidget {
   final bool showBackButton;
 
   @override
-  ConsumerState<CreditCardsScreen> createState() => _CreditCardsScreenState();
-}
-
-class _CreditCardsScreenState extends ConsumerState<CreditCardsScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
-
-  late final Set<String> _selectedBankIds = {
-    for (final option in _designBankOptions)
-      if (option.isDefaultSelected) option.id,
-  };
-
-  List<_BankCardOptionData> get _filteredBankOptions {
-    if (_searchQuery.isEmpty) {
-      return _designBankOptions;
-    }
-    final query = _searchQuery;
-    return _designBankOptions.where((option) {
-      final bank = option.bankName.toLowerCase();
-      final card = option.cardLabel.toLowerCase();
-      return bank.contains(query) || card.contains(query);
-    }).toList();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  void _handleSearch(String rawQuery) {
-    setState(() {
-      _searchQuery = rawQuery.trim().toLowerCase();
-    });
-  }
-
-  void _toggleBank(String bankId) {
-    setState(() {
-      if (_selectedBankIds.contains(bankId)) {
-        _selectedBankIds.remove(bankId);
-      } else {
-        _selectedBankIds.add(bankId);
-      }
-    });
-  }
-
-  void _showComingSoonSnackBar(BuildContext context) {
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    messenger?.clearSnackBars();
-    messenger?.showSnackBar(
-      const SnackBar(
-        content: Text('Filter functionality coming soon'),
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final responsive = ResponsiveHelper(context);
-    final filteredBanks = _filteredBankOptions;
+    final searchController = useTextEditingController();
+    final searchQuery = useState('');
+    final selectedBankIds = useState(<String>{});
+
+    final headerTitleStyle = theme.textTheme.titleLarge?.copyWith(
+      fontWeight: FontWeight.w700,
+      fontSize: responsive.scaleFontSize(18, minSize: 16),
+      height: 1.0,
+      color: theme.colorScheme.onSurface,
+    );
+    final headerSubtitleStyle = theme.textTheme.bodyLarge?.copyWith(
+      fontWeight: FontWeight.w400,
+      fontSize: responsive.scaleFontSize(16, minSize: 14),
+      height: 1.15,
+      color: theme.colorScheme.onSurface,
+    );
+
+    List<_BankCardOptionData> filteredBankOptions() {
+      final query = searchQuery.value.trim().toLowerCase();
+      if (query.isEmpty) {
+        return _designBankOptions;
+      }
+      return _designBankOptions.where((option) {
+        final bank = option.bankName.toLowerCase();
+        final card = option.cardLabel.toLowerCase();
+        return bank.contains(query) || card.contains(query);
+      }).toList();
+    }
+
+    void handleSearch(String rawQuery) {
+      searchQuery.value = rawQuery.trim().toLowerCase();
+    }
+
+    void toggleBank(String bankId) {
+      final updated = {...selectedBankIds.value};
+      if (updated.contains(bankId)) {
+        updated.remove(bankId);
+      } else {
+        updated.add(bankId);
+      }
+      selectedBankIds.value = updated;
+    }
+
+    void showComingSoonSnackBar() {
+      final messenger = ScaffoldMessenger.maybeOf(context);
+      messenger?.clearSnackBars();
+      messenger?.showSnackBar(
+        SnackBar(
+          content: Text(LocaleKeys.creditCards.filterComingSoon.tr()),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+
+    Widget buildHeader(String title, String subtitle) {
+      return Column(
+        children: [
+          Text(title, textAlign: TextAlign.center, style: headerTitleStyle),
+          SizedBox(height: responsive.scale(16)),
+          Text(subtitle, textAlign: TextAlign.center, style: headerSubtitleStyle),
+        ],
+      );
+    }
+
+    Widget buildEmptyState(String title, String description) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.credit_card_outlined,
+              size: responsive.scale(80),
+              color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+            ),
+            SizedBox(height: responsive.scale(16)),
+            Text(
+              title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: responsive.scaleFontSize(18, minSize: 16),
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            SizedBox(height: responsive.scale(8)),
+            Text(
+              description,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w400,
+                fontSize: responsive.scaleFontSize(14, minSize: 12),
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final filteredBanks = filteredBankOptions();
+    final headerTitle = LocaleKeys.creditCards.title.tr();
+    final headerSubtitle = LocaleKeys.creditCards.subtitle.tr();
+    final searchHint = LocaleKeys.creditCards.searchHint.tr();
+    final emptyTitle = LocaleKeys.creditCards.empty.title.tr();
+    final emptyDescription = LocaleKeys.creditCards.empty.description.tr();
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -104,32 +150,16 @@ class _CreditCardsScreenState extends ConsumerState<CreditCardsScreen> {
 
                 // Header: top spacer + title/subtitle block.
                 final topSpacer = responsive.scale(90);
-                final titleStyle = theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  fontSize: responsive.scaleFontSize(18, minSize: 16),
-                  height: 1.0,
-                  color: theme.colorScheme.onSurface,
-                );
-                final subtitleStyle = theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: responsive.scaleFontSize(16, minSize: 14),
-                  height: 1.15,
-                  color: theme.colorScheme.onSurface,
-                );
 
                 final titlePainter = TextPainter(
-                  text: TextSpan(text: 'Select Your\nCredit Card/Debit Card', style: titleStyle),
+                  text: TextSpan(text: headerTitle, style: headerTitleStyle),
                   textDirection: Directionality.of(context),
                   textAlign: TextAlign.center,
                   textScaler: MediaQuery.textScalerOf(context),
                 )..layout(maxWidth: maxHeaderWidth);
 
                 final subtitlePainter = TextPainter(
-                  text: TextSpan(
-                    text:
-                        'Please note: you only need to select your card type - you will not be asked to provide any other details.',
-                    style: subtitleStyle,
-                  ),
+                  text: TextSpan(text: headerSubtitle, style: headerSubtitleStyle),
                   textDirection: Directionality.of(context),
                   textAlign: TextAlign.center,
                   textScaler: MediaQuery.textScalerOf(context),
@@ -160,12 +190,11 @@ class _CreditCardsScreenState extends ConsumerState<CreditCardsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           SizedBox(height: topSpacer),
-                          _buildHeader(theme, responsive),
+                          buildHeader(headerTitle, headerSubtitle),
                         ],
                       ),
                     ),
                   ),
-
                   SliverPersistentHeader(
                     pinned: true,
                     delegate: _PinnedSearchHeaderDelegate(
@@ -174,12 +203,12 @@ class _CreditCardsScreenState extends ConsumerState<CreditCardsScreen> {
                       backgroundColor: theme.colorScheme.surface,
                       horizontalPadding: horizontalPadding,
                       child: SearchBarWidget(
-                        controller: _searchController,
-                        hintText: 'Card, or Bank Name',
+                        controller: searchController,
+                        hintText: searchHint,
                         showFilterButton: true,
-                        onChanged: _handleSearch,
-                        onSearch: _handleSearch,
-                        onFilterTap: () => _showComingSoonSnackBar(context),
+                        onChanged: handleSearch,
+                        onSearch: handleSearch,
+                        onFilterTap: showComingSoonSnackBar,
                       ),
                     ),
                   ),
@@ -194,7 +223,7 @@ class _CreditCardsScreenState extends ConsumerState<CreditCardsScreen> {
                         top: responsive.scale(32),
                         bottom: responsive.scale(120),
                       ),
-                      children: [_buildEmptyState(theme, responsive)],
+                      children: [buildEmptyState(emptyTitle, emptyDescription)],
                     )
                   : ListView.separated(
                       padding: EdgeInsets.only(
@@ -208,85 +237,23 @@ class _CreditCardsScreenState extends ConsumerState<CreditCardsScreen> {
                       separatorBuilder: (context, index) => SizedBox(height: responsive.scale(16)),
                       itemBuilder: (context, index) {
                         final option = filteredBanks[index];
-                        final isSelected = _selectedBankIds.contains(option.id);
+                        final isSelected = selectedBankIds.value.contains(option.id);
                         return _BankSelectionTile(
                           option: option,
                           isSelected: isSelected,
                           responsive: responsive,
-                          onToggle: () => _toggleBank(option.id),
+                          onToggle: () => toggleBank(option.id),
                         );
                       },
                     ),
             ),
           ),
-          if (widget.showBackButton)
+          if (showBackButton)
             Positioned(
               left: responsive.scale(16),
               top: MediaQuery.paddingOf(context).top + responsive.scale(16),
               child: WaffirBackButton(size: responsive.scale(44)),
             ),
-        ],
-      ),
-    );
-  }
- 
-
-  Widget _buildHeader(ThemeData theme, ResponsiveHelper responsive) {
-    final titleStyle = theme.textTheme.titleLarge?.copyWith(
-      fontWeight: FontWeight.w700,
-      fontSize: responsive.scaleFontSize(18, minSize: 16),
-      height: 1.0,
-      color: theme.colorScheme.onSurface,
-    );
-    final subtitleStyle = theme.textTheme.bodyLarge?.copyWith(
-      fontWeight: FontWeight.w400,
-      fontSize: responsive.scaleFontSize(16, minSize: 14),
-      height: 1.15,
-      color: theme.colorScheme.onSurface,
-    );
-
-    return Column(
-      children: [
-        Text('Select Your\nCredit Card/Debit Card', textAlign: TextAlign.center, style: titleStyle),
-        SizedBox(height: responsive.scale(16)),
-        Text(
-          'Please note: you only need to select your card type - you will not be asked to provide any other details.',
-          textAlign: TextAlign.center,
-          style: subtitleStyle,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildEmptyState(ThemeData theme, ResponsiveHelper responsive) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.credit_card_outlined,
-            size: responsive.scale(80),
-            color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-          ),
-          SizedBox(height: responsive.scale(16)),
-          Text(
-            'No banks found',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              fontSize: responsive.scaleFontSize(18, minSize: 16),
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-          SizedBox(height: responsive.scale(8)),
-          Text(
-            'Try a different search term',
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w400,
-              fontSize: responsive.scaleFontSize(14, minSize: 12),
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
         ],
       ),
     );

@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,7 +19,8 @@ class ProductPageCommentsSection extends StatelessWidget {
     this.defaultAvatarAssetPath,
     this.padding,
     this.showComposer = true,
-    this.composerHintText = 'Write your comment',
+    this.composerHintText = 'productPage.comments.writeComment',
+
     this.onSendTap,
   });
 
@@ -39,7 +42,7 @@ class ProductPageCommentsSection extends StatelessWidget {
       children.add(
         _ProductPageCommentComposer(
           theme: theme,
-          hintText: composerHintText,
+          hintText: composerHintText.tr(),
           avatarAssetPath: defaultAvatarAssetPath,
           onSendTap: onSendTap,
         ),
@@ -50,7 +53,7 @@ class ProductPageCommentsSection extends StatelessWidget {
       children.add(SizedBox(height: responsive.scale(12)));
       children.add(
         Text(
-          'No comments yet',
+          LocaleKeys.productPage.comments.noComments.tr(),
           style: theme.textStyles.body.copyWith(
             color: theme.colors.textSecondary,
             fontSize: responsive.scaleFontSize(theme.textStyles.body.fontSize ?? 14),

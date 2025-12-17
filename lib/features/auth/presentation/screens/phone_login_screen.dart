@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/themes/phone_login/app_colors.dart';
 import 'package:waffir/core/themes/phone_login/app_text_styles.dart';
@@ -87,7 +89,7 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
         codeAutoRetrievalTimeout: () {
           if (!mounted) return;
           setState(() => _isLoading = false);
-          context.showInfoSnackBar(message: 'Code timeout. Please try again.');
+          context.showInfoSnackBar(message: LocaleKeys.errors.timeoutError.tr());
         },
       );
     } catch (e, stackTrace) {
@@ -120,9 +122,9 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
     authValue.when(
       data: (state) {
         if (state.isAuthenticated) {
-          context.go(AppRoutes.accountDetails);
+          context.go(AppRoutes.splash);
         } else {
-          context.showErrorSnackBar(message: 'Google sign-in failed.');
+          context.showErrorSnackBar(message: LocaleKeys.auth.googleSignInFailed.tr());
         }
       },
       loading: () {},
@@ -142,9 +144,9 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
     authValue.when(
       data: (state) {
         if (state.isAuthenticated) {
-          context.go(AppRoutes.accountDetails);
+          context.go(AppRoutes.splash);
         } else {
-          context.showErrorSnackBar(message: 'Apple sign-in failed.');
+          context.showErrorSnackBar(message: LocaleKeys.auth.appleSignInFailed.tr());
         }
       },
       loading: () {},
@@ -209,7 +211,7 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                                         child: Column(
                                           children: [
                                             Text(
-                                              'مرحباً بكم في وفــــر',
+                                              LocaleKeys.auth.welcomeToWaffir.tr(),
                                               style: PhoneLoginTextStyles.title.copyWith(
                                                 fontSize: sf(20, min: 14),
                                               ),
@@ -217,7 +219,7 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                                             ),
                                             SizedBox(height: s(16)),
                                             Text(
-                                              'سجّل الدخول أو أنشئ حساباً للمتابعة',
+                                              LocaleKeys.auth.loginSubtitle.tr(),
                                               style: PhoneLoginTextStyles.subtitle.copyWith(
                                                 fontSize: sf(16, min: 12),
                                               ),
@@ -235,7 +237,7 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                                         child: PhoneInputWidget(
                                           controller: _phoneController,
                                           countryCode: _selectedDialCode,
-                                          hintText: 'Phone Number',
+                                          hintText: LocaleKeys.auth.phoneHint.tr(),
                                           isLoading: _isLoading,
                                           isValid: _isPhoneValid,
                                           onSubmit: _submitPhone,
@@ -259,7 +261,7 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                                       Padding(
                                         padding: EdgeInsets.symmetric(horizontal: s(16)),
                                         child: Text(
-                                          'أو',
+                                          LocaleKeys.auth.or.tr(),
                                           style: PhoneLoginTextStyles.divider.copyWith(
                                             fontSize: sf(14, min: 12),
                                           ),
@@ -283,7 +285,7 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                                         width: s(361),
                                         child: SocialAuthButton(
                                           provider: SocialAuthProvider.google,
-                                          label: 'تابع باستخدام Google',
+                                          label: LocaleKeys.auth.continueWithGoogle.tr(),
                                           onTap: _signInWithGoogle,
                                         ),
                                       ),
@@ -292,7 +294,7 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
                                         width: s(361),
                                         child: SocialAuthButton(
                                           provider: SocialAuthProvider.apple,
-                                          label: 'تابع باستخدام Apple',
+                                          label: LocaleKeys.auth.continueWithApple.tr(),
                                           onTap: _signInWithApple,
                                         ),
                                       ),

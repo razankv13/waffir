@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:intl/intl.dart';
 import 'package:waffir/core/constants/app_typography.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/core/widgets/profile/profile_card.dart';
@@ -47,6 +50,15 @@ class ProfilePremiumCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final responsive = ResponsiveHelper(context);
+    final subscriptionLabel = isPremium
+        ? LocaleKeys.profile.subscription.premiumPlan.tr()
+        : LocaleKeys.profile.subscription.freePlan.tr();
+    final expiryLabel = isPremium && subscriptionExpiryDate != null
+        ? _formatExpiryDate(context, subscriptionExpiryDate!)
+        : null;
+    final manageLabel = isPremium
+        ? LocaleKeys.profile.subscription.manageSubscription.tr()
+        : LocaleKeys.profile.subscription.upgradeToPremium.tr();
 
     return ProfileCard(
       padding: responsive.scalePadding(const EdgeInsets.all(16)),
@@ -83,7 +95,7 @@ class ProfilePremiumCard extends StatelessWidget {
                   children: [
                     // Title: "Premium Plan" / "Free Plan" - 16px weight 700, line-height 1em
                     Text(
-                      isPremium ? 'Premium Plan' : 'Free Plan',
+                      subscriptionLabel,
                       style: AppTypography.premiumTitle.copyWith(
                         color: colorScheme.onSurface, // #151515
                         fontSize: responsive.scaleFontSize(16, minSize: 14),
@@ -91,13 +103,13 @@ class ProfilePremiumCard extends StatelessWidget {
                     ),
 
                     // Gap: 8px (exact from Figma) - Only show if premium with expiry date
-                    if (isPremium && subscriptionExpiryDate != null)
+                    if (expiryLabel != null)
                       SizedBox(height: responsive.scale(8)),
 
                     // Subtitle: "Valid until Dec 2023" - 12px weight 400, line-height 1em
-                    if (isPremium && subscriptionExpiryDate != null)
+                    if (expiryLabel != null)
                       Text(
-                        _formatExpiryDate(subscriptionExpiryDate!),
+                        expiryLabel,
                         style: AppTypography.premiumSubtitle.copyWith(
                           color: colorScheme.onSurface, // #151515
                           fontSize: responsive.scaleFontSize(12, minSize: 10),
@@ -115,32 +127,17 @@ class ProfilePremiumCard extends StatelessWidget {
           // Manage Subscription Button (Secondary style, full width)
           AppButton.secondary(
             onPressed: onManageTap,
-            child: Text(isPremium ? 'Manage Subscription' : 'Upgrade to Premium'),
+            child: Text(manageLabel),
           ),
         ],
       ),
     );
   }
 
-  /// Formats expiry date to "Valid until MMM YYYY" format
-  ///
-  /// Example: DateTime(2023, 12, 15) → "Valid until Dec 2023"
-  String _formatExpiryDate(DateTime date) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    final monthName = months[date.month - 1];
-    return 'Valid until $monthName ${date.year}';
+  /// Returns localized expiry string using the current locale
+  String _formatExpiryDate(BuildContext context, DateTime date) {
+    final localeTag = context.locale.toLanguageTag();
+    final formattedDate = DateFormat.yMMM(localeTag).format(date);
+    return LocaleKeys.profile.subscription.validUntil.tr(namedArgs: {'date': formattedDate});
   }
 }

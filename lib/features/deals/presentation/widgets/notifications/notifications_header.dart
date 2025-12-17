@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/themes/extensions/notifications_alerts_theme.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
@@ -44,7 +46,7 @@ class NotificationsHeader extends StatelessWidget {
 
                 // Title & subtitle
                 Text(
-                  'Don\'t miss out!',
+                  LocaleKeys.notifications.header.title.tr(),
                   style: naTheme.titleStyle.copyWith(
                     color: naTheme.textPrimary,
                     fontSize: responsive.scaleFontSize(18, minSize: 16),
@@ -53,7 +55,7 @@ class NotificationsHeader extends StatelessWidget {
                 ),
                 SizedBox(height: responsive.scale(16)),
                 Text(
-                  'Get notified when great deals drop!',
+                  LocaleKeys.notifications.header.subtitle.tr(),
                   style: naTheme.subtitleStyle.copyWith(
                     color: naTheme.textPrimary,
                     fontSize: responsive.scaleFontSize(16, minSize: 14),

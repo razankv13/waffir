@@ -1,9 +1,11 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/mock/mock_user_data.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
@@ -17,185 +19,184 @@ import 'package:waffir/core/widgets/waffir_back_button.dart';
 /// Note: Despite the file name, this screen currently renders the "My Account Page" UI
 /// (avatar + activity cards + menu + logout) as requested.
 class MyAccount extends ConsumerWidget {
+  void _showDeleteAccountBottomSheet(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final responsive = ResponsiveHelper(context);
 
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: false,
+      useSafeArea: false,
+      builder: (sheetContext) {
+        final bottomInset = MediaQuery.paddingOf(sheetContext).bottom;
 
-void _showDeleteAccountBottomSheet(BuildContext context) {
-  final theme = Theme.of(context);
-  final colorScheme = theme.colorScheme;
-  final responsive = ResponsiveHelper(context);
-
-  showModalBottomSheet<void>(
-    context: context,
-    backgroundColor: Colors.transparent,
-    isScrollControlled: false,
-    useSafeArea: false,
-    builder: (sheetContext) {
-      final bottomInset = MediaQuery.paddingOf(sheetContext).bottom;
-
-      return Container(
-        width: double.infinity,
-        padding: EdgeInsets.only(bottom: responsive.scale(48) + bottomInset),
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(responsive.scale(24))),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF1B1B1B).withValues(alpha: 0.12),
-              blurRadius: responsive.scale(25),
-              offset: Offset(responsive.scale(2), responsive.scale(4)),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: responsive.scalePadding(const EdgeInsets.fromLTRB(6, 6, 6, 0)),
-              child: SizedBox(
-                height: responsive.scale(44),
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: Padding(
-                        padding: EdgeInsets.only(top: responsive.scale(10)),
-                        child: Container(
-                          width: responsive.scale(32),
-                          height: responsive.scale(6),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF2F2F2),
-                            borderRadius: BorderRadius.circular(responsive.scale(9999)),
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.only(bottom: responsive.scale(48) + bottomInset),
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(responsive.scale(24))),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF1B1B1B).withValues(alpha: 0.12),
+                blurRadius: responsive.scale(25),
+                offset: Offset(responsive.scale(2), responsive.scale(4)),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: responsive.scalePadding(const EdgeInsets.fromLTRB(6, 6, 6, 0)),
+                child: SizedBox(
+                  height: responsive.scale(44),
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: responsive.scale(10)),
+                          child: Container(
+                            width: responsive.scale(32),
+                            height: responsive.scale(6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF2F2F2),
+                              borderRadius: BorderRadius.circular(responsive.scale(9999)),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: SizedBox(
-                        width: responsive.scale(44),
-                        height: responsive.scale(44),
-                        child: Center(
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () => Navigator.of(sheetContext).pop(),
-                              customBorder: const CircleBorder(),
-                              child: Container(
-                                width: responsive.scale(32),
-                                height: responsive.scale(32),
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFF2F2F2),
-                                  shape: BoxShape.circle,
-                                ),
-                                alignment: Alignment.center,
-                                child: Icon(
-                                  Icons.close_rounded,
-                                  size: responsive.scaleWithRange(16, min: 14, max: 18),
-                                  color: colorScheme.onSurface,
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: SizedBox(
+                          width: responsive.scale(44),
+                          height: responsive.scale(44),
+                          child: Center(
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () => Navigator.of(sheetContext).pop(),
+                                customBorder: const CircleBorder(),
+                                child: Container(
+                                  width: responsive.scale(32),
+                                  height: responsive.scale(32),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFF2F2F2),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.close_rounded,
+                                    size: responsive.scaleWithRange(16, min: 14, max: 18),
+                                    color: colorScheme.onSurface,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: responsive.scale(24)),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: responsive.scale(8)),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Delete Account',
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontFamily: 'Parkinsans',
-                            fontWeight: FontWeight.w700,
-                            fontSize: responsive.scaleFontSize(18, minSize: 16),
-                            height: 1.4,
-                            color: colorScheme.onSurface,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: responsive.scale(24)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: responsive.scale(8)),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+                          child: Column(
+                            children: [
+                              Text(
+                                LocaleKeys.profile.myAccount.deleteAccount.tr(),
+                                textAlign: TextAlign.center,
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontFamily: 'Parkinsans',
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: responsive.scaleFontSize(18, minSize: 16),
+                                  height: 1.4,
+                                  color: colorScheme.onSurface,
+                                ),
+                              ),
+                              SizedBox(height: responsive.scale(12)),
+                              Text(
+                                LocaleKeys.profile.myAccount.deleteDescription.tr(),
+                                textAlign: TextAlign.center,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontFamily: 'Parkinsans',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: responsive.scaleFontSize(14, minSize: 12),
+                                  height: 1.4,
+                                  color: colorScheme.onSurface,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(height: responsive.scale(12)),
-                        Text(
-                          'One you delete your account, your profile, user name, and comments are permanently removed from Waffir.',
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontFamily: 'Parkinsans',
-                            fontWeight: FontWeight.w400,
-                            fontSize: responsive.scaleFontSize(14, minSize: 12),
-                            height: 1.4,
-                            color: colorScheme.onSurface,
+
+                        SizedBox(height: responsive.scale(32)),
+
+                        Column(
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              height: responsive.scale(48),
+                              child: AppButton.primary(
+                                onPressed: () => Navigator.of(sheetContext).pop(),
+                                backgroundColor: const Color(0xFFFF0000),
+                                foregroundColor: Colors.white,
+                                borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
+                                child: Text(
+                                  LocaleKeys.profile.myAccount.confirmDelete.tr(),
+                                  style: theme.textTheme.labelLarge?.copyWith(
+                                    fontFamily: 'Parkinsans',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: responsive.scaleFontSize(14, minSize: 12),
+                                    height: 1.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                            ),
+                          ),
+                          SizedBox(height: responsive.scale(12)),
+                          SizedBox(
+                            width: double.infinity,
+                            height: responsive.scale(48),
+                            child: AppButton.secondary(
+                              onPressed: () => Navigator.of(sheetContext).pop(),
+                              borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
+                              foregroundColor: colorScheme.onSurface,
+                              child: Text(
+                                LocaleKeys.buttons.cancel.tr(),
+                                style: theme.textTheme.labelLarge?.copyWith(
+                                  fontFamily: 'Parkinsans',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: responsive.scaleFontSize(14, minSize: 12),
+                                  height: 1.0,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-
-                  SizedBox(height: responsive.scale(32)),
-
-                  Column(
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        height: responsive.scale(48),
-                        child: AppButton.primary(
-                          onPressed: () => Navigator.of(sheetContext).pop(),
-                          backgroundColor: const Color(0xFFFF0000),
-                          foregroundColor: Colors.white,
-                          borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
-                          child: Text(
-                            'Yes, Delete',
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              fontFamily: 'Parkinsans',
-                              fontWeight: FontWeight.w600,
-                              fontSize: responsive.scaleFontSize(14, minSize: 12),
-                              height: 1.0,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: responsive.scale(12)),
-                      SizedBox(
-                        width: double.infinity,
-                        height: responsive.scale(48),
-                        child: AppButton.secondary(
-                          onPressed: () => Navigator.of(sheetContext).pop(),
-                          borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
-                          foregroundColor: colorScheme.onSurface,
-                          child: Text(
-                            'Cancel',
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              fontFamily: 'Parkinsans',
-                              fontWeight: FontWeight.w600,
-                              fontSize: responsive.scaleFontSize(14, minSize: 12),
-                              height: 1.0,
-                              color: colorScheme.onSurface,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   const MyAccount({super.key});
 
   @override
@@ -250,13 +251,12 @@ void _showDeleteAccountBottomSheet(BuildContext context) {
       color: colorScheme.onSurface,
     );
 
-    final destructiveTextStyle = menuTextStyle.copyWith(
-      color: colorScheme.error,
-    );
+    final destructiveTextStyle = menuTextStyle.copyWith(color: colorScheme.error);
 
     // Gradient used across icons and subtle background (derived from theme colors).
     final gradientStart = colorScheme.secondary;
-    final gradientEnd = Color.lerp(colorScheme.secondary, colorScheme.primary, 0.35) ?? colorScheme.primary;
+    final gradientEnd =
+        Color.lerp(colorScheme.secondary, colorScheme.primary, 0.35) ?? colorScheme.primary;
 
     return Scaffold(
       body: Stack(
@@ -303,11 +303,7 @@ void _showDeleteAccountBottomSheet(BuildContext context) {
                   // Back button row
                   Padding(
                     padding: responsive.scalePadding(
-                      EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        top: headerTopPadding,
-                      ),
+                      EdgeInsets.only(left: 16, right: 16, top: headerTopPadding),
                     ),
                     child: Align(
                       alignment: Alignment.centerLeft,
@@ -339,7 +335,7 @@ void _showDeleteAccountBottomSheet(BuildContext context) {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Welcome', style: titleWelcomeStyle),
+                            Text(LocaleKeys.profile.myAccount.welcome.tr(), style: titleWelcomeStyle),
                             SizedBox(height: responsive.scale(8)),
                             Text(user.name, style: titleNameStyle),
                           ],
@@ -357,51 +353,53 @@ void _showDeleteAccountBottomSheet(BuildContext context) {
                       child: Row(
                         children: [
                           Expanded(
-                            child: _ActivityStatCard(
-                              icon: _GradientSvgIcon(
-                                assetPath: 'assets/icons/like_inactive.svg',
-                                gradientStart: gradientStart,
-                                gradientEnd: gradientEnd,
-                                size: responsive.scale(24),
-                              ),
-                              label: '200k Like',
-                              borderColor: colorScheme.onSurface.withValues(alpha: 0.05),
-                              textStyle: menuTextStyle,
-                              paddingVertical: responsive.scale(16),
-                              gap: responsive.scale(16),
+                          child: _ActivityStatCard(
+                            icon: _GradientSvgIcon(
+                              assetPath: 'assets/icons/like_inactive.svg',
+                              gradientStart: gradientStart,
+                              gradientEnd: gradientEnd,
+                              size: responsive.scale(24),
                             ),
+                            label: LocaleKeys.profile.myAccount.likes
+                                .tr(namedArgs: {'count': '200k'}),
+                            borderColor: colorScheme.onSurface.withValues(alpha: 0.05),
+                            textStyle: menuTextStyle,
+                            paddingVertical: responsive.scale(16),
+                            gap: responsive.scale(16),
+                          ),
                           ),
                           SizedBox(width: cardGap),
                           Expanded(
                             child: _ActivityStatCard(
-                              icon: _GradientSvgIcon(
-                                assetPath: 'assets/icons/comment.svg',
-                                gradientStart: gradientStart,
-                                gradientEnd: gradientEnd,
-                                size: responsive.scale(24),
-                              ),
-                              label: '20 Comment',
-                              borderColor: colorScheme.onSurface.withValues(alpha: 0.05),
-                              textStyle: menuTextStyle,
-                              paddingVertical: responsive.scale(16),
-                              gap: responsive.scale(16),
+                            icon: _GradientSvgIcon(
+                              assetPath: 'assets/icons/comment.svg',
+                              gradientStart: gradientStart,
+                              gradientEnd: gradientEnd,
+                              size: responsive.scale(24),
                             ),
+                            label: LocaleKeys.profile.myAccount.comments
+                                .tr(namedArgs: {'count': '20'}),
+                            borderColor: colorScheme.onSurface.withValues(alpha: 0.05),
+                            textStyle: menuTextStyle,
+                            paddingVertical: responsive.scale(16),
+                            gap: responsive.scale(16),
+                          ),
                           ),
                           SizedBox(width: cardGap),
                           Expanded(
                             child: _ActivityStatCard(
-                              icon: _GradientIcon(
-                                icon: Icons.favorite,
-                                gradientStart: gradientStart,
-                                gradientEnd: gradientEnd,
-                                size: responsive.scale(24),
-                              ),
-                              label: '201 Votes',
-                              borderColor: colorScheme.onSurface.withValues(alpha: 0.05),
-                              textStyle: menuTextStyle,
-                              paddingVertical: responsive.scale(16),
-                              gap: responsive.scale(16),
+                            icon: _GradientIcon(
+                              icon: Icons.favorite,
+                              gradientStart: gradientStart,
+                              gradientEnd: gradientEnd,
+                              size: responsive.scale(24),
                             ),
+                            label: LocaleKeys.profile.myAccount.votes.tr(namedArgs: {'count': '201'}),
+                            borderColor: colorScheme.onSurface.withValues(alpha: 0.05),
+                            textStyle: menuTextStyle,
+                            paddingVertical: responsive.scale(16),
+                            gap: responsive.scale(16),
+                          ),
                           ),
                         ],
                       ),
@@ -416,7 +414,7 @@ void _showDeleteAccountBottomSheet(BuildContext context) {
                     child: Column(
                       children: [
                         _MenuRow(
-                          label: 'Manage Personal Details',
+                          label: LocaleKeys.profile.myAccount.managePersonalDetails.tr(),
                           textStyle: menuTextStyle,
                           chevronColor: colorScheme.onSurface,
                           dividerColor: colorScheme.surfaceContainerHighest,
@@ -425,7 +423,7 @@ void _showDeleteAccountBottomSheet(BuildContext context) {
                           },
                         ),
                         _MenuRow(
-                          label: 'Favorites',
+                          label: LocaleKeys.profile.menu.favourites.tr(),
                           textStyle: menuTextStyle,
                           chevronColor: colorScheme.onSurface,
                           dividerColor: colorScheme.surfaceContainerHighest,
@@ -434,7 +432,7 @@ void _showDeleteAccountBottomSheet(BuildContext context) {
                           },
                         ),
                         _MenuRow(
-                          label: 'Selected Credit Cards',
+                          label: LocaleKeys.profile.myAccount.selectedCreditCards.tr(),
                           textStyle: menuTextStyle,
                           chevronColor: colorScheme.onSurface,
                           dividerColor: colorScheme.surfaceContainerHighest,
@@ -443,7 +441,7 @@ void _showDeleteAccountBottomSheet(BuildContext context) {
                           },
                         ),
                         _MenuRow(
-                          label: 'Delete Account',
+                          label: LocaleKeys.profile.myAccount.deleteAccount.tr(),
                           textStyle: destructiveTextStyle,
                           chevronColor: colorScheme.onSurface,
                           dividerColor: colorScheme.surfaceContainerHighest,
@@ -471,7 +469,7 @@ void _showDeleteAccountBottomSheet(BuildContext context) {
                           },
                           borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
                           child: Text(
-                            'Log out',
+                            LocaleKeys.auth.logout.tr(),
                             style: textTheme.labelLarge?.copyWith(
                               fontFamily: 'Parkinsans',
                               fontSize: responsive.scaleFontSize(14, minSize: 12),
@@ -528,10 +526,7 @@ class _AvatarWithEditBadge extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(
-                color: borderColor,
-                width: responsive.scale(2),
-              ),
+              border: Border.all(color: borderColor, width: responsive.scale(2)),
             ),
             child: ClipOval(
               child: avatarUrl == null || avatarUrl!.isEmpty
@@ -629,11 +624,7 @@ class _ActivityStatCard extends StatelessWidget {
         children: [
           icon,
           SizedBox(height: gap),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: textStyle,
-          ),
+          Text(label, textAlign: TextAlign.center, style: textStyle),
         ],
       ),
     );
@@ -672,22 +663,13 @@ class _MenuRow extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(child: Text(label, style: textStyle)),
-                  Icon(
-                    Icons.chevron_right,
-                    size: responsive.scale(24),
-                    color: chevronColor,
-                  ),
+                  Icon(Icons.chevron_right, size: responsive.scale(24), color: chevronColor),
                 ],
               ),
             ),
           ),
         ),
-        if (showDivider)
-          Divider(
-            height: responsive.scale(8),
-            thickness: 1,
-            color: dividerColor,
-          ),
+        if (showDivider) Divider(height: responsive.scale(8), thickness: 1, color: dividerColor),
       ],
     );
   }
@@ -717,11 +699,7 @@ class _GradientSvgIcon extends StatelessWidget {
           colors: [gradientStart, gradientEnd],
         ).createShader(bounds);
       },
-      child: SvgPicture.asset(
-        assetPath,
-        width: size,
-        height: size,
-      ),
+      child: SvgPicture.asset(assetPath, width: size, height: size),
     );
   }
 }

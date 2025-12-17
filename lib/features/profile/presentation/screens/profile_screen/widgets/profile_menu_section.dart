@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/extensions/context_extensions.dart';
 import 'package:waffir/gen/assets.gen.dart';
 import 'package:waffir/core/widgets/profile/profile_card.dart';
@@ -68,7 +70,7 @@ class ProfileMenuSection extends StatelessWidget {
               height: 24,
               colorFilter: ColorFilter.mode(context.colorScheme.primary, BlendMode.srcIn),
             ),
-            label: 'My Account',
+            label: LocaleKeys.profile.menu.myAccount.tr(),
             onTap: onPersonalDetailsTap,
           ),
 
@@ -79,7 +81,7 @@ class ProfileMenuSection extends StatelessWidget {
               height: 24,
               colorFilter: ColorFilter.mode(context.colorScheme.primary, BlendMode.srcIn),
             ),
-            label: 'Favourites',
+            label: LocaleKeys.profile.menu.favourites.tr(),
             onTap: onSavedDealsTap,
           ),
 
@@ -90,7 +92,7 @@ class ProfileMenuSection extends StatelessWidget {
               height: 24,
               colorFilter: ColorFilter.mode(context.colorScheme.primary, BlendMode.srcIn),
             ),
-            label: 'Change City',
+            label: LocaleKeys.profile.menu.changeCity.tr(),
             onTap: onMyCityTap,
           ),
 
@@ -101,7 +103,7 @@ class ProfileMenuSection extends StatelessWidget {
               height: 24,
               colorFilter: ColorFilter.mode(context.colorScheme.primary, BlendMode.srcIn),
             ),
-            label: 'Notifications',
+            label: LocaleKeys.settings.notifications.tr(),
             onTap: onNotificationsTap,
           ),
 
@@ -112,14 +114,14 @@ class ProfileMenuSection extends StatelessWidget {
               height: 24,
               colorFilter: ColorFilter.mode(context.colorScheme.primary, BlendMode.srcIn),
             ),
-            label: 'Language',
+            label: LocaleKeys.settings.language.tr(),
             onTap: onLanguageTap,
           ),
 
           // Help Center (no divider on last item)
           ProfileMenuItem(
             icon: Icon(Icons.help_center, size: 24, color: context.colorScheme.primary),
-            label: 'Help Center',
+            label: LocaleKeys.profile.menu.helpCenter.tr(),
             onTap: onHelpCenterTap,
             showDivider: false, // Last item has no divider
           ),

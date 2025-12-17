@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:waffir/core/constants/app_typography.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 
@@ -36,7 +38,7 @@ class SubscriptionProceedButton extends StatelessWidget {
             child: AppButton.primary(
               onPressed: onPressed,
               child: Text(
-                'Proceed',
+                LocaleKeys.subscription.management.proceed.tr(),
                 style: AppTypography.labelLarge.copyWith(
                   fontSize: responsive.scaleFontSize(14, minSize: 12),
                   fontWeight: FontWeight.w600,

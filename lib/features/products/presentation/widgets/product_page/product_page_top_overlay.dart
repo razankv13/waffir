@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:waffir/core/themes/figma_product_page/product_page_theme.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
@@ -56,7 +58,7 @@ class _OnlinePill extends StatelessWidget {
       ),
       padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
       child: Text(
-        'Online',
+        LocaleKeys.productPage.availability.online.tr(),
         style: theme.textStyles.onlinePill.copyWith(
           color: theme.colors.textPrimary,
           fontSize: responsive.scaleFontSize(

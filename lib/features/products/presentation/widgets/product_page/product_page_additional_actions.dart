@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:waffir/core/themes/figma_product_page/product_page_theme.dart';
@@ -30,7 +32,7 @@ class ProductPageAdditionalActions extends StatelessWidget {
               ),
               SizedBox(width: responsive.scale(4)),
               Text(
-                'Report Expired',
+                LocaleKeys.productPage.actions.reportExpired.tr(),
                 style: theme.textStyles.reportExpired.copyWith(
                   color: theme.colors.textPrimary,
                   fontSize: responsive.scaleFontSize(theme.textStyles.reportExpired.fontSize ?? 12),

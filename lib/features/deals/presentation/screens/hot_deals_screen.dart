@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/bottom_login_overlay.dart';
@@ -38,9 +40,9 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
 
   void _handleFilterTap() {
     // TODO: Implement filter dialog
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Filter dialog coming soon')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(LocaleKeys.deals.filterComingSoon.tr())),
+    );
   }
 
   @override
@@ -52,6 +54,11 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
     final colorScheme = theme.colorScheme;
     final responsive = context.responsive;
     final selectedCategory = hotDealsState.value?.selectedCategory ?? defaultCategory;
+    final categoryLabels = [
+      LocaleKeys.deals.categories.forYou.tr(),
+      LocaleKeys.deals.categories.frontPage.tr(),
+      LocaleKeys.deals.categories.popular.tr(),
+    ];
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -142,7 +149,7 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: headerHorizontalPadding),
                           child: SearchBarWidget(
-                            hintText: 'Search deals...',
+                            hintText: LocaleKeys.deals.searchHint.tr(),
                             showFilterButton: true,
                             onChanged: _handleSearch,
                             onSearch: _handleSearch,
@@ -163,6 +170,7 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                       child: CategoryFilterChips(
                         categories: _categories,
                         categoryIcons: _categoryIcons,
+                        categoryLabels: categoryLabels,
                         selectedCategory: selectedCategory,
                         onCategorySelected: hotDealsController.updateCategory,
                       ),
@@ -175,13 +183,13 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                 child: hotDealsState.when(
                   loading: () => const _HotDealsLoadingState(),
                   error: (error, stackTrace) => _HotDealsErrorState(
-                    message: 'Unable to load deals right now. Please try again.',
+                    message: LocaleKeys.deals.loadError.tr(),
                     onRetry: hotDealsController.refresh,
                   ),
                   data: (data) {
                     if (data.hasError) {
                       return _HotDealsErrorState(
-                        message: data.failure?.message ?? 'Unable to load deals right now.',
+                        message: data.failure?.message ?? LocaleKeys.deals.loadErrorShort.tr(),
                         onRetry: hotDealsController.refresh,
                       );
                     }
@@ -219,13 +227,13 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
 
                         if (deal.isHot) {
                           badgeType = BadgeType.sale;
-                          badgeText = 'HOT';
+                          badgeText = LocaleKeys.deals.badges.hot.tr();
                         } else if (deal.isNew == true) {
                           badgeType = BadgeType.newBadge;
-                          badgeText = 'NEW';
+                          badgeText = LocaleKeys.deals.badges.newBadge.tr();
                         } else if (deal.isFeatured == true) {
                           badgeType = BadgeType.featured;
-                          badgeText = 'FEATURED';
+                          badgeText = LocaleKeys.deals.badges.featured.tr();
                         }
 
                         // Convert prices to strings (format to whole numbers)
@@ -247,7 +255,7 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                           discountPercentage: deal.hasDiscount
                               ? deal.calculatedDiscountPercentage
                               : null,
-                          storeName: deal.brand ?? 'Store',
+                          storeName: deal.brand ?? LocaleKeys.deals.storeFallback.tr(),
                           badge: badgeText,
                           badgeType: badgeType,
                           likeCount: likeCount,
@@ -255,13 +263,15 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                           onLike: () {
                             // TODO: Implement like functionality
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Like functionality coming soon')),
+                              SnackBar(content: Text(LocaleKeys.deals.actions.likeComingSoon.tr())),
                             );
                           },
                           onComment: () {
                             // TODO: Implement comment functionality
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Comment functionality coming soon')),
+                              SnackBar(
+                                content: Text(LocaleKeys.deals.actions.commentComingSoon.tr()),
+                              ),
                             );
                           },
                         );
@@ -295,7 +305,7 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No deals found',
+            LocaleKeys.deals.empty.title.tr(),
             style: theme.textTheme.titleLarge?.copyWith(
               color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
@@ -304,8 +314,8 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
           const SizedBox(height: 8),
           Text(
             searchQuery.isEmpty
-                ? 'Try selecting a different category'
-                : 'Try a different search term',
+                ? LocaleKeys.deals.empty.categorySuggestion.tr()
+                : LocaleKeys.deals.empty.searchSuggestion.tr(),
             style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
@@ -357,7 +367,7 @@ class _HotDealsErrorState extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Center(
-          child: TextButton(onPressed: onRetry, child: const Text('Retry')),
+          child: TextButton(onPressed: onRetry, child: Text(LocaleKeys.buttons.retry.tr())),
         ),
       ],
     );

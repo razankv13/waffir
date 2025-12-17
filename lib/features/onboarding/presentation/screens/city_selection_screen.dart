@@ -1,22 +1,23 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/extensions/context_extensions.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/storage/settings_service.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
-import 'package:waffir/core/widgets/inputs/city_list_item.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
+import 'package:waffir/core/widgets/inputs/city_list_item.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 
 /// City selection screen
 ///
 /// Allows users to select their city from a scrollable list
-/// of Saudi Arabian cities (bilingual: Arabic + English)
 class CitySelectionScreen extends ConsumerStatefulWidget {
   const CitySelectionScreen({super.key});
 
@@ -28,22 +29,22 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
   String? _selectedCity;
   bool _isLoading = false;
 
-  // Saudi cities in Arabic and English
-  final List<Map<String, String>> _cities = const [
-    {'ar': 'الرياض', 'en': 'Riyadh'},
-    {'ar': 'جدة', 'en': 'Jeddah'},
-    {'ar': 'مكة', 'en': 'Mecca'},
-    {'ar': 'المدينة المنورة', 'en': 'Medina'},
-    {'ar': 'الخبر', 'en': 'Khobar'},
-    {'ar': 'الدمام', 'en': 'Dammam'},
-    {'ar': 'تبوك', 'en': 'Tabuk'},
-    {'ar': 'ابها', 'en': 'Abha'},
-    {'ar': 'الطائف', 'en': 'Taif'},
-    {'ar': 'القسيم', 'en': 'Qassim'},
-    {'ar': 'ينبع', 'en': 'Yanbu'},
-    {'ar': 'الجبيل', 'en': 'Jubail'},
-    {'ar': 'نجران', 'en': 'Najran'},
-    {'ar': 'جيزان', 'en': 'Jizan'},
+  // City data with ID (for storage) and translation key (for display)
+  final List<({String id, String key})> _cities = [
+    (id: 'Riyadh', key: LocaleKeys.cities.riyadh),
+    (id: 'Jeddah', key: LocaleKeys.cities.jeddah),
+    (id: 'Mecca', key: LocaleKeys.cities.mecca),
+    (id: 'Medina', key: LocaleKeys.cities.medina),
+    (id: 'Khobar', key: LocaleKeys.cities.khobar),
+    (id: 'Dammam', key: LocaleKeys.cities.dammam),
+    (id: 'Tabuk', key: LocaleKeys.cities.tabuk),
+    (id: 'Abha', key: LocaleKeys.cities.abha),
+    (id: 'Taif', key: LocaleKeys.cities.taif),
+    (id: 'Qassim', key: LocaleKeys.cities.qassim),
+    (id: 'Yanbu', key: LocaleKeys.cities.yanbu),
+    (id: 'Jubail', key: LocaleKeys.cities.jubail),
+    (id: 'Najran', key: LocaleKeys.cities.najran),
+    (id: 'Jizan', key: LocaleKeys.cities.jizan),
   ];
 
   Future<void> _onContinue() async {
@@ -67,7 +68,7 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('حدث خطأ أثناء حفظ اختيارك. يرجى المحاولة مرة أخرى.'),
+            content: Text(LocaleKeys.errors.saveSelection.tr()),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -90,8 +91,8 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
 
     bool showBackButton = context.pathParameters is Map<String, dynamic>
         ? (context.pathParameters as Map<String, dynamic>)['showBackButton'] == 'true'
-              ? true
-              : false
+            ? true
+            : false
         : true;
 
     return Scaffold(
@@ -149,7 +150,7 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
           Semantics(
             header: true,
             child: Text(
-              'اختر مدينتك',
+              LocaleKeys.onboarding.citySelection.title.tr(),
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontSize: 20,
                 height: 27 / 20,
@@ -157,16 +158,16 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
                 color: colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
-              textDirection: TextDirection.rtl,
+              // textDirection removed to respect locale
             ),
           ),
           SizedBox(height: verticalPadding),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Semantics(
-              label: 'سنعرض لك جميع الخصومات المتوفرة من البنوك والبطاقات من حولك.',
+              label: LocaleKeys.onboarding.citySelection.subtitle.tr(),
               child: Text(
-                'سنعرض لك جميع الخصومات المتوفرة من البنوك والبطاقات من حولك.',
+                LocaleKeys.onboarding.citySelection.subtitle.tr(),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontSize: 20,
                   height: 27 / 20,
@@ -174,7 +175,7 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
                   color: colorScheme.onSurface,
                 ),
                 textAlign: TextAlign.center,
-                textDirection: TextDirection.rtl,
+                // textDirection removed to respect locale
               ),
             ),
           ),
@@ -190,15 +191,16 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
       itemCount: _cities.length,
       itemBuilder: (context, index) {
         final city = _cities[index];
-        final cityName = city['en']!;
+        final cityId = city.id;
+        final cityKey = city.key;
         return Padding(
           padding: const EdgeInsets.only(bottom: 11),
           child: CityListItem(
-            cityName: cityName,
-            isSelected: _selectedCity == cityName,
+            cityName: cityKey.tr(),
+            isSelected: _selectedCity == cityId,
             onTap: () {
               setState(() {
-                _selectedCity = cityName;
+                _selectedCity = cityId;
               });
             },
           ),
@@ -229,7 +231,7 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: screenWidth > 600 ? 600 : double.infinity),
           child: AppButton.primary(
-            text: 'استمر',
+            text: LocaleKeys.buttons.continueBtn.tr(),
             onPressed: isEnabled ? _onContinue : null,
             size: ButtonSize.large,
             isLoading: _isLoading,
@@ -237,7 +239,7 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 16),
             borderRadius: BorderRadius.circular(60),
-            tooltip: _selectedCity == null ? 'يرجى اختيار مدينة للمتابعة' : null,
+            tooltip: _selectedCity == null ? LocaleKeys.validation.selectCity.tr() : null,
           ),
         ),
       ),

@@ -1,8 +1,11 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/subscription/presentation/providers/subscription_providers.dart';
@@ -16,34 +19,61 @@ import 'package:waffir/features/subscription/presentation/widgets/subscription_t
 
 /// Subscription management screen with pixel-perfect Figma design
 /// and Riverpod-managed UI state.
-class SubscriptionManagementScreen extends ConsumerStatefulWidget {
+class SubscriptionManagementScreen extends HookConsumerWidget {
   const SubscriptionManagementScreen({super.key});
 
   @override
-  ConsumerState<SubscriptionManagementScreen> createState() => _SubscriptionManagementScreenState();
-}
-
-class _SubscriptionManagementScreenState extends ConsumerState<SubscriptionManagementScreen> {
-  late final TextEditingController _promoController;
-
-  @override
-  void initState() {
-    super.initState();
-    _promoController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _promoController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final selection = ref.watch(subscriptionSelectionProvider);
     final selectionNotifier = ref.read(subscriptionSelectionProvider.notifier);
     final responsive = ResponsiveHelper(context);
     final theme = Theme.of(context);
+    final promoController = useTextEditingController();
+    final monthlyLabel = LocaleKeys.subscription.management.tabs.monthly.tr();
+    final yearlyLabel = LocaleKeys.subscription.management.tabs.yearlySaveMore.tr();
+    final yearlyLabelInline = yearlyLabel.replaceAll('\n', ' ');
+
+    void handleProceed(SubscriptionSelectionState currentSelection) {
+      ref.read(subscriptionNotifierProvider.notifier);
+
+      // TODO: Implement actual subscription purchase logic
+      // 1. Determine package based on selection
+      // 2. Call subscriptionNotifier.purchasePackage(package)
+      // 3. Handle loading/success/error UI
+
+      final periodLabel =
+          currentSelection.period == SubscriptionPeriod.monthly ? monthlyLabel : yearlyLabelInline;
+      final optionLabel = currentSelection.option == SubscriptionOption.individual
+          ? LocaleKeys.subscription.management.options.individual.name.tr()
+          : LocaleKeys.subscription.management.options.family.name.tr();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            LocaleKeys.subscription.management.selection.tr(
+              namedArgs: {'period': periodLabel, 'option': optionLabel},
+            ),
+          ),
+          backgroundColor: theme.colorScheme.primary,
+        ),
+      );
+    }
+
+    void applyPromoCode(String promoCode) {
+      final trimmedCode = promoCode.trim();
+      if (trimmedCode.isEmpty) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            LocaleKeys.subscription.management.promo.applied.tr(namedArgs: {'code': trimmedCode}),
+          ),
+          backgroundColor: theme.colorScheme.primary,
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -79,52 +109,18 @@ class _SubscriptionManagementScreenState extends ConsumerState<SubscriptionManag
                     ),
                     SizedBox(height: responsive.scale(32)),
                     SubscriptionPromoSection(
-                      promoController: _promoController,
+                      promoController: promoController,
                       onPromoChanged: selectionNotifier.updatePromoCode,
-                      onApplyPromo: () => _applyPromoCode(selection.promoCode),
+                      onApplyPromo: () => applyPromoCode(promoController.text),
                     ),
                   ],
                 ),
               ),
             ),
             WaffirBackButton(onTap: () => context.pop(), size: responsive.scale(44)),
-            SubscriptionProceedButton(onPressed: () => _handleProceed(selection)),
+            SubscriptionProceedButton(onPressed: () => handleProceed(selection)),
           ],
         ),
-      ),
-    );
-  }
-
-  void _handleProceed(SubscriptionSelectionState selection) {
-    ref.read(subscriptionNotifierProvider.notifier);
-
-    // TODO: Implement actual subscription purchase logic
-    // 1. Determine package based on selection
-    // 2. Call subscriptionNotifier.purchasePackage(package)
-    // 3. Handle loading/success/error UI
-
-    final periodLabel = selection.period == SubscriptionPeriod.monthly ? 'Monthly' : 'Yearly';
-    final optionLabel = selection.option == SubscriptionOption.individual ? 'Individual' : 'Family';
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Selected: $periodLabel - $optionLabel'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-    );
-  }
-
-  void _applyPromoCode(String promoCode) {
-    final trimmedCode = promoCode.trim();
-    if (trimmedCode.isEmpty) {
-      return;
-    }
-
-    // TODO: Implement promo code validation
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Promo code \"$trimmedCode\" applied!'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
     );
   }

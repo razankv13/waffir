@@ -71,6 +71,7 @@ class AppConstants {
   // Social Login
   static const String googleClientIdAndroid = 'your-android-client-id';
   static const String googleClientIdIOS = 'your-ios-client-id';
+  static const String googleClientIdWeb = 'your-web-client-id';
   static const String appleClientId = 'your-apple-client-id';
 
   // Deep Links

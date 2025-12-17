@@ -30,18 +30,26 @@ class CategoryFilterChips extends StatelessWidget {
     required this.categoryIcons,
     required this.selectedCategory,
     required this.onCategorySelected,
-  }) : assert(
+    this.categoryLabels,
+  })  : assert(
           categories.length == categoryIcons.length,
           'Categories and icons must have the same length',
+        ),
+        assert(
+          categoryLabels == null || categoryLabels.length == categories.length,
+          'Category labels, categories, and icons must have the same length',
         );
 
   final List<String> categories;
   final List<String> categoryIcons;
+  final List<String>? categoryLabels;
   final String selectedCategory;
   final ValueChanged<String> onCategorySelected;
 
   @override
   Widget build(BuildContext context) {
+    final displayLabels = categoryLabels ?? categories;
+
     return SizedBox(
       height: 64,
       child: ListView.separated(
@@ -51,11 +59,12 @@ class CategoryFilterChips extends StatelessWidget {
         separatorBuilder: (context, index) => const SizedBox(width: 21),
         itemBuilder: (context, index) {
           final category = categories[index];
+          final label = displayLabels[index];
           final iconPath = categoryIcons[index];
           final isSelected = category == selectedCategory;
 
           return _CategoryChip(
-            label: category,
+            label: label,
             iconPath: iconPath,
             isSelected: isSelected,
             onTap: () => onCategorySelected(category),

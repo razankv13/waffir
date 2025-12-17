@@ -27,11 +27,13 @@ class StoresCategoryChips extends StatelessWidget {
     required this.categories,
     required this.selectedCategory,
     required this.onCategorySelected,
+    this.labelBuilder,
   });
 
   final List<String> categories;
   final String selectedCategory;
   final ValueChanged<String> onCategorySelected;
+  final String Function(String category)? labelBuilder;
 
   /// Maps category names to their icon paths
   String _getIconPath(String category) {
@@ -61,9 +63,10 @@ class StoresCategoryChips extends StatelessWidget {
         itemBuilder: (context, index) {
           final category = categories[index];
           final isSelected = category == selectedCategory;
+          final displayLabel = labelBuilder?.call(category) ?? category;
 
           return _CategoryChip(
-            label: category,
+            label: displayLabel,
             iconPath: _getIconPath(category),
             isSelected: isSelected,
             onTap: () => onCategorySelected(category),

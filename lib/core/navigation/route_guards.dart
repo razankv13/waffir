@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/logger.dart';
+import 'package:waffir/features/auth/data/providers/auth_bootstrap_providers.dart';
+import 'package:waffir/features/auth/data/providers/auth_providers.dart';
+import 'package:waffir/features/auth/domain/entities/auth_state.dart';
 
 /// Base class for route guards
 abstract class RouteGuard extends ChangeNotifier {
@@ -17,14 +20,19 @@ abstract class RouteGuard extends ChangeNotifier {
 class AuthGuard extends RouteGuard {
   bool _isAuthenticated = false;
   bool _isInitialized = false;
+  bool _isBootstrapped = false;
 
   bool get isAuthenticated => _isAuthenticated;
   bool get isInitialized => _isInitialized;
+  bool get isBootstrapped => _isBootstrapped;
 
   /// Update authentication status
   void updateAuthStatus(bool isAuthenticated) {
-    if (_isAuthenticated != isAuthenticated) {
-      _isAuthenticated = isAuthenticated;
+    final didChange = _isAuthenticated != isAuthenticated || !_isInitialized;
+    _isAuthenticated = isAuthenticated;
+    _isInitialized = true;
+
+    if (didChange) {
       _isInitialized = true;
       notifyListeners();
       
@@ -35,29 +43,29 @@ class AuthGuard extends RouteGuard {
     }
   }
 
-  /// Initialize authentication status
-  Future<void> initialize() async {
-    // This will be connected to your auth service
-    // For now, we'll simulate checking stored auth state
-    await Future.delayed(const Duration(milliseconds: 500));
-    
-    // TODO: Replace with actual auth check
-    // final hasValidToken = await AuthService.hasValidToken();
-    // updateAuthStatus(hasValidToken);
-    
-    // Temporary: assume not authenticated
-    updateAuthStatus(false);
+  /// Update bootstrapping status (After-login sequence)
+  void updateBootstrapStatus(bool isBootstrapped) {
+    if (_isBootstrapped != isBootstrapped) {
+      _isBootstrapped = isBootstrapped;
+      notifyListeners();
+    }
   }
 
   @override
   String? redirect(BuildContext context, GoRouterState state) {
     final isGoingToAuth = AppRoutes.authRoutes.contains(state.matchedLocation);
     final isGoingToPublic = AppRoutes.publicRoutes.contains(state.matchedLocation);
+    final isGoingToSplash = state.matchedLocation == AppRoutes.splash;
     
     // Don't redirect if not initialized yet
     if (!_isInitialized) {
       AppLogger.debug('AuthGuard not initialized, allowing navigation');
       return null;
+    }
+
+    // If authenticated but bootstrapping is not finished, keep the user on splash.
+    if (_isAuthenticated && !_isBootstrapped && !isGoingToSplash) {
+      return AppRoutes.splash;
     }
 
     // If user is not authenticated and trying to access protected route
@@ -92,6 +100,7 @@ class AuthGuard extends RouteGuard {
   /// Sign out user
   void signOut() {
     updateAuthStatus(false);
+    updateBootstrapStatus(false);
   }
 
   /// Sign in user
@@ -220,15 +229,32 @@ class CombinedRouteGuard extends RouteGuard {
 }
 
 // Global instances
-final _authGuard = AuthGuard();
 final _adminGuard = AdminGuard();
 final _onboardingGuard = OnboardingGuard();
 
 // Providers
 final authGuardProvider = Provider<AuthGuard>((ref) {
-  // Initialize authentication status on first access
-  _authGuard.initialize();
-  return _authGuard;
+  final guard = AuthGuard();
+
+  ref.listen(authStateProvider, (previous, next) {
+    next.when(
+      data: (state) => guard.updateAuthStatus(state.isAuthenticated),
+      loading: () {},
+      error: (_, __) => guard.updateAuthStatus(false),
+    );
+  });
+
+  ref.listen(isBootstrappedProvider, (previous, next) {
+    guard.updateBootstrapStatus(next);
+  });
+
+  // Initialize with current values if already available.
+  final initialAuth = ref.read(isAuthenticatedProvider);
+  guard.updateAuthStatus(initialAuth);
+  guard.updateBootstrapStatus(ref.read(isBootstrappedProvider));
+
+  ref.onDispose(guard.dispose);
+  return guard;
 });
 
 final adminGuardProvider = Provider<AdminGuard>((ref) {

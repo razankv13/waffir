@@ -9,6 +9,7 @@ class AppRoutes {
   static const String forgotPassword = '/forgot-password';
   static const String resetPassword = '/reset-password';
   static const String otpVerification = '/auth/otp-verification';
+  static const String familyInviteLink = '/family-invite';
 
   // Main app routes
   static const String home = '/deals';
@@ -64,7 +65,7 @@ class AppRoutes {
   static const String subscriptionManagement = '/subscription/management';
 
   /// Get all authentication routes
-  static List<String> get authRoutes => [login, signup, forgotPassword, resetPassword];
+  static List<String> get authRoutes => [login, signup, forgotPassword, resetPassword, otpVerification];
 
   /// Get all main app routes (requiring authentication)
   static List<String> get protectedRoutes => [
@@ -104,6 +105,8 @@ class AppRoutes {
     splash,
     onboarding,
     welcome,
+    citySelection,
+    familyInviteLink,
   ];
 }
 
@@ -118,6 +121,7 @@ class AppRouteNames {
   static const String forgotPassword = 'forgot-password';
   static const String resetPassword = 'reset-password';
   static const String otpVerification = 'otp-verification';
+  static const String familyInviteLink = 'family-invite';
 
   // Main app route names
   static const String home = 'home';
