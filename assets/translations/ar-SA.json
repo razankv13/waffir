@@ -102,7 +102,29 @@
     "finish": "إنهاء",
     "accept": "قبول",
     "reject": "رفض",
-    "continueBtn": "استمر"
+    "continueBtn": "استمر",
+    "copy": "نسخ",
+    "readMore": "اقرأ المزيد",
+    "readLess": "اقرأ أقل"
+  },
+  "dealDetails": {
+    "title": "تفاصيل العرض",
+    "actions": {
+      "share": "مشاركة",
+      "shopNow": "تسوق الآن"
+    },
+    "labels": {
+      "promoCode": "رمز الخصم",
+      "terms": "الشروط"
+    },
+    "errors": {
+      "loadFailed": "تعذر تحميل تفاصيل العرض.",
+      "couldNotOpenLink": "تعذر فتح الرابط.",
+      "noLongerAvailable": "هذا العرض لم يعد متاحًا."
+    },
+    "success": {
+      "promoCodeCopied": "تم نسخ رمز الخصم"
+    }
   },
   "settings": {
     "title": "الإعدادات",

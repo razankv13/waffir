@@ -6,10 +6,7 @@ class AlertsMockData {
         // Popular Alerts
         Alert(
           id: '1',
-          title: 'Electronics Sale Alerts',
-          description: 'Get notified when electronics go on sale',
-          type: AlertType.categoryAlert,
-          category: 'Electronics',
+          keyword: 'Electronics',
           isSubscribed: false,
           subscriberCount: 2567,
           createdAt: DateTime.now().subtract(const Duration(days: 30)),
@@ -17,10 +14,7 @@ class AlertsMockData {
 
         Alert(
           id: '2',
-          title: 'Fashion Deals',
-          description: 'Exclusive fashion deals and discounts',
-          type: AlertType.categoryAlert,
-          category: 'Fashion',
+          keyword: 'Fashion Deals',
           isSubscribed: true,
           subscriberCount: 3456,
           createdAt: DateTime.now().subtract(const Duration(days: 25)),
@@ -28,10 +22,7 @@ class AlertsMockData {
 
         Alert(
           id: '3',
-          title: 'Nike Store Updates',
-          description: 'New arrivals and offers from Nike',
-          type: AlertType.storeAlert,
-          category: 'Fashion',
+          keyword: 'Nike',
           isSubscribed: false,
           subscriberCount: 1890,
           createdAt: DateTime.now().subtract(const Duration(days: 20)),
@@ -39,10 +30,7 @@ class AlertsMockData {
 
         Alert(
           id: '4',
-          title: 'Apple Product Launches',
-          description: 'Be the first to know about new Apple products',
-          type: AlertType.newProduct,
-          category: 'Electronics',
+          keyword: 'Apple',
           isSubscribed: true,
           subscriberCount: 5678,
           createdAt: DateTime.now().subtract(const Duration(days: 15)),
@@ -50,10 +38,7 @@ class AlertsMockData {
 
         Alert(
           id: '5',
-          title: 'Beauty & Cosmetics Deals',
-          description: 'Sephora, MAC, and more beauty deals',
-          type: AlertType.categoryAlert,
-          category: 'Beauty',
+          keyword: 'Beauty',
           isSubscribed: false,
           subscriberCount: 1234,
           createdAt: DateTime.now().subtract(const Duration(days: 10)),
@@ -61,9 +46,7 @@ class AlertsMockData {
 
         Alert(
           id: '6',
-          title: 'Price Drop Alerts',
-          description: 'Track price drops on your wishlist items',
-          type: AlertType.priceDrop,
+          keyword: 'Price Drops',
           isSubscribed: true,
           subscriberCount: 4567,
           createdAt: DateTime.now().subtract(const Duration(days: 5)),
@@ -71,9 +54,7 @@ class AlertsMockData {
 
         Alert(
           id: '7',
-          title: 'Weekend Flash Sales',
-          description: 'Special weekend deals and flash sales',
-          type: AlertType.deal,
+          keyword: 'Weekend Sales',
           isSubscribed: false,
           subscriberCount: 3890,
           createdAt: DateTime.now().subtract(const Duration(days: 3)),
@@ -81,10 +62,7 @@ class AlertsMockData {
 
         Alert(
           id: '8',
-          title: 'Zara New Collection',
-          description: 'Latest fashion collections from Zara',
-          type: AlertType.storeAlert,
-          category: 'Fashion',
+          keyword: 'Zara',
           isSubscribed: false,
           subscriberCount: 2345,
           createdAt: DateTime.now().subtract(const Duration(days: 2)),
@@ -92,10 +70,7 @@ class AlertsMockData {
 
         Alert(
           id: '9',
-          title: 'Dining Offers',
-          description: 'Restaurant deals and dining discounts',
-          type: AlertType.categoryAlert,
-          category: 'Dining',
+          keyword: 'Dining',
           isSubscribed: true,
           subscriberCount: 1567,
           createdAt: DateTime.now().subtract(const Duration(days: 1)),
@@ -103,10 +78,7 @@ class AlertsMockData {
 
         Alert(
           id: '10',
-          title: 'Jewelry Sale Alerts',
-          description: 'Pandora, Swarovski, and luxury jewelry deals',
-          type: AlertType.categoryAlert,
-          category: 'Jewelry',
+          keyword: 'Jewelry',
           isSubscribed: false,
           subscriberCount: 890,
           createdAt: DateTime.now(),
@@ -119,15 +91,7 @@ class AlertsMockData {
   /// Get popular alerts (> 100 subscribers)
   static List<Alert> get popularAlerts => alerts.where((alert) => alert.isPopular).toList();
 
-  /// Get alerts by category
-  static List<Alert> getAlertsByCategory(String category) {
-    return alerts.where((alert) => alert.category == category).toList();
-  }
-
-  /// Get alerts by type
-  static List<Alert> getAlertsByType(AlertType type) {
-    return alerts.where((alert) => alert.type == type).toList();
-  }
+  // Note: Categorization by type is removed as the entity is simplified to keywords only.
 }
 
 /// Mock notification data for deal alerts

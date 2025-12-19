@@ -1,69 +1,160 @@
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:waffir/core/constants/locale_keys.dart';
+import 'package:waffir/core/providers/push_notification_providers.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/core/widgets/switches/custom_toggle_switch.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
+import 'package:waffir/features/profile/presentation/controllers/profile_controller.dart';
 
 enum _NotificationType { allOffers, topOffers }
 
-class NotificationSettingsScreen extends ConsumerStatefulWidget {
+/// Notification Settings Screen
+///
+/// Refactored to HookConsumerWidget and integrated with ProfileController
+/// for persisting notification settings to Supabase backend.
+class NotificationSettingsScreen extends HookConsumerWidget {
   const NotificationSettingsScreen({super.key});
 
   @override
-  ConsumerState<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
-}
-
-class _NotificationSettingsScreenState extends ConsumerState<NotificationSettingsScreen> {
-  bool _pushEnabled = false;
-  bool _emailEnabled = true;
-
-  bool _hotDeals = true;
-  bool _storeOffers = true;
-  bool _bankCardsOffers = true;
-
-  _NotificationType _notificationType = _NotificationType.allOffers;
-
-  bool _isSaving = false;
-
-  Future<void> _save() async {
-    if (_isSaving) return;
-
-    setState(() => _isSaving = true);
-
-    // Simulate persistence.
-    await Future<void>.delayed(const Duration(milliseconds: 500));
-
-    if (!mounted) return;
-
-    setState(() => _isSaving = false);
-
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    messenger?.showSnackBar(
-      SnackBar(
-        content: Text(LocaleKeys.success.saved.tr()),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-
-    context.pop();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final responsive = ResponsiveHelper(context);
 
-    final topInset = MediaQuery.paddingOf(context).top;
+    // Watch profile state
+    final profileAsync = ref.watch(profileControllerProvider);
+    final profile = profileAsync.asData?.value.profile;
 
+    // Local state using hooks
+    final pushEnabled = useState(profile?.notifyPushEnabled ?? false);
+    final emailEnabled = useState(profile?.notifyEmailEnabled ?? true);
+
+    // Local checkboxes (not persisted to backend yet - UI only)
+    final hotDeals = useState(true);
+    final storeOffers = useState(true);
+    final bankCardsOffers = useState(true);
+
+    // Notification type based on profile's notifyOfferPreference
+    final notificationType = useState(
+      profile?.notifyOfferPreference == 'popular'
+          ? _NotificationType.topOffers
+          : _NotificationType.allOffers,
+    );
+
+    final isSaving = useState(false);
+
+    // Sync local state when profile data changes
+    useEffect(() {
+      if (profile != null) {
+        pushEnabled.value = profile.notifyPushEnabled;
+        emailEnabled.value = profile.notifyEmailEnabled;
+        notificationType.value = profile.notifyOfferPreference == 'popular'
+            ? _NotificationType.topOffers
+            : _NotificationType.allOffers;
+      }
+      return null;
+    }, [profile?.notifyPushEnabled, profile?.notifyEmailEnabled, profile?.notifyOfferPreference]);
+
+    // Check device push permission on mount
+    useEffect(() {
+      Future<void> checkPermission() async {
+        try {
+          final hasPermission = await ref.read(pushNotificationPermissionProvider.future);
+          pushEnabled.value = hasPermission && (profile?.notifyPushEnabled ?? false);
+        } catch (_) {
+          // If push notification service isn't available, keep current state
+        }
+      }
+
+      checkPermission();
+      return null;
+    }, const []);
+
+    Future<void> save() async {
+      if (isSaving.value) return;
+
+      isSaving.value = true;
+
+      // Convert notification type to preference string
+      final offerPreference =
+          notificationType.value == _NotificationType.topOffers ? 'popular' : 'all';
+
+      // Call profile controller to save notification settings
+      final failure = await ref.read(profileControllerProvider.notifier).updateNotificationSettings(
+            notifyPushEnabled: pushEnabled.value,
+            notifyEmailEnabled: emailEnabled.value,
+            notifyOfferPreference: offerPreference,
+          );
+
+      isSaving.value = false;
+
+      if (!context.mounted) return;
+
+      if (failure == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(LocaleKeys.success.saved.tr()),
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        context.pop();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(failure.message ?? 'Failed to save'),
+            backgroundColor: theme.colorScheme.error,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+
+    Future<void> handlePushToggle(bool value) async {
+      if (value) {
+        try {
+          final service = ref.read(pushNotificationServiceProvider);
+          final settings = await service.requestPermissions();
+          if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+            pushEnabled.value = true;
+            ref.invalidate(pushNotificationPermissionProvider);
+          } else {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Permission denied. Please enable in device settings.'),
+                ),
+              );
+            }
+            pushEnabled.value = false;
+          }
+        } catch (_) {
+          // Push notification service not available
+          pushEnabled.value = false;
+        }
+      } else {
+        // Cannot disable programmatically
+        pushEnabled.value = false;
+      }
+    }
+
+    final topInset = MediaQuery.paddingOf(context).top;
     final contentTop = topInset + responsive.scale(context.responsive.topSafeArea + 8);
+
+    // Show loading if profile is not loaded yet
+    if (profileAsync.isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -92,29 +183,29 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                           children: [
                             _ToggleRow(
                               title: LocaleKeys.profile.notificationSettings.pushNotifications.tr(),
-                              value: _pushEnabled,
+                              value: pushEnabled.value,
                               responsive: responsive,
-                              onChanged: (value) => setState(() => _pushEnabled = value),
+                              onChanged: handlePushToggle,
                             ),
                             SizedBox(height: responsive.scale(12)),
                             _CheckboxGroup(
                               responsive: responsive,
-                              enabled: _pushEnabled,
+                              enabled: pushEnabled.value,
                               items: [
                                 _CheckboxItemData(
                                   label: LocaleKeys.profile.notificationSettings.hotDeals.tr(),
-                                  value: _hotDeals,
-                                  onChanged: (v) => setState(() => _hotDeals = v),
+                                  value: hotDeals.value,
+                                  onChanged: (v) => hotDeals.value = v,
                                 ),
                                 _CheckboxItemData(
                                   label: LocaleKeys.profile.notificationSettings.storeOffers.tr(),
-                                  value: _storeOffers,
-                                  onChanged: (v) => setState(() => _storeOffers = v),
+                                  value: storeOffers.value,
+                                  onChanged: (v) => storeOffers.value = v,
                                 ),
                                 _CheckboxItemData(
                                   label: LocaleKeys.profile.notificationSettings.bankCardsOffers.tr(),
-                                  value: _bankCardsOffers,
-                                  onChanged: (v) => setState(() => _bankCardsOffers = v),
+                                  value: bankCardsOffers.value,
+                                  onChanged: (v) => bankCardsOffers.value = v,
                                 ),
                               ],
                             ),
@@ -123,9 +214,9 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                             SizedBox(height: responsive.scale(12)),
                             _ToggleRow(
                               title: LocaleKeys.profile.notificationSettings.emailNotifications.tr(),
-                              value: _emailEnabled,
+                              value: emailEnabled.value,
                               responsive: responsive,
-                              onChanged: (value) => setState(() => _emailEnabled = value),
+                              onChanged: (value) => emailEnabled.value = value,
                             ),
                           ],
                         ),
@@ -139,10 +230,9 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                             _RadioRow(
                               title: LocaleKeys.profile.notificationSettings.allOffers.tr(),
                               subtitle: LocaleKeys.profile.notificationSettings.allOffersSubtitle.tr(),
-                              isSelected: _notificationType == _NotificationType.allOffers,
+                              isSelected: notificationType.value == _NotificationType.allOffers,
                               responsive: responsive,
-                              onTap: () =>
-                                  setState(() => _notificationType = _NotificationType.allOffers),
+                              onTap: () => notificationType.value = _NotificationType.allOffers,
                             ),
                             SizedBox(height: responsive.scale(12)),
                             _DividerLine(responsive: responsive),
@@ -150,10 +240,9 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                             _RadioRow(
                               title: LocaleKeys.profile.notificationSettings.topOffers.tr(),
                               subtitle: LocaleKeys.profile.notificationSettings.topOffersSubtitle.tr(),
-                              isSelected: _notificationType == _NotificationType.topOffers,
+                              isSelected: notificationType.value == _NotificationType.topOffers,
                               responsive: responsive,
-                              onTap: () =>
-                                  setState(() => _notificationType = _NotificationType.topOffers),
+                              onTap: () => notificationType.value = _NotificationType.topOffers,
                             ),
                           ],
                         ),
@@ -173,9 +262,9 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                     width: responsive.scale(330),
                     child: AppButton.primary(
                       text: LocaleKeys.buttons.save.tr(),
-                      isLoading: _isSaving,
-                      enabled: !_isSaving,
-                      onPressed: _isSaving ? null : _save,
+                      isLoading: isSaving.value,
+                      enabled: !isSaving.value,
+                      onPressed: isSaving.value ? null : save,
                       width: responsive.scale(330),
                       borderRadius: BorderRadius.circular(responsive.scale(30)),
                     ),
@@ -324,7 +413,7 @@ class _CheckboxGroup extends StatelessWidget {
               responsive: responsive,
               textStyle: theme.textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w400,
-                fontSize: responsive.scaleFontSize(12, minSize: 10),
+                fontSize: responsive.scaleFontSize(12),
                 height: 1.15,
                 color: _kSubtleTextColor,
               ),
@@ -443,7 +532,6 @@ class _RadioRow extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: responsive.scale(8)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: Column(
@@ -463,7 +551,7 @@ class _RadioRow extends StatelessWidget {
                     subtitle,
                     style: theme.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w400,
-                      fontSize: responsive.scaleFontSize(11.9, minSize: 10),
+                      fontSize: responsive.scaleFontSize(11.9),
                       height: 1.15,
                       color: _kTextColor,
                     ),

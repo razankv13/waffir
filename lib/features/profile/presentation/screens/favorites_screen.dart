@@ -2,15 +2,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/cards/horizontal_store_card.dart';
 import 'package:waffir/core/widgets/products/product_card.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
-import 'package:waffir/features/products/data/providers/product_providers.dart';
-import 'package:waffir/features/products/domain/entities/product.dart';
-import 'package:waffir/features/products/domain/entities/store.dart';
-import 'package:waffir/core/constants/locale_keys.dart';
+import 'package:waffir/features/favorites/presentation/controllers/favorites_controller.dart';
 
 /// Favorites Screen
 ///
@@ -22,34 +20,13 @@ class FavoritesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-
     final responsive = ResponsiveHelper(context);
-
     final bottomInset = MediaQuery.paddingOf(context).bottom;
- 
     final horizontalPadding = responsive.scale(16);
     final bottomPadding = responsive.scale(120) + bottomInset;
 
-    final favoritesProductIds = ref.watch(favoritesProvider);
-    final favoritesStoreIds = ref.watch(followedStoresNotifierProvider);
-
-    final productsAsync = ref.watch(allProductsProvider);
-    final storesAsync = ref.watch(allStoresProvider);
-
-    final isLoading = productsAsync.isLoading || storesAsync.isLoading;
-
-    final productsError = productsAsync.hasError ? productsAsync.error : null;
-    final storesError = storesAsync.hasError ? storesAsync.error : null;
-
-    final favoriteProducts = productsAsync.maybeWhen(
-      data: (products) => _filterProducts(products, favoritesProductIds),
-      orElse: () => <Product>[],
-    );
-
-    final favoriteStores = storesAsync.maybeWhen(
-      data: (stores) => _filterStores(stores, favoritesStoreIds),
-      orElse: () => <Store>[],
-    );
+    // Watch the new favorites controller
+    final favoritesAsync = ref.watch(favoritesControllerProvider);
 
     return Scaffold(
       body: Stack(
@@ -82,46 +59,49 @@ class FavoritesScreen extends ConsumerWidget {
                   SizedBox(height: responsive.scale(32)),
 
                   Expanded(
-                    child: Builder(
-                      builder: (_) {
-                        if (isLoading) {
-                          return Center(
-                            child: SizedBox(
-                              width: responsive.scale(28),
-                              height: responsive.scale(28),
-                              child: const CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          );
-                        }
-
-                        if (productsError != null || storesError != null) {
+                    child: favoritesAsync.when(
+                      data: (favoritesState) {
+                        // Show error state if backend call failed
+                        if (favoritesState.hasError) {
                           return _ErrorState(
                             message: LocaleKeys.profile.favorites.loadError.tr(),
-                            details: '${productsError ?? ''}${storesError ?? ''}',
+                            details: favoritesState.failure?.message ?? '',
                           );
                         }
 
+                        // Show empty state if no favorites
+                        if (favoritesState.hasNoFavorites) {
+                          return _EmptyState(
+                            title: LocaleKeys.profile.favorites.emptyTitle.tr(),
+                            subtitle: LocaleKeys.profile.favorites.emptySubtitle.tr(),
+                          );
+                        }
+
+                        // Build list of favorite items
                         final items = <Widget>[];
 
-                        for (final product in favoriteProducts) {
-                          final isLiked = favoritesProductIds.contains(product.id);
+                        // Add product cards (deals)
+                        for (final deal in favoritesState.favoritedProducts) {
                           items.add(
                             ProductCard(
-                              productId: product.id,
-                              imageUrl: product.primaryImageUrl,
-                              title: product.title,
-                              salePrice: product.price.round().toString(),
-                              originalPrice: product.originalPrice?.round().toString(),
-                              discountPercentage: product.discountPercentage,
-                              storeName: product.brand,
-                              isLiked: isLiked,
-                              onLike: () => ref.read(favoritesProvider.notifier).toggle(product.id),
+                              productId: deal.id,
+                              imageUrl: deal.imageUrl,
+                              title: deal.title,
+                              salePrice: deal.price.round().toString(),
+                              originalPrice: deal.originalPrice?.round().toString(),
+                              discountPercentage: deal.discountPercentage?.round(),
+                              storeName: deal.brand,
+                              isLiked: deal.isLiked,
+                              onLike: () async {
+                                final controller = ref.read(favoritesControllerProvider.notifier);
+                                await controller.toggleProductLike(dealId: deal.id);
+                              },
                             ),
                           );
                         }
 
-                        for (final store in favoriteStores) {
-                          final isFavorite = favoritesStoreIds.contains(store.id);
+                        // Add store cards
+                        for (final store in favoritesState.favoritedStores) {
                           items.add(
                             HorizontalStoreCard(
                               storeId: store.id,
@@ -129,29 +109,33 @@ class FavoritesScreen extends ConsumerWidget {
                               storeName: store.name,
                               discountText: store.discountText,
                               distance: store.distance ?? '-,- kilometers',
-                              isFavorite: isFavorite,
-                              onFavoriteToggle: () => ref
-                                  .read(followedStoresNotifierProvider.notifier)
-                                  .toggle(store.id),
+                              isFavorite: true, // Always true since it's in favorites list
+                              onFavoriteToggle: () async {
+                                final controller = ref.read(favoritesControllerProvider.notifier);
+                                await controller.toggleStoreFavorite(storeId: store.id);
+                              },
                             ),
-                          );
-                        }
-
-                        if (items.isEmpty) {
-                          return _EmptyState(
-                            title: LocaleKeys.profile.favorites.emptyTitle.tr(),
-                            subtitle: LocaleKeys.profile.favorites.emptySubtitle.tr(),
                           );
                         }
 
                         return ListView.separated(
                           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                           itemCount: items.length,
-                          separatorBuilder: (context, index) =>
-                              SizedBox(height: responsive.scale(16)),
+                          separatorBuilder: (context, index) => SizedBox(height: responsive.scale(16)),
                           itemBuilder: (context, index) => items[index],
                         );
                       },
+                      loading: () => Center(
+                        child: SizedBox(
+                          width: responsive.scale(28),
+                          height: responsive.scale(28),
+                          child: const CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                      error: (error, stack) => _ErrorState(
+                        message: LocaleKeys.profile.favorites.loadError.tr(),
+                        details: error.toString(),
+                      ),
                     ),
                   ),
                 ],
@@ -161,14 +145,6 @@ class FavoritesScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  List<Product> _filterProducts(List<Product> products, Set<String> favoriteIds) {
-    return products.where((p) => favoriteIds.contains(p.id)).toList(growable: false);
-  }
-
-  List<Store> _filterStores(List<Store> stores, Set<String> favoriteIds) {
-    return stores.where((s) => favoriteIds.contains(s.id)).toList(growable: false);
   }
 }
 

@@ -22,6 +22,7 @@ class StorePurchaseBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsive = context.responsive;
     final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Container(
       width: double.infinity,
@@ -96,12 +97,12 @@ class StorePurchaseBottomSheet extends StatelessWidget {
                         Text(
                           'We’d love to know if you bought something from the store so we can track your savings.',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontFamily: 'Parkinsans',
+                          style: textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w400,
-                            fontSize: 14,
+                            fontSize: responsive.scaleFontSize(14, minSize: 12),
                             height: 1.4,
-                          ).copyWith(color: colorScheme.onSurface),
+                            color: colorScheme.onSurface,
+                          ),
                         ),
                       ],
                     ),

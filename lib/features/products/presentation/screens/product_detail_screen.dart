@@ -17,7 +17,7 @@ const List<ProductPageComment> _mockProductComments = [
     author: 'Emma',
     subtitle: 'May 2023',
     body:
-        'We were only sad not to stay longer. We hope to be back to explore Nantes some more and would love to stay at Golwen’s place again, if they’ll have us! :)',
+        "We were only sad not to stay longer. We hope to be back to explore Nantes some more and would love to stay at Golwen's place again, if they'll have us! :)",
     timeText: '3 hours ago',
     helpfulCount: 21,
     avatarAssetPath: 'assets/images/product_page/avatar.png',

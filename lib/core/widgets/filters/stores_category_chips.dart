@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:waffir/core/constants/app_colors.dart';
+import 'package:waffir/core/themes/extensions/filter_colors_extension.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 
-/// Stores category filter chips with exact Figma specifications
+/// Stores category filter chips with horizontal scroll
 ///
-/// Specifications from Figma:
-/// - Container Height: 64px
-/// - Chip Width: 100px (fixed)
-/// - Selected: Bottom border 2px #00C531, green text, weight 700
-/// - Unselected: No border, gray text (#A3A3A3), weight 500
-/// - Icons: 24x24px per category
-/// - Layout: Vertical (Icon + 4px gap + Text)
-/// - Gap between chips: 0px (seamless scroll)
+/// Matches Figma design (node 35:2553) with:
+/// - Horizontal scrollable list for 10 categories
+/// - Vertical icon+text layout (column)
+/// - Bottom border indicator for selected state
+/// - 100px width, 64px height per chip
+/// - 24x24px icons with 4px gap
+/// - 14px font (700 selected, 500 unselected)
 ///
 /// Example usage:
 /// ```dart
@@ -54,11 +54,13 @@ class StoresCategoryChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
+
     return SizedBox(
-      height: 66,
+      height: responsive.scaleWithMin(71, min: 58),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
         itemCount: categories.length,
         itemBuilder: (context, index) {
           final category = categories[index];
@@ -92,53 +94,68 @@ class _CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final filterColors = theme.extension<FilterColors>()!;
+    final responsive = context.responsive;
+
+    final chipWidth = responsive.scaleWithMin(100, min: 88);
+    final verticalPadding = responsive.scale(8);
+    final horizontalPadding = responsive.scale(9.127);
+    final iconSize = responsive.scaleWithMin(24, min: 20);
+    final gap = responsive.scale(4);
+    final fontSize = responsive.scaleFontSize(14, minSize: 11);
+    final borderWidth = responsive.scaleWithMin(2, min: 2);
+
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 100, // Fixed width per Figma
-        padding: const EdgeInsets.symmetric(
-          horizontal: 9.127, // Exact from Figma
-          vertical: 8,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          border: isSelected
-              ? const Border(
-                  bottom: BorderSide(
-                    color: AppColors.waffirGreen03, // #00C531 bright green
-                    width: 2,
-                  ),
-                )
-              : null,
-        ),
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        width: chipWidth,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Icon (24x24px)
-            SvgPicture.asset(
-              iconPath,
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                isSelected ? AppColors.waffirGreen03 : AppColors.gray03,
-                BlendMode.srcIn,
+            // Content area with consistent padding for both states
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: verticalPadding,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: iconSize,
+                    height: iconSize,
+                    child: SvgPicture.asset(
+                      iconPath,
+                      width: iconSize,
+                      height: iconSize,
+                      colorFilter: ColorFilter.mode(
+                        isSelected ? filterColors.selected : filterColors.unselected,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: gap),
+                  Text(
+                    label,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      fontSize: fontSize,
+                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                      color: isSelected ? filterColors.selected : filterColors.unselected,
+                      height: 1.4,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
-
-            const SizedBox(height: 4), // 4px gap per Figma
-            // Label
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Parkinsans',
-                fontSize: 14,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? AppColors.waffirGreen03 : AppColors.gray03,
-                height: 1.4, // Line height from Figma
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            // Underline indicator - always present, transparent when unselected
+            Container(
+              height: borderWidth,
+              color: isSelected ? filterColors.selectedBorder : Colors.transparent,
             ),
           ],
         ),

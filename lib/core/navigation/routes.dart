@@ -29,10 +29,12 @@ class AppRoutes {
   static const String stores = '/stores';
   static const String creditCards = '/credit-cards';
   static const String addCreditCard = '/credit-cards/add';
+  static const String banks = '/banks';
 
   // Product routes
   static const String productDetail = '/product/:id';
   static const String storeDetail = '/store/:id';
+  static const String dealDetail = '/deal/:type/:id';
 
   // Nested routes
   static const String profileEdit = '/profile/edit';
@@ -43,7 +45,8 @@ class AppRoutes {
   static const String profileLanguage = '/profile/language';
   static const String profileHelpCenter = '/profile/help-center';
   static const String profileDeleteAccount = '/profile/delete-account';
-  static const String profileSelectedCreditCards = '/profile/selected-credit-cards';
+  static const String profileSelectedCreditCards =
+      '/profile/selected-credit-cards';
   static const String themeSettings = '/settings/theme';
   static const String privacySettings = '/settings/privacy';
   static const String accountSettings = '/settings/account';
@@ -65,7 +68,13 @@ class AppRoutes {
   static const String subscriptionManagement = '/subscription/management';
 
   /// Get all authentication routes
-  static List<String> get authRoutes => [login, signup, forgotPassword, resetPassword, otpVerification];
+  static List<String> get authRoutes => [
+    login,
+    signup,
+    forgotPassword,
+    resetPassword,
+    otpVerification,
+  ];
 
   /// Get all main app routes (requiring authentication)
   static List<String> get protectedRoutes => [
@@ -92,8 +101,10 @@ class AppRoutes {
     stores,
     creditCards,
     addCreditCard,
+    banks,
     productDetail,
     storeDetail,
+    dealDetail,
   ];
 
   /// Get all public routes (no authentication required)
@@ -141,10 +152,12 @@ class AppRouteNames {
   static const String stores = 'stores';
   static const String creditCards = 'credit-cards';
   static const String addCreditCard = 'add-credit-card';
+  static const String banks = 'banks';
 
   // Product route names
   static const String productDetail = 'product-detail';
   static const String storeDetail = 'store-detail';
+  static const String dealDetail = 'deal-detail';
 
   // Nested route names
   static const String profileEdit = 'profile-edit';
@@ -156,7 +169,8 @@ class AppRouteNames {
   static const String profileLanguage = 'profile-language';
   static const String profileHelpCenter = 'profile-help-center';
   static const String profileDeleteAccount = 'profile-delete-account';
-  static const String profileSelectedCreditCards = 'profile-selected-credit-cards';
+  static const String profileSelectedCreditCards =
+      'profile-selected-credit-cards';
   static const String themeSettings = 'theme-settings';
   static const String privacySettings = 'privacy-settings';
   static const String accountSettings = 'account-settings';

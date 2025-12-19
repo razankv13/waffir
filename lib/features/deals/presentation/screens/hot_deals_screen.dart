@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/constants/locale_keys.dart';
+import 'package:waffir/core/errors/failures.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/bottom_login_overlay.dart';
@@ -12,47 +16,27 @@ import 'package:waffir/core/widgets/search/category_filter_chips.dart';
 import 'package:waffir/core/widgets/search/search_bar_widget.dart';
 import 'package:waffir/features/deals/presentation/controllers/hot_deals_controller.dart';
 
-/// Hot Deals Screen - displays deals with category filters and search
-///
-/// The screen now consumes data from HotDealsController, which can be backed by
-/// mock data today and Supabase later without UI changes.
-class HotDealsScreen extends ConsumerStatefulWidget {
+/// Hot Deals Screen - displays the feed with category filters and search.
+class HotDealsScreen extends HookConsumerWidget {
   const HotDealsScreen({super.key});
 
-  @override
-  ConsumerState<HotDealsScreen> createState() => _HotDealsScreenState();
-}
-
-class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
-  /// Available categories for filtering (matches Figma design node 34:6101)
   static const List<String> _categories = ['For You', 'Front Page', 'Popular'];
 
-  /// Category icons (matches Figma design)
   static const List<String> _categoryIcons = [
     'assets/icons/categories/for_you_icon.svg',
     'assets/icons/categories/front_page_icon.svg',
     'assets/icons/categories/popular_icon.svg',
   ];
 
-  void _handleSearch(String query) {
-    ref.read(hotDealsControllerProvider.notifier).updateSearch(query);
-  }
-
-  void _handleFilterTap() {
-    // TODO: Implement filter dialog
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(LocaleKeys.deals.filterComingSoon.tr())),
-    );
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final hotDealsState = ref.watch(hotDealsControllerProvider);
     final hotDealsController = ref.read(hotDealsControllerProvider.notifier);
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final responsive = context.responsive;
+
     final selectedCategory = hotDealsState.value?.selectedCategory ?? defaultCategory;
     final categoryLabels = [
       LocaleKeys.deals.categories.forYou.tr(),
@@ -60,39 +44,52 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
       LocaleKeys.deals.categories.popular.tr(),
     ];
 
+    final scrollController = useScrollController();
+    useEffect(() {
+      void listener() {
+        final position = scrollController.position;
+        if (!position.hasPixels || !position.hasContentDimensions) return;
+        if (position.extentAfter > responsive.scale(320)) return;
+        hotDealsController.loadMore();
+      }
+
+      scrollController.addListener(listener);
+      return () => scrollController.removeListener(listener);
+    }, [scrollController, responsive]);
+
+    void handleSearch(String query) {
+      hotDealsController.updateSearch(query);
+    }
+
+    void handleFilterTap() {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(LocaleKeys.deals.filterComingSoon.tr())));
+    }
+
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
-          // Main scrollable content
           SafeArea(
             bottom: false,
             child: NestedScrollView(
               floatHeaderSlivers: true,
               headerSliverBuilder: (context, _) {
-                // Keep responsive scaling for the header area (repo rule).
                 final headerHorizontalPadding = responsive.scale(16);
                 final headerVerticalPadding = responsive.scale(12);
                 final logoHeight = responsive.scale(56);
-                final notificationSize = responsive.scale(44);
-                final notificationIconSize = responsive.scale(22);
-                final notificationSplashRadius = responsive.scale(24);
 
-                // SearchBarWidget is 68px height (per Figma / widget update).
                 const searchBarHeight = 68.0;
                 final searchGap = responsive.scale(12);
-
-                final rowHeight = logoHeight > notificationSize ? logoHeight : notificationSize;
                 final headerSearchHeight =
-                    (headerVerticalPadding * 2) + rowHeight + searchGap + searchBarHeight;
+                    (headerVerticalPadding * 2) + logoHeight + searchGap + searchBarHeight;
 
-                // CategoryFilterChips is 64px height.
-                const chipsHeight = 64.0;
+                const chipsHeight = 71.0;
                 final chipsTopSpacing = responsive.scale(6);
                 final chipsHeaderHeight = chipsTopSpacing + chipsHeight;
 
                 return [
-                  // Header + Search (hides on scroll up, snaps back on scroll down)
                   SliverAppBar(
                     floating: true,
                     snap: true,
@@ -105,62 +102,32 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                     flexibleSpace: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Header with Waffir logo and notification icon
                         Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: headerHorizontalPadding,
                             vertical: headerVerticalPadding,
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Image.asset(
-                                'assets/images/splash_logo.png',
-                                height: logoHeight,
-                                fit: BoxFit.contain,
-                              ),
-
-                              // Notification Icon with soft background
-                              Container(
-                                width: notificationSize,
-                                height: notificationSize,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.notifications,
-                                    size: notificationIconSize,
-                                    color: colorScheme.primary,
-                                  ),
-                                  onPressed: () {
-                                    context.pushNamed(AppRouteNames.notifications);
-                                  },
-                                  padding: EdgeInsets.zero,
-                                  splashRadius: notificationSplashRadius,
-                                ),
-                              ),
-                            ],
+                          child: SizedBox(
+                            height: logoHeight,
+                            child: Image.asset(
+                              'assets/images/splash_logo.png',
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                            ),
                           ),
                         ),
-
-                        // Search Bar
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: headerHorizontalPadding),
                           child: SearchBarWidget(
-                            hintText: LocaleKeys.deals.searchHint.tr(),
                             showFilterButton: true,
-                            onChanged: _handleSearch,
-                            onSearch: _handleSearch,
-                            onFilterTap: _handleFilterTap,
+                            onChanged: handleSearch,
+                            onSearch: handleSearch,
+                            onFilterTap: handleFilterTap,
                           ),
                         ),
                       ],
                     ),
                   ),
-
-                  // Category Filters (always visible + sticky)
                   SliverPersistentHeader(
                     pinned: true,
                     delegate: _StickyCategoryChipsHeaderDelegate(
@@ -182,7 +149,7 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                 onRefresh: hotDealsController.refresh,
                 child: hotDealsState.when(
                   loading: () => const _HotDealsLoadingState(),
-                  error: (error, stackTrace) => _HotDealsErrorState(
+                  error: (_, __) => _HotDealsErrorState(
                     message: LocaleKeys.deals.loadError.tr(),
                     onRetry: hotDealsController.refresh,
                   ),
@@ -194,37 +161,53 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                       );
                     }
 
-                    final deals = data.deals;
-
-                    if (deals.isEmpty) {
+                    if (data.deals.isEmpty) {
                       return ListView(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.only(
-                          top: 24,
-                          left: 16,
-                          right: 16,
-                          bottom: 280, // Extra space for gradient overlay + bottom nav
+                        padding: responsive.scalePadding(
+                          const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
                         ),
                         children: [_buildEmptyState(context, data.searchQuery)],
                       );
                     }
 
                     return ListView.builder(
+                      controller: scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.only(
-                        top: 24,
-                        left: 16,
-                        right: 16,
-                        bottom: 280, // Extra space for gradient overlay + bottom nav
+                      padding: responsive.scalePadding(
+                        const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
                       ),
-                      itemCount: deals.length,
+                      itemCount: data.deals.length + 1,
                       itemBuilder: (context, index) {
-                        final deal = deals[index];
+                        if (index == data.deals.length) {
+                          if (data.isLoadingMore) {
+                            return Padding(
+                              padding: responsive.scalePadding(
+                                const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              child: const Center(child: CircularProgressIndicator()),
+                            );
+                          }
+                          if (data.loadMoreFailure != null) {
+                            return Padding(
+                              padding: responsive.scalePadding(
+                                const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              child: Center(
+                                child: TextButton(
+                                  onPressed: hotDealsController.loadMore,
+                                  child: Text(LocaleKeys.buttons.retry.tr()),
+                                ),
+                              ),
+                            );
+                          }
+                          return SizedBox(height: responsive.scale(16));
+                        }
 
-                        // Determine badge type based on deal properties
+                        final deal = data.deals[index];
+
                         BadgeType? badgeType;
                         String? badgeText;
-
                         if (deal.isHot) {
                           badgeType = BadgeType.sale;
                           badgeText = LocaleKeys.deals.badges.hot.tr();
@@ -236,15 +219,8 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                           badgeText = LocaleKeys.deals.badges.featured.tr();
                         }
 
-                        // Convert prices to strings (format to whole numbers)
                         final salePrice = deal.price.toStringAsFixed(0);
                         final originalPriceStr = deal.originalPrice?.toStringAsFixed(0);
-
-                        // Generate like and comment counts based on review count or random
-                        final likeCount = deal.reviewCount ?? (index * 15 + 23);
-                        final commentCount = deal.reviewCount != null
-                            ? (deal.reviewCount! * 0.3).round()
-                            : (index * 8 + 12);
 
                         return ProductCard(
                           productId: deal.id,
@@ -258,16 +234,34 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
                           storeName: deal.brand ?? LocaleKeys.deals.storeFallback.tr(),
                           badge: badgeText,
                           badgeType: badgeType,
-                          likeCount: likeCount,
-                          commentCount: commentCount,
-                          onLike: () {
-                            // TODO: Implement like functionality
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(LocaleKeys.deals.actions.likeComingSoon.tr())),
+                          likeCount: deal.likesCount,
+                          commentCount: (deal.viewsCount * 0.3).round(),
+                          isLiked: deal.isLiked,
+                          onTap: () async {
+                            await hotDealsController.trackView(deal);
+                            if (!context.mounted) return;
+                            unawaited(
+                              context.pushNamed(
+                                AppRouteNames.productDetail,
+                                pathParameters: {AppRouteParams.id: deal.id},
+                              ),
                             );
                           },
+                          onLike: () {
+                            unawaited(() async {
+                              final failure = await hotDealsController.toggleLike(deal);
+                              if (failure == null) return;
+                              if (failure is UnauthorizedFailure) {
+                                if (context.mounted) unawaited(context.push(AppRoutes.login));
+                                return;
+                              }
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(SnackBar(content: Text(failure.message)));
+                            }());
+                          },
                           onComment: () {
-                            // TODO: Implement comment functionality
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(LocaleKeys.deals.actions.commentComingSoon.tr()),
@@ -282,8 +276,6 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
               ),
             ),
           ),
-
-          // Bottom Gradient CTA Overlay
           const BottomLoginOverlay(),
         ],
       ),
@@ -293,6 +285,7 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
   Widget _buildEmptyState(BuildContext context, String searchQuery) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final responsive = context.responsive;
 
     return Center(
       child: Column(
@@ -300,10 +293,10 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
         children: [
           Icon(
             Icons.shopping_bag_outlined,
-            size: 80,
+            size: responsive.scale(80),
             color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: responsive.scale(16)),
           Text(
             LocaleKeys.deals.empty.title.tr(),
             style: theme.textTheme.titleLarge?.copyWith(
@@ -311,7 +304,7 @@ class _HotDealsScreenState extends ConsumerState<HotDealsScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: responsive.scale(8)),
           Text(
             searchQuery.isEmpty
                 ? LocaleKeys.deals.empty.categorySuggestion.tr()
@@ -330,9 +323,12 @@ class _HotDealsLoadingState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
+      padding: responsive.scalePadding(
+        const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
+      ),
       children: const [
         Center(
           child: Padding(padding: EdgeInsets.only(top: 48), child: CircularProgressIndicator()),
@@ -352,20 +348,23 @@ class _HotDealsErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final responsive = context.responsive;
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
+      padding: responsive.scalePadding(
+        const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
+      ),
       children: [
-        const SizedBox(height: 48),
-        Icon(Icons.error_outline, size: 56, color: colorScheme.error),
-        const SizedBox(height: 12),
+        SizedBox(height: responsive.scale(48)),
+        Icon(Icons.error_outline, size: responsive.scale(56), color: colorScheme.error),
+        SizedBox(height: responsive.scale(12)),
         Text(
           message,
           style: theme.textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: responsive.scale(12)),
         Center(
           child: TextButton(onPressed: onRetry, child: Text(LocaleKeys.buttons.retry.tr())),
         ),

@@ -65,10 +65,7 @@ class AccountDetailsScreen extends HookConsumerWidget {
           firstName: firstName,
           lastName: lastName,
           gender: selectedGender.value?.name,
-          preferences: <String, dynamic>{
-            ...user.preferences,
-            'acceptedTerms': acceptedTerms.value,
-          },
+          preferences: <String, dynamic>{...user.preferences, 'acceptedTerms': acceptedTerms.value},
         );
 
         final authController = ref.read(authControllerProvider.notifier);
@@ -215,7 +212,9 @@ class AccountDetailsScreen extends HookConsumerWidget {
                                 SizedBox(height: termsButtonGap),
                                 AppButton.primary(
                                   text: tr(LocaleKeys.buttons.continueBtn),
-                                  onPressed: isFormValidValue && !isSubmitting.value ? confirm : null,
+                                  onPressed: isFormValidValue && !isSubmitting.value
+                                      ? confirm
+                                      : null,
                                   isLoading: isSubmitting.value,
                                   enabled: isFormValidValue && !isSubmitting.value,
                                   width: buttonWidth,

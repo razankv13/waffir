@@ -146,7 +146,9 @@ class EnvironmentConfig {
   static bool getBool(String key, {bool defaultValue = false}) {
     if (!dotenv.isInitialized) return defaultValue;
     final value = dotenv.env[key]?.toLowerCase();
-    return value == 'true' || value == '1' || defaultValue;
+
+    if (value == null) return defaultValue;
+    return value == 'true' || value == '1';
   }
 
   /// Get environment variable as integer
@@ -186,13 +188,22 @@ class EnvironmentConfig {
   ///
   /// When `true`, the app uses mocked auth flows (OTP/OAuth/profile) without calling backend endpoints.
   /// When `false`, repositories should call the real backend (Supabase).
-  static bool get useMockAuth => getBool('USE_MOCK_AUTH', defaultValue: true);
+  static bool get useMockAuth => getBool('USE_MOCK_AUTH');
 
   /// Feature flag to use mock Deals backend (until Supabase is deployed).
-  static bool get useMockDeals => getBool('USE_MOCK_DEALS', defaultValue: true);
+  static bool get useMockDeals => getBool('USE_MOCK_DEALS');
 
   /// Feature flag to use mock Stores backend (until Supabase is deployed).
-  static bool get useMockStores => getBool('USE_MOCK_STORES', defaultValue: true);
+  static bool get useMockStores => getBool('USE_MOCK_STORES');
+
+  /// Feature flag to use mock Favorites backend (until Supabase is deployed).
+  static bool get useMockFavorites => getBool('USE_MOCK_FAVORITES');
+
+  /// Feature flag to use mock Alerts backend (until Supabase is deployed).
+  static bool get useMockAlerts => getBool('USE_MOCK_ALERTS');
+
+  /// Feature flag to use mock Profile backend (until Supabase is deployed).
+  static bool get useMockProfile => getBool('USE_MOCK_PROFILE');
 
   /// Firebase Configuration
   static String get firebaseOptionsName => getString('FIREBASE_OPTIONS_NAME', defaultValue: 'dev')!;

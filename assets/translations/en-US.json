@@ -102,7 +102,29 @@
     "finish": "Finish",
     "accept": "Accept",
     "reject": "Reject",
-    "continueBtn": "Continue"
+    "continueBtn": "Continue",
+    "copy": "Copy",
+    "readMore": "Read more",
+    "readLess": "Read less"
+  },
+  "dealDetails": {
+    "title": "Deal Details",
+    "actions": {
+      "share": "Share",
+      "shopNow": "Shop now"
+    },
+    "labels": {
+      "promoCode": "Promo code",
+      "terms": "Terms"
+    },
+    "errors": {
+      "loadFailed": "Failed to load deal details.",
+      "couldNotOpenLink": "Could not open link.",
+      "noLongerAvailable": "This deal is no longer available."
+    },
+    "success": {
+      "promoCodeCopied": "Promo code copied"
+    }
   },
   "settings": {
     "title": "Settings",

@@ -3,8 +3,8 @@ import 'package:waffir/features/stores/data/models/store_model.dart';
 
 final storeDetailUiControllerProvider = StateNotifierProvider.autoDispose
     .family<StoreDetailUiController, StoreDetailUiState, String>(
-  (ref, _) => StoreDetailUiController(),
-);
+      (ref, _) => StoreDetailUiController(),
+    );
 
 class StoreDetailUiController extends StateNotifier<StoreDetailUiState> {
   StoreDetailUiController() : super(StoreDetailUiState.initial());
@@ -22,6 +22,10 @@ class StoreDetailUiController extends StateNotifier<StoreDetailUiState> {
 
   void toggleFavorite() {
     state = state.copyWith(isFavorite: !state.isFavorite);
+  }
+
+  void setFavorite(bool value) {
+    state = state.copyWith(isFavorite: value);
   }
 
   void toggleFollowing() {

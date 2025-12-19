@@ -1,51 +1,26 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'alert.freezed.dart';
+part 'alert.g.dart';
 
 /// Domain entity for a deal alert
+///
+/// Represents a keyword-based alert that notifies users when deals
+/// matching their interests are available.
 @freezed
 abstract class Alert with _$Alert {
   const factory Alert({
     required String id,
-    required String title,
-    required String description,
-    required AlertType type,
-    String? iconUrl,
-    String? category,
-    bool? isSubscribed,
+    required String keyword,
+    @Default(false) bool isSubscribed,
     int? subscriberCount,
     DateTime? createdAt,
   }) = _Alert;
 
   const Alert._();
 
-  /// Check if alert is popular
+  factory Alert.fromJson(Map<String, dynamic> json) => _$AlertFromJson(json);
+
+  /// Check if alert is popular (>100 subscribers)
   bool get isPopular => subscriberCount != null && subscriberCount! > 100;
-}
-
-/// Alert type enum
-enum AlertType {
-  deal,
-  priceDrop,
-  newProduct,
-  categoryAlert,
-  storeAlert,
-  custom;
-
-  String get displayName {
-    switch (this) {
-      case AlertType.deal:
-        return 'Deal Alert';
-      case AlertType.priceDrop:
-        return 'Price Drop';
-      case AlertType.newProduct:
-        return 'New Product';
-      case AlertType.categoryAlert:
-        return 'Category Alert';
-      case AlertType.storeAlert:
-        return 'Store Alert';
-      case AlertType.custom:
-        return 'Custom Alert';
-    }
-  }
 }

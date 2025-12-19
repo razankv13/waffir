@@ -11,5 +11,18 @@ abstract class DealsRepository {
   AsyncResult<List<Deal>> fetchHotDeals({
     String? category,
     String? searchQuery,
+    String languageCode,
+    int limit,
+    int offset,
+  });
+
+  AsyncResult<void> trackDealView({
+    required String dealId,
+    String dealType,
+  });
+
+  AsyncResult<bool> toggleDealLike({
+    required String dealId,
+    String dealType,
   });
 }

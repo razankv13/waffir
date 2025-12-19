@@ -42,14 +42,14 @@ class FirebaseService {
       AppLogger.info('🔥 Initializing Firebase...');
 
       // Initialize Firebase Core
-      // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
       // Initialize services based on environment
-      //   await _initializeAnalytics();
-      //   await _initializePerformance();
-      //   await _initializeCrashlytics();
-      //   await _initializeMessaging();
-      //   await _initializeRemoteConfig();
+        await _initializeAnalytics();
+        await _initializePerformance();
+        await _initializeCrashlytics();
+        await _initializeMessaging();
+        await _initializeRemoteConfig();
 
       _isInitialized = true;
       AppLogger.info('✅ Firebase initialization completed');

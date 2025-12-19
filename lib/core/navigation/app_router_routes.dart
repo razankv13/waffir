@@ -15,6 +15,8 @@ import 'package:waffir/features/auth/presentation/screens/signup_screen.dart';
 import 'package:waffir/features/credit_cards/presentation/screens/add_credit_card_screen.dart';
 import 'package:waffir/features/credit_cards/presentation/screens/credit_cards_screen.dart';
 import 'package:waffir/features/deals/presentation/screens/hot_deals_screen.dart';
+import 'package:waffir/features/deals/presentation/screens/deal_details_screen.dart';
+import 'package:waffir/features/deals/domain/entities/deal_details_type.dart';
 import 'package:waffir/features/deals/presentation/screens/notifications_screen.dart';
 import 'package:waffir/features/onboarding/presentation/screens/city_selection_screen.dart';
 import 'package:waffir/features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -34,6 +36,7 @@ import 'package:waffir/features/profile/presentation/screens/saved_deals_screen.
 import 'package:waffir/features/settings/presentation/screens/privacy_settings_screen.dart';
 import 'package:waffir/features/settings/presentation/screens/settings_screen.dart';
 import 'package:waffir/features/settings/presentation/screens/theme_settings_screen.dart';
+import 'package:waffir/features/stores/presentation/screens/bank_catalog_screen/bank_catalog_screen.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/store_detail_screen.dart';
 import 'package:waffir/features/stores/presentation/screens/stores_screen.dart';
 import 'package:waffir/features/subscription/presentation/screens/paywall_screen.dart';
@@ -42,7 +45,9 @@ import 'package:waffir/features/subscription/presentation/screens/subscription_m
 /// Builds the full GoRouter route table.
 ///
 /// This is extracted to keep `app_router.dart` focused on wiring providers/guards.
-List<RouteBase> buildAppRoutes({required GlobalKey<NavigatorState> shellNavigatorKey}) {
+List<RouteBase> buildAppRoutes({
+  required GlobalKey<NavigatorState> shellNavigatorKey,
+}) {
   return [
     // Splash Screen
     GoRoute(
@@ -179,7 +184,8 @@ List<RouteBase> buildAppRoutes({required GlobalKey<NavigatorState> shellNavigato
             GoRoute(
               path: '/personal-details',
               name: AppRouteNames.profilePersonalDetails,
-              builder: (context, state) => const ManagePersonalDetailsFormScreen(),
+              builder: (context, state) =>
+                  const ManagePersonalDetailsFormScreen(),
             ),
             GoRoute(
               path: '/saved-deals',
@@ -195,7 +201,9 @@ List<RouteBase> buildAppRoutes({required GlobalKey<NavigatorState> shellNavigato
               path: '/change-city',
               name: AppRouteNames.profileChangeCity,
               builder: (context, state) {
-                final showBackButton = state.extra is bool ? state.extra as bool : true;
+                final showBackButton = state.extra is bool
+                    ? state.extra as bool
+                    : true;
                 return ChangeCityScreen(showBackButton: showBackButton);
               },
             ),
@@ -217,7 +225,8 @@ List<RouteBase> buildAppRoutes({required GlobalKey<NavigatorState> shellNavigato
             GoRoute(
               path: '/selected-credit-cards',
               name: AppRouteNames.profileSelectedCreditCards,
-              builder: (context, state) => const CreditCardsScreen(showBackButton: true),
+              builder: (context, state) =>
+                  const CreditCardsScreen(showBackButton: true),
             ),
           ],
         ),
@@ -289,6 +298,26 @@ List<RouteBase> buildAppRoutes({required GlobalKey<NavigatorState> shellNavigato
         final storeId = state.pathParameters['id']!;
         return StoreDetailScreen(storeId: storeId);
       },
+    ),
+
+    GoRoute(
+      path: '/deal/:type/:id',
+      name: AppRouteNames.dealDetail,
+      builder: (context, state) {
+        final rawType = state.pathParameters['type']!;
+        final dealId = state.pathParameters['id']!;
+        final type = DealDetailsType.tryParse(rawType);
+        if (type == null) {
+          return const ErrorScreen(error: 'Invalid deal type.');
+        }
+        return DealDetailsScreen(dealId: dealId, type: type);
+      },
+    ),
+
+    GoRoute(
+      path: AppRoutes.banks,
+      name: AppRouteNames.banks,
+      builder: (context, state) => const BankCatalogScreen(),
     ),
 
     // Error/Not Found Route

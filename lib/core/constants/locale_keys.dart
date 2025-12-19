@@ -10,6 +10,7 @@ abstract class LocaleKeys {
   static const dialogs = _DialogsKeys();
   static const loading = _LoadingKeys();
   static const deals = _DealsKeys();
+  static const dealDetails = _DealDetailsKeys();
   static const notifications = _NotificationsKeys();
   static const creditCards = _CreditCardsKeys();
   static const stores = _StoresKeys();
@@ -110,6 +111,42 @@ class _ButtonsKeys {
   final accept = 'buttons.accept';
   final reject = 'buttons.reject';
   final continueBtn = 'buttons.continueBtn';
+  final copy = 'buttons.copy';
+  final readMore = 'buttons.readMore';
+  final readLess = 'buttons.readLess';
+}
+
+class _DealDetailsKeys {
+  const _DealDetailsKeys();
+  final title = 'dealDetails.title';
+  final actions = const _DealDetailsActionsKeys();
+  final labels = const _DealDetailsLabelsKeys();
+  final errors = const _DealDetailsErrorsKeys();
+  final success = const _DealDetailsSuccessKeys();
+}
+
+class _DealDetailsActionsKeys {
+  const _DealDetailsActionsKeys();
+  final share = 'dealDetails.actions.share';
+  final shopNow = 'dealDetails.actions.shopNow';
+}
+
+class _DealDetailsLabelsKeys {
+  const _DealDetailsLabelsKeys();
+  final promoCode = 'dealDetails.labels.promoCode';
+  final terms = 'dealDetails.labels.terms';
+}
+
+class _DealDetailsErrorsKeys {
+  const _DealDetailsErrorsKeys();
+  final loadFailed = 'dealDetails.errors.loadFailed';
+  final couldNotOpenLink = 'dealDetails.errors.couldNotOpenLink';
+  final noLongerAvailable = 'dealDetails.errors.noLongerAvailable';
+}
+
+class _DealDetailsSuccessKeys {
+  const _DealDetailsSuccessKeys();
+  final promoCodeCopied = 'dealDetails.success.promoCodeCopied';
 }
 
 class _SettingsKeys {
@@ -405,7 +442,8 @@ class _SubscriptionOptionsKeys {
 class _SubscriptionIndividualKeys {
   const _SubscriptionIndividualKeys();
   final name = 'subscription.management.options.individual.name';
-  final priceMonthly = 'subscription.management.options.individual.priceMonthly';
+  final priceMonthly =
+      'subscription.management.options.individual.priceMonthly';
   final priceYearly = 'subscription.management.options.individual.priceYearly';
   final users = 'subscription.management.options.individual.users';
 }
@@ -564,4 +602,3 @@ class _ProductPageCommentsKeys {
   final writeComment = 'productPage.comments.writeComment';
   final noComments = 'productPage.comments.noComments';
 }
-

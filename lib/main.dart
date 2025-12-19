@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:waffir/app.dart';
 import 'package:waffir/core/config/environment_config.dart';
+import 'package:waffir/core/services/firebase_service.dart';
+import 'package:waffir/core/services/push_notification_service.dart';
 import 'package:waffir/core/storage/hive_service.dart';
 import 'package:waffir/core/utils/logger.dart';
 import 'package:waffir/flavors.dart';
@@ -35,6 +37,30 @@ Future<void> mainCommon(Flavor flavor) async {
         await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
       } else {
         AppLogger.warning('Supabase not initialized (missing SUPABASE_URL/SUPABASE_ANON_KEY)');
+      }
+
+      // Initialize Firebase (required for push notifications, analytics, crashlytics)
+      //   if (EnvironmentConfig.enableNotifications) {
+      //     try {
+      //       await FirebaseService.instance.initialize();
+      //     } catch (e) {
+      //       AppLogger.error('Failed to initialize Firebase', error: e);
+      //     }
+      //   }
+
+      // Initialize Push Notifications
+      if (EnvironmentConfig.enableNotifications) {
+        try {
+          // Wait for Supabase to be ready if it was initialized
+          // We pass the client even if not fully authed, service handles it.
+          // Note: PushNotificationService needs SupabaseClient.
+          // Supabase.instance.client throws if not initialized.
+          if (supabaseUrl != null && supabaseAnonKey != null) {
+            await PushNotificationService.instance.initialize(supabase: Supabase.instance.client);
+          }
+        } catch (e) {
+          AppLogger.error('Failed to initialize push notifications', error: e);
+        }
       }
 
       // Set preferred orientations
@@ -76,11 +102,7 @@ Future<void> mainCommon(Flavor flavor) async {
       );
     },
     (error, stackTrace) {
-      AppLogger.error(
-        '💥 Uncaught error in app',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('💥 Uncaught error in app', error: error, stackTrace: stackTrace);
     },
   );
 }

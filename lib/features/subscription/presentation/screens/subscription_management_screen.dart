@@ -12,6 +12,8 @@ import 'package:waffir/features/subscription/presentation/providers/subscription
 import 'package:waffir/features/subscription/presentation/providers/subscription_selection_provider.dart';
 import 'package:waffir/features/subscription/presentation/widgets/management/subscription_benefits_section.dart';
 import 'package:waffir/features/subscription/presentation/widgets/management/subscription_management_header.dart';
+import 'package:flutter/foundation.dart'; // For kDebugMode
+import 'package:waffir/features/subscription/presentation/widgets/management/manage_subscription_view.dart';
 import 'package:waffir/features/subscription/presentation/widgets/management/subscription_options_section.dart';
 import 'package:waffir/features/subscription/presentation/widgets/management/subscription_proceed_button.dart';
 import 'package:waffir/features/subscription/presentation/widgets/management/subscription_promo_section.dart';
@@ -41,8 +43,9 @@ class SubscriptionManagementScreen extends HookConsumerWidget {
       // 2. Call subscriptionNotifier.purchasePackage(package)
       // 3. Handle loading/success/error UI
 
-      final periodLabel =
-          currentSelection.period == SubscriptionPeriod.monthly ? monthlyLabel : yearlyLabelInline;
+      final periodLabel = currentSelection.period == SubscriptionPeriod.monthly
+          ? monthlyLabel
+          : yearlyLabelInline;
       final optionLabel = currentSelection.option == SubscriptionOption.individual
           ? LocaleKeys.subscription.management.options.individual.name.tr()
           : LocaleKeys.subscription.management.options.family.name.tr();
@@ -75,50 +78,66 @@ class SubscriptionManagementScreen extends HookConsumerWidget {
       );
     }
 
+    final isSubscribed = useState(true); // TODO: Replace with actual subscription status provider
+
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
+      // Temporary debug button to toggle subscription view
+      floatingActionButton: kDebugMode
+          ? FloatingActionButton(
+              onPressed: () => isSubscribed.value = !isSubscribed.value,
+              child: Icon(isSubscribed.value ? Icons.check : Icons.close),
+            )
+          : null,
       body: SafeArea(
         top: false,
         child: Stack(
           children: [
             _SubscriptionBackground(responsive: responsive),
-            SingleChildScrollView(
-              padding: responsive.scalePadding(const EdgeInsets.only(top: 108, bottom: 120)),
-              child: Padding(
-                padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
-                child: Column(
-                  children: [
-                    SubscriptionManagementHeader(selectedPeriod: selection.period),
-                    SizedBox(height: responsive.scale(32)),
-                    SubscriptionTabSwitcher(
-                      selectedTab: selection.period,
-                      onTabChanged: selectionNotifier.selectPeriod,
-                    ),
-                    SizedBox(height: responsive.scale(32)),
-                    SubscriptionOptionsSection(
-                      selection: selection,
-                      onOptionSelected: selectionNotifier.selectOption,
-                    ),
-                    SizedBox(height: responsive.scale(13)),
-                    const SubscriptionBenefitsSection(),
-                    SizedBox(height: responsive.scale(32)),
-                    Container(
-                      width: responsive.scale(338),
-                      height: 1,
-                      color: theme.colorScheme.surfaceContainerHighest,
-                    ),
-                    SizedBox(height: responsive.scale(32)),
-                    SubscriptionPromoSection(
-                      promoController: promoController,
-                      onPromoChanged: selectionNotifier.updatePromoCode,
-                      onApplyPromo: () => applyPromoCode(promoController.text),
-                    ),
-                  ],
+            if (isSubscribed.value)
+              SingleChildScrollView(
+                padding: responsive.scalePadding(const EdgeInsets.only(top: 108, bottom: 40)),
+                child: const Center(child: ManageSubscriptionView()),
+              )
+            else
+              SingleChildScrollView(
+                padding: responsive.scalePadding(const EdgeInsets.only(top: 108, bottom: 120)),
+                child: Padding(
+                  padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
+                  child: Column(
+                    children: [
+                      SubscriptionManagementHeader(selectedPeriod: selection.period),
+                      SizedBox(height: responsive.scale(32)),
+                      SubscriptionTabSwitcher(
+                        selectedTab: selection.period,
+                        onTabChanged: selectionNotifier.selectPeriod,
+                      ),
+                      SizedBox(height: responsive.scale(32)),
+                      SubscriptionOptionsSection(
+                        selection: selection,
+                        onOptionSelected: selectionNotifier.selectOption,
+                      ),
+                      SizedBox(height: responsive.scale(13)),
+                      const SubscriptionBenefitsSection(),
+                      SizedBox(height: responsive.scale(32)),
+                      Container(
+                        width: responsive.scale(338),
+                        height: 1,
+                        color: theme.colorScheme.surfaceContainerHighest,
+                      ),
+                      SizedBox(height: responsive.scale(32)),
+                      SubscriptionPromoSection(
+                        promoController: promoController,
+                        onPromoChanged: selectionNotifier.updatePromoCode,
+                        onApplyPromo: () => applyPromoCode(promoController.text),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
             WaffirBackButton(onTap: () => context.pop(), size: responsive.scale(44)),
-            SubscriptionProceedButton(onPressed: () => handleProceed(selection)),
+            if (!isSubscribed.value)
+              SubscriptionProceedButton(onPressed: () => handleProceed(selection)),
           ],
         ),
       ),
@@ -142,9 +161,9 @@ class _SubscriptionBackground extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color(0xFF00FF88).withOpacity(0.15),
-              const Color(0xFF00D9A3).withOpacity(0.10),
-              const Color(0xFF00C531).withOpacity(0.05),
+              const Color(0xFF00FF88).withValues(alpha: 0.15),
+              const Color(0xFF00D9A3).withValues(alpha: 0.10),
+              const Color(0xFF00C531).withValues(alpha: 0.05),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -153,7 +172,7 @@ class _SubscriptionBackground extends StatelessWidget {
         ),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
-          child: Container(decoration: BoxDecoration(color: Colors.white.withOpacity(0.0))),
+          child: Container(decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.0))),
         ),
       ),
     );

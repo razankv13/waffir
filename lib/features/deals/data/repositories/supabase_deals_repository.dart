@@ -4,9 +4,7 @@ import 'package:waffir/features/deals/data/datasources/deals_remote_data_source.
 import 'package:waffir/features/deals/domain/entities/deal.dart';
 import 'package:waffir/features/deals/domain/repositories/deals_repository.dart';
 
-/// Stub repository until the Supabase backend is deployed.
-///
-/// Keep the domain contract stable; only update the data layer when ready.
+/// Supabase-backed deals repository.
 class SupabaseDealsRepository implements DealsRepository {
   SupabaseDealsRepository(this._remoteDataSource);
 
@@ -16,13 +14,39 @@ class SupabaseDealsRepository implements DealsRepository {
   AsyncResult<List<Deal>> fetchHotDeals({
     String? category,
     String? searchQuery,
+    String languageCode = 'en',
+    int limit = 20,
+    int offset = 0,
   }) async {
     try {
       final models = await _remoteDataSource.fetchHotDeals(
         category: category,
         searchQuery: searchQuery,
+        languageCode: languageCode,
+        limit: limit,
+        offset: offset,
       );
       return Result.success(models.map((model) => model.toDomain()).toList());
+    } on Failure catch (failure) {
+      return Result.failure(failure);
+    }
+  }
+
+  @override
+  AsyncResult<void> trackDealView({required String dealId, String dealType = 'product'}) async {
+    try {
+      await _remoteDataSource.trackDealView(dealId: dealId, dealType: dealType);
+      return const Result.success(null);
+    } on Failure catch (failure) {
+      return Result.failure(failure);
+    }
+  }
+
+  @override
+  AsyncResult<bool> toggleDealLike({required String dealId, String dealType = 'product'}) async {
+    try {
+      final liked = await _remoteDataSource.toggleDealLike(dealId: dealId, dealType: dealType);
+      return Result.success(liked);
     } on Failure catch (failure) {
       return Result.failure(failure);
     }

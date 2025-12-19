@@ -8,6 +8,19 @@ abstract class DealsRemoteDataSource {
   Future<List<DealModel>> fetchHotDeals({
     String? category,
     String? searchQuery,
+    String languageCode,
+    int limit,
+    int offset,
+  });
+
+  Future<void> trackDealView({
+    required String dealId,
+    String dealType,
+  });
+
+  Future<bool> toggleDealLike({
+    required String dealId,
+    String dealType,
   });
 }
 
@@ -17,6 +30,9 @@ class MockDealsRemoteDataSource implements DealsRemoteDataSource {
   Future<List<DealModel>> fetchHotDeals({
     String? category,
     String? searchQuery,
+    String languageCode = 'en',
+    int limit = 20,
+    int offset = 0,
   }) async {
     // Simulate network roundtrip
     await Future<void>.delayed(const Duration(milliseconds: 350));
@@ -61,6 +77,20 @@ class MockDealsRemoteDataSource implements DealsRemoteDataSource {
       }).toList();
     }
 
-    return data;
+    if (offset <= 0 && limit >= data.length) return data;
+    final start = offset.clamp(0, data.length);
+    final end = (offset + limit).clamp(start, data.length);
+    return data.sublist(start, end);
+  }
+
+  @override
+  Future<void> trackDealView({required String dealId, String dealType = 'product'}) async {
+    // No-op for mock backend.
+  }
+
+  @override
+  Future<bool> toggleDealLike({required String dealId, String dealType = 'product'}) async {
+    // Mock backend doesn’t persist likes; return true so UI can behave consistently.
+    return true;
   }
 }

@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:waffir/core/constants/app_colors.dart';
 import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/themes/app_text_styles.dart';
 import 'package:waffir/core/themes/extensions/promo_colors_extension.dart';
@@ -108,7 +107,7 @@ class StoreLikeDislikePill extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: responsive.scale(6)),
-                const _ActionIconBox(assetPath: 'assets/icons/product_page/like_inactive.svg'),
+                _ActionIconBox(assetPath: Assets.icons.productPage.likeInactive.path),
               ],
             ),
           ),
@@ -126,6 +125,7 @@ class _ActionIconBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return SizedBox(
       width: responsive.scale(40),
@@ -136,7 +136,7 @@ class _ActionIconBox extends StatelessWidget {
           height: responsive.scale(24),
           child: SvgPicture.asset(
             assetPath,
-            colorFilter: const ColorFilter.mode(AppColors.gray03, BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(colorScheme.onSurfaceVariant, BlendMode.srcIn),
           ),
         ),
       ),
@@ -178,7 +178,7 @@ class StoreIconCountPill extends StatelessWidget {
               height: responsive.scale(20),
               child: SvgPicture.asset(
                 iconAsset,
-                colorFilter: const ColorFilter.mode(AppColors.gray03, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(colorScheme.onSurfaceVariant, BlendMode.srcIn),
               ),
             ),
             SizedBox(width: responsive.scale(6)),
@@ -213,7 +213,6 @@ class StoreIconOnlyPill extends StatelessWidget {
           height: responsive.scale(20),
           child: SvgPicture.asset(
             iconAsset,
-            fit: BoxFit.contain,
             colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
           ),
         ),

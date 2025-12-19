@@ -5,14 +5,14 @@ import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/themes/extensions/notifications_alerts_theme.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/cards/alert_card.dart';
-import 'package:waffir/core/widgets/cards/deal_card.dart';
-import 'package:waffir/features/deals/data/providers/deals_providers.dart';
+import 'package:waffir/features/alerts/presentation/controllers/my_alerts_controller.dart';
+import 'package:waffir/features/alerts/presentation/controllers/popular_keywords_provider.dart';
 import 'package:waffir/features/deals/presentation/widgets/notifications/notifications_empty_state.dart';
 
 /// Deal alerts section for notifications screen
 ///
-/// Displays "My deal alerts" and "Popular Alerts" sections.
-/// Reads data from dealNotificationsProvider and popularAlertsProvider.
+/// Displays "My Alerts" and "Popular Keywords" sections.
+/// Uses myAlertsControllerProvider and popularKeywordsProvider.
 class DealAlertsSection extends ConsumerWidget {
   const DealAlertsSection({super.key});
 
@@ -20,13 +20,13 @@ class DealAlertsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final naTheme = Theme.of(context).extension<NotificationsAlertsTheme>()!;
     final responsive = ResponsiveHelper(context);
-    final dealNotifications = ref.watch(dealNotificationsProvider);
-    final alerts = ref.watch(popularAlertsProvider);
+    final myAlertsAsync = ref.watch(myAlertsControllerProvider);
+    final popularKeywordsAsync = ref.watch(popularKeywordsProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // "My deal alerts" section
+        // "My Alerts" section
         Text(
           LocaleKeys.notifications.sections.myDealAlerts.tr(),
           style: naTheme.sectionTitleStyle.copyWith(
@@ -36,46 +36,61 @@ class DealAlertsSection extends ConsumerWidget {
         ),
         SizedBox(height: responsive.scale(16)),
 
-        // Deal alerts list
-        if (dealNotifications.isEmpty)
-          NotificationsEmptyState(
-            message: LocaleKeys.notifications.empty.dealAlerts.tr(),
-          )
-        else
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: dealNotifications.length,
-            separatorBuilder: (context, index) => Container(
-              height: responsive.scale(1),
-              color: naTheme.dividerColor,
-              margin: responsive.scalePadding(const EdgeInsets.symmetric(vertical: 8)),
-            ),
-            itemBuilder: (context, index) {
-              final notification = dealNotifications[index];
-              return DealCard(
-                initial: notification.title[0].toUpperCase(),
-                title: notification.title,
-                subtitle: notification.description,
-                onTap: () {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        LocaleKeys.notifications.snackbar.view
-                            .tr(namedArgs: {'title': notification.title}),
-                      ),
-                    ),
-                  );
-                },
+        // My alerts list
+        myAlertsAsync.when(
+          data: (state) {
+            if (state.isEmpty) {
+              return NotificationsEmptyState(
+                message: LocaleKeys.notifications.empty.dealAlerts.tr(),
               );
-            },
+            }
+            return ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: state.alerts.length,
+              separatorBuilder: (context, index) => SizedBox(height: responsive.scale(8)),
+              itemBuilder: (context, index) {
+                final alert = state.alerts[index];
+                return AlertCard(
+                  title: alert.keyword,
+                  isSubscribed: true,
+                  onToggle: (bool isSubscribed) async {
+                    if (!isSubscribed) {
+                      // Delete alert
+                      final controller = ref.read(myAlertsControllerProvider.notifier);
+                      final failure = await controller.deleteAlert(alert.id);
+                      if (failure == null && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              LocaleKeys.notifications.snackbar.unsubscribed
+                                  .tr(namedArgs: {'title': alert.keyword}),
+                            ),
+                          ),
+                        );
+                      } else if (failure != null && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(failure.message),
+                            backgroundColor: Theme.of(context).colorScheme.error,
+                          ),
+                        );
+                      }
+                    }
+                  },
+                );
+              },
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => NotificationsEmptyState(
+            message: LocaleKeys.notifications.empty.dealAlerts.tr(),
           ),
+        ),
 
-        SizedBox(height: responsive.scale(16)),
+        SizedBox(height: responsive.scale(24)),
 
-        // "Popular Alerts" section
+        // "Popular Keywords" section
         Text(
           LocaleKeys.notifications.sections.popularAlerts.tr(),
           style: naTheme.sectionTitleStyle.copyWith(
@@ -85,39 +100,59 @@ class DealAlertsSection extends ConsumerWidget {
         ),
         SizedBox(height: responsive.scale(16)),
 
-        // Popular alerts cards
-        if (alerts.isEmpty)
-          NotificationsEmptyState(
-            message: LocaleKeys.notifications.empty.popularAlerts.tr(),
-          )
-        else
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: alerts.length,
-            separatorBuilder: (context, index) => SizedBox(height: responsive.scale(8)),
-            itemBuilder: (context, index) {
-              final alert = alerts[index];
-              return AlertCard(
-                title: alert.title,
-                imageUrl: alert.iconUrl,
-                isSubscribed: alert.isSubscribed ?? false,
-                onToggle: (bool isSubscribed) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        isSubscribed
-                            ? LocaleKeys.notifications.snackbar.subscribed
-                                .tr(namedArgs: {'title': alert.title})
-                            : LocaleKeys.notifications.snackbar.unsubscribed
-                                .tr(namedArgs: {'title': alert.title}),
-                      ),
-                    ),
-                  );
-                },
+        // Popular keywords cards
+        popularKeywordsAsync.when(
+          data: (keywords) {
+            if (keywords.isEmpty) {
+              return NotificationsEmptyState(
+                message: LocaleKeys.notifications.empty.popularAlerts.tr(),
               );
-            },
+            }
+            return ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: keywords.length,
+              separatorBuilder: (context, index) => SizedBox(height: responsive.scale(8)),
+              itemBuilder: (context, index) {
+                final keyword = keywords[index];
+                final controller = ref.read(myAlertsControllerProvider.notifier);
+                final isSubscribed = controller.hasAlertFor(keyword);
+
+                return AlertCard(
+                  title: keyword,
+                  isSubscribed: isSubscribed,
+                  onToggle: (bool newValue) async {
+                    if (newValue) {
+                      // Create alert
+                      final failure = await controller.createAlert(keyword);
+                      if (failure == null && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              LocaleKeys.notifications.snackbar.subscribed
+                                  .tr(namedArgs: {'title': keyword}),
+                            ),
+                          ),
+                        );
+                      } else if (failure != null && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(failure.message),
+                            backgroundColor: Theme.of(context).colorScheme.error,
+                          ),
+                        );
+                      }
+                    }
+                  },
+                );
+              },
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => NotificationsEmptyState(
+            message: LocaleKeys.notifications.empty.popularAlerts.tr(),
           ),
+        ),
       ],
     );
   }

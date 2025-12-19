@@ -41,7 +41,7 @@ target 'Runner' do
     # hack to compile firebase faster on Macs. It does this by predownloading compiled firebase files, instead of having XCode compile this on your machine. Comment this out if you're having issues compiling.
   # if firebase_core is updated in pubspec.yaml, get the right version from here (https://github.com/FirebaseExtended/flutterfire/blob/firebase_core-v1.9.0/packages/firebase_core/firebase_core/ios/firebase_sdk_version.rb)
   # Check out this link for more details = https://github.com/invertase/firestore-ios-sdk-frameworks
-  pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '12.2.0'
+  pod 'FirebaseFirestore', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '12.6.0'
 end
 
 post_install do |installer|

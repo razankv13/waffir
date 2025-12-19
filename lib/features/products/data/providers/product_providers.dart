@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
+
 import 'package:waffir/features/products/data/services/mock_product_service.dart';
 import 'package:waffir/features/products/data/services/mock_review_service.dart';
 import 'package:waffir/features/products/data/services/mock_store_service.dart';
@@ -120,40 +120,3 @@ final followedStoresProvider = FutureProvider<List<Store>>((ref) async {
 // STATE NOTIFIER PROVIDERS (for mutable state)
 // ============================================================================
 
-/// Favorite products state (simple list of product IDs)
-class FavoritesNotifier extends StateNotifier<Set<String>> {
-  FavoritesNotifier() : super({});
-
-  void toggle(String productId) {
-    if (state.contains(productId)) {
-      state = {...state}..remove(productId);
-    } else {
-      state = {...state, productId};
-    }
-  }
-
-  bool isFavorite(String productId) => state.contains(productId);
-}
-
-final favoritesProvider = StateNotifierProvider<FavoritesNotifier, Set<String>>((ref) {
-  return FavoritesNotifier();
-});
-
-/// Follow stores state (simple list of store IDs)
-class FollowedStoresNotifier extends StateNotifier<Set<String>> {
-  FollowedStoresNotifier() : super({'store_002', 'store_005'}); // Pre-followed stores
-
-  void toggle(String storeId) {
-    if (state.contains(storeId)) {
-      state = {...state}..remove(storeId);
-    } else {
-      state = {...state, storeId};
-    }
-  }
-
-  bool isFollowing(String storeId) => state.contains(storeId);
-}
-
-final followedStoresNotifierProvider = StateNotifierProvider<FollowedStoresNotifier, Set<String>>((ref) {
-  return FollowedStoresNotifier();
-});

@@ -116,7 +116,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  build_runner: ^2.4.11
+  build_runner: ^2.10.4
   flutter_gen_runner:
   freezed: ^3.2.0
   json_serializable: ^6.8.0
@@ -149,6 +149,10 @@ flutter:
     - assets/icons/profile/
     - assets/translations/
     - assets/images/credit_cards/
+    - .env.dev
+    - .env.staging
+    - .env.production
+    
 
   # Fonts
   fonts:

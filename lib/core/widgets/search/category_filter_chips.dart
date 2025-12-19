@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/themes/extensions/filter_colors_extension.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 
-/// Horizontal scrollable category filter chips with icon-above-text layout
+/// Horizontal category filter chips with icon-above-text layout
 ///
 /// Matches Figma design (node 34:6101) with:
+/// - Row layout with equally spaced chips (Expanded)
 /// - Vertical icon+text layout (column)
 /// - Bottom border indicator for selected state (no background fill)
-/// - 100px width, 64px height per chip
+/// - 64px height per chip
 /// - 24x24px icons with 4px gap
-/// - Parkinsans 14px font (700 selected, 500 unselected)
+/// - 14px font (700 selected, 500 unselected)
 ///
 /// Example usage:
 /// ```dart
@@ -31,14 +34,14 @@ class CategoryFilterChips extends StatelessWidget {
     required this.selectedCategory,
     required this.onCategorySelected,
     this.categoryLabels,
-  })  : assert(
-          categories.length == categoryIcons.length,
-          'Categories and icons must have the same length',
-        ),
-        assert(
-          categoryLabels == null || categoryLabels.length == categories.length,
-          'Category labels, categories, and icons must have the same length',
-        );
+  }) : assert(
+         categories.length == categoryIcons.length,
+         'Categories and icons must have the same length',
+       ),
+       assert(
+         categoryLabels == null || categoryLabels.length == categories.length,
+         'Category labels, categories, and icons must have the same length',
+       );
 
   final List<String> categories;
   final List<String> categoryIcons;
@@ -48,28 +51,27 @@ class CategoryFilterChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     final displayLabels = categoryLabels ?? categories;
 
-    return SizedBox(
-      height: 64,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: categories.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 21),
-        itemBuilder: (context, index) {
+    return Padding(
+      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
+      child: Row(
+        children: List.generate(categories.length, (index) {
           final category = categories[index];
           final label = displayLabels[index];
           final iconPath = categoryIcons[index];
           final isSelected = category == selectedCategory;
 
-          return _CategoryChip(
-            label: label,
-            iconPath: iconPath,
-            isSelected: isSelected,
-            onTap: () => onCategorySelected(category),
+          return Expanded(
+            child: _CategoryChip(
+              label: label, 
+              iconPath: iconPath,
+              isSelected: isSelected,
+              onTap: () => onCategorySelected(category),
+            ),
           );
-        },
+        }),
       ),
     );
   }
@@ -91,62 +93,62 @@ class _CategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final filterColors = theme.extension<FilterColors>()!;
+    final responsive = context.responsive;
+
+    final verticalPadding = responsive.scale(8);
+    final iconSize = responsive.scaleWithMin(24, min: 20);
+    final gap = responsive.scale(4);
+    final fontSize = responsive.scaleFontSize(14, minSize: 11);
+    final borderWidth = responsive.scaleWithMin(2, min: 2);
 
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 100,
-        height: 64,
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-          border: isSelected
-              ? Border(
-                  bottom: BorderSide(
-                    color: colorScheme.primary,
-                    width: 2,
+      behavior: HitTestBehavior.opaque,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Content area with consistent padding for both states
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: verticalPadding),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: iconSize,
+                  height: iconSize,
+                  child: SvgPicture.asset(
+                    iconPath,
+                    width: iconSize,
+                    height: iconSize,
+                    colorFilter: ColorFilter.mode(
+                      isSelected ? filterColors.selected : filterColors.unselected,
+                      BlendMode.srcIn,
+                    ),
                   ),
-                )
-              : null,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Icon (24x24)
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: SvgPicture.asset(
-                iconPath,
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(
-                  isSelected
-                      ? colorScheme.primary
-                      : colorScheme.onSurfaceVariant,
-                  BlendMode.srcIn,
                 ),
-              ),
+                SizedBox(height: gap),
+                Text(
+                  label,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontSize: fontSize,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: isSelected ? filterColors.selected : filterColors.unselected,
+                    height: 1.2,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-
-            // Gap between icon and text
-            const SizedBox(height: 4),
-
-            // Label Text
-            Text(
-              label,
-              style: theme.textTheme.labelLarge?.copyWith(
-                fontSize: 14,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected
-                    ? colorScheme.primary
-                    : colorScheme.onSurfaceVariant,
-                height: 1.4,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+          ),
+          // Underline indicator - always present, transparent when unselected
+          Container(
+            height: borderWidth,
+            color: isSelected ? filterColors.selectedBorder : Colors.transparent,
+          ),
+        ],
       ),
     );
   }

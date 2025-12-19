@@ -102,7 +102,29 @@
     "finish": "Finalizar",
     "accept": "Aceptar",
     "reject": "Rechazar",
-    "continueBtn": "Continuar"
+    "continueBtn": "Continuar",
+    "copy": "Copiar",
+    "readMore": "Leer más",
+    "readLess": "Leer menos"
+  },
+  "dealDetails": {
+    "title": "Detalles de la oferta",
+    "actions": {
+      "share": "Compartir",
+      "shopNow": "Comprar ahora"
+    },
+    "labels": {
+      "promoCode": "Código promocional",
+      "terms": "Términos"
+    },
+    "errors": {
+      "loadFailed": "No se pudieron cargar los detalles de la oferta.",
+      "couldNotOpenLink": "No se pudo abrir el enlace.",
+      "noLongerAvailable": "Esta oferta ya no está disponible."
+    },
+    "success": {
+      "promoCodeCopied": "Código promocional copiado"
+    }
   },
   "settings": {
     "title": "Ajustes",

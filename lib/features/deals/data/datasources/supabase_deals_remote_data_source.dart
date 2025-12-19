@@ -3,72 +3,69 @@ import 'package:waffir/core/errors/failures.dart';
 import 'package:waffir/features/deals/data/datasources/deals_remote_data_source.dart';
 import 'package:waffir/features/deals/data/models/deal_model.dart';
 
-/// Supabase-backed deals data source.
-///
-/// This implementation is wired behind `USE_MOCK_DEALS`. Keep that flag `true`
-/// until the Supabase schema/RLS and data are deployed.
+/// Supabase-backed deals data source (Point #3: Home & Discovery feed).
 class SupabaseDealsRemoteDataSource implements DealsRemoteDataSource {
   SupabaseDealsRemoteDataSource(this._client);
 
   final SupabaseClient _client;
 
-  static const String _table = 'deals';
+  static const String _storesTable = 'stores';
+  static const String _likesTable = 'user_deal_likes';
+  static const String _rpcFrontpageProducts = 'get_frontpage_products';
+  static const String _rpcTrackView = 'track_deal_view';
+  static const String _rpcToggleLike = 'toggle_deal_like';
 
   @override
   Future<List<DealModel>> fetchHotDeals({
     String? category,
     String? searchQuery,
+    String languageCode = 'en',
+    int limit = 20,
+    int offset = 0,
   }) async {
     try {
-      final normalizedCategory = category?.trim();
-      final normalizedSearch = searchQuery?.trim();
+      final raw = await _client.rpc(
+        _rpcFrontpageProducts,
+        params: {'p_limit': limit, 'p_offset': offset},
+      );
 
-      // Start with filters only. Apply ordering last to avoid changing the
-      // builder type mid-chain (FilterBuilder -> TransformBuilder).
-      var filteredQuery = _client
-          .from(_table)
-          .select()
-          .gte('discount_percentage', 20);
+      final rows = raw is List ? raw : const <dynamic>[];
+      final normalizedRows = rows.map(_normalizeRow).toList(growable: false);
 
-      var orderByRating = false;
-      if (normalizedCategory != null && normalizedCategory.isNotEmpty) {
-        switch (normalizedCategory) {
-          case 'For You':
-          case 'All':
-          case 'الكل':
-            break;
-          case 'Front Page':
-            filteredQuery = filteredQuery.eq('is_featured', true);
-            break;
-          case 'Popular':
-            orderByRating = true;
-            break;
-          default:
-            filteredQuery = filteredQuery.eq('category', normalizedCategory);
-            break;
-        }
-      }
+      final storeIds = normalizedRows
+          .map((row) => row['store_id'])
+          .where((id) => id != null)
+          .map((id) => id.toString())
+          .toSet()
+          .toList(growable: false);
 
-      if (normalizedSearch != null && normalizedSearch.isNotEmpty) {
-        final like = '%$normalizedSearch%';
-        filteredQuery = filteredQuery.or(
-          'title.ilike.$like,description.ilike.$like,brand.ilike.$like',
-        );
-      }
+      final storeNamesById = await _safeFetchStoreNamesById(
+        languageCode: languageCode,
+        storeIds: storeIds,
+      );
 
-      final orderedQuery = orderByRating
-          ? filteredQuery
-                .order('rating', ascending: false)
-                .order('review_count', ascending: false)
-                .order('created_at', ascending: false)
-          : filteredQuery.order('created_at', ascending: false);
+      final deals = normalizedRows
+          .map(
+            (row) => _mapProductDealRowToDealModel(
+              row,
+              languageCode: languageCode,
+              storeName: storeNamesById[row['store_id']?.toString()],
+            ),
+          )
+          .toList(growable: false);
 
-      final rows = await orderedQuery.limit(50) as List<dynamic>;
+      final userId = _client.auth.currentUser?.id;
+      if (userId == null || userId.isEmpty || deals.isEmpty) return deals;
 
-      return rows
-          .map(_normalizeRow)
-          .map(_normalizeDealJson)
-          .map(DealModel.fromJson)
+      final likedIds = await _fetchLikedDealIds(
+        userId: userId,
+        dealType: 'product',
+        dealIds: deals.map((d) => d.id).toList(growable: false),
+      );
+      if (likedIds.isEmpty) return deals;
+
+      return deals
+          .map((deal) => likedIds.contains(deal.id) ? deal.copyWith(isLiked: true) : deal)
           .toList(growable: false);
     } on PostgrestException catch (e) {
       throw Failure.server(message: e.message, code: e.code);
@@ -92,26 +89,204 @@ class SupabaseDealsRemoteDataSource implements DealsRemoteDataSource {
     );
   }
 
-  /// Accept both `snake_case` (typical Postgres) and `camelCase` keys to keep
-  /// the Dart model stable while the DB schema is finalized.
-  static Map<String, dynamic> _normalizeDealJson(Map<String, dynamic> json) {
-    final data = Map<String, dynamic>.from(json);
+  static DealModel _mapProductDealRowToDealModel(
+    Map<String, dynamic> row, {
+    required String languageCode,
+    String? storeName,
+  }) {
+    final isArabic = languageCode.toLowerCase() == 'ar';
 
-    void alias(String snake, String camel) {
-      if (!data.containsKey(camel) && data.containsKey(snake)) {
-        data[camel] = data[snake];
-      }
+    final title = _pickLocalizedText(
+      isArabic: isArabic,
+      primary: row['title_ar'],
+      fallback: row['title'],
+    );
+    final description = _pickLocalizedText(
+      isArabic: isArabic,
+      primary: row['description_ar'],
+      fallback: row['description'],
+    );
+
+    final originalPrice = _toDouble(row['original_price']);
+    final discountedPrice = _toDouble(row['discounted_price']);
+    final price = discountedPrice ?? originalPrice ?? 0;
+
+    return DealModel(
+      id: (row['id'] ?? '').toString(),
+      title: title ?? '',
+      description: description ?? '',
+      price: price,
+      originalPrice: originalPrice,
+      discountPercentage: _toInt(row['discount_percent']),
+      imageUrl: _pickImageUrl(row) ?? '',
+      brand: storeName,
+      likesCount: _toInt(row['likes_count']) ?? 0,
+      viewsCount: _toInt(row['views_count']) ?? 0,
+      isLiked: false,
+      isFeatured: true,
+      createdAt: _toDateTime(row['created_at']),
+      expiresAt: _toDateTime(row['end_date']),
+    );
+  }
+
+  static String? _pickLocalizedText({
+    required bool isArabic,
+    required Object? primary,
+    required Object? fallback,
+  }) {
+    String? normalize(Object? value) {
+      final text = value?.toString();
+      if (text == null) return null;
+      final trimmed = text.trim();
+      return trimmed.isEmpty ? null : trimmed;
     }
 
-    alias('original_price', 'originalPrice');
-    alias('discount_percentage', 'discountPercentage');
-    alias('image_url', 'imageUrl');
-    alias('review_count', 'reviewCount');
-    alias('is_new', 'isNew');
-    alias('is_featured', 'isFeatured');
-    alias('created_at', 'createdAt');
-    alias('expires_at', 'expiresAt');
+    final primaryText = normalize(primary);
+    final fallbackText = normalize(fallback);
+    return isArabic ? (primaryText ?? fallbackText) : (fallbackText ?? primaryText);
+  }
 
-    return data;
+  static String? _pickImageUrl(Map<String, dynamic> row) {
+    final direct = row['image_url'];
+    if (direct is String && direct.trim().isNotEmpty) return direct.trim();
+
+    final urls = row['image_urls'];
+    if (urls is List && urls.isNotEmpty) {
+      final first = urls.first;
+      if (first is String && first.trim().isNotEmpty) return first.trim();
+    }
+    return null;
+  }
+
+  static double? _toDouble(Object? value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    return double.tryParse(value.toString());
+  }
+
+  static int? _toInt(Object? value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString());
+  }
+
+  static DateTime? _toDateTime(Object? value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.tryParse(value);
+    return DateTime.tryParse(value.toString());
+  }
+
+  @override
+  Future<void> trackDealView({required String dealId, String dealType = 'product'}) async {
+    try {
+      await _client.rpc(_rpcTrackView, params: {'p_deal_type': dealType, 'p_deal_id': dealId});
+    } on PostgrestException catch (e) {
+      throw Failure.server(message: e.message, code: e.code);
+    } catch (e, stackTrace) {
+      throw Failure.unknown(
+        message: 'Failed to track deal view',
+        originalError: e.toString(),
+        stackTrace: stackTrace.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<bool> toggleDealLike({required String dealId, String dealType = 'product'}) async {
+    try {
+      final raw = await _client.rpc(
+        _rpcToggleLike,
+        params: {'p_deal_type': dealType, 'p_deal_id': dealId},
+      );
+      return _parseBoolRpcResult(raw);
+    } on PostgrestException catch (e) {
+      final message = e.message;
+      if (message.toLowerCase().contains('not authenticated')) {
+        throw Failure.unauthorized(message: message, code: e.code);
+      }
+      throw Failure.server(message: message, code: e.code);
+    } catch (e, stackTrace) {
+      throw Failure.unknown(
+        message: 'Failed to toggle deal like',
+        originalError: e.toString(),
+        stackTrace: stackTrace.toString(),
+      );
+    }
+  }
+
+  Future<Set<String>> _fetchLikedDealIds({
+    required String userId,
+    required String dealType,
+    required List<String> dealIds,
+  }) async {
+    if (dealIds.isEmpty) return const <String>{};
+    try {
+      final rows = await _client
+          .from(_likesTable)
+          .select('deal_id')
+          .eq('user_id', userId)
+          .eq('deal_type', dealType)
+          .inFilter('deal_id', dealIds) as List<dynamic>;
+
+      return rows
+          .whereType<Map>()
+          .map((row) => row['deal_id'])
+          .where((id) => id != null)
+          .map((id) => id.toString())
+          .toSet();
+    } on PostgrestException catch (e) {
+      throw Failure.server(message: e.message, code: e.code);
+    }
+  }
+
+  static bool _parseBoolRpcResult(Object? raw) {
+    if (raw is bool) return raw;
+    if (raw is Map) {
+      final data = raw['data'];
+      if (data is bool) return data;
+      final result = raw['result'];
+      if (result is bool) return result;
+    }
+    throw const Failure.parse(
+      message: 'Invalid toggle like response.',
+      code: 'DEALS_TOGGLE_LIKE_INVALID',
+    );
+  }
+
+  Future<Map<String, String>> _safeFetchStoreNamesById({
+    required String languageCode,
+    required List<String> storeIds,
+  }) async {
+    if (storeIds.isEmpty) return const <String, String>{};
+    try {
+      final rows = await _client
+          .from(_storesTable)
+          .select('id,name,name_ar')
+          .inFilter('id', storeIds) as List<dynamic>;
+
+      final isArabic = languageCode.toLowerCase() == 'ar';
+
+      final result = <String, String>{};
+      for (final row in rows.whereType<Map>()) {
+        final map = Map<String, dynamic>.from(row);
+        final id = map['id']?.toString();
+        if (id == null || id.isEmpty) continue;
+
+        final name = _pickLocalizedText(
+          isArabic: isArabic,
+          primary: map['name_ar'],
+          fallback: map['name'],
+        );
+        if (name == null || name.isEmpty) continue;
+        result[id] = name;
+      }
+
+      return result;
+    } catch (_) {
+      // Best-effort hydration; keep feed usable if store RLS changes.
+      return const <String, String>{};
+    }
   }
 }

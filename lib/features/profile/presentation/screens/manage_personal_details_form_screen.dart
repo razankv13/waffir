@@ -1,15 +1,17 @@
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
-import 'package:waffir/core/mock/mock_user_data.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
-import 'package:waffir/core/constants/locale_keys.dart';
+import 'package:waffir/features/auth/data/providers/auth_providers.dart';
+import 'package:waffir/features/auth/domain/entities/auth_state.dart';
+import 'package:waffir/features/profile/presentation/controllers/profile_controller.dart';
 
 /// Manage Personal Details (Form)
 ///
@@ -17,65 +19,83 @@ import 'package:waffir/core/constants/locale_keys.dart';
 /// - White background + blurred shape
 /// - Title (Parkinsans 16, w500)
 /// - 3 filled fields (radius 16, fill #F2F2F2, horizontal padding 16)
-/// - Save button (330×48, radius 30)
-class ManagePersonalDetailsFormScreen extends ConsumerStatefulWidget {
+/// - Save button (330x48, radius 30)
+class ManagePersonalDetailsFormScreen extends HookConsumerWidget {
   const ManagePersonalDetailsFormScreen({super.key});
 
   @override
-  ConsumerState<ManagePersonalDetailsFormScreen> createState() =>
-      _ManagePersonalDetailsFormScreenState();
-}
-
-class _ManagePersonalDetailsFormScreenState extends ConsumerState<ManagePersonalDetailsFormScreen> {
-  late final TextEditingController _nameController;
-  late final TextEditingController _emailController;
-  late final TextEditingController _phoneController;
-
-  bool _isSaving = false;
-
-  @override
-  void initState() {
-    super.initState();
-    final user = currentMockUser;
-
-    _nameController = TextEditingController(text: user.name);
-    _emailController = TextEditingController(text: user.email);
-    _phoneController = TextEditingController(text: user.phone ?? '');
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _save() async {
-    setState(() => _isSaving = true);
-
-    // Simulate save
-    await Future.delayed(const Duration(milliseconds: 800));
-
-    if (!mounted) return;
-    setState(() => _isSaving = false);
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(LocaleKeys.success.saved.tr()), duration: const Duration(seconds: 2)));
-    context.pop();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final responsive = ResponsiveHelper(context);
 
+    // Watch profile state
+    final profileAsync = ref.watch(profileControllerProvider);
+    final profile = profileAsync.asData?.value.profile;
+
+    // Watch auth state for email
+    final authStateAsync = ref.watch(authStateProvider);
+    final authState = authStateAsync.asData?.value;
+    final userEmail = authState?.user?.email ?? '';
+    final userPhone = authState?.user?.phoneNumber ?? '';
+
+    // Local state
+    final isSaving = useState(false);
+
+    // Text controllers - initialize with profile data
+    final nameController = useTextEditingController(text: profile?.fullName ?? '');
+    final emailController = useTextEditingController(text: userEmail);
+    final phoneController = useTextEditingController(text: userPhone);
+
+    // Sync controllers when profile data changes
+    useEffect(() {
+      if (profile != null && nameController.text.isEmpty) {
+        nameController.text = profile.fullName ?? '';
+      }
+      if (userEmail.isNotEmpty && emailController.text.isEmpty) {
+        emailController.text = userEmail;
+      }
+      if (userPhone.isNotEmpty && phoneController.text.isEmpty) {
+        phoneController.text = userPhone;
+      }
+      return null;
+    }, [profile?.fullName, userEmail, userPhone]);
+
+    Future<void> save() async {
+      isSaving.value = true;
+
+      // Update profile (only fullName is editable via profile controller)
+      final failure = await ref.read(profileControllerProvider.notifier).updateProfile(
+            fullName: nameController.text,
+          );
+
+      isSaving.value = false;
+
+      if (!context.mounted) return;
+
+      if (failure == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(LocaleKeys.success.saved.tr()),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        context.pop();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(failure.message ?? 'Failed to save'),
+            backgroundColor: colorScheme.error,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+
     final topInset = MediaQuery.paddingOf(context).top;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
 
-    // Figma: back row padding top = 64. On iOS, 64 ≈ status bar (44) + 20.
+    // Figma: back row padding top = 64. On iOS, 64 ~ status bar (44) + 20.
     final headerTopPadding = topInset + responsive.scale(20);
 
     // Figma root padding bottom = 120.
@@ -104,8 +124,14 @@ class _ManagePersonalDetailsFormScreenState extends ConsumerState<ManagePersonal
 
     // Background blur gradient derived from theme (keeps dark-mode safe while matching look)
     final gradientStart = colorScheme.secondary;
-    final gradientEnd =
-        Color.lerp(colorScheme.secondary, colorScheme.primary, 0.35) ?? colorScheme.primary;
+    final gradientEnd = Color.lerp(colorScheme.secondary, colorScheme.primary, 0.35) ?? colorScheme.primary;
+
+    // Show loading if profile is not loaded yet
+    if (profileAsync.isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       body: Stack(
@@ -174,7 +200,7 @@ class _ManagePersonalDetailsFormScreenState extends ConsumerState<ManagePersonal
 
                         // Fields (gap 8)
                         _FilledClearField(
-                          controller: _nameController,
+                          controller: nameController,
                           height: fieldHeight,
                           borderRadius: fieldRadius,
                           fillColor: colorScheme.surfaceContainerHighest,
@@ -182,21 +208,23 @@ class _ManagePersonalDetailsFormScreenState extends ConsumerState<ManagePersonal
                         ),
                         SizedBox(height: responsive.scale(8)),
                         _FilledClearField(
-                          controller: _emailController,
+                          controller: emailController,
                           height: fieldHeight,
                           borderRadius: fieldRadius,
                           fillColor: colorScheme.surfaceContainerHighest,
                           textStyle: fieldTextStyle,
                           keyboardType: TextInputType.emailAddress,
+                          enabled: false, // Email is not editable
                         ),
                         SizedBox(height: responsive.scale(8)),
                         _FilledClearField(
-                          controller: _phoneController,
+                          controller: phoneController,
                           height: fieldHeight,
                           borderRadius: fieldRadius,
                           fillColor: colorScheme.surfaceContainerHighest,
                           textStyle: fieldTextStyle,
                           keyboardType: TextInputType.phone,
+                          enabled: false, // Phone is not editable
                         ),
                       ],
                     ),
@@ -211,8 +239,8 @@ class _ManagePersonalDetailsFormScreenState extends ConsumerState<ManagePersonal
                         width: responsive.scale(330),
                         height: responsive.scale(48),
                         child: AppButton.primary(
-                          onPressed: _isSaving ? null : _save,
-                          isLoading: _isSaving,
+                          onPressed: isSaving.value ? null : save,
+                          isLoading: isSaving.value,
                           borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
                           child: Text(
                             LocaleKeys.buttons.save.tr(),
@@ -246,6 +274,7 @@ class _FilledClearField extends StatelessWidget {
     required this.fillColor,
     required this.textStyle,
     this.keyboardType,
+    this.enabled = true,
   });
 
   final TextEditingController controller;
@@ -254,6 +283,7 @@ class _FilledClearField extends StatelessWidget {
   final Color fillColor;
   final TextStyle textStyle;
   final TextInputType? keyboardType;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -264,7 +294,10 @@ class _FilledClearField extends StatelessWidget {
 
     return Container(
       height: height,
-      decoration: BoxDecoration(color: fillColor, borderRadius: borderRadius),
+      decoration: BoxDecoration(
+        color: enabled ? fillColor : fillColor.withValues(alpha: 0.5),
+        borderRadius: borderRadius,
+      ),
       padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
       child: Row(
         children: [
@@ -272,34 +305,40 @@ class _FilledClearField extends StatelessWidget {
             child: TextField(
               controller: controller,
               keyboardType: keyboardType,
+              enabled: enabled,
               textAlign: TextAlign.center, // Figma shows centered text
-              style: textStyle,
+              style: textStyle.copyWith(
+                color: enabled ? textStyle.color : textStyle.color?.withValues(alpha: 0.5),
+              ),
               decoration: InputDecoration(
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
                 isDense: true,
                 contentPadding: EdgeInsets.zero,
                 fillColor: fillColor,
               ),
             ),
           ),
-          SizedBox(width: responsive.scale(12)),
-          GestureDetector(
-            onTap: controller.clear,
-            child: Container(
-              width: responsive.scale(24),
-              height: responsive.scale(24),
-              padding: responsive.scalePadding(const EdgeInsets.all(4)),
-              decoration: BoxDecoration(color: closeBg, shape: BoxShape.circle),
-              alignment: Alignment.center,
-              child: Icon(
-                Icons.close,
-                size: responsive.scaleWithRange(16, min: 14, max: 18),
-                color: colorScheme.surface,
+          if (enabled) ...[
+            SizedBox(width: responsive.scale(12)),
+            GestureDetector(
+              onTap: controller.clear,
+              child: Container(
+                width: responsive.scale(24),
+                height: responsive.scale(24),
+                padding: responsive.scalePadding(const EdgeInsets.all(4)),
+                decoration: BoxDecoration(color: closeBg, shape: BoxShape.circle),
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.close,
+                  size: responsive.scaleWithRange(16, min: 14, max: 18),
+                  color: colorScheme.surface,
+                ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );

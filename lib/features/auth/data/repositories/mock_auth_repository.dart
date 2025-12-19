@@ -169,7 +169,8 @@ class MockAuthRepository implements AuthRepository {
     return Result.guard(() async {
       await _store.simulateNetwork();
       final updated = _store.updateUser(
-        (current) => current.copyWith(displayName: displayName ?? current.displayName, photoURL: photoURL),
+        (current) =>
+            current.copyWith(displayName: displayName ?? current.displayName, photoURL: photoURL),
       );
       final authState = _store.signInUser(updated);
       await _sessionStorage.save(authState);
@@ -178,7 +179,10 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  AsyncResult<void> updatePassword({required String currentPassword, required String newPassword}) async {
+  AsyncResult<void> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
     return Result.guard(() async {
       await _store.simulateNetwork();
       _store.requireUser();
@@ -195,7 +199,9 @@ class MockAuthRepository implements AuthRepository {
   AsyncResult<void> updateEmail({required String newEmail, required String password}) async {
     return Result.guard(() async {
       await _store.simulateNetwork();
-      final updated = _store.updateUser((current) => current.copyWith(email: newEmail.trim().toLowerCase()));
+      final updated = _store.updateUser(
+        (current) => current.copyWith(email: newEmail.trim().toLowerCase()),
+      );
       final authState = _store.signInUser(updated);
       await _sessionStorage.save(authState);
     });
@@ -362,14 +368,20 @@ class MockAuthRepository implements AuthRepository {
     Map<String, dynamic>? parameters,
   }) async {
     return Result.failure(
-      Failure.featureNotAvailable(message: 'Provider linking not supported in mock auth', code: providerId),
+      Failure.featureNotAvailable(
+        message: 'Provider linking not supported in mock auth',
+        code: providerId,
+      ),
     );
   }
 
   @override
   AsyncResult<AuthState> unlinkProvider(String providerId) async {
     return Result.failure(
-      Failure.featureNotAvailable(message: 'Provider unlinking not supported in mock auth', code: providerId),
+      Failure.featureNotAvailable(
+        message: 'Provider unlinking not supported in mock auth',
+        code: providerId,
+      ),
     );
   }
 

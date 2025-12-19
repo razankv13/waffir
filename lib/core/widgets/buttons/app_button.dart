@@ -206,8 +206,19 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
     final buttonStyle = _getButtonStyle(colorScheme, isEnabled);
     final textStyle = _getTextStyle(colorScheme);
 
+    final isFullWidth = widget.width == double.infinity;
+
+    Widget label;
+    if (widget.isLoading) {
+      label = Text('Loading...', style: textStyle, maxLines: 1, overflow: TextOverflow.ellipsis);
+    } else if (widget.child != null) {
+      label = DefaultTextStyle(style: textStyle, child: widget.child!);
+    } else {
+      label = Text(widget.text ?? '', style: textStyle, maxLines: 1, overflow: TextOverflow.ellipsis);
+    }
+
     Widget content = Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: isFullWidth ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (widget.isLoading) ...[
@@ -228,12 +239,7 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
           ),
           const SizedBox(width: AppSpacing.xs2),
         ],
-        if (widget.isLoading)
-          Text('Loading...', style: textStyle)
-        else if (widget.child != null)
-          DefaultTextStyle(style: textStyle, child: widget.child!)
-        else
-          Text(widget.text ?? '', style: textStyle),
+        Flexible(child: label),
       ],
     );
 
@@ -330,6 +336,8 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
   }
 
   ButtonStyle _getButtonStyle(ColorScheme colorScheme, bool isEnabled) {
+    final width = widget.width;
+    final effectiveMinWidth = (width != null && width.isFinite) ? width : 0.0;
     return ButtonStyle(
       padding: WidgetStateProperty.all(widget.padding ?? _getPadding()),
       shape: WidgetStateProperty.all(
@@ -354,7 +362,7 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
       elevation: _getElevation(),
       shadowColor: WidgetStateProperty.all(colorScheme.shadow.withValues(alpha: 0.06)),
       // Fixed height (48px for medium size) via minimum size
-      minimumSize: WidgetStateProperty.all(Size(widget.width ?? 330, 48)),
+      minimumSize: WidgetStateProperty.all(Size(effectiveMinWidth == 0 ? 330 : effectiveMinWidth, 48)),
     );
   }
 

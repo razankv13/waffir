@@ -11,7 +11,9 @@ import 'package:waffir/core/widgets/cards/store_card.dart';
 import 'package:waffir/core/widgets/filters/stores_category_chips.dart';
 import 'package:waffir/core/widgets/search/waffir_search_bar.dart';
 import 'package:waffir/features/stores/domain/entities/store.dart';
+import 'package:waffir/features/stores/presentation/controllers/catalog_categories_controller.dart';
 import 'package:waffir/features/stores/presentation/controllers/stores_controller.dart';
+import 'package:waffir/features/stores/domain/entities/catalog_category.dart';
 
 /// Stores Screen - displays stores with category filters and sections
 ///
@@ -42,12 +44,53 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
     'Other',
   ];
 
+  static const List<String> _categorySlugOrder = [
+    'dining',
+    'fashion',
+    'electronics',
+    'beauty',
+    'travel',
+    'lifestyle',
+    'jewelry',
+    'entertainment',
+    'others',
+  ];
+
+  static const Map<String, String> _slugToLegacyCategory = {
+    'dining': 'Dining',
+    'fashion': 'Fashion',
+    'electronics': 'Electronics',
+    'beauty': 'Beauty',
+    'travel': 'Travel',
+    'lifestyle': 'Lifestyle',
+    'jewelry': 'Jewelry',
+    'entertainment': 'Entertainment',
+    'others': 'Other',
+  };
+
+  List<String> _categoriesFromBackend(List<CatalogCategory> backendCategories) {
+    final availableSlugs = backendCategories.map((c) => c.slug.trim().toLowerCase()).toSet();
+
+    final result = <String>['All'];
+    for (final slug in _categorySlugOrder) {
+      if (!availableSlugs.contains(slug)) continue;
+      final legacy = _slugToLegacyCategory[slug];
+      if (legacy != null) result.add(legacy);
+    }
+
+    // Keep the legacy list as a fallback for any missing categories so filtering
+    // does not unexpectedly lose options when backend data is incomplete.
+    for (final legacy in _categories) {
+      if (!result.contains(legacy)) result.add(legacy);
+    }
+
+    return result;
+  }
+
   void _handleFilterTap() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(LocaleKeys.stores.filterComingSoon.tr()),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(LocaleKeys.stores.filterComingSoon.tr())));
   }
 
   String _resolveCategoryLabel(BuildContext context, String category) {
@@ -83,6 +126,11 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
     final storesState = ref.watch(storesControllerProvider);
     final storesController = ref.read(storesControllerProvider.notifier);
     final selectedCategory = storesState.value?.selectedCategory ?? defaultStoresCategory;
+    final backendCategories =
+        ref.watch(catalogCategoriesControllerProvider).value ?? const <CatalogCategory>[];
+    final categories = backendCategories.isEmpty
+        ? _categories
+        : _categoriesFromBackend(backendCategories);
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -104,6 +152,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                 final notificationSize = responsive.scale(44);
                 final notificationIconSize = responsive.scale(22);
                 final notificationSplashRadius = responsive.scale(24);
+                final headerActionSpacing = responsive.scale(10);
 
                 // WaffirSearchBar has a fixed height of 68px by design.
                 const searchBarHeight = 68.0;
@@ -114,7 +163,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                     (headerVerticalPadding * 2) + rowHeight + (searchPadding * 2) + searchBarHeight;
 
                 // StoresCategoryChips has a fixed height of 66px currently.
-                const chipsHeight = 66.0;
+                const chipsHeight = 74.0;
                 final chipsTopSpacing = responsive.scale(6);
                 final chipsHeaderHeight = chipsTopSpacing + chipsHeight;
 
@@ -147,26 +196,62 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                                 fit: BoxFit.contain,
                               ),
 
-                              // Notification Icon with soft background
-                              Container(
-                                width: notificationSize,
-                                height: notificationSize,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: IconButton(
-                                  icon: Icon(
-                                    Icons.notifications,
-                                    size: notificationIconSize,
-                                    color: colorScheme.primary,
+                              Row(
+                                children: [
+                                  // Banks (Catalog)
+                                  Tooltip(
+                                    message: 'Banks',
+                                    child: Container(
+                                      width: notificationSize,
+                                      height: notificationSize,
+                                      decoration: BoxDecoration(
+                                        color: colorScheme.surfaceContainerHighest.withValues(
+                                          alpha: 0.6,
+                                        ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.account_balance_outlined,
+                                          size: notificationIconSize,
+                                          color: colorScheme.primary,
+                                        ),
+                                        onPressed: () {
+                                          context.pushNamed(AppRouteNames.banks);
+                                        },
+                                        padding: EdgeInsets.zero,
+                                        splashRadius: notificationSplashRadius,
+                                      ),
+                                    ),
                                   ),
-                                  onPressed: () {
-                                    context.pushNamed(AppRouteNames.notifications);
-                                  },
-                                  padding: EdgeInsets.zero,
-                                  splashRadius: notificationSplashRadius,
-                                ),
+                                  SizedBox(width: headerActionSpacing),
+                                  // Notifications
+                                  Tooltip(
+                                    message: 'Notifications',
+                                    child: Container(
+                                      width: notificationSize,
+                                      height: notificationSize,
+                                      decoration: BoxDecoration(
+                                        color: colorScheme.surfaceContainerHighest.withValues(
+                                          alpha: 0.6,
+                                        ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(
+                                          Icons.notifications,
+                                          size: notificationIconSize,
+                                          color: colorScheme.primary,
+                                        ),
+                                        onPressed: () {
+                                          context.pushNamed(AppRouteNames.notifications);
+                                        },
+                                        padding: EdgeInsets.zero,
+                                        splashRadius: notificationSplashRadius,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -194,7 +279,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                       topSpacing: chipsTopSpacing,
                       backgroundColor: colorScheme.surface,
                       child: StoresCategoryChips(
-                        categories: _categories,
+                        categories: categories,
                         selectedCategory: selectedCategory,
                         onCategorySelected: storesController.updateCategory,
                         labelBuilder: (category) => _resolveCategoryLabel(context, category),
@@ -304,18 +389,12 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
   }) {
     final colorScheme = Theme.of(context).colorScheme;
     final title = titleKey.tr(namedArgs: namedArgs);
-    final countLabel = LocaleKeys.stores.count.plural(
-      count,
-      namedArgs: {'count': '$count'},
-    );
+    final countLabel = LocaleKeys.stores.count.plural(count, namedArgs: {'count': '$count'});
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: AppTypography.storeSectionHeader.copyWith(color: colorScheme.onSurface),
-        ),
+        Text(title, style: AppTypography.storeSectionHeader.copyWith(color: colorScheme.onSurface)),
         Text(
           countLabel,
           style: AppTypography.bodyMedium.copyWith(color: colorScheme.onSurfaceVariant),
@@ -446,10 +525,7 @@ class _StoresErrorState extends StatelessWidget {
         ),
         SizedBox(height: responsive.scale(12)),
         Center(
-          child: TextButton(
-            onPressed: onRetry,
-            child: Text(LocaleKeys.buttons.retry).tr(),
-          ),
+          child: TextButton(onPressed: onRetry, child: Text(LocaleKeys.buttons.retry).tr()),
         ),
       ],
     );
