@@ -141,13 +141,50 @@
     "themeSettings": "Theme Settings"
   },
   "errors": {
-    "networkError": "Please check your internet connection and try again",
-    "serverError": "Something went wrong on our end. Please try again later",
-    "unknownError": "An unexpected error occurred. Please try again",
-    "unknown": "An unexpected error occurred",
-    "timeoutError": "Request timed out. Please try again",
-    "unauthorizedError": "You are not authorized to perform this action",
-    "saveSelection": "An error occurred while saving your selection. Please try again"
+    "networkError": "Please check your internet connection and try again.",
+    "serverError": "Something went wrong on our end. Please try again later.",
+    "unknownError": "An unexpected error occurred. Please try again.",
+    "unknown": "An unexpected error occurred.",
+    "timeoutError": "Request timed out. Please try again.",
+    "unauthorizedError": "You are not authorized to perform this action.",
+    "saveSelection": "An error occurred while saving your selection. Please try again.",
+    "authError": "Authentication failed. Please sign in again.",
+    "validationError": "Please check your input and try again.",
+    "storageError": "Unable to access local storage. Please try again.",
+    "permissionError": "Permission required to continue.",
+    "cacheError": "Cache error occurred. Please try again.",
+    "forbiddenError": "Access denied.",
+    "notFoundError": "The requested content could not be found.",
+    "conflictError": "A conflict occurred. Please try again.",
+    "tooManyRequestsError": "Too many requests. Please wait a moment and try again.",
+    "internalServerError": "Internal server error. Please try again later.",
+    "serviceUnavailableError": "Service is temporarily unavailable. Please try again later.",
+    "deviceError": "Device error occurred.",
+    "platformError": "Platform-specific error occurred.",
+    "fileSystemError": "File system error occurred.",
+    "encryptionError": "Encryption error occurred.",
+    "biometricError": "Biometric authentication failed.",
+    "locationError": "Location access failed.",
+    "cameraError": "Camera access failed.",
+    "galleryError": "Gallery access failed.",
+    "notificationError": "Notification error occurred.",
+    "shareError": "Sharing failed.",
+    "urlLauncherError": "Unable to open link.",
+    "connectivityError": "Connectivity issue occurred.",
+    "parseError": "Data parsing failed.",
+    "databaseError": "Database error occurred.",
+    "migrationError": "Database migration failed.",
+    "syncError": "Sync failed.",
+    "featureNotAvailableError": "This feature is not available.",
+    "versionMismatchError": "App update required.",
+    "maintenanceModeError": "App is under maintenance. Please try again later.",
+    "rateLimitError": "Rate limit exceeded. Please wait and try again.",
+    "subscriptionError": "Subscription issue occurred.",
+    "paymentError": "Payment failed.",
+    "contentNotAvailableError": "Content is not available.",
+    "quotaExceededError": "Quota exceeded.",
+    "configurationError": "Configuration error occurred.",
+    "dependencyError": "Dependency error occurred."
   },
   "common": {
     "ok": "OK",
@@ -289,9 +326,15 @@
     "subtitle": "Please note: you only need to select your card type - you will not be asked to provide any other details.",
     "searchHint": "Card, or Bank Name",
     "filterComingSoon": "Filter functionality coming soon",
+    "loading": "Loading cards...",
     "empty": {
       "title": "No banks found",
       "description": "Try a different search term"
+    },
+    "error": {
+      "title": "Could not load cards",
+      "description": "Please check your connection and try again",
+      "retry": "Retry"
     }
   },
   "profile": {
@@ -417,6 +460,9 @@
     "citySelection": {
       "title": "Choose your city",
       "subtitle": "We will show you all available discounts from banks and cards around you."
+    },
+    "splash": {
+      "takingLonger": "This is taking longer than usual..."
     }
   },
   "cities": {

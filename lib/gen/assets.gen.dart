@@ -472,9 +472,15 @@ class $AssetsImagesCreditCardsGen {
 class Assets {
   const Assets._();
 
+  static const String devEnv = '.env.dev';
+  static const String productionEnv = '.env.production';
+  static const String stagingEnv = '.env.staging';
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsTranslationsGen translations = $AssetsTranslationsGen();
+
+  /// List of all assets
+  static List<String> get values => [devEnv, productionEnv, stagingEnv];
 }
 
 class AssetGenImage {

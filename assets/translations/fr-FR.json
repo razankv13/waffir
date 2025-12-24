@@ -141,13 +141,50 @@
     "themeSettings": "Paramètres du thème"
   },
   "errors": {
-    "networkError": "Veuillez vérifier votre connexion internet et réessayer",
-    "serverError": "Une erreur est survenue de notre côté. Veuillez réessayer plus tard",
-    "unknownError": "Une erreur inattendue est survenue. Veuillez réessayer",
-    "unknown": "Une erreur inattendue est survenue",
-    "timeoutError": "Délai d'attente dépassé. Veuillez réessayer",
-    "unauthorizedError": "Vous n'êtes pas autorisé à effectuer cette action",
-    "saveSelection": "Une erreur s'est produite lors de l'enregistrement de votre sélection. Veuillez réessayer"
+    "networkError": "Veuillez vérifier votre connexion internet et réessayer.",
+    "serverError": "Une erreur est survenue de notre côté. Veuillez réessayer plus tard.",
+    "unknownError": "Une erreur inattendue est survenue. Veuillez réessayer.",
+    "unknown": "Une erreur inattendue est survenue.",
+    "timeoutError": "Délai d'attente dépassé. Veuillez réessayer.",
+    "unauthorizedError": "Vous n'êtes pas autorisé à effectuer cette action.",
+    "saveSelection": "Une erreur s'est produite lors de l'enregistrement de votre sélection. Veuillez réessayer.",
+    "authError": "L'authentification a échoué. Veuillez vous reconnecter.",
+    "validationError": "Veuillez vérifier vos données et réessayer.",
+    "storageError": "Impossible d'accéder au stockage local. Veuillez réessayer.",
+    "permissionError": "Autorisation requise pour continuer.",
+    "cacheError": "Une erreur de cache s'est produite. Veuillez réessayer.",
+    "forbiddenError": "Accès refusé.",
+    "notFoundError": "Le contenu demandé est introuvable.",
+    "conflictError": "Un conflit s'est produit. Veuillez réessayer.",
+    "tooManyRequestsError": "Trop de requêtes. Veuillez patienter un instant et réessayer.",
+    "internalServerError": "Erreur interne du serveur. Veuillez réessayer plus tard.",
+    "serviceUnavailableError": "Service temporairement indisponible. Veuillez réessayer plus tard.",
+    "deviceError": "Une erreur de l'appareil s'est produite.",
+    "platformError": "Une erreur spécifique à la plateforme s'est produite.",
+    "fileSystemError": "Une erreur du système de fichiers s'est produite.",
+    "encryptionError": "Une erreur de chiffrement s'est produite.",
+    "biometricError": "L'authentification biométrique a échoué.",
+    "locationError": "L'accès à la localisation a échoué.",
+    "cameraError": "L'accès à la caméra a échoué.",
+    "galleryError": "L'accès à la galerie a échoué.",
+    "notificationError": "Une erreur de notification s'est produite.",
+    "shareError": "Le partage a échoué.",
+    "urlLauncherError": "Impossible d'ouvrir le lien.",
+    "connectivityError": "Un problème de connectivité s'est produit.",
+    "parseError": "L'analyse des données a échoué.",
+    "databaseError": "Une erreur de base de données s'est produite.",
+    "migrationError": "La migration de la base de données a échoué.",
+    "syncError": "La synchronisation a échoué.",
+    "featureNotAvailableError": "Cette fonctionnalité n'est pas disponible.",
+    "versionMismatchError": "Mise à jour de l'application requise.",
+    "maintenanceModeError": "L'application est en maintenance. Veuillez réessayer plus tard.",
+    "rateLimitError": "Limite de requêtes dépassée. Veuillez patienter et réessayer.",
+    "subscriptionError": "Un problème d'abonnement s'est produit.",
+    "paymentError": "Le paiement a échoué.",
+    "contentNotAvailableError": "Le contenu n'est pas disponible.",
+    "quotaExceededError": "Quota dépassé.",
+    "configurationError": "Une erreur de configuration s'est produite.",
+    "dependencyError": "Une erreur de dépendance s'est produite."
   },
   "common": {
     "ok": "OK",
@@ -289,9 +326,15 @@
     "subtitle": "Vous devez seulement choisir votre type de carte ; aucune autre information ne sera demandée.",
     "searchHint": "Carte ou nom de banque",
     "filterComingSoon": "La fonction de filtrage arrive bientôt",
+    "loading": "Chargement des cartes...",
     "empty": {
       "title": "Aucune banque trouvée",
       "description": "Essayez un autre terme de recherche"
+    },
+    "error": {
+      "title": "Impossible de charger les cartes",
+      "description": "Vérifiez votre connexion et réessayez",
+      "retry": "Réessayer"
     }
   },
   "profile": {
@@ -406,6 +449,9 @@
     "citySelection": {
       "title": "Choisissez votre ville",
       "subtitle": "Nous vous montrerons toutes les réductions disponibles auprès des banques et des cartes autour de vous."
+    },
+    "splash": {
+      "takingLonger": "Cela prend plus de temps que d'habitude..."
     }
   },
   "cities": {

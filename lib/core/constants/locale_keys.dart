@@ -184,6 +184,43 @@ class _ErrorsKeys {
   final timeoutError = 'errors.timeoutError';
   final unauthorizedError = 'errors.unauthorizedError';
   final saveSelection = 'errors.saveSelection';
+  final authError = 'errors.authError';
+  final validationError = 'errors.validationError';
+  final storageError = 'errors.storageError';
+  final permissionError = 'errors.permissionError';
+  final cacheError = 'errors.cacheError';
+  final forbiddenError = 'errors.forbiddenError';
+  final notFoundError = 'errors.notFoundError';
+  final conflictError = 'errors.conflictError';
+  final tooManyRequestsError = 'errors.tooManyRequestsError';
+  final internalServerError = 'errors.internalServerError';
+  final serviceUnavailableError = 'errors.serviceUnavailableError';
+  final deviceError = 'errors.deviceError';
+  final platformError = 'errors.platformError';
+  final fileSystemError = 'errors.fileSystemError';
+  final encryptionError = 'errors.encryptionError';
+  final biometricError = 'errors.biometricError';
+  final locationError = 'errors.locationError';
+  final cameraError = 'errors.cameraError';
+  final galleryError = 'errors.galleryError';
+  final notificationError = 'errors.notificationError';
+  final shareError = 'errors.shareError';
+  final urlLauncherError = 'errors.urlLauncherError';
+  final connectivityError = 'errors.connectivityError';
+  final parseError = 'errors.parseError';
+  final databaseError = 'errors.databaseError';
+  final migrationError = 'errors.migrationError';
+  final syncError = 'errors.syncError';
+  final featureNotAvailableError = 'errors.featureNotAvailableError';
+  final versionMismatchError = 'errors.versionMismatchError';
+  final maintenanceModeError = 'errors.maintenanceModeError';
+  final rateLimitError = 'errors.rateLimitError';
+  final subscriptionError = 'errors.subscriptionError';
+  final paymentError = 'errors.paymentError';
+  final contentNotAvailableError = 'errors.contentNotAvailableError';
+  final quotaExceededError = 'errors.quotaExceededError';
+  final configurationError = 'errors.configurationError';
+  final dependencyError = 'errors.dependencyError';
 }
 
 class _SuccessKeys {
@@ -308,13 +345,22 @@ class _CreditCardsKeys {
   final subtitle = 'creditCards.subtitle';
   final searchHint = 'creditCards.searchHint';
   final filterComingSoon = 'creditCards.filterComingSoon';
+  final loading = 'creditCards.loading';
   final empty = const _CreditCardsEmptyKeys();
+  final error = const _CreditCardsErrorKeys();
 }
 
 class _CreditCardsEmptyKeys {
   const _CreditCardsEmptyKeys();
   final title = 'creditCards.empty.title';
   final description = 'creditCards.empty.description';
+}
+
+class _CreditCardsErrorKeys {
+  const _CreditCardsErrorKeys();
+  final title = 'creditCards.error.title';
+  final description = 'creditCards.error.description';
+  final retry = 'creditCards.error.retry';
 }
 
 class _StoresKeys {
@@ -398,6 +444,12 @@ class _OnboardingKeys {
   final languageButton = const _LanguageButtonKeys();
   final familyInvite = const _FamilyInviteKeys();
   final citySelection = const _CitySelectionKeys();
+  final splash = const _SplashKeys();
+}
+
+class _SplashKeys {
+  const _SplashKeys();
+  final takingLonger = 'onboarding.splash.takingLonger';
 }
 
 class _LanguageButtonKeys {

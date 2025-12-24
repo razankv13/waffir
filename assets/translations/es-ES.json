@@ -141,13 +141,50 @@
     "themeSettings": "Ajustes del tema"
   },
   "errors": {
-    "networkError": "Por favor verifica tu conexión a internet e inténtalo de nuevo",
-    "serverError": "Algo salió mal de nuestro lado. Por favor inténtalo más tarde",
-    "unknownError": "Ocurrió un error inesperado. Por favor inténtalo de nuevo",
-    "unknown": "Ocurrió un error inesperado",
-    "timeoutError": "La solicitud agotó el tiempo de espera. Por favor inténtalo de nuevo",
-    "unauthorizedError": "No estás autorizado para realizar esta acción",
-    "saveSelection": "Ocurrió un error al guardar tu selección. Por favor inténtalo de nuevo"
+    "networkError": "Por favor verifica tu conexión a internet e inténtalo de nuevo.",
+    "serverError": "Algo salió mal de nuestro lado. Por favor inténtalo más tarde.",
+    "unknownError": "Ocurrió un error inesperado. Por favor inténtalo de nuevo.",
+    "unknown": "Ocurrió un error inesperado.",
+    "timeoutError": "La solicitud agotó el tiempo de espera. Por favor inténtalo de nuevo.",
+    "unauthorizedError": "No estás autorizado para realizar esta acción.",
+    "saveSelection": "Ocurrió un error al guardar tu selección. Por favor inténtalo de nuevo.",
+    "authError": "La autenticación falló. Por favor inicia sesión de nuevo.",
+    "validationError": "Por favor verifica tus datos e inténtalo de nuevo.",
+    "storageError": "No se pudo acceder al almacenamiento local. Por favor inténtalo de nuevo.",
+    "permissionError": "Se requiere permiso para continuar.",
+    "cacheError": "Ocurrió un error de caché. Por favor inténtalo de nuevo.",
+    "forbiddenError": "Acceso denegado.",
+    "notFoundError": "No se pudo encontrar el contenido solicitado.",
+    "conflictError": "Ocurrió un conflicto. Por favor inténtalo de nuevo.",
+    "tooManyRequestsError": "Demasiadas solicitudes. Por favor espera un momento e inténtalo de nuevo.",
+    "internalServerError": "Error interno del servidor. Por favor inténtalo más tarde.",
+    "serviceUnavailableError": "El servicio no está disponible temporalmente. Por favor inténtalo más tarde.",
+    "deviceError": "Ocurrió un error del dispositivo.",
+    "platformError": "Ocurrió un error específico de la plataforma.",
+    "fileSystemError": "Ocurrió un error del sistema de archivos.",
+    "encryptionError": "Ocurrió un error de cifrado.",
+    "biometricError": "La autenticación biométrica falló.",
+    "locationError": "Falló el acceso a la ubicación.",
+    "cameraError": "Falló el acceso a la cámara.",
+    "galleryError": "Falló el acceso a la galería.",
+    "notificationError": "Ocurrió un error de notificación.",
+    "shareError": "Falló al compartir.",
+    "urlLauncherError": "No se pudo abrir el enlace.",
+    "connectivityError": "Ocurrió un problema de conectividad.",
+    "parseError": "Falló el análisis de datos.",
+    "databaseError": "Ocurrió un error de base de datos.",
+    "migrationError": "Falló la migración de la base de datos.",
+    "syncError": "Falló la sincronización.",
+    "featureNotAvailableError": "Esta función no está disponible.",
+    "versionMismatchError": "Se requiere actualización de la app.",
+    "maintenanceModeError": "La app está en mantenimiento. Por favor inténtalo más tarde.",
+    "rateLimitError": "Límite de solicitudes excedido. Por favor espera e inténtalo de nuevo.",
+    "subscriptionError": "Ocurrió un problema con la suscripción.",
+    "paymentError": "El pago falló.",
+    "contentNotAvailableError": "El contenido no está disponible.",
+    "quotaExceededError": "Cuota excedida.",
+    "configurationError": "Ocurrió un error de configuración.",
+    "dependencyError": "Ocurrió un error de dependencia."
   },
   "common": {
     "ok": "Aceptar",
@@ -289,9 +326,15 @@
     "subtitle": "Solo necesitas elegir tu tipo de tarjeta; no se solicitarán otros datos.",
     "searchHint": "Tarjeta o nombre del banco",
     "filterComingSoon": "La función de filtros estará disponible pronto",
+    "loading": "Cargando tarjetas...",
     "empty": {
       "title": "No se encontraron bancos",
       "description": "Prueba con otro término de búsqueda"
+    },
+    "error": {
+      "title": "No se pudieron cargar las tarjetas",
+      "description": "Verifica tu conexión e inténtalo de nuevo",
+      "retry": "Reintentar"
     }
   },
   "profile": {
@@ -406,6 +449,9 @@
     "citySelection": {
       "title": "Elige tu ciudad",
       "subtitle": "Te mostraremos todos los descuentos disponibles de bancos y tarjetas a tu alrededor."
+    },
+    "splash": {
+      "takingLonger": "Esto está tardando más de lo habitual..."
     }
   },
   "cities": {

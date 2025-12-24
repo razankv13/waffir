@@ -2,40 +2,51 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'credit_card.freezed.dart';
 
-/// Domain entity for a credit card offer
+/// Domain entity for a bank card (matches Supabase `bank_cards` table with bank join)
+///
+/// This entity represents a bank card with its associated bank information,
+/// used for display in the credit cards selection screen.
 @freezed
-abstract class CreditCard with _$CreditCard {
-  const factory CreditCard({
+abstract class BankCard with _$BankCard {
+  const factory BankCard({
     required String id,
     required String bankId,
-    required String bankName,
-    required String cardName,
-    required String cardType,
-    required String imageUrl,
-    String? description,
-    List<String>? benefits,
-    double? cashbackPercentage,
-    int? rewardPoints,
-    double? annualFee,
-    bool? isPopular,
-    bool? isFeatured,
-    String? applyUrl,
-  }) = _CreditCard;
+    required String nameEn,
+    String? nameAr,
+    String? imageUrl,
+    @Default(true) bool isActive,
+    int? accountTypeId,
+    int? cardTypeId,
+    // Bank info from join
+    String? bankName,
+    String? bankNameAr,
+    String? bankLogoUrl,
+  }) = _BankCard;
 
-  const CreditCard._();
+  const BankCard._();
 
-  /// Check if card has cashback
-  bool get hasCashback => cashbackPercentage != null && cashbackPercentage! > 0;
-
-  /// Check if card has rewards
-  bool get hasRewards => rewardPoints != null && rewardPoints! > 0;
-
-  /// Check if card has no annual fee
-  bool get isNoAnnualFee => annualFee == null || annualFee == 0;
-
-  /// Get formatted annual fee
-  String get formattedAnnualFee {
-    if (annualFee == null || annualFee == 0) return 'No annual fee';
-    return 'SAR ${annualFee!.toStringAsFixed(0)}/year';
+  /// Get localized card name based on language code
+  String localizedName(String languageCode) {
+    if (languageCode.toLowerCase() == 'ar' && nameAr != null && nameAr!.isNotEmpty) {
+      return nameAr!;
+    }
+    return nameEn;
   }
+
+  /// Get localized bank name based on language code
+  String localizedBankName(String languageCode) {
+    if (languageCode.toLowerCase() == 'ar' && bankNameAr != null && bankNameAr!.isNotEmpty) {
+      return bankNameAr!;
+    }
+    return bankName ?? '';
+  }
+
+  /// Get the display image URL (card image or bank logo fallback)
+  String? get displayImageUrl => imageUrl ?? bankLogoUrl;
+
+  /// Check if this card has an image to display
+  bool get hasImage => displayImageUrl != null && displayImageUrl!.isNotEmpty;
 }
+
+/// Legacy alias for backwards compatibility
+typedef CreditCard = BankCard;

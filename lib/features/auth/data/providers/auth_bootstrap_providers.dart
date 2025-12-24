@@ -21,8 +21,22 @@ class PendingFamilyInviteIdController extends Notifier<String?> {
   void clear() => state = null;
 }
 
-final pendingFamilyInviteIdProvider =
-    NotifierProvider<PendingFamilyInviteIdController, String?>(PendingFamilyInviteIdController.new);
+final pendingFamilyInviteIdProvider = NotifierProvider<PendingFamilyInviteIdController, String?>(
+  PendingFamilyInviteIdController.new,
+);
+
+/// Tracks if user has completed initial navigation (city selection done).
+/// This survives widget recreations unlike useState, preventing redirect loops.
+class InitialNavigationController extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void markCompleted() => state = true;
+  void reset() => state = false;
+}
+
+final initialNavigationCompletedProvider =
+    NotifierProvider<InitialNavigationController, bool>(InitialNavigationController.new);
 
 class AuthBootstrapController extends AsyncNotifier<AuthBootstrapData?> {
   @override
@@ -40,7 +54,6 @@ class AuthBootstrapController extends AsyncNotifier<AuthBootstrapData?> {
         accountSummary: null,
         userSettings: null,
         hasHadSubscriptionBefore: null,
-        familyInvites: const <Map<String, dynamic>>[],
         fetchedAt: DateTime.now(),
       );
     }
@@ -60,7 +73,6 @@ class AuthBootstrapController extends AsyncNotifier<AuthBootstrapData?> {
           accountSummary: null,
           userSettings: null,
           hasHadSubscriptionBefore: null,
-          familyInvites: const <Map<String, dynamic>>[],
           fetchedAt: DateTime.now(),
         );
       }
@@ -98,7 +110,6 @@ class AuthBootstrapController extends AsyncNotifier<AuthBootstrapData?> {
           accountSummary: null,
           userSettings: null,
           hasHadSubscriptionBefore: null,
-          familyInvites: const <Map<String, dynamic>>[],
           fetchedAt: DateTime.now(),
         );
       }
@@ -116,5 +127,7 @@ final isBootstrappedProvider = Provider<bool>((ref) {
   if (!authenticated) return true;
 
   final bootstrap = ref.watch(authBootstrapControllerProvider);
-  return bootstrap.hasValue && bootstrap.value != null;
+  // Bootstrapped when: has data OR has error (error handled by splash screen)
+  // Only false when actively loading
+  return !bootstrap.isLoading;
 });

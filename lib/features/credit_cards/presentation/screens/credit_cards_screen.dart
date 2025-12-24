@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:waffir/core/constants/locale_keys.dart';
+import 'package:waffir/core/storage/settings_service.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/search/search_bar_widget.dart';
 import 'package:waffir/core/widgets/switches/custom_toggle_switch.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
-import 'package:waffir/gen/assets.gen.dart';
+import 'package:waffir/features/credit_cards/domain/entities/credit_card.dart';
+import 'package:waffir/features/credit_cards/presentation/controllers/bank_cards_controller.dart';
 
 /// Credit Cards Screen - Choose Bank Cards (Figma node: 34:9127)
 ///
@@ -30,8 +32,11 @@ class CreditCardsScreen extends HookConsumerWidget {
     final theme = Theme.of(context);
     final responsive = ResponsiveHelper(context);
     final searchController = useTextEditingController();
-    final searchQuery = useState('');
-    final selectedBankIds = useState(<String>{});
+    final languageCode = ref.watch(localeProvider).languageCode;
+
+    // Watch the bank cards controller
+    final bankCardsAsync = ref.watch(bankCardsControllerProvider);
+    final controller = ref.read(bankCardsControllerProvider.notifier);
 
     final headerTitleStyle = theme.textTheme.titleLarge?.copyWith(
       fontWeight: FontWeight.w700,
@@ -46,30 +51,12 @@ class CreditCardsScreen extends HookConsumerWidget {
       color: theme.colorScheme.onSurface,
     );
 
-    List<_BankCardOptionData> filteredBankOptions() {
-      final query = searchQuery.value.trim().toLowerCase();
-      if (query.isEmpty) {
-        return _designBankOptions;
-      }
-      return _designBankOptions.where((option) {
-        final bank = option.bankName.toLowerCase();
-        final card = option.cardLabel.toLowerCase();
-        return bank.contains(query) || card.contains(query);
-      }).toList();
-    }
-
     void handleSearch(String rawQuery) {
-      searchQuery.value = rawQuery.trim().toLowerCase();
+      controller.updateSearch(rawQuery);
     }
 
-    void toggleBank(String bankId) {
-      final updated = {...selectedBankIds.value};
-      if (updated.contains(bankId)) {
-        updated.remove(bankId);
-      } else {
-        updated.add(bankId);
-      }
-      selectedBankIds.value = updated;
+    void toggleCard(String cardId) {
+      controller.toggleCard(cardId);
     }
 
     void showComingSoonSnackBar() {
@@ -128,7 +115,67 @@ class CreditCardsScreen extends HookConsumerWidget {
       );
     }
 
-    final filteredBanks = filteredBankOptions();
+    Widget buildLoadingState() {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: responsive.scale(48),
+              height: responsive.scale(48),
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            SizedBox(height: responsive.scale(16)),
+            Text(
+              LocaleKeys.creditCards.loading.tr(),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget buildErrorState(Object error, StackTrace stackTrace) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: responsive.scale(64),
+              color: theme.colorScheme.error,
+            ),
+            SizedBox(height: responsive.scale(16)),
+            Text(
+              LocaleKeys.creditCards.error.title.tr(),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            SizedBox(height: responsive.scale(8)),
+            Text(
+              LocaleKeys.creditCards.error.description.tr(),
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            SizedBox(height: responsive.scale(24)),
+            FilledButton.tonal(
+              onPressed: () => ref.invalidate(bankCardsControllerProvider),
+              child: Text(LocaleKeys.creditCards.error.retry.tr()),
+            ),
+          ],
+        ),
+      );
+    }
+
     final headerTitle = LocaleKeys.creditCards.title.tr();
     final headerSubtitle = LocaleKeys.creditCards.subtitle.tr();
     final searchHint = LocaleKeys.creditCards.searchHint.tr();
@@ -214,8 +261,14 @@ class CreditCardsScreen extends HookConsumerWidget {
                   ),
                 ];
               },
-              body: filteredBanks.isEmpty
-                  ? ListView(
+              body: bankCardsAsync.when(
+                loading: () => buildLoadingState(),
+                error: (error, stackTrace) => buildErrorState(error, stackTrace),
+                data: (state) {
+                  final filteredCards = state.filteredBankCards;
+
+                  if (filteredCards.isEmpty) {
+                    return ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.only(
                         left: responsive.scale(16),
@@ -224,28 +277,33 @@ class CreditCardsScreen extends HookConsumerWidget {
                         bottom: responsive.scale(120),
                       ),
                       children: [buildEmptyState(emptyTitle, emptyDescription)],
-                    )
-                  : ListView.separated(
-                      padding: EdgeInsets.only(
-                        left: responsive.scale(16),
-                        right: responsive.scale(16),
-                        top: responsive.scale(32),
-                        bottom: responsive.scale(120),
-                      ),
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: filteredBanks.length,
-                      separatorBuilder: (context, index) => SizedBox(height: responsive.scale(16)),
-                      itemBuilder: (context, index) {
-                        final option = filteredBanks[index];
-                        final isSelected = selectedBankIds.value.contains(option.id);
-                        return _BankSelectionTile(
-                          option: option,
-                          isSelected: isSelected,
-                          responsive: responsive,
-                          onToggle: () => toggleBank(option.id),
-                        );
-                      },
+                    );
+                  }
+
+                  return ListView.separated(
+                    padding: EdgeInsets.only(
+                      left: responsive.scale(16),
+                      right: responsive.scale(16),
+                      top: responsive.scale(32),
+                      bottom: responsive.scale(120),
                     ),
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: filteredCards.length,
+                    separatorBuilder: (context, index) => SizedBox(height: responsive.scale(16)),
+                    itemBuilder: (context, index) {
+                      final card = filteredCards[index];
+                      final isSelected = state.isSelected(card.id);
+                      return _BankCardSelectionTile(
+                        card: card,
+                        languageCode: languageCode,
+                        isSelected: isSelected,
+                        responsive: responsive,
+                        onToggle: () => toggleCard(card.id),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ),
           if (showBackButton)
@@ -306,15 +364,18 @@ class _PinnedSearchHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 }
 
-class _BankSelectionTile extends StatelessWidget {
-  const _BankSelectionTile({
-    required this.option,
+/// Bank card selection tile with network image support
+class _BankCardSelectionTile extends StatelessWidget {
+  const _BankCardSelectionTile({
+    required this.card,
+    required this.languageCode,
     required this.isSelected,
     required this.responsive,
     required this.onToggle,
   });
 
-  final _BankCardOptionData option;
+  final BankCard card;
+  final String languageCode;
   final bool isSelected;
   final ResponsiveHelper responsive;
   final VoidCallback onToggle;
@@ -333,10 +394,10 @@ class _BankSelectionTile extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: borderRadius,
             border: Border.all(color: theme.colorScheme.outlineVariant),
-            color: theme.colorScheme.surface,
+            color: theme.colorScheme.surfaceContainerHighest,
           ),
           clipBehavior: Clip.antiAlias,
-          child: option.asset.image(fit: BoxFit.cover),
+          child: _buildCardImage(context, logoSize),
         ),
         SizedBox(width: responsive.scale(12)),
         Expanded(
@@ -344,7 +405,7 @@ class _BankSelectionTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                option.bankName,
+                card.localizedBankName(languageCode),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w700,
                   fontSize: responsive.scaleFontSize(14, minSize: 12),
@@ -354,7 +415,7 @@ class _BankSelectionTile extends StatelessWidget {
               ),
               SizedBox(height: responsive.scale(4)),
               Text(
-                option.cardLabel,
+                card.localizedName(languageCode),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
                   fontSize: responsive.scaleFontSize(12),
@@ -370,48 +431,59 @@ class _BankSelectionTile extends StatelessWidget {
       ],
     );
   }
+
+  Widget _buildCardImage(BuildContext context, double size) {
+    final theme = Theme.of(context);
+    final imageUrl = card.displayImageUrl;
+
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return _buildPlaceholder(theme, size);
+    }
+
+    return Image.network(
+      imageUrl,
+      fit: BoxFit.cover,
+      width: size,
+      height: size,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return _buildLoadingIndicator(theme, size, loadingProgress);
+      },
+      errorBuilder: (context, error, stackTrace) {
+        return _buildPlaceholder(theme, size);
+      },
+    );
+  }
+
+  Widget _buildLoadingIndicator(
+    ThemeData theme,
+    double size,
+    ImageChunkEvent loadingProgress,
+  ) {
+    final progress = loadingProgress.expectedTotalBytes != null
+        ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+        : null;
+
+    return Center(
+      child: SizedBox(
+        width: size * 0.4,
+        height: size * 0.4,
+        child: CircularProgressIndicator(
+          value: progress,
+          strokeWidth: 2,
+          color: theme.colorScheme.primary.withOpacity(0.6),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder(ThemeData theme, double size) {
+    return Center(
+      child: Icon(
+        Icons.credit_card,
+        size: size * 0.5,
+        color: theme.colorScheme.onSurfaceVariant.withOpacity(0.4),
+      ),
+    );
+  }
 }
-
-class _BankCardOptionData {
-  const _BankCardOptionData({
-    required this.id,
-    required this.bankName,
-    required this.cardLabel,
-    required this.asset,
-    this.isDefaultSelected = false,
-  });
-
-  final String id;
-  final String bankName;
-  final String cardLabel;
-  final AssetGenImage asset;
-  final bool isDefaultSelected;
-}
-
-final List<_BankCardOptionData> _designBankOptions = [
-  _BankCardOptionData(
-    id: 'sab',
-    bankName: 'SAB',
-    cardLabel: 'Platinum 4609 92',
-    asset: Assets.images.creditCards.sabCard,
-  ),
-  _BankCardOptionData(
-    id: 'rajhi',
-    bankName: 'Rajhi',
-    cardLabel: 'Business 4431 22',
-    asset: Assets.images.creditCards.rajhiCard,
-    isDefaultSelected: true,
-  ),
-  _BankCardOptionData(
-    id: 'enbd',
-    bankName: 'ENBD',
-    cardLabel: 'Premium Plus 4992 00',
-    asset: Assets.images.creditCards.enbdCard,
-  ),
-  _BankCardOptionData(
-    id: 'snb',
-    bankName: 'SNB',
-    cardLabel: 'Titanium 5521 43',
-    asset: Assets.images.creditCards.snbCard,
-  ),
-];

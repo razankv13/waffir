@@ -9,10 +9,11 @@ import 'package:waffir/core/errors/failures.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/bottom_login_overlay.dart';
+import 'package:waffir/core/widgets/headers/sticky_header_delegate.dart';
+import 'package:waffir/core/widgets/headers/waffir_sliver_app_bar.dart';
 import 'package:waffir/core/widgets/products/badge_widget.dart';
 import 'package:waffir/core/widgets/products/product_card.dart';
 import 'package:waffir/core/widgets/search/category_filter_chips.dart';
-import 'package:waffir/core/widgets/search/search_bar_widget.dart';
 import 'package:waffir/features/deals/presentation/controllers/hot_deals_controller.dart';
 
 /// Hot Deals Screen - displays the feed with category filters and search.
@@ -62,61 +63,23 @@ class HotDealsScreen extends HookConsumerWidget {
             child: NestedScrollView(
               floatHeaderSlivers: true,
               headerSliverBuilder: (context, _) {
-                final headerHorizontalPadding = responsive.scale(16);
-                final headerVerticalPadding = responsive.scale(12);
-                final logoHeight = responsive.scale(56);
-
-                const searchBarHeight = 68.0;
-                final searchGap = responsive.scale(12);
-                final headerSearchHeight =
-                    (headerVerticalPadding * 2) + logoHeight + searchGap + searchBarHeight;
-
                 final chipsHeight = responsive.scale(71);
                 final chipsTopSpacing = responsive.scale(6);
                 final chipsHeaderHeight = chipsTopSpacing + chipsHeight;
 
                 return [
-                  SliverAppBar(
-                    floating: true,
-                    snap: true,
-                    toolbarHeight: 0,
-                    collapsedHeight: headerSearchHeight,
-                    expandedHeight: headerSearchHeight,
-                    elevation: 0,
-                    backgroundColor: colorScheme.surface,
-                    surfaceTintColor: Colors.transparent,
-                    flexibleSpace: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: headerHorizontalPadding,
-                            vertical: headerVerticalPadding,
-                          ),
-                          child: SizedBox(
-                            height: logoHeight,
-                            child: Image.asset(
-                              'assets/images/splash_logo.png',
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: headerHorizontalPadding),
-                          child: SearchBarWidget(
-                            showFilterButton: true,
-                            onChanged: handleSearch,
-                            onSearch: handleSearch,
-                            onFilterTap: handleFilterTap,
-                          ),
-                        ),
-                      ],
-                    ),
+                  // Header + Search (hides on scroll up, snaps back on scroll down)
+                  WaffirSliverAppBar(
+                    searchHintText: LocaleKeys.deals.searchHint.tr(),
+                    onSearchChanged: handleSearch,
+                    onSearch: handleSearch,
+                    onFilterTap: handleFilterTap,
                   ),
+
+                  // Category Filters (always visible + sticky)
                   SliverPersistentHeader(
                     pinned: true,
-                    delegate: _StickyCategoryChipsHeaderDelegate(
+                    delegate: StickyHeaderDelegate(
                       height: chipsHeaderHeight,
                       topSpacing: chipsTopSpacing,
                       backgroundColor: colorScheme.surface,
@@ -369,42 +332,3 @@ class _HotDealsErrorState extends StatelessWidget {
   }
 }
 
-class _StickyCategoryChipsHeaderDelegate extends SliverPersistentHeaderDelegate {
-  _StickyCategoryChipsHeaderDelegate({
-    required this.height,
-    required this.topSpacing,
-    required this.backgroundColor,
-    required this.child,
-  });
-
-  final double height;
-  final double topSpacing;
-  final Color backgroundColor;
-  final Widget child;
-
-  @override
-  double get minExtent => height;
-
-  @override
-  double get maxExtent => height;
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      height: height,
-      color: backgroundColor,
-      child: Padding(
-        padding: EdgeInsets.only(top: topSpacing),
-        child: child,
-      ),
-    );
-  }
-
-  @override
-  bool shouldRebuild(covariant _StickyCategoryChipsHeaderDelegate oldDelegate) {
-    return height != oldDelegate.height ||
-        topSpacing != oldDelegate.topSpacing ||
-        backgroundColor != oldDelegate.backgroundColor ||
-        child != oldDelegate.child;
-  }
-}

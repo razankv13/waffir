@@ -1,19 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/constants/app_typography.dart';
-import 'package:waffir/core/navigation/routes.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/bottom_login_overlay.dart';
 import 'package:waffir/core/widgets/cards/store_card.dart';
 import 'package:waffir/core/widgets/filters/stores_category_chips.dart';
-import 'package:waffir/core/widgets/search/waffir_search_bar.dart';
+import 'package:waffir/core/widgets/headers/sticky_header_delegate.dart';
+import 'package:waffir/core/widgets/headers/waffir_sliver_app_bar.dart';
+import 'package:waffir/features/stores/domain/entities/catalog_category.dart';
 import 'package:waffir/features/stores/domain/entities/store.dart';
 import 'package:waffir/features/stores/presentation/controllers/catalog_categories_controller.dart';
 import 'package:waffir/features/stores/presentation/controllers/stores_controller.dart';
-import 'package:waffir/features/stores/domain/entities/catalog_category.dart';
 
 /// Stores Screen - displays stores with category filters and sections
 ///
@@ -145,136 +144,24 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
             child: NestedScrollView(
               floatHeaderSlivers: true,
               headerSliverBuilder: (context, _) {
-                // Keep responsive scaling for the header area (repo rule).
-                final headerHorizontalPadding = responsive.scale(16);
-                final headerVerticalPadding = responsive.scale(12);
-                final logoHeight = responsive.scale(56);
-                final notificationSize = responsive.scale(44);
-                final notificationIconSize = responsive.scale(22);
-                final notificationSplashRadius = responsive.scale(24);
-                final headerActionSpacing = responsive.scale(10);
-
-                // WaffirSearchBar has a fixed height of 68px by design.
-                const searchBarHeight = 68.0;
-                final searchPadding = responsive.scale(16);
-
-                final rowHeight = logoHeight > notificationSize ? logoHeight : notificationSize;
-                final headerSearchHeight =
-                    (headerVerticalPadding * 2) + rowHeight + (searchPadding * 2) + searchBarHeight;
-
-                // StoresCategoryChips has a fixed height of 66px currently.
+                // StoresCategoryChips has a fixed height of 74px currently.
                 const chipsHeight = 74.0;
                 final chipsTopSpacing = responsive.scale(6);
                 final chipsHeaderHeight = chipsTopSpacing + chipsHeight;
 
                 return [
                   // Header + Search (hides on scroll up, snaps back on scroll down)
-                  SliverAppBar(
-                    floating: true,
-                    snap: true,
-                    toolbarHeight: 0,
-                    collapsedHeight: headerSearchHeight,
-                    expandedHeight: headerSearchHeight,
-                    elevation: 0,
-                    backgroundColor: colorScheme.surface,
-                    surfaceTintColor: Colors.transparent,
-                    flexibleSpace: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Header row (logo + notifications)
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: headerHorizontalPadding,
-                            vertical: headerVerticalPadding,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Image.asset(
-                                'assets/images/splash_logo.png',
-                                height: logoHeight,
-                                fit: BoxFit.contain,
-                              ),
-
-                              Row(
-                                children: [
-                                  // Banks (Catalog)
-                                  Tooltip(
-                                    message: 'Banks',
-                                    child: Container(
-                                      width: notificationSize,
-                                      height: notificationSize,
-                                      decoration: BoxDecoration(
-                                        color: colorScheme.surfaceContainerHighest.withValues(
-                                          alpha: 0.6,
-                                        ),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.account_balance_outlined,
-                                          size: notificationIconSize,
-                                          color: colorScheme.primary,
-                                        ),
-                                        onPressed: () {
-                                          context.pushNamed(AppRouteNames.banks);
-                                        },
-                                        padding: EdgeInsets.zero,
-                                        splashRadius: notificationSplashRadius,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: headerActionSpacing),
-                                  // Notifications
-                                  Tooltip(
-                                    message: 'Notifications',
-                                    child: Container(
-                                      width: notificationSize,
-                                      height: notificationSize,
-                                      decoration: BoxDecoration(
-                                        color: colorScheme.surfaceContainerHighest.withValues(
-                                          alpha: 0.6,
-                                        ),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.notifications,
-                                          size: notificationIconSize,
-                                          color: colorScheme.primary,
-                                        ),
-                                        onPressed: () {
-                                          context.pushNamed(AppRouteNames.notifications);
-                                        },
-                                        padding: EdgeInsets.zero,
-                                        splashRadius: notificationSplashRadius,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Search Bar (Waffir branded with exact Figma specs)
-                        Padding(
-                          padding: EdgeInsets.all(searchPadding),
-                          child: WaffirSearchBar(
-                            hintText: LocaleKeys.stores.searchHint.tr(),
-                            onChanged: storesController.updateSearch,
-                            onSearch: storesController.updateSearch,
-                            onFilterTap: _handleFilterTap,
-                          ),
-                        ),
-                      ],
-                    ),
+                  WaffirSliverAppBar(
+                    searchHintText: LocaleKeys.stores.searchHint.tr(),
+                    onSearchChanged: storesController.updateSearch,
+                    onSearch: storesController.updateSearch,
+                    onFilterTap: _handleFilterTap,
                   ),
 
                   // Category Filters (always visible + sticky)
                   SliverPersistentHeader(
                     pinned: true,
-                    delegate: _StickyCategoryChipsHeaderDelegate(
+                    delegate: StickyHeaderDelegate(
                       height: chipsHeaderHeight,
                       topSpacing: chipsTopSpacing,
                       backgroundColor: colorScheme.surface,
@@ -532,42 +419,3 @@ class _StoresErrorState extends StatelessWidget {
   }
 }
 
-class _StickyCategoryChipsHeaderDelegate extends SliverPersistentHeaderDelegate {
-  _StickyCategoryChipsHeaderDelegate({
-    required this.height,
-    required this.topSpacing,
-    required this.backgroundColor,
-    required this.child,
-  });
-
-  final double height;
-  final double topSpacing;
-  final Color backgroundColor;
-  final Widget child;
-
-  @override
-  double get minExtent => height;
-
-  @override
-  double get maxExtent => height;
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      height: height,
-      color: backgroundColor,
-      child: Padding(
-        padding: EdgeInsets.only(top: topSpacing),
-        child: child,
-      ),
-    );
-  }
-
-  @override
-  bool shouldRebuild(covariant _StickyCategoryChipsHeaderDelegate oldDelegate) {
-    return height != oldDelegate.height ||
-        topSpacing != oldDelegate.topSpacing ||
-        backgroundColor != oldDelegate.backgroundColor ||
-        child != oldDelegate.child;
-  }
-}

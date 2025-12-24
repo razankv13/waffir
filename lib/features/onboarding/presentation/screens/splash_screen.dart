@@ -24,7 +24,6 @@ class SplashScreen extends HookConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final responsive = context.responsive;
-    final isMounted = context.mounted;
 
     final animationController = useAnimationController(
       duration: const Duration(milliseconds: 1500),
@@ -41,6 +40,7 @@ class SplashScreen extends HookConsumerWidget {
     final isNavigating = useRef(false);
     final isShowingInviteDialog = useState(false);
     final bootstrapErrorMessage = useState<String?>(null);
+    final bootstrapTimeoutReached = useState(false);
 
     final isAuthenticated = ref.watch(isAuthenticatedProvider);
     final bootstrap = ref.watch(authBootstrapControllerProvider);
@@ -61,7 +61,7 @@ class SplashScreen extends HookConsumerWidget {
     }
 
     Future<void> maybeHandleFamilyInvites(AuthBootstrapData data) async {
-      if (isShowingInviteDialog.value || !isMounted) return;
+      if (isShowingInviteDialog.value || !context.mounted) return;
 
       final resolvedInviteId = (pendingInviteId?.trim().isNotEmpty ?? false)
           ? pendingInviteId!.trim()
@@ -74,10 +74,10 @@ class SplashScreen extends HookConsumerWidget {
         final action = await showDialog<String>(
           context: context,
           barrierDismissible: false,
-          builder: (context) {
-            final theme = Theme.of(context);
+          builder: (dialogContext) {
+            final theme = Theme.of(dialogContext);
             final colorScheme = theme.colorScheme;
-            final responsive = context.responsive;
+            final responsive = dialogContext.responsive;
             return AlertDialog(
               title: Text(LocaleKeys.onboarding.familyInvite.title.tr()),
               content: Text(
@@ -85,14 +85,14 @@ class SplashScreen extends HookConsumerWidget {
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop('reject'),
+                  onPressed: () => Navigator.of(dialogContext).pop('reject'),
                   child: Text(
                     LocaleKeys.buttons.reject.tr(),
                     style: TextStyle(color: colorScheme.error),
                   ),
                 ),
                 FilledButton(
-                  onPressed: () => Navigator.of(context).pop('accept'),
+                  onPressed: () => Navigator.of(dialogContext).pop('accept'),
                   style: FilledButton.styleFrom(
                     padding: responsive.scalePadding(
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -105,7 +105,7 @@ class SplashScreen extends HookConsumerWidget {
           },
         );
 
-        if (action == null || !isMounted) return;
+        if (action == null || !context.mounted) return;
 
         await ref
             .read(supabaseAuthBootstrapRepositoryProvider)
@@ -113,23 +113,23 @@ class SplashScreen extends HookConsumerWidget {
         ref.read(pendingFamilyInviteIdProvider.notifier).clear();
         await ref.read(authBootstrapControllerProvider.notifier).refresh();
 
-        if (isMounted) {
+        if (context.mounted) {
           final message = action == 'accept'
               ? LocaleKeys.onboarding.familyInvite.inviteAccepted.tr()
               : LocaleKeys.onboarding.familyInvite.inviteRejected.tr();
           context.showInfoSnackBar(message: message);
         }
       } catch (e) {
-        if (isMounted) {
+        if (context.mounted) {
           context.showErrorSnackBar(message: e.toString());
         }
       } finally {
-        if (isMounted) isShowingInviteDialog.value = false;
+        if (context.mounted) isShowingInviteDialog.value = false;
       }
     }
 
     Future<void> maybeNavigate() async {
-      if (!isMounted || hasNavigated.value || isNavigating.value) return;
+      if (!context.mounted || hasNavigated.value || isNavigating.value) return;
       isNavigating.value = true;
 
       try {
@@ -137,35 +137,56 @@ class SplashScreen extends HookConsumerWidget {
 
         // Keep the splash visible briefly for the brand animation.
         await Future<void>.delayed(const Duration(milliseconds: 500));
-        if (!isMounted || hasNavigated.value) return;
+        if (!context.mounted || hasNavigated.value) return;
 
         final settingsService = ref.read(settingsServiceProvider);
         final selectedCity = settingsService.getPreference<String>('selected_city');
         if (selectedCity == null) {
           hasNavigated.value = true;
-          context.go(AppRoutes.citySelection);
+          if (context.mounted) context.go(AppRoutes.citySelection);
           return;
         }
 
         if (!isAuthenticated) {
           hasNavigated.value = true;
-          context.go(AppRoutes.login);
+          if (context.mounted) context.go(AppRoutes.login);
           return;
         }
 
-        if (bootstrap.isLoading) return;
+        // Handle bootstrap loading with timeout
+        if (bootstrap.isLoading && !bootstrapTimeoutReached.value) {
+          return; // Will retry when bootstrap state changes
+        }
+
+        // If timeout reached while still loading, navigate to home anyway
+        if (bootstrapTimeoutReached.value && bootstrap.isLoading) {
+          hasNavigated.value = true;
+          if (context.mounted) context.go(AppRoutes.home);
+          return;
+        }
 
         if (bootstrap.hasError) {
           bootstrapErrorMessage.value = bootstrap.error.toString();
           return;
         }
 
-        if (!bootstrap.hasValue) return;
+        if (!bootstrap.hasValue) {
+          // No data yet but not loading - navigate to home as fallback
+          hasNavigated.value = true;
+          if (context.mounted) context.go(AppRoutes.home);
+          return;
+        }
+
         final data = bootstrap.value;
-        if (data == null) return;
+        if (data == null) {
+          // Null data - navigate to home as fallback
+          hasNavigated.value = true;
+          if (context.mounted) context.go(AppRoutes.home);
+          return;
+        }
 
         await maybeHandleFamilyInvites(data);
-        if (!isMounted || hasNavigated.value) return;
+        if (!context.mounted || hasNavigated.value) return;
 
         final user = ref.read(activeUserProvider);
         final acceptedTerms = user?.preferences['acceptedTerms'] == true;
@@ -173,18 +194,35 @@ class SplashScreen extends HookConsumerWidget {
         final hasGender = user?.gender?.trim().isNotEmpty ?? false;
 
         hasNavigated.value = true;
-        context.go(
-          (hasName && hasGender && acceptedTerms) ? AppRoutes.home : AppRoutes.accountDetails,
-        );
+        if (context.mounted) {
+          context.go(
+            (hasName && hasGender && acceptedTerms) ? AppRoutes.home : AppRoutes.accountDetails,
+          );
+        }
       } finally {
         isNavigating.value = false;
       }
     }
 
+    // Bootstrap timeout: if loading takes too long, navigate anyway
+    useEffect(() {
+      if (!isAuthenticated || !bootstrap.isLoading || hasNavigated.value) {
+        return null;
+      }
+
+      final timer = Timer(const Duration(seconds: 10), () {
+        if (context.mounted && !hasNavigated.value) {
+          bootstrapTimeoutReached.value = true;
+        }
+      });
+
+      return timer.cancel;
+    }, [isAuthenticated, bootstrap.isLoading]);
+
     useEffect(() {
       unawaited(maybeNavigate());
       return null;
-    }, [isAuthenticated, bootstrap, pendingInviteId]);
+    }, [isAuthenticated, bootstrap, pendingInviteId, bootstrapTimeoutReached.value]);
 
     return Scaffold(
       backgroundColor: colorScheme.primary,
@@ -201,6 +239,16 @@ class SplashScreen extends HookConsumerWidget {
                 if (isAuthenticated && bootstrap.isLoading) ...[
                   SizedBox(height: responsive.scale(24)),
                   CircularProgressIndicator(color: colorScheme.secondary),
+                  if (bootstrapTimeoutReached.value) ...[
+                    SizedBox(height: responsive.scale(16)),
+                    Text(
+                      LocaleKeys.onboarding.splash.takingLonger.tr(),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onPrimary.withValues(alpha: 0.7),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ],
                 if (bootstrapErrorMessage.value != null) ...[
                   SizedBox(height: responsive.scale(24)),

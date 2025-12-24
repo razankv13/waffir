@@ -13,6 +13,8 @@ import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 import 'package:waffir/core/widgets/inputs/city_list_item.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
+import 'package:waffir/features/auth/data/providers/auth_bootstrap_providers.dart';
+import 'package:waffir/features/auth/data/providers/auth_providers.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
 
 /// City selection screen
@@ -60,8 +62,23 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
       final settingsService = ref.read(settingsServiceProvider);
       await settingsService.setPreference<String>('selected_city', _selectedCity!);
 
+      final isAuthenticated = ref.watch(isAuthenticatedProvider);
+
+      final isBootstrapped = ref.watch(isBootstrappedProvider);
+
       if (mounted) {
-        context.go(AppRoutes.onboarding);
+        if (isAuthenticated) {
+          // Mark initial navigation as complete to prevent redirect loop
+          ref.read(initialNavigationCompletedProvider.notifier).markCompleted();
+
+          if (isBootstrapped) {
+            context.go(AppRoutes.home);
+          } else {
+            context.go(AppRoutes.accountDetails);
+          }
+        } else {
+          context.go(AppRoutes.onboarding);
+        }
       }
     } catch (error) {
       if (mounted) {
@@ -91,19 +108,21 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
 
     bool showBackButton = context.pathParameters is Map<String, dynamic>
         ? (context.pathParameters as Map<String, dynamic>)['showBackButton'] == 'true'
-            ? true
-            : false
+              ? true
+              : false
         : true;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: SafeArea(
+        top: false,
         child: Stack(
           children: [
             // Blurred background matching Figma design
             const BlurredBackground(),
             Column(
               children: [
+                SizedBox(height: context.safeAreaTop),
                 if (showBackButton) WaffirBackButton(size: responsive.scale(44)),
                 // Header section with gradient fade
                 _buildHeaderSection(

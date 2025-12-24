@@ -11,20 +11,22 @@ import 'package:waffir/features/auth/domain/entities/auth_state.dart';
 abstract class RouteGuard extends ChangeNotifier {
   /// Check if the route should be redirected
   String? redirect(BuildContext context, GoRouterState state);
-  
+
   /// Check if the guard should be active for this route
   bool shouldGuard(String route);
 }
 
 /// Authentication route guard
 class AuthGuard extends RouteGuard {
+  AuthGuard(this._ref);
+  final Ref _ref;
+
   bool _isAuthenticated = false;
   bool _isInitialized = false;
-  bool _isBootstrapped = false;
 
   bool get isAuthenticated => _isAuthenticated;
   bool get isInitialized => _isInitialized;
-  bool get isBootstrapped => _isBootstrapped;
+  bool get isBootstrapped => _ref.read(isBootstrappedProvider);
 
   /// Update authentication status
   void updateAuthStatus(bool isAuthenticated) {
@@ -35,7 +37,7 @@ class AuthGuard extends RouteGuard {
     if (didChange) {
       _isInitialized = true;
       notifyListeners();
-      
+
       AppLogger.logAuth(
         isAuthenticated ? 'User authenticated' : 'User logged out',
         metadata: {'timestamp': DateTime.now().toIso8601String()},
@@ -43,28 +45,34 @@ class AuthGuard extends RouteGuard {
     }
   }
 
-  /// Update bootstrapping status (After-login sequence)
-  void updateBootstrapStatus(bool isBootstrapped) {
-    if (_isBootstrapped != isBootstrapped) {
-      _isBootstrapped = isBootstrapped;
-      notifyListeners();
-    }
-  }
-
   @override
   String? redirect(BuildContext context, GoRouterState state) {
     final isGoingToAuth = AppRoutes.authRoutes.contains(state.matchedLocation);
     final isGoingToPublic = AppRoutes.publicRoutes.contains(state.matchedLocation);
-    final isGoingToSplash = state.matchedLocation == AppRoutes.splash;
-    
+
+    // Onboarding routes that should be accessible during bootstrap
+    final isGoingToOnboarding = [
+      AppRoutes.splash,
+      AppRoutes.citySelection,
+      AppRoutes.onboarding,
+      AppRoutes.welcome,
+    ].contains(state.matchedLocation);
+
     // Don't redirect if not initialized yet
     if (!_isInitialized) {
       AppLogger.debug('AuthGuard not initialized, allowing navigation');
       return null;
     }
 
-    // If authenticated but bootstrapping is not finished, keep the user on splash.
-    if (_isAuthenticated && !_isBootstrapped && !isGoingToSplash) {
+    // Read bootstrap status directly from provider to avoid race conditions
+    final isBootstrapped = _ref.read(isBootstrappedProvider);
+
+    // Check if user has already passed the initial navigation flow (city selection done)
+    final hasPassedInitialFlow = _ref.read(initialNavigationCompletedProvider);
+
+    // If authenticated but bootstrapping is not finished, allow onboarding routes
+    // Also allow if user has already passed initial flow (prevents redirect loop)
+    if (_isAuthenticated && !isBootstrapped && !isGoingToOnboarding && !hasPassedInitialFlow) {
       return AppRoutes.splash;
     }
 
@@ -93,26 +101,29 @@ class AuthGuard extends RouteGuard {
 
   @override
   bool shouldGuard(String route) {
-    return AppRoutes.protectedRoutes.contains(route) || 
-           AppRoutes.authRoutes.contains(route);
+    return AppRoutes.protectedRoutes.contains(route) || AppRoutes.authRoutes.contains(route);
   }
 
   /// Sign out user
   void signOut() {
     updateAuthStatus(false);
-    updateBootstrapStatus(false);
   }
 
   /// Sign in user
   void signIn() {
     updateAuthStatus(true);
   }
+
+  /// Force GoRouter to re-evaluate routes
+  void refreshRouter() {
+    notifyListeners();
+  }
 }
 
 /// Admin route guard
 class AdminGuard extends RouteGuard {
   bool _isAdmin = false;
-  
+
   bool get isAdmin => _isAdmin;
 
   void updateAdminStatus(bool isAdmin) {
@@ -126,7 +137,7 @@ class AdminGuard extends RouteGuard {
   String? redirect(BuildContext context, GoRouterState state) {
     // Check if trying to access admin routes
     final isAdminRoute = state.matchedLocation.startsWith('/admin');
-    
+
     if (isAdminRoute && !_isAdmin) {
       AppLogger.logNavigation(
         from: state.matchedLocation,
@@ -148,7 +159,7 @@ class AdminGuard extends RouteGuard {
 /// Onboarding route guard
 class OnboardingGuard extends RouteGuard {
   bool _hasCompletedOnboarding = false;
-  
+
   bool get hasCompletedOnboarding => _hasCompletedOnboarding;
 
   void updateOnboardingStatus(bool completed) {
@@ -162,7 +173,7 @@ class OnboardingGuard extends RouteGuard {
   String? redirect(BuildContext context, GoRouterState state) {
     final isGoingToOnboarding = state.matchedLocation == AppRoutes.onboarding;
     final isGoingToAuth = AppRoutes.authRoutes.contains(state.matchedLocation);
-    
+
     // If user hasn't completed onboarding and is not going to onboarding or auth
     if (!_hasCompletedOnboarding && !isGoingToOnboarding && !isGoingToAuth) {
       AppLogger.logNavigation(
@@ -183,14 +194,12 @@ class OnboardingGuard extends RouteGuard {
 
   @override
   bool shouldGuard(String route) {
-    return !AppRoutes.authRoutes.contains(route) && 
-           route != AppRoutes.onboarding;
+    return !AppRoutes.authRoutes.contains(route) && route != AppRoutes.onboarding;
   }
 }
 
 /// Combined route guard that manages multiple guards
 class CombinedRouteGuard extends RouteGuard {
-  
   CombinedRouteGuard(this._guards) {
     // Listen to changes in all guards
     for (final guard in _guards) {
@@ -234,24 +243,33 @@ final _onboardingGuard = OnboardingGuard();
 
 // Providers
 final authGuardProvider = Provider<AuthGuard>((ref) {
-  final guard = AuthGuard();
+  final guard = AuthGuard(ref);
 
   ref.listen(authStateProvider, (previous, next) {
     next.when(
-      data: (state) => guard.updateAuthStatus(state.isAuthenticated),
+      data: (state) {
+        guard.updateAuthStatus(state.isAuthenticated);
+        // Reset initial navigation state when user logs out
+        if (!state.isAuthenticated) {
+          ref.read(initialNavigationCompletedProvider.notifier).reset();
+        }
+      },
       loading: () {},
-      error: (_, __) => guard.updateAuthStatus(false),
+      error: (_, _) => guard.updateAuthStatus(false),
     );
   });
 
+  // Trigger GoRouter re-evaluation when bootstrap status changes
+  // This ensures stale provider values are refreshed after bootstrap completes
   ref.listen(isBootstrappedProvider, (previous, next) {
-    guard.updateBootstrapStatus(next);
+    if (previous != next) {
+      guard.refreshRouter();
+    }
   });
 
-  // Initialize with current values if already available.
+  // Initialize with current auth value if already available
   final initialAuth = ref.read(isAuthenticatedProvider);
   guard.updateAuthStatus(initialAuth);
-  guard.updateBootstrapStatus(ref.read(isBootstrappedProvider));
 
   ref.onDispose(guard.dispose);
   return guard;
@@ -280,7 +298,7 @@ extension GoRouterExtension on GoRouter {
     final location = routerDelegate.currentConfiguration.uri.path;
     return AppRoutes.protectedRoutes.contains(location);
   }
-  
+
   /// Get current route name
   String? get currentRouteName {
     final matches = routerDelegate.currentConfiguration.matches;
@@ -301,7 +319,7 @@ extension BuildContextRouteExtension on BuildContext {
     }
     router.go(route, extra: extra);
   }
-  
+
   /// Push with authentication check
   void pushWithAuth(String route, {Object? extra}) {
     final router = GoRouter.of(this);

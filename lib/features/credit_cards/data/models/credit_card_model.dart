@@ -1,71 +1,67 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:waffir/features/credit_cards/domain/entities/credit_card.dart';
 
 part 'credit_card_model.freezed.dart';
 part 'credit_card_model.g.dart';
 
-/// Data model for CreditCard with JSON serialization
+/// Data model for BankCard with JSON serialization (matches Supabase `bank_cards` joined with `banks`)
 @freezed
-abstract class CreditCardModel with _$CreditCardModel {
+abstract class BankCardModel with _$BankCardModel {
+  const factory BankCardModel({
+    required String id,
+    @JsonKey(name: 'bank_id') required String bankId,
+    @JsonKey(name: 'name_en') required String nameEn,
+    @JsonKey(name: 'name_ar') String? nameAr,
+    @JsonKey(name: 'image_url') String? imageUrl,
+    @JsonKey(name: 'is_active') @Default(true) bool isActive,
+    @JsonKey(name: 'account_type_id') int? accountTypeId,
+    @JsonKey(name: 'card_type_id') int? cardTypeId,
+    // Bank info from join
+    @JsonKey(name: 'bank_name') String? bankName,
+    @JsonKey(name: 'bank_name_ar') String? bankNameAr,
+    @JsonKey(name: 'bank_logo_url') String? bankLogoUrl,
+  }) = _BankCardModel;
+
+  const BankCardModel._();
+
+  /// Create from JSON (Supabase row with bank join)
+  factory BankCardModel.fromJson(Map<String, dynamic> json) => _$BankCardModelFromJson(json);
 
   /// Create from domain entity
-  factory CreditCardModel.fromDomain(CreditCard card) {
-    return CreditCardModel(
+  factory BankCardModel.fromDomain(BankCard card) {
+    return BankCardModel(
       id: card.id,
       bankId: card.bankId,
-      bankName: card.bankName,
-      cardName: card.cardName,
-      cardType: card.cardType,
+      nameEn: card.nameEn,
+      nameAr: card.nameAr,
       imageUrl: card.imageUrl,
-      description: card.description,
-      benefits: card.benefits,
-      cashbackPercentage: card.cashbackPercentage,
-      rewardPoints: card.rewardPoints,
-      annualFee: card.annualFee,
-      isPopular: card.isPopular,
-      isFeatured: card.isFeatured,
-      applyUrl: card.applyUrl,
+      isActive: card.isActive,
+      accountTypeId: card.accountTypeId,
+      cardTypeId: card.cardTypeId,
+      bankName: card.bankName,
+      bankNameAr: card.bankNameAr,
+      bankLogoUrl: card.bankLogoUrl,
     );
   }
-  const factory CreditCardModel({
-    required String id,
-    required String bankId,
-    required String bankName,
-    required String cardName,
-    required String cardType,
-    required String imageUrl,
-    String? description,
-    List<String>? benefits,
-    double? cashbackPercentage,
-    int? rewardPoints,
-    double? annualFee,
-    bool? isPopular,
-    bool? isFeatured,
-    String? applyUrl,
-  }) = _CreditCardModel;
-
-  const CreditCardModel._();
-
-  /// Create from JSON
-  factory CreditCardModel.fromJson(Map<String, dynamic> json) => _$CreditCardModelFromJson(json);
 
   /// Convert to domain entity
-  CreditCard toDomain() {
-    return CreditCard(
+  BankCard toDomain() {
+    return BankCard(
       id: id,
       bankId: bankId,
-      bankName: bankName,
-      cardName: cardName,
-      cardType: cardType,
+      nameEn: nameEn,
+      nameAr: nameAr,
       imageUrl: imageUrl,
-      description: description,
-      benefits: benefits,
-      cashbackPercentage: cashbackPercentage,
-      rewardPoints: rewardPoints,
-      annualFee: annualFee,
-      isPopular: isPopular,
-      isFeatured: isFeatured,
-      applyUrl: applyUrl,
+      isActive: isActive,
+      accountTypeId: accountTypeId,
+      cardTypeId: cardTypeId,
+      bankName: bankName,
+      bankNameAr: bankNameAr,
+      bankLogoUrl: bankLogoUrl,
     );
   }
 }
+
+/// Legacy alias for backwards compatibility
+typedef CreditCardModel = BankCardModel;

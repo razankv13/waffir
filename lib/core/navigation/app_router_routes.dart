@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:waffir/core/navigation/page_transitions.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/navigation/screens/error_screen.dart';
 import 'package:waffir/core/navigation/widgets/main_shell.dart';
-
 import 'package:waffir/features/auth/presentation/screens/account_details_screen.dart';
-import 'package:waffir/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:waffir/features/auth/presentation/screens/family_invite_link_screen.dart';
+import 'package:waffir/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:waffir/features/auth/presentation/screens/otp_verification_screen.dart';
 import 'package:waffir/features/auth/presentation/screens/phone_login_screen.dart';
 import 'package:waffir/features/auth/presentation/screens/signup_screen.dart';
-import 'package:waffir/features/credit_cards/presentation/screens/add_credit_card_screen.dart';
 import 'package:waffir/features/credit_cards/presentation/screens/credit_cards_screen.dart';
-import 'package:waffir/features/deals/presentation/screens/hot_deals_screen.dart';
-import 'package:waffir/features/deals/presentation/screens/deal_details_screen.dart';
 import 'package:waffir/features/deals/domain/entities/deal_details_type.dart';
+import 'package:waffir/features/deals/presentation/screens/deal_details_screen.dart';
+import 'package:waffir/features/deals/presentation/screens/hot_deals_screen.dart';
 import 'package:waffir/features/deals/presentation/screens/notifications_screen.dart';
 import 'package:waffir/features/onboarding/presentation/screens/city_selection_screen.dart';
 import 'package:waffir/features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -27,14 +24,11 @@ import 'package:waffir/features/profile/presentation/screens/delete_account_scre
 import 'package:waffir/features/profile/presentation/screens/favorites_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/help_center_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/language_selection_screen.dart';
-import 'package:waffir/features/profile/presentation/screens/my_account.dart';
 import 'package:waffir/features/profile/presentation/screens/manage_personal_details_form_screen.dart';
-import 'package:waffir/features/profile/presentation/screens/notification_settings_screen.dart';
+import 'package:waffir/features/profile/presentation/screens/my_account.dart';
 import 'package:waffir/features/profile/presentation/screens/profile_edit_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/profile_screen/profile_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/saved_deals_screen.dart';
-import 'package:waffir/features/settings/presentation/screens/privacy_settings_screen.dart';
-import 'package:waffir/features/settings/presentation/screens/theme_settings_screen.dart';
 import 'package:waffir/features/stores/presentation/screens/bank_catalog_screen/bank_catalog_screen.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/store_detail_screen.dart';
 import 'package:waffir/features/stores/presentation/screens/stores_screen.dart';
@@ -142,12 +136,7 @@ List<RouteBase> buildAppRoutes({required GlobalKey<NavigatorState> shellNavigato
           pageBuilder: (context, state) =>
               AppPageTransitions.fadeScale<void>(state: state, child: const CreditCardsScreen()),
           routes: [
-            // Add Credit Card sub-route
-            GoRoute(
-              path: '/add',
-              name: AppRouteNames.addCreditCard,
-              builder: (context, state) => const AddCreditCardScreen(),
-            ),
+           
           ],
         ),
 
