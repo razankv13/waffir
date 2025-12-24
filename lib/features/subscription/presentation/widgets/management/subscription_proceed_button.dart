@@ -6,9 +6,16 @@ import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
 
 class SubscriptionProceedButton extends StatelessWidget {
-  const SubscriptionProceedButton({super.key, required this.onPressed});
+  const SubscriptionProceedButton({
+    super.key,
+    required this.onPressed,
+    this.isLoading = false,
+    this.onRestorePressed,
+  });
 
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
+  final bool isLoading;
+  final VoidCallback? onRestorePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -22,30 +29,62 @@ class SubscriptionProceedButton extends StatelessWidget {
       child: Container(
         color: theme.colorScheme.surface,
         padding: responsive.scalePadding(const EdgeInsets.all(16)),
-        child: Center(
-          child: Container(
-            width: responsive.scale(330),
-            height: responsive.scale(48),
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF0F352D).withOpacity(0.15),
-                  offset: const Offset(0, 8),
-                  blurRadius: 16,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Container(
+                width: responsive.scale(330),
+                height: responsive.scale(48),
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF0F352D).withOpacity(0.15),
+                      offset: const Offset(0, 8),
+                      blurRadius: 16,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: AppButton.primary(
-              onPressed: onPressed,
-              child: Text(
-                LocaleKeys.subscription.management.proceed.tr(),
-                style: AppTypography.labelLarge.copyWith(
-                  fontSize: responsive.scaleFontSize(14, minSize: 12),
-                  fontWeight: FontWeight.w600,
+                child: AppButton.primary(
+                  onPressed: isLoading ? null : onPressed,
+                  child: isLoading
+                      ? SizedBox(
+                          width: responsive.scale(20),
+                          height: responsive.scale(20),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              theme.colorScheme.onPrimary,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          LocaleKeys.subscription.management.proceed.tr(),
+                          style: AppTypography.labelLarge.copyWith(
+                            fontSize: responsive.scaleFontSize(14, minSize: 12),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
             ),
-          ),
+            if (onRestorePressed != null) ...[
+              SizedBox(height: responsive.scale(12)),
+              TextButton(
+                onPressed: isLoading ? null : onRestorePressed,
+                child: Text(
+                  LocaleKeys.subscription.restore.button.tr(),
+                  style: AppTypography.bodySmall.copyWith(
+                    fontSize: responsive.scaleFontSize(12, minSize: 10),
+                    color: isLoading
+                        ? theme.colorScheme.onSurface.withOpacity(0.38)
+                        : theme.colorScheme.primary,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

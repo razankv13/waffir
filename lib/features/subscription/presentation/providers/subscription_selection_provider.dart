@@ -4,17 +4,17 @@ import 'package:waffir/features/subscription/presentation/widgets/subscription_t
 class SubscriptionSelectionState {
   const SubscriptionSelectionState({
     this.period = SubscriptionPeriod.monthly,
-    this.option = SubscriptionOption.individual,
+    this.option = AppSubscriptionOption.individual,
     this.promoCode = '',
   });
 
   final SubscriptionPeriod period;
-  final SubscriptionOption option;
+  final AppSubscriptionOption option;
   final String promoCode;
 
   SubscriptionSelectionState copyWith({
     SubscriptionPeriod? period,
-    SubscriptionOption? option,
+    AppSubscriptionOption? option,
     String? promoCode,
   }) {
     return SubscriptionSelectionState(
@@ -26,7 +26,7 @@ class SubscriptionSelectionState {
 }
 
 /// Subscription option enum.
-enum SubscriptionOption { individual, family }
+enum AppSubscriptionOption { individual, family }
 
 /// StateNotifier controlling subscription selection interactions.
 class SubscriptionSelectionNotifier extends StateNotifier<SubscriptionSelectionState> {
@@ -36,7 +36,7 @@ class SubscriptionSelectionNotifier extends StateNotifier<SubscriptionSelectionS
     state = state.copyWith(period: period);
   }
 
-  void selectOption(SubscriptionOption option) {
+  void selectOption(AppSubscriptionOption option) {
     state = state.copyWith(option: option);
   }
 

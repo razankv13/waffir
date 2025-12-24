@@ -104,7 +104,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
       authValue.when(
         data: (state) {
           if (state.isAuthenticated) {
-            context.go(AppRoutes.splash);
+            context.go(AppRoutes.home);
           } else {
             context.showErrorSnackBar(message: LocaleKeys.auth.otpVerificationFailed.tr());
           }

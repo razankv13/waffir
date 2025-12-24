@@ -60,7 +60,7 @@
     "phoneNumber": "Phone Number",
     "enterPhoneNumber": "Enter phone number",
     "otpTitle": "Enter Verification Code",
-    "otpSubtitle": "Enter the 6-digit code that was sent to\\n{contact}",
+    "otpSubtitle": "Enter the 6-digit code that was sent to\n{contact}",
     "changeNumber": "Change Number",
     "resendCode": "Resend Code",
     "verify": "Verify",
@@ -144,9 +144,17 @@
     "networkError": "Please check your internet connection and try again",
     "serverError": "Something went wrong on our end. Please try again later",
     "unknownError": "An unexpected error occurred. Please try again",
+    "unknown": "An unexpected error occurred",
     "timeoutError": "Request timed out. Please try again",
     "unauthorizedError": "You are not authorized to perform this action",
     "saveSelection": "An error occurred while saving your selection. Please try again"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "yes": "Yes",
+    "no": "No"
   },
   "success": {
     "dataSaved": "Data saved successfully",
@@ -277,7 +285,7 @@
     }
   },
   "creditCards": {
-    "title": "Select Your\\nCredit Card/Debit Card",
+    "title": "Select Your\nCredit Card/Debit Card",
     "subtitle": "Please note: you only need to select your card type - you will not be asked to provide any other details.",
     "searchHint": "Card, or Bank Name",
     "filterComingSoon": "Filter functionality coming soon",
@@ -340,7 +348,7 @@
       "subtitle": "Continue to start your free month and confirm your plan.",
       "tabs": {
         "monthly": "Monthly",
-        "yearlySaveMore": "Yearly\\n(Save more)"
+        "yearlySaveMore": "Yearly\n(Save more)"
       },
       "options": {
         "individual": {
@@ -374,10 +382,32 @@
       },
       "proceed": "Proceed",
       "selection": "Selected: {period} - {option}"
+    },
+    "purchase": {
+      "success": "Purchase successful! You now have premium access.",
+      "failed": "Purchase Failed",
+      "processing": "Processing your purchase...",
+      "unavailable": "Unavailable",
+      "serviceUnavailable": "Subscription service is currently unavailable. Please try again later.",
+      "planNotAvailable": "The selected plan is currently not available. Please try a different option.",
+      "alreadySubscribed": "You already have an active subscription."
+    },
+    "restore": {
+      "button": "Restore Purchases",
+      "success": "Purchases restored successfully!",
+      "failed": "Failed to restore purchases. Please try again.",
+      "noPurchases": "No previous purchases found."
     }
   },
-  "choose_language": "Please choose your language",
   "onboarding": {
+    "chooseLanguage": "Please choose your language",
+    "languageButton": {
+      "arabicSelected": "Arabic, selected",
+      "selectArabic": "Select Arabic language",
+      "englishSelected": "English, selected",
+      "selectEnglish": "Select English language",
+      "continueToLogin": "Continue to login"
+    },
     "familyInvite": {
       "title": "Family invite",
       "message": "You have a pending family invite.\nInvite ID: {}",

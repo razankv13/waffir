@@ -64,7 +64,6 @@ class AppRoutes {
   static const String accountDetails = '/auth/account-details';
 
   // Subscription routes
-  static const String paywall = '/subscription/paywall';
   static const String subscriptionManagement = '/subscription/management';
 
   /// Get all authentication routes
@@ -188,7 +187,6 @@ class AppRouteNames {
   static const String accountDetails = 'account-details';
 
   // Subscription route names
-  static const String paywall = 'paywall';
   static const String subscriptionManagement = 'subscription-management';
 }
 

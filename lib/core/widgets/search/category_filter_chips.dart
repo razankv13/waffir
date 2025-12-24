@@ -93,7 +93,7 @@ class _CategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final filterColors = theme.extension<FilterColors>()!;
+    final filterColors = theme.extension<FilterColors>();
     final responsive = context.responsive;
 
     final verticalPadding = responsive.scale(8);
@@ -122,7 +122,9 @@ class _CategoryChip extends StatelessWidget {
                     width: iconSize,
                     height: iconSize,
                     colorFilter: ColorFilter.mode(
-                      isSelected ? filterColors.selected : filterColors.unselected,
+                      isSelected
+                          ? (filterColors?.selected ?? theme.colorScheme.primary)
+                          : (filterColors?.unselected ?? theme.colorScheme.onSurfaceVariant),
                       BlendMode.srcIn,
                     ),
                   ),
@@ -133,7 +135,9 @@ class _CategoryChip extends StatelessWidget {
                   style: theme.textTheme.labelLarge?.copyWith(
                     fontSize: fontSize,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected ? filterColors.selected : filterColors.unselected,
+                    color: isSelected
+                        ? (filterColors?.selected ?? theme.colorScheme.primary)
+                        : (filterColors?.unselected ?? theme.colorScheme.onSurfaceVariant),
                     height: 1.2,
                   ),
                   maxLines: 1,
@@ -146,7 +150,9 @@ class _CategoryChip extends StatelessWidget {
           // Underline indicator - always present, transparent when unselected
           Container(
             height: borderWidth,
-            color: isSelected ? filterColors.selectedBorder : Colors.transparent,
+            color: isSelected
+                ? (filterColors?.selectedBorder ?? theme.colorScheme.primary)
+                : Colors.transparent,
           ),
         ],
       ),

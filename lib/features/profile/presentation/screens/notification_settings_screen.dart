@@ -110,7 +110,7 @@ class NotificationSettingsScreen extends HookConsumerWidget {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(failure.message ?? 'Failed to save'),
+            content: Text(failure.message),
             backgroundColor: theme.colorScheme.error,
             duration: const Duration(seconds: 3),
           ),

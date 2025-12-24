@@ -60,7 +60,7 @@
     "phoneNumber": "Numéro de téléphone",
     "enterPhoneNumber": "Entrez votre numéro de téléphone",
     "otpTitle": "Entrez le code de vérification",
-    "otpSubtitle": "Entrez le code à 6 chiffres envoyé au \\n{contact}",
+    "otpSubtitle": "Entrez le code à 6 chiffres envoyé au\n{contact}",
     "changeNumber": "Changer de numéro",
     "resendCode": "Renvoyer le code",
     "verify": "Vérifier",
@@ -144,9 +144,17 @@
     "networkError": "Veuillez vérifier votre connexion internet et réessayer",
     "serverError": "Une erreur est survenue de notre côté. Veuillez réessayer plus tard",
     "unknownError": "Une erreur inattendue est survenue. Veuillez réessayer",
+    "unknown": "Une erreur inattendue est survenue",
     "timeoutError": "Délai d'attente dépassé. Veuillez réessayer",
     "unauthorizedError": "Vous n'êtes pas autorisé à effectuer cette action",
     "saveSelection": "Une erreur s'est produite lors de l'enregistrement de votre sélection. Veuillez réessayer"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Annuler",
+    "retry": "Réessayer",
+    "yes": "Oui",
+    "no": "Non"
   },
   "success": {
     "dataSaved": "Données enregistrées avec succès",
@@ -277,7 +285,7 @@
     }
   },
   "creditCards": {
-    "title": "Choisissez votre\\ncarte de crédit/débit",
+    "title": "Choisissez votre\ncarte de crédit/débit",
     "subtitle": "Vous devez seulement choisir votre type de carte ; aucune autre information ne sera demandée.",
     "searchHint": "Carte ou nom de banque",
     "filterComingSoon": "La fonction de filtrage arrive bientôt",
@@ -329,7 +337,7 @@
       "subtitle": "Continuez pour démarrer votre mois gratuit et confirmer votre formule.",
       "tabs": {
         "monthly": "Mensuel",
-        "yearlySaveMore": "Annuel\\n(Économisez plus)"
+        "yearlySaveMore": "Annuel\n(Économisez plus)"
       },
       "options": {
         "individual": {
@@ -363,10 +371,32 @@
       },
       "proceed": "Continuer",
       "selection": "Sélectionné : {period} - {option}"
+    },
+    "purchase": {
+      "success": "Achat réussi ! Vous avez maintenant un accès premium.",
+      "failed": "Échec de l'achat",
+      "processing": "Traitement de votre achat...",
+      "unavailable": "Non disponible",
+      "serviceUnavailable": "Le service d'abonnement est actuellement indisponible. Veuillez réessayer plus tard.",
+      "planNotAvailable": "Le forfait sélectionné n'est pas disponible actuellement. Veuillez essayer une autre option.",
+      "alreadySubscribed": "Vous avez déjà un abonnement actif."
+    },
+    "restore": {
+      "button": "Restaurer les achats",
+      "success": "Achats restaurés avec succès !",
+      "failed": "Échec de la restauration des achats. Veuillez réessayer.",
+      "noPurchases": "Aucun achat précédent trouvé."
     }
   },
-  "choose_language": "Veuillez choisir votre langue",
   "onboarding": {
+    "chooseLanguage": "Veuillez choisir votre langue",
+    "languageButton": {
+      "arabicSelected": "Arabe, sélectionné",
+      "selectArabic": "Sélectionner la langue arabe",
+      "englishSelected": "Anglais, sélectionné",
+      "selectEnglish": "Sélectionner la langue anglaise",
+      "continueToLogin": "Continuer pour se connecter"
+    },
     "familyInvite": {
       "title": "Invitation familiale",
       "message": "Vous avez une invitation familiale en attente.\nID de l'invitation : {}",

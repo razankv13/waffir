@@ -53,9 +53,7 @@ class DeleteAccountScreen extends HookConsumerWidget {
             ),
             FilledButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              style: FilledButton.styleFrom(
-                backgroundColor: colorScheme.error,
-              ),
+              style: FilledButton.styleFrom(backgroundColor: colorScheme.error),
               child: const Text('Delete'),
             ),
           ],
@@ -245,9 +243,7 @@ class DeleteAccountScreen extends HookConsumerWidget {
                         },
                         borderRadius: BorderRadius.circular(responsive.scale(8)),
                         child: Padding(
-                          padding: responsive.scalePadding(
-                            const EdgeInsets.symmetric(vertical: 8),
-                          ),
+                          padding: responsive.scalePadding(const EdgeInsets.symmetric(vertical: 8)),
                           child: Row(
                             children: [
                               Checkbox(
@@ -300,9 +296,7 @@ class DeleteAccountScreen extends HookConsumerWidget {
                                 height: responsive.scale(20),
                                 child: CircularProgressIndicator(
                                   strokeWidth: responsive.scaleWithMin(2, min: 1.5),
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    colorScheme.onError,
-                                  ),
+                                  valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onError),
                                 ),
                               )
                             : Text(
@@ -345,11 +339,7 @@ class DeleteAccountScreen extends HookConsumerWidget {
 
 /// A single item showing what will be deleted.
 class _DeletedItem extends StatelessWidget {
-  const _DeletedItem({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
+  const _DeletedItem({required this.icon, required this.title, required this.subtitle});
 
   final IconData icon;
   final String title;
@@ -364,11 +354,7 @@ class _DeletedItem extends StatelessWidget {
 
     return Row(
       children: [
-        Icon(
-          icon,
-          size: responsive.scale(24),
-          color: colorScheme.error,
-        ),
+        Icon(icon, size: responsive.scale(24), color: colorScheme.error),
         SizedBox(width: responsive.scale(16)),
         Expanded(
           child: Column(

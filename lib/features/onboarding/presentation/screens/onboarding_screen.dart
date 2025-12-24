@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/extensions/context_extensions.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/storage/settings_service.dart';
@@ -84,6 +85,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: SafeArea(
+        top: false,
         child: LayoutBuilder(
           builder: (context, constraints) {
             // Responsive shape dimensions
@@ -167,7 +169,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             children: [
                               // Heading: Please choose your language
                               Text(
-                                tr('choose_language'),
+                                LocaleKeys.onboarding.chooseLanguage.tr(),
                                 textAlign: TextAlign.center,
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   fontSize: languageHeadingFontSize,
@@ -186,7 +188,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                   Semantics(
                                     button: true,
                                     selected: _isArabic,
-                                    label: _isArabic ? 'العربية، محدد' : 'اختر لغة العربية',
+                                    label: _isArabic
+                                        ? LocaleKeys.onboarding.languageButton.arabicSelected.tr()
+                                        : LocaleKeys.onboarding.languageButton.selectArabic.tr(),
                                     child: SizedBox(
                                       height: 56,
                                       child: _isArabic
@@ -210,8 +214,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                     button: true,
                                     selected: !_isArabic,
                                     label: !_isArabic
-                                        ? 'English, selected'
-                                        : 'Choose English language',
+                                        ? LocaleKeys.onboarding.languageButton.englishSelected.tr()
+                                        : LocaleKeys.onboarding.languageButton.selectEnglish.tr(),
                                     child: SizedBox(
                                       height: 56,
                                       child: _isArabic
@@ -235,11 +239,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               // Continue button using AppButton.primary
                               Semantics(
                                 button: true,
-                                label: 'متابعة إلى تسجيل الدخول',
+                                label: LocaleKeys.onboarding.languageButton.continueToLogin.tr(),
                                 child: SizedBox(
                                   height: 56,
                                   child: AppButton.primary(
-                                    text: 'استمر',
+                                    text: LocaleKeys.buttons.continueBtn.tr(),
                                     onPressed: _continue,
                                     width: double.infinity,
                                   ),

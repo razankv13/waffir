@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/constants/locale_keys.dart';
@@ -44,19 +43,6 @@ class HotDealsScreen extends HookConsumerWidget {
       LocaleKeys.deals.categories.popular.tr(),
     ];
 
-    final scrollController = useScrollController();
-    useEffect(() {
-      void listener() {
-        final position = scrollController.position;
-        if (!position.hasPixels || !position.hasContentDimensions) return;
-        if (position.extentAfter > responsive.scale(320)) return;
-        hotDealsController.loadMore();
-      }
-
-      scrollController.addListener(listener);
-      return () => scrollController.removeListener(listener);
-    }, [scrollController, responsive]);
-
     void handleSearch(String query) {
       hotDealsController.updateSearch(query);
     }
@@ -85,7 +71,7 @@ class HotDealsScreen extends HookConsumerWidget {
                 final headerSearchHeight =
                     (headerVerticalPadding * 2) + logoHeight + searchGap + searchBarHeight;
 
-                const chipsHeight = 71.0;
+                final chipsHeight = responsive.scale(71);
                 final chipsTopSpacing = responsive.scale(6);
                 final chipsHeaderHeight = chipsTopSpacing + chipsHeight;
 
@@ -145,9 +131,19 @@ class HotDealsScreen extends HookConsumerWidget {
                   ),
                 ];
               },
-              body: RefreshIndicator(
-                onRefresh: hotDealsController.refresh,
-                child: hotDealsState.when(
+              body: NotificationListener<ScrollNotification>(
+                onNotification: (notification) {
+                  if (notification is ScrollUpdateNotification) {
+                    final metrics = notification.metrics;
+                    if (metrics.extentAfter < responsive.scale(320)) {
+                      hotDealsController.loadMore();
+                    }
+                  }
+                  return false;
+                },
+                child: RefreshIndicator(
+                  onRefresh: hotDealsController.refresh,
+                  child: hotDealsState.when(
                   loading: () => const _HotDealsLoadingState(),
                   error: (_, __) => _HotDealsErrorState(
                     message: LocaleKeys.deals.loadError.tr(),
@@ -172,7 +168,6 @@ class HotDealsScreen extends HookConsumerWidget {
                     }
 
                     return ListView.builder(
-                      controller: scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: responsive.scalePadding(
                         const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
@@ -272,6 +267,7 @@ class HotDealsScreen extends HookConsumerWidget {
                       },
                     );
                   },
+                  ),
                 ),
               ),
             ),
@@ -395,6 +391,7 @@ class _StickyCategoryChipsHeaderDelegate extends SliverPersistentHeaderDelegate 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
+      height: height,
       color: backgroundColor,
       child: Padding(
         padding: EdgeInsets.only(top: topSpacing),

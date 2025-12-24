@@ -147,7 +147,7 @@ flutter build ipa --release --flavor staging
 
 android {
     defaultConfig {
-        applicationId "com.waffir.app"
+        applicationId "net.waffir.app"
         minSdkVersion 21  // Or higher
         targetSdkVersion 34  // Latest
         versionCode flutterVersionCode.toInteger()
@@ -365,7 +365,7 @@ flutter pub add msix
 msix_config:
   display_name: Waffir
   publisher_display_name: Your Company
-  identity_name: com.waffir.app
+  identity_name: net.waffir.app
   publisher: CN=...
 
 # Build MSIX
@@ -428,7 +428,7 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-          packageName: com.waffir.app
+          packageName: net.waffir.app
           releaseFiles: build/app/outputs/bundle/productionRelease/*.aab
           track: internal
 ```

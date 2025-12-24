@@ -15,7 +15,7 @@ class SubscriptionOptionsSection extends StatelessWidget {
   });
 
   final SubscriptionSelectionState selection;
-  final ValueChanged<SubscriptionOption> onOptionSelected;
+  final ValueChanged<AppSubscriptionOption> onOptionSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +33,8 @@ class SubscriptionOptionsSection extends StatelessWidget {
               : individualPrices.priceYearly.tr(),
           userInfo: individualPrices.users.tr(),
           isMultiUser: false,
-          isSelected: selection.option == SubscriptionOption.individual,
-          onTap: () => onOptionSelected(SubscriptionOption.individual),
+          isSelected: selection.option == AppSubscriptionOption.individual,
+          onTap: () => onOptionSelected(AppSubscriptionOption.individual),
           badges: _individualBadges(isMonthly),
         ).animate().fadeIn(delay: 200.ms, duration: 400.ms).slideX(begin: -0.2, duration: 400.ms),
         SizedBox(height: responsive.scale(24)),
@@ -44,8 +44,8 @@ class SubscriptionOptionsSection extends StatelessWidget {
               : familyPrices.priceYearly.tr(),
           userInfo: familyPrices.users.tr(),
           isMultiUser: true,
-          isSelected: selection.option == SubscriptionOption.family,
-          onTap: () => onOptionSelected(SubscriptionOption.family),
+          isSelected: selection.option == AppSubscriptionOption.family,
+          onTap: () => onOptionSelected(AppSubscriptionOption.family),
           badges: _familyBadges(isMonthly),
         ).animate().fadeIn(delay: 300.ms, duration: 400.ms).slideX(begin: -0.2, duration: 400.ms),
       ],

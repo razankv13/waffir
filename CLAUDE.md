@@ -751,9 +751,9 @@ Uses [flutter_flavorizr](https://pub.dev/packages/flutter_flavorizr) for multi-e
 
 ### Available Flavors
 
-- **dev** - Development (`.env.dev`, `com.waffir.app.dev`)
-- **staging** - Staging (`.env.staging`, `com.waffir.app.staging`)
-- **production** - Production (`.env.production`, `com.waffir.app`)
+- **dev** - Development (`.env.dev`, `net.waffir.app.dev`)
+- **staging** - Staging (`.env.staging`, `net.waffir.app.staging`)
+- **production** - Production (`.env.production`, `net.waffir.app`)
 
 ### Flavor Usage
 

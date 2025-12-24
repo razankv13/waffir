@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/constants/locale_keys.dart';
+import 'package:waffir/core/utils/logger.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/subscription/presentation/providers/subscription_providers.dart';
@@ -31,35 +32,166 @@ class SubscriptionManagementScreen extends HookConsumerWidget {
     final responsive = ResponsiveHelper(context);
     final theme = Theme.of(context);
     final promoController = useTextEditingController();
-    final monthlyLabel = LocaleKeys.subscription.management.tabs.monthly.tr();
-    final yearlyLabel = LocaleKeys.subscription.management.tabs.yearlySaveMore.tr();
-    final yearlyLabelInline = yearlyLabel.replaceAll('\n', ' ');
 
-    void handleProceed(SubscriptionSelectionState currentSelection) {
-      ref.read(subscriptionNotifierProvider.notifier);
+    // Watch subscription status from provider
+    final isSubscribed = ref.watch(isPremiumUserProvider);
+    final isRevenueCatAvailable = ref.watch(isRevenueCatAvailableProvider);
 
-      // TODO: Implement actual subscription purchase logic
-      // 1. Determine package based on selection
-      // 2. Call subscriptionNotifier.purchasePackage(package)
-      // 3. Handle loading/success/error UI
+    // Local state for purchase loading
+    final isPurchasing = useState(false);
 
-      final periodLabel = currentSelection.period == SubscriptionPeriod.monthly
-          ? monthlyLabel
-          : yearlyLabelInline;
-      final optionLabel = currentSelection.option == SubscriptionOption.individual
-          ? LocaleKeys.subscription.management.options.individual.name.tr()
-          : LocaleKeys.subscription.management.options.family.name.tr();
+    // Debug mode override for testing UI states
+    final debugOverrideSubscribed = useState<bool?>(null);
+    final effectiveIsSubscribed = debugOverrideSubscribed.value ?? isSubscribed;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            LocaleKeys.subscription.management.selection.tr(
-              namedArgs: {'period': periodLabel, 'option': optionLabel},
-            ),
+    Future<void> handleProceed(SubscriptionSelectionState currentSelection) async {
+      // Check if RevenueCat is available
+      if (!isRevenueCatAvailable) {
+        _showErrorDialog(
+          context,
+          title: LocaleKeys.subscription.purchase.unavailable.tr(),
+          message: LocaleKeys.subscription.purchase.serviceUnavailable.tr(),
+        );
+        return;
+      }
+
+      isPurchasing.value = true;
+
+      try {
+        final notifier = ref.read(subscriptionNotifierProvider.notifier);
+        final result = await notifier.purchaseFromSelection(
+          period: currentSelection.period,
+          option: currentSelection.option,
+        );
+
+        if (!context.mounted) return;
+
+        switch (result.type) {
+          case PurchaseResultType.success:
+            // Show success briefly and navigate back
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(LocaleKeys.subscription.purchase.success.tr()),
+                backgroundColor: theme.colorScheme.primary,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+            // Wait a moment for user to see success message
+            await Future.delayed(const Duration(milliseconds: 500));
+            if (context.mounted) {
+              context.pop();
+            }
+
+          case PurchaseResultType.cancelled:
+            // User cancelled - do nothing, just dismiss loading
+            AppLogger.info('Purchase cancelled by user');
+
+          case PurchaseResultType.alreadySubscribed:
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(LocaleKeys.subscription.purchase.alreadySubscribed.tr()),
+                backgroundColor: theme.colorScheme.secondary,
+              ),
+            );
+
+          case PurchaseResultType.noPackageAvailable:
+            _showErrorDialog(
+              context,
+              title: LocaleKeys.subscription.purchase.unavailable.tr(),
+              message: LocaleKeys.subscription.purchase.planNotAvailable.tr(),
+            );
+
+          case PurchaseResultType.notInitialized:
+            _showErrorDialog(
+              context,
+              title: LocaleKeys.subscription.purchase.unavailable.tr(),
+              message: LocaleKeys.subscription.purchase.serviceUnavailable.tr(),
+            );
+
+          case PurchaseResultType.networkError:
+            _showRetryDialog(
+              context,
+              message: LocaleKeys.errors.networkError.tr(),
+              onRetry: () => handleProceed(currentSelection),
+            );
+
+          case PurchaseResultType.error:
+            _showErrorDialog(
+              context,
+              title: LocaleKeys.subscription.purchase.failed.tr(),
+              message: result.message ?? LocaleKeys.errors.unknown.tr(),
+            );
+        }
+      } catch (e) {
+        AppLogger.error('Unexpected error in handleProceed', error: e);
+        if (context.mounted) {
+          _showErrorDialog(
+            context,
+            title: LocaleKeys.subscription.purchase.failed.tr(),
+            message: LocaleKeys.errors.unknown.tr(),
+          );
+        }
+      } finally {
+        if (context.mounted) {
+          isPurchasing.value = false;
+        }
+      }
+    }
+
+    Future<void> handleRestorePurchases() async {
+      if (!isRevenueCatAvailable) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(LocaleKeys.subscription.purchase.serviceUnavailable.tr()),
+            backgroundColor: theme.colorScheme.error,
           ),
-          backgroundColor: theme.colorScheme.primary,
-        ),
-      );
+        );
+        return;
+      }
+
+      isPurchasing.value = true;
+
+      try {
+        final notifier = ref.read(subscriptionNotifierProvider.notifier);
+        final result = await notifier.restorePurchasesWithResult();
+
+        if (!context.mounted) return;
+
+        if (result.isSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(LocaleKeys.subscription.restore.success.tr()),
+              backgroundColor: theme.colorScheme.primary,
+            ),
+          );
+          // If restoration found active subscription, navigate back after a delay
+          await Future.delayed(const Duration(milliseconds: 500));
+          if (context.mounted) {
+            context.pop();
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(LocaleKeys.subscription.restore.noPurchases.tr()),
+              backgroundColor: theme.colorScheme.secondary,
+            ),
+          );
+        }
+      } catch (e) {
+        AppLogger.error('Unexpected error in handleRestorePurchases', error: e);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(LocaleKeys.subscription.restore.failed.tr()),
+              backgroundColor: theme.colorScheme.error,
+            ),
+          );
+        }
+      } finally {
+        if (context.mounted) {
+          isPurchasing.value = false;
+        }
+      }
     }
 
     void applyPromoCode(String promoCode) {
@@ -78,15 +210,19 @@ class SubscriptionManagementScreen extends HookConsumerWidget {
       );
     }
 
-    final isSubscribed = useState(true); // TODO: Replace with actual subscription status provider
-
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      // Temporary debug button to toggle subscription view
+      // Temporary debug button to toggle subscription view (only in debug mode)
       floatingActionButton: kDebugMode
           ? FloatingActionButton(
-              onPressed: () => isSubscribed.value = !isSubscribed.value,
-              child: Icon(isSubscribed.value ? Icons.check : Icons.close),
+              onPressed: () {
+                if (debugOverrideSubscribed.value == null) {
+                  debugOverrideSubscribed.value = !isSubscribed;
+                } else {
+                  debugOverrideSubscribed.value = !debugOverrideSubscribed.value!;
+                }
+              },
+              child: Icon(effectiveIsSubscribed ? Icons.check : Icons.close),
             )
           : null,
       body: SafeArea(
@@ -94,14 +230,14 @@ class SubscriptionManagementScreen extends HookConsumerWidget {
         child: Stack(
           children: [
             _SubscriptionBackground(responsive: responsive),
-            if (isSubscribed.value)
+            if (effectiveIsSubscribed)
               SingleChildScrollView(
                 padding: responsive.scalePadding(const EdgeInsets.only(top: 108, bottom: 40)),
                 child: const Center(child: ManageSubscriptionView()),
               )
             else
               SingleChildScrollView(
-                padding: responsive.scalePadding(const EdgeInsets.only(top: 108, bottom: 120)),
+                padding: responsive.scalePadding(const EdgeInsets.only(top: 108, bottom: 160)),
                 child: Padding(
                   padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
                   child: Column(
@@ -136,9 +272,116 @@ class SubscriptionManagementScreen extends HookConsumerWidget {
                 ),
               ),
             WaffirBackButton(onTap: () => context.pop(), size: responsive.scale(44)),
-            if (!isSubscribed.value)
-              SubscriptionProceedButton(onPressed: () => handleProceed(selection)),
+            if (!effectiveIsSubscribed)
+              SubscriptionProceedButton(
+                onPressed: () => handleProceed(selection),
+                isLoading: isPurchasing.value,
+                onRestorePressed: handleRestorePurchases,
+              ),
+            // Loading overlay during purchase
+            if (isPurchasing.value) _PurchaseLoadingOverlay(responsive: responsive),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, {required String title, required String message}) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(LocaleKeys.common.ok.tr()),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRetryDialog(
+    BuildContext context, {
+    required String message,
+    required VoidCallback onRetry,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(LocaleKeys.errors.networkError.tr()),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(LocaleKeys.common.cancel.tr()),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              onRetry();
+            },
+            child: Text(LocaleKeys.common.retry.tr()),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Loading overlay shown during purchase operations
+class _PurchaseLoadingOverlay extends StatelessWidget {
+  const _PurchaseLoadingOverlay({required this.responsive});
+
+  final ResponsiveHelper responsive;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Positioned.fill(
+      child: Container(
+        color: Colors.black.withOpacity(0.3),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+          child: Center(
+            child: Container(
+              padding: responsive.scalePadding(const EdgeInsets.all(24)),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(16)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: responsive.scale(40),
+                    height: responsive.scale(40),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                    ),
+                  ),
+                  SizedBox(height: responsive.scale(16)),
+                  Text(
+                    LocaleKeys.subscription.purchase.processing.tr(),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: responsive.scaleFontSize(14, minSize: 12),
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

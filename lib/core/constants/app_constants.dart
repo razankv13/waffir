@@ -69,9 +69,9 @@ class AppConstants {
   static const int maxMessageLength = 1000;
 
   // Social Login
-  static const String googleClientIdAndroid = 'your-android-client-id';
-  static const String googleClientIdIOS = 'your-ios-client-id';
-  static const String googleClientIdWeb = 'your-web-client-id';
+  static const String googleClientIdAndroid = '1061874584243-jdmak73v64n3l3loa90hf6pbu6g8hicv.apps.googleusercontent.com';
+  static const String googleClientIdIOS = '1061874584243-ijuaki5sq70h7jk6kebmkgqvjanl6fe4.apps.googleusercontent.com';
+  static const String googleClientIdWeb = '1061874584243-ud3f876181mdscn5m14g96meno8njeb1.apps.googleusercontent.com';
   static const String appleClientId = 'your-apple-client-id';
 
   // Deep Links

@@ -19,9 +19,19 @@ abstract class LocaleKeys {
   static const cities = _CitiesKeys();
   static const accountDetails = _AccountDetailsKeys();
   static const profile = _ProfileKeys();
+  static const common = _CommonKeys();
 
   static const chooseLanguage = 'choose_language';
   static const productPage = _ProductPageKeys();
+}
+
+class _CommonKeys {
+  const _CommonKeys();
+  final ok = 'common.ok';
+  final cancel = 'common.cancel';
+  final retry = 'common.retry';
+  final yes = 'common.yes';
+  final no = 'common.no';
 }
 
 class _AppKeys {
@@ -170,6 +180,7 @@ class _ErrorsKeys {
   final networkError = 'errors.networkError';
   final serverError = 'errors.serverError';
   final unknownError = 'errors.unknownError';
+  final unknown = 'errors.unknown';
   final timeoutError = 'errors.timeoutError';
   final unauthorizedError = 'errors.unauthorizedError';
   final saveSelection = 'errors.saveSelection';
@@ -383,8 +394,19 @@ class _StoreCategoriesKeys {
 
 class _OnboardingKeys {
   const _OnboardingKeys();
+  final chooseLanguage = 'onboarding.chooseLanguage';
+  final languageButton = const _LanguageButtonKeys();
   final familyInvite = const _FamilyInviteKeys();
   final citySelection = const _CitySelectionKeys();
+}
+
+class _LanguageButtonKeys {
+  const _LanguageButtonKeys();
+  final arabicSelected = 'onboarding.languageButton.arabicSelected';
+  final selectArabic = 'onboarding.languageButton.selectArabic';
+  final englishSelected = 'onboarding.languageButton.englishSelected';
+  final selectEnglish = 'onboarding.languageButton.selectEnglish';
+  final continueToLogin = 'onboarding.languageButton.continueToLogin';
 }
 
 class _FamilyInviteKeys {
@@ -412,6 +434,27 @@ class _AccountDetailsKeys {
 class _SubscriptionKeys {
   const _SubscriptionKeys();
   final management = const _SubscriptionManagementKeys();
+  final purchase = const _SubscriptionPurchaseKeys();
+  final restore = const _SubscriptionRestoreKeys();
+}
+
+class _SubscriptionPurchaseKeys {
+  const _SubscriptionPurchaseKeys();
+  final success = 'subscription.purchase.success';
+  final failed = 'subscription.purchase.failed';
+  final processing = 'subscription.purchase.processing';
+  final unavailable = 'subscription.purchase.unavailable';
+  final serviceUnavailable = 'subscription.purchase.serviceUnavailable';
+  final planNotAvailable = 'subscription.purchase.planNotAvailable';
+  final alreadySubscribed = 'subscription.purchase.alreadySubscribed';
+}
+
+class _SubscriptionRestoreKeys {
+  const _SubscriptionRestoreKeys();
+  final button = 'subscription.restore.button';
+  final success = 'subscription.restore.success';
+  final failed = 'subscription.restore.failed';
+  final noPurchases = 'subscription.restore.noPurchases';
 }
 
 class _SubscriptionManagementKeys {
@@ -442,8 +485,7 @@ class _SubscriptionOptionsKeys {
 class _SubscriptionIndividualKeys {
   const _SubscriptionIndividualKeys();
   final name = 'subscription.management.options.individual.name';
-  final priceMonthly =
-      'subscription.management.options.individual.priceMonthly';
+  final priceMonthly = 'subscription.management.options.individual.priceMonthly';
   final priceYearly = 'subscription.management.options.individual.priceYearly';
   final users = 'subscription.management.options.individual.users';
 }

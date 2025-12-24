@@ -140,7 +140,12 @@ class ProfileScreen extends HookConsumerWidget {
                   body: BlurryEdgeListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: responsive.scalePadding(
-                      EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16 + logoutOverlayHeight),
+                      EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
+                        bottom: 16 + logoutOverlayHeight,
+                      ),
                     ),
                     topBlurEnabled: false,
                     itemCount: 4,
@@ -151,11 +156,7 @@ class ProfileScreen extends HookConsumerWidget {
                             isPremium: isPremium,
                             subscriptionExpiryDate: subscriptionExpiryDate,
                             onManageTap: () {
-                              if (isPremium) {
-                                context.pushNamed(AppRouteNames.subscriptionManagement);
-                              } else {
-                                context.pushNamed(AppRouteNames.paywall);
-                              }
+                              context.pushNamed(AppRouteNames.subscriptionManagement);
                             },
                           );
                         case 1:

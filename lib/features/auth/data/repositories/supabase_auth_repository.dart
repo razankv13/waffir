@@ -1,13 +1,16 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
 
 import 'package:crypto/crypto.dart';
-import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:waffir/core/config/environment_config.dart';
 import 'package:waffir/core/errors/failures.dart';
 import 'package:waffir/core/result/exception_to_failure.dart';
 import 'package:waffir/core/result/result.dart';
+import 'package:waffir/core/utils/logger.dart';
 import 'package:waffir/features/auth/domain/entities/auth_state.dart';
 import 'package:waffir/features/auth/domain/entities/user_model.dart';
 import 'package:waffir/features/auth/domain/repositories/auth_repository.dart';
@@ -58,31 +61,47 @@ class SupabaseAuthRepository implements AuthRepository {
   @override
   AsyncResult<AuthState> signInWithGoogle() async {
     try {
-      final signIn = GoogleSignInPlatform.instance;
-      await signIn.init(
-        InitParameters(
-          clientId: EnvironmentConfig.googleClientIdIOS,
-          serverClientId: EnvironmentConfig.googleClientIdWeb,
-        ),
+      final signIn = GoogleSignIn.instance;
+
+      // Determine the client ID based on platform
+      // iOS requires the iOS client ID, Android uses serverClientId for token generation
+      final String? clientId = kIsWeb
+          ? EnvironmentConfig.googleClientIdWeb
+          : (Platform.isIOS || Platform.isMacOS)
+              ? EnvironmentConfig.googleClientIdIOS
+              : null; // Android doesn't need clientId if using google-services.json
+
+      AppLogger.info('🔐 Initializing Google Sign-In...');
+
+      // Initialize Google Sign-In with platform-specific client IDs
+      await signIn.initialize(
+        clientId: clientId,
+        serverClientId: EnvironmentConfig.googleClientIdWeb, // Always needed for backend verification
       );
 
-      final result = await signIn.authenticate(const AuthenticateParameters(scopeHint: <String>['email']));
-      final idToken = result.authenticationTokens.idToken;
+      AppLogger.info('🔐 Starting Google Sign-In authentication...');
+
+      // Authenticate the user
+      final googleAccount = await signIn.authenticate();
+
+      AppLogger.info('🔐 Google user signed in: ${googleAccount.email}');
+
+      // Get authentication tokens
+      final googleAuth = googleAccount.authentication;
+      final idToken = googleAuth.idToken;
+
       if (idToken == null || idToken.isEmpty) {
+        AppLogger.error('❌ Missing Google ID token');
         return const Result.failure(Failure.validation(message: 'Missing Google ID token.'));
       }
 
-      final tokenData = await signIn.clientAuthorizationTokensForScopes(
-        ClientAuthorizationTokensForScopesParameters(
-          request: AuthorizationRequestDetails(
-            scopes: const <String>['email'],
-            userId: result.user.id,
-            email: result.user.email,
-            promptIfUnauthorized: true,
-          ),
-        ),
+      // Get access token for additional scopes if needed
+      final authorization = await googleAccount.authorizationClient.authorizationForScopes(
+        const <String>['email', 'profile'],
       );
-      final accessToken = tokenData?.accessToken;
+      final accessToken = authorization?.accessToken;
+
+      AppLogger.info('🔐 Signing in to Supabase with Google ID token...');
 
       final response = await _client.auth.signInWithIdToken(
         provider: sb.OAuthProvider.google,
@@ -91,13 +110,22 @@ class SupabaseAuthRepository implements AuthRepository {
       );
 
       final session = response.session ?? _client.auth.currentSession;
+      AppLogger.info('✅ Google Sign-In successful');
       return Result.success(_toDomainAuthState(event: sb.AuthChangeEvent.signedIn, session: session));
-    } on GoogleSignInException catch (e, stackTrace) {
+    } on GoogleSignInException catch (e) {
+      // Handle Google Sign-In specific exceptions
+      AppLogger.info('🔐 Google Sign-In exception: ${e.code}');
       if (e.code == GoogleSignInExceptionCode.canceled) {
         return const Result.failure(Failure.validation(message: 'Google sign-in cancelled.'));
       }
-      return Result.failure(ExceptionToFailure.convert(e, stackTrace));
+      return Result.failure(Failure.server(message: e.description ?? 'Google sign-in failed.'));
     } catch (e, stackTrace) {
+      AppLogger.error('❌ Google Sign-In failed: $e');
+      // Handle user cancellation from string matching as fallback
+      final errorStr = e.toString().toLowerCase();
+      if (errorStr.contains('cancel') || errorStr.contains('canceled') || errorStr.contains('cancelled')) {
+        return const Result.failure(Failure.validation(message: 'Google sign-in cancelled.'));
+      }
       return Result.failure(ExceptionToFailure.convert(e, stackTrace));
     }
   }

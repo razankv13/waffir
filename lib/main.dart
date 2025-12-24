@@ -7,8 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:waffir/app.dart';
 import 'package:waffir/core/config/environment_config.dart';
-import 'package:waffir/core/services/firebase_service.dart';
 import 'package:waffir/core/services/push_notification_service.dart';
+import 'package:waffir/core/services/revenue_cat_service.dart';
 import 'package:waffir/core/storage/hive_service.dart';
 import 'package:waffir/core/utils/logger.dart';
 import 'package:waffir/flavors.dart';
@@ -79,6 +79,22 @@ Future<void> mainCommon(Flavor flavor) async {
 
       // Initialize Hive storage
       await HiveService.instance.initialize();
+
+      // Initialize RevenueCat (optional; requires env vars)
+      if (EnvironmentConfig.hasRevenueCatConfig) {
+        try {
+          await RevenueCatService.instance.initialize(
+            apiKey: EnvironmentConfig.revenueCatApiKey!,
+            enableDebugLogs: !EnvironmentConfig.isProduction,
+          );
+          AppLogger.info('RevenueCat initialized successfully');
+        } catch (e) {
+          AppLogger.error('Failed to initialize RevenueCat', error: e);
+          // Continue app execution - purchases won't work but app should run
+        }
+      } else {
+        AppLogger.warning('RevenueCat not initialized (missing REVENUECAT_API_KEY)');
+      }
 
       // Initialize EasyLocalization
       await EasyLocalization.ensureInitialized();

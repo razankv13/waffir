@@ -8,13 +8,13 @@ flavors:
       name: "Waffir (Dev)"
 
     android:
-      applicationId: "com.waffir.app.dev"
+      applicationId: "net.waffir.app.dev"
 
     ios:
-      bundleId: "com.waffir.app.dev"
+      bundleId: "net.waffir.app.dev"
 
     macos:
-      bundleId: "com.waffir.app.dev"
+      bundleId: "net.waffir.app.dev"
       buildSettings:
         LD_RUNPATH_SEARCH_PATHS:
           - "$(inherited)"
@@ -25,13 +25,13 @@ flavors:
       name: "Waffir (Staging)"
 
     android:
-      applicationId: "com.waffir.app.staging"
+      applicationId: "net.waffir.app.staging"
 
     ios:
-      bundleId: "com.waffir.app.staging"
+      bundleId: "net.waffir.app.staging"
 
     macos:
-      bundleId: "com.waffir.app.staging"
+      bundleId: "net.waffir.app.staging"
       buildSettings:
         LD_RUNPATH_SEARCH_PATHS:
           - "$(inherited)"
@@ -42,13 +42,13 @@ flavors:
       name: "Waffir"
 
     android:
-      applicationId: "com.waffir.app"
+      applicationId: "net.waffir.app"
 
     ios:
-      bundleId: "com.waffir.app"
+      bundleId: "net.waffir.app"
 
     macos:
-      bundleId: "com.waffir.app"
+      bundleId: "net.waffir.app"
       buildSettings:
         LD_RUNPATH_SEARCH_PATHS:
           - "$(inherited)"

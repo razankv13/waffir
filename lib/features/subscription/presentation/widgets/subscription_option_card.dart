@@ -133,8 +133,6 @@ class SubscriptionOptionCard extends StatelessWidget {
   }
 
   Widget _buildBadge(BuildContext context, SubscriptionBadge badge, ResponsiveHelper responsive) {
-    final theme = Theme.of(context);
-
     double leftPosition;
     switch (badge.position) {
       case BadgePosition.left:

@@ -118,7 +118,7 @@ class MyAccount extends HookConsumerWidget {
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(failure.message ?? 'Failed to delete account'),
+                    content: Text(failure.message),
                     backgroundColor: colorScheme.error,
                     duration: const Duration(seconds: 3),
                   ),

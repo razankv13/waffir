@@ -8,17 +8,17 @@ android.apply {
     productFlavors {
         create("dev") {
             dimension = "environment"
-            applicationId = "com.waffir.app.dev"
+            applicationId = "net.waffir.app.dev"
             resValue(type = "string", name = "app_name", value = "Waffir (Dev)")
         }
         create("staging") {
             dimension = "environment"
-            applicationId = "com.waffir.app.staging"
+            applicationId = "net.waffir.app.staging"
             resValue(type = "string", name = "app_name", value = "Waffir (Staging)")
         }
         create("production") {
             dimension = "environment"
-            applicationId = "com.waffir.app"
+            applicationId = "net.waffir.app"
             resValue(type = "string", name = "app_name", value = "Waffir")
         }
     }

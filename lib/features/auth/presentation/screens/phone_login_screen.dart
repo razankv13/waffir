@@ -128,7 +128,10 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
         }
       },
       loading: () {},
-      error: (error, _) => context.showErrorSnackBar(message: error.toString()),
+      error: (error, _) {
+        AppLogger.error('Google sign in failed: ${error.toString()}');
+        context.showErrorSnackBar(message: error.toString());
+      },
     );
   }
 
@@ -150,7 +153,10 @@ class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
         }
       },
       loading: () {},
-      error: (error, _) => context.showErrorSnackBar(message: error.toString()),
+      error: (error, _) {
+        AppLogger.error('Apple sign in failed: ${error.toString()}');
+        context.showErrorSnackBar(message: error.toString());
+      },
     );
   }
 

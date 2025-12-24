@@ -34,20 +34,16 @@ import 'package:waffir/features/profile/presentation/screens/profile_edit_screen
 import 'package:waffir/features/profile/presentation/screens/profile_screen/profile_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/saved_deals_screen.dart';
 import 'package:waffir/features/settings/presentation/screens/privacy_settings_screen.dart';
-import 'package:waffir/features/settings/presentation/screens/settings_screen.dart';
 import 'package:waffir/features/settings/presentation/screens/theme_settings_screen.dart';
 import 'package:waffir/features/stores/presentation/screens/bank_catalog_screen/bank_catalog_screen.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/store_detail_screen.dart';
 import 'package:waffir/features/stores/presentation/screens/stores_screen.dart';
-import 'package:waffir/features/subscription/presentation/screens/paywall_screen.dart';
 import 'package:waffir/features/subscription/presentation/screens/subscription_management_screen.dart';
 
 /// Builds the full GoRouter route table.
 ///
 /// This is extracted to keep `app_router.dart` focused on wiring providers/guards.
-List<RouteBase> buildAppRoutes({
-  required GlobalKey<NavigatorState> shellNavigatorKey,
-}) {
+List<RouteBase> buildAppRoutes({required GlobalKey<NavigatorState> shellNavigatorKey}) {
   return [
     // Splash Screen
     GoRoute(
@@ -127,30 +123,24 @@ List<RouteBase> buildAppRoutes({
         GoRoute(
           path: AppRoutes.deals,
           name: AppRouteNames.deals,
-          pageBuilder: (context, state) => AppPageTransitions.fadeScale<void>(
-            state: state,
-            child: const HotDealsScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              AppPageTransitions.fadeScale<void>(state: state, child: const HotDealsScreen()),
         ),
 
         // Stores
         GoRoute(
           path: AppRoutes.stores,
           name: AppRouteNames.stores,
-          pageBuilder: (context, state) => AppPageTransitions.fadeScale<void>(
-            state: state,
-            child: const StoresScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              AppPageTransitions.fadeScale<void>(state: state, child: const StoresScreen()),
         ),
 
         // Credit Cards
         GoRoute(
           path: AppRoutes.creditCards,
           name: AppRouteNames.creditCards,
-          pageBuilder: (context, state) => AppPageTransitions.fadeScale<void>(
-            state: state,
-            child: const CreditCardsScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              AppPageTransitions.fadeScale<void>(state: state, child: const CreditCardsScreen()),
           routes: [
             // Add Credit Card sub-route
             GoRoute(
@@ -165,10 +155,8 @@ List<RouteBase> buildAppRoutes({
         GoRoute(
           path: AppRoutes.profile,
           name: AppRouteNames.profile,
-          pageBuilder: (context, state) => AppPageTransitions.fadeScale<void>(
-            state: state,
-            child: const ProfileScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              AppPageTransitions.fadeScale<void>(state: state, child: const ProfileScreen()),
           routes: [
             // Profile sub-routes
             GoRoute(
@@ -184,8 +172,7 @@ List<RouteBase> buildAppRoutes({
             GoRoute(
               path: '/personal-details',
               name: AppRouteNames.profilePersonalDetails,
-              builder: (context, state) =>
-                  const ManagePersonalDetailsFormScreen(),
+              builder: (context, state) => const ManagePersonalDetailsFormScreen(),
             ),
             GoRoute(
               path: '/saved-deals',
@@ -201,9 +188,7 @@ List<RouteBase> buildAppRoutes({
               path: '/change-city',
               name: AppRouteNames.profileChangeCity,
               builder: (context, state) {
-                final showBackButton = state.extra is bool
-                    ? state.extra as bool
-                    : true;
+                final showBackButton = state.extra is bool ? state.extra as bool : true;
                 return ChangeCityScreen(showBackButton: showBackButton);
               },
             ),
@@ -225,35 +210,9 @@ List<RouteBase> buildAppRoutes({
             GoRoute(
               path: '/selected-credit-cards',
               name: AppRouteNames.profileSelectedCreditCards,
-              builder: (context, state) =>
-                  const CreditCardsScreen(showBackButton: true),
+              builder: (context, state) => const CreditCardsScreen(showBackButton: true),
             ),
           ],
-        ),
-      ],
-    ),
-
-    // Settings (Outside shell - accessible from Profile or AppBar)
-    GoRoute(
-      path: AppRoutes.settings,
-      name: AppRouteNames.settings,
-      builder: (context, state) => const SettingsScreen(),
-      routes: [
-        // Settings sub-routes
-        GoRoute(
-          path: '/notifications',
-          name: AppRouteNames.notificationSettings,
-          builder: (context, state) => const NotificationSettingsScreen(),
-        ),
-        GoRoute(
-          path: '/theme',
-          name: AppRouteNames.themeSettings,
-          builder: (context, state) => const ThemeSettingsScreen(),
-        ),
-        GoRoute(
-          path: '/privacy',
-          name: AppRouteNames.privacySettings,
-          builder: (context, state) => const PrivacySettingsScreen(),
         ),
       ],
     ),
@@ -266,13 +225,6 @@ List<RouteBase> buildAppRoutes({
       path: AppRoutes.notifications,
       name: AppRouteNames.notifications,
       builder: (context, state) => const NotificationsScreen(),
-    ),
-
-    // Subscription Routes (Outside shell for fullscreen experience)
-    GoRoute(
-      path: AppRoutes.paywall,
-      name: AppRouteNames.paywall,
-      builder: (context, state) => const PaywallScreen(),
     ),
 
     GoRoute(

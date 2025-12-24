@@ -209,7 +209,18 @@ class EnvironmentConfig {
   static String get firebaseOptionsName => getString('FIREBASE_OPTIONS_NAME', defaultValue: 'dev')!;
 
   /// RevenueCat Configuration
-  static String? get revenueCatApiKey => getString('REVENUECAT_API_KEY');
+  /// Supports platform-specific API keys with fallback to generic key.
+  static String? get revenueCatApiKey {
+    if (Platform.isAndroid) {
+      return getString('REVENUECAT_API_KEY_ANDROID') ?? getString('REVENUECAT_API_KEY');
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      return getString('REVENUECAT_API_KEY_IOS') ?? getString('REVENUECAT_API_KEY');
+    }
+    return getString('REVENUECAT_API_KEY');
+  }
+
+  /// Check if RevenueCat is configured
+  static bool get hasRevenueCatConfig => revenueCatApiKey != null && revenueCatApiKey!.isNotEmpty;
 
   /// Google AdMob Configuration
   static String get adMobAppIdAndroid =>

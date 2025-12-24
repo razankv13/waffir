@@ -30,9 +30,10 @@ class SplashScreen extends HookConsumerWidget {
       duration: const Duration(milliseconds: 1500),
     );
     final fadeAnimation = useMemoized(
-      () => Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: animationController, curve: Curves.easeInOut),
-      ),
+      () => Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      ).animate(CurvedAnimation(parent: animationController, curve: Curves.easeInOut)),
       [animationController],
     );
 
@@ -172,7 +173,9 @@ class SplashScreen extends HookConsumerWidget {
         final hasGender = user?.gender?.trim().isNotEmpty ?? false;
 
         hasNavigated.value = true;
-        context.go((hasName && hasGender && acceptedTerms) ? AppRoutes.home : AppRoutes.accountDetails);
+        context.go(
+          (hasName && hasGender && acceptedTerms) ? AppRoutes.home : AppRoutes.accountDetails,
+        );
       } finally {
         isNavigating.value = false;
       }
@@ -216,7 +219,10 @@ class SplashScreen extends HookConsumerWidget {
                   ),
                   TextButton(
                     onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
-                    child: Text(LocaleKeys.auth.logout.tr(), style: TextStyle(color: colorScheme.onPrimary)),
+                    child: Text(
+                      LocaleKeys.auth.logout.tr(),
+                      style: TextStyle(color: colorScheme.onPrimary),
+                    ),
                   ),
                 ],
               ],
