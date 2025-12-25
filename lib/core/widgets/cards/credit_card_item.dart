@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:waffir/core/constants/app_typography.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 
 /// Credit Card List Item Widget
 ///
@@ -76,34 +77,11 @@ class CreditCardItem extends StatelessWidget {
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(15),
                   ),
-                  child: Container(
+                  child: AppNetworkImage(
+                    imageUrl: imageUrl,
                     height: 160,
-                    width: double.infinity,
-                    color: colorScheme.surfaceContainerHighest,
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Center(
-                          child: Icon(
-                            Icons.credit_card,
-                            size: 64,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        );
-                      },
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                          ),
-                        );
-                      },
-                    ),
+                    contentType: ImageContentType.creditCard,
+                    useResponsiveScaling: false,
                   ),
                 ),
 

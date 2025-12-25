@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:waffir/core/result/exception_to_failure.dart';
+import 'package:waffir/core/utils/logger.dart';
 import 'package:waffir/features/auth/domain/entities/auth_bootstrap_data.dart';
 
 class SupabaseAuthBootstrapRepository {
@@ -36,23 +37,24 @@ class SupabaseAuthBootstrapRepository {
                       (hasHadSubscriptionBeforeRaw['result'] as bool?)
                 : null);
 
-      final invitesRaw = await _client.rpc('get_my_family_invites');
-      final familyInvites = invitesRaw is List
-          ? invitesRaw
-                .whereType<Map>()
-                .map((e) => Map<String, dynamic>.from(e))
-                .toList(growable: false)
-          : const <Map<String, dynamic>>[];
-
+      //   final invitesRaw = await _client.rpc('get_my_family_invites');
+      //   final familyInvites = invitesRaw is List
+      //       ? invitesRaw
+      //             .whereType<Map>()
+      //             .map((e) => Map<String, dynamic>.from(e))
+      //             .toList(growable: false)
+      //       : const <Map<String, dynamic>>[];
+      //   print('this is the family invites: $familyInvites');
       return AuthBootstrapData(
         userId: userId,
         accountSummary: accountSummary,
         userSettings: userSettings,
         hasHadSubscriptionBefore: hasHadSubscriptionBefore,
-        familyInvites: familyInvites,
+        familyInvites: [],
         fetchedAt: DateTime.now(),
       );
     } catch (e, stackTrace) {
+      AppLogger.error('Failed to bootstrap auth', error: e, stackTrace: stackTrace);
       throw ExceptionToFailure.convert(e, stackTrace);
     }
   }

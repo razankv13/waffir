@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 
 /// Product image gallery with swipeable images and indicators
 ///
@@ -109,32 +110,11 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                 onTap: () {
                   // Could open full screen view
                 },
-                child: Container(
-                  color: colorScheme.surfaceContainerHighest,
-                  child: Image.network(
-                    widget.imageUrls[index],
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(
-                        child: Icon(
-                          Icons.broken_image_outlined,
-                          size: 64,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      );
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      );
-                    },
-                  ),
+                child: AppNetworkImage(
+                  imageUrl: widget.imageUrls[index],
+                  fit: BoxFit.contain,
+                  contentType: ImageContentType.product,
+                  useResponsiveScaling: false,
                 ),
               );
             },

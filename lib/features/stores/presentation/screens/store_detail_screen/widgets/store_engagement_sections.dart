@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,20 +8,45 @@ import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/themes/app_text_styles.dart';
 import 'package:waffir/core/themes/extensions/promo_colors_extension.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/features/stores/domain/entities/store_offer.dart';
 import 'package:waffir/gen/assets.gen.dart';
 
 /// Product actions row (Figma node 54:5549 / 54:5550).
 class StoreActionsSection extends StatelessWidget {
-  const StoreActionsSection({super.key, required this.isFavorite, required this.onToggleFavorite});
+  const StoreActionsSection({
+    super.key,
+    required this.isFavorite,
+    required this.onToggleFavorite,
+    this.offers = const [],
+  });
 
   final bool isFavorite;
   final VoidCallback onToggleFavorite;
+  final List<StoreOffer> offers;
+
+  /// Calculates total popularity score from offers.
+  String _calculateLikesCount() {
+    if (offers.isEmpty) return '0';
+    final total = offers.fold<int>(
+      0,
+      (sum, offer) => sum + (offer.popularityScore ?? 0),
+    );
+    return total.toString();
+  }
+
+  /// Returns offers count as comment count (since no comments in Supabase).
+  String _calculateOffersCount() {
+    return offers.length.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
     final colorScheme = Theme.of(context).colorScheme;
     final promoColors = Theme.of(context).extension<PromoColors>();
+
+    final likesCount = _calculateLikesCount();
+    final offersCount = _calculateOffersCount();
 
     // Outer container is provided by parent padding (12px 16px in StoreDetailView).
     return Row(
@@ -28,17 +55,17 @@ class StoreActionsSection extends StatelessWidget {
           child: Row(
             children: [
               StoreLikeDislikePill(
-                countText: '21',
+                countText: likesCount,
                 isLiked: isFavorite,
                 onTap: () {
-                  HapticFeedback.lightImpact();
+                  unawaited(HapticFeedback.lightImpact());
                   onToggleFavorite();
                 },
               ),
               SizedBox(width: responsive.scale(16)),
               StoreIconCountPill(
                 iconAsset: 'assets/icons/store_detail/comment.svg',
-                label: '45',
+                label: offersCount,
                 textColor: colorScheme.onSurfaceVariant,
                 countColor: colorScheme.onSurfaceVariant,
               ),

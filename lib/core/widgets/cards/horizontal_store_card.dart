@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/core/widgets/products/discount_tag_pill.dart';
 
 /// Horizontal store card designed to match the Favorites screen Figma example (node 7783:6484).
@@ -87,23 +88,10 @@ class HorizontalStoreCard extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(responsive.scale(8)),
-                      child: Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        color: colorScheme.surfaceContainerHighest,
-                        child: Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Center(
-                              child: Icon(
-                                Icons.store,
-                                size: responsive.scale(32),
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            );
-                          },
-                        ),
+                      child: AppNetworkImage(
+                        imageUrl: imageUrl,
+                        contentType: ImageContentType.store,
+                        useResponsiveScaling: false, // Parent container handles scaling
                       ),
                     ),
 

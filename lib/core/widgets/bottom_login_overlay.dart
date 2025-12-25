@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:waffir/core/extensions/context_extensions.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
+import 'package:waffir/features/auth/data/providers/auth_providers.dart';
 
 /// Gradient overlay CTA used on scrolling screens to prompt unauthenticated users to log in.
 ///
 /// Based on Figma node `34:7097` (393×215, bottom-aligned button with 30px radius).
 /// Dimensions, padding, and radius are scaled via [ResponsiveHelper] to stay responsive.
-class BottomLoginOverlay extends StatelessWidget {
+class BottomLoginOverlay extends ConsumerWidget {
   const BottomLoginOverlay({
     super.key,
     this.buttonText = 'Login to view full deal details',
@@ -62,7 +64,7 @@ class BottomLoginOverlay extends StatelessWidget {
   final EdgeInsets? buttonPadding;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final responsive = context.responsive;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -74,6 +76,9 @@ class BottomLoginOverlay extends StatelessWidget {
     final effectiveBorderRadius = responsive.scaleBorderRadius(
       borderRadius ?? BorderRadius.circular(30),
     );
+
+    final isAuthenticated = ref.watch(isAuthenticatedProvider);
+    if (isAuthenticated) return const SizedBox.shrink();
 
     return Positioned(
       left: 0,

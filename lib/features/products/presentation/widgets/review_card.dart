@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/features/products/domain/entities/review.dart';
 
 /// Review card widget for displaying individual product reviews.
@@ -42,7 +44,7 @@ class ReviewCard extends StatelessWidget {
               CircleAvatar(
                 radius: responsive.scale(20),
                 backgroundColor: colorScheme.primaryContainer,
-                backgroundImage: review.userAvatarUrl != null ? NetworkImage(review.userAvatarUrl!) : null,
+                backgroundImage: review.userAvatarUrl != null ? CachedNetworkImageProvider(review.userAvatarUrl!) : null,
                 child: review.userAvatarUrl == null
                     ? Text(
                         review.userName?.substring(0, 1).toUpperCase() ?? 'U',
@@ -108,12 +110,13 @@ class ReviewCard extends StatelessWidget {
                       if (i != 0) SizedBox(width: responsive.scale(8)),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(responsive.scale(8)),
-                        child: Image.network(
-                          review.imageUrls[i],
-                          width: responsive.scale(80),
-                          height: responsive.scale(80),
+                        child: AppNetworkImage(
+                          imageUrl: review.imageUrls[i],
+                          width: 80,
+                          height: 80,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
+                          contentType: ImageContentType.generic,
+                          errorWidget: Container(
                             width: responsive.scale(80),
                             height: responsive.scale(80),
                             color: colorScheme.surfaceContainerHighest,

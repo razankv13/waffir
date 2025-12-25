@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/mock/mock_deals_data.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 
 /// Saved Deals Screen
 ///
@@ -160,17 +161,17 @@ class _SavedDealsScreenState extends ConsumerState<SavedDealsScreen> {
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
-                  child: Image.network(
-                    deal.imageUrl!,
+                  child: AppNetworkImage(
+                    imageUrl: deal.imageUrl!,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: colorScheme.surfaceContainerHighest,
-                        child: const Center(
-                          child: Icon(Icons.image_not_supported, size: 48),
-                        ),
-                      );
-                    },
+                    contentType: ImageContentType.deal,
+                    useResponsiveScaling: false,
+                    errorWidget: Container(
+                      color: colorScheme.surfaceContainerHighest,
+                      child: const Center(
+                        child: Icon(Icons.image_not_supported, size: 48),
+                      ),
+                    ),
                   ),
                 ),
               ),

@@ -6,6 +6,11 @@ import 'package:waffir/features/stores/data/mock_data/stores_mock_data.dart';
 import 'package:waffir/features/stores/data/models/store_model.dart';
 
 /// Temporary mock implementation that simulates latency and filtering.
+///
+/// @deprecated Use [MockStoreCatalogRemoteDataSource] instead which implements
+/// the consolidated [StoreCatalogRemoteDataSource] interface.
+// ignore: deprecated_member_use_from_same_package
+@Deprecated('Use MockStoreCatalogRemoteDataSource instead')
 class MockStoresRemoteDataSource implements StoresRemoteDataSource {
   MockStoresRemoteDataSource({this.forceError = false});
 

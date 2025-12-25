@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/storage/settings_service.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/core/widgets/search/search_bar_widget.dart';
 import 'package:waffir/core/widgets/switches/custom_toggle_switch.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
@@ -440,18 +441,14 @@ class _BankCardSelectionTile extends StatelessWidget {
       return _buildPlaceholder(theme, size);
     }
 
-    return Image.network(
-      imageUrl,
-      fit: BoxFit.cover,
+    return AppNetworkImage(
+      imageUrl: imageUrl,
       width: size,
       height: size,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return _buildLoadingIndicator(theme, size, loadingProgress);
-      },
-      errorBuilder: (context, error, stackTrace) {
-        return _buildPlaceholder(theme, size);
-      },
+      fit: BoxFit.cover,
+      contentType: ImageContentType.creditCard,
+      useResponsiveScaling: false, // Size already scaled by caller
+      errorWidget: _buildPlaceholder(theme, size),
     );
   }
 

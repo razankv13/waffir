@@ -3,6 +3,10 @@ import 'package:waffir/features/stores/domain/entities/store.dart';
 
 /// Contract for fetching stores data, allowing the backend to be swapped
 /// (mock → Supabase) without touching presentation.
+///
+/// @deprecated Use [StoreCatalogRepository] instead which provides the same
+/// functionality with proper Supabase integration and language support.
+@Deprecated('Use StoreCatalogRepository instead')
 abstract class StoresRepository {
   /// Fetch the Stores screen feed with optional filters.
   ///

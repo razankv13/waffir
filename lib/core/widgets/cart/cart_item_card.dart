@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:waffir/core/constants/app_typography.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/core/widgets/products/price_display.dart';
 
 /// Cart item card widget for displaying items in shopping cart
@@ -64,23 +65,12 @@ class CartItemCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Product Image
-          ClipRRect(
+          AppNetworkImage(
+            imageUrl: imageUrl,
+            width: 80,
+            height: 80,
             borderRadius: BorderRadius.circular(8),
-            child: Container(
-              width: 80,
-              height: 80,
-              color: colorScheme.surfaceContainerHighest,
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(
-                    Icons.image_not_supported_outlined,
-                    color: colorScheme.onSurfaceVariant,
-                  );
-                },
-              ),
-            ),
+            contentType: ImageContentType.product,
           ),
 
           const SizedBox(width: 12),

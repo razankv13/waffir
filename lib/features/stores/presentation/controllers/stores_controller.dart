@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:waffir/core/errors/failures.dart';
 import 'package:waffir/core/result/result.dart';
-import 'package:waffir/features/stores/data/providers/stores_backend_providers.dart';
+import 'package:waffir/core/storage/settings_service.dart';
+import 'package:waffir/features/stores/data/providers/catalog_backend_providers.dart';
 import 'package:waffir/features/stores/domain/entities/store.dart';
-import 'package:waffir/features/stores/domain/repositories/stores_repository.dart';
+import 'package:waffir/features/stores/domain/repositories/store_catalog_repository.dart';
 
 const defaultStoresCategory = 'All';
 
@@ -38,13 +39,15 @@ class StoresState {
 final storesControllerProvider = AsyncNotifierProvider<StoresController, StoresState>(StoresController.new);
 
 class StoresController extends AsyncNotifier<StoresState> {
-  StoresRepository get _repository => ref.read(storesRepositoryProvider);
+  StoreCatalogRepository get _repository => ref.read(storeCatalogRepositoryProvider);
 
   List<Store> _allNearYouStores = const [];
   List<Store> _allMallStores = const [];
 
   @override
   Future<StoresState> build() async {
+    // Watch locale to rebuild when language changes
+    ref.watch(localeProvider);
     return _fetchAllAndApply(category: defaultStoresCategory, searchQuery: '');
   }
 
@@ -70,7 +73,8 @@ class StoresController extends AsyncNotifier<StoresState> {
   }
 
   Future<StoresState> _fetchAllAndApply({required String category, required String searchQuery}) async {
-    final result = await _repository.fetchStoresFeed();
+    final languageCode = ref.read(localeProvider).languageCode;
+    final result = await _repository.fetchStoresFeed(languageCode: languageCode);
 
     return result.when(
       success: (feed) {

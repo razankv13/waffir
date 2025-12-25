@@ -152,6 +152,27 @@ class SupabaseAuthRepository implements AuthRepository {
         nonce: rawNonce,
       );
 
+      // Apple only provides name on first sign-in, capture and save it
+      final givenName = credential.givenName;
+      final familyName = credential.familyName;
+      if (givenName != null || familyName != null) {
+        final nameParts = <String>[
+          if (givenName != null && givenName.isNotEmpty) givenName,
+          if (familyName != null && familyName.isNotEmpty) familyName,
+        ];
+        final fullName = nameParts.join(' ');
+        if (fullName.isNotEmpty) {
+          AppLogger.info('🍎 Capturing Apple Sign-In name: $fullName');
+          await _client.auth.updateUser(sb.UserAttributes(
+            data: {
+              'full_name': fullName,
+              'first_name': givenName,
+              'last_name': familyName,
+            },
+          ));
+        }
+      }
+
       final session = response.session ?? _client.auth.currentSession;
       return Result.success(_toDomainAuthState(event: sb.AuthChangeEvent.signedIn, session: session));
     } catch (e, stackTrace) {

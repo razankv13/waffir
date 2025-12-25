@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/core/widgets/products/badge_widget.dart';
 import 'package:waffir/core/widgets/products/card_actions.dart';
 import 'package:waffir/core/widgets/products/discount_tag_pill.dart';
@@ -132,42 +133,13 @@ class ProductCard extends StatelessWidget {
       child: Stack(
         children: [
           // Product Image
-          ClipRRect(
+          AppNetworkImage(
+            imageUrl: imageUrl,
+            width: 140,
+            height: 120,
             borderRadius: BorderRadius.circular(8),
-            child: Container(
-              width: 140,
-              height: 120,
-              color: colorScheme.surfaceContainerHighest,
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Center(
-                    child: Icon(
-                      Icons.image_not_supported_outlined,
-                      size: 32,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  );
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
+            contentType: ImageContentType.product,
+            useResponsiveScaling: false,
           ),
 
           // Badge overlay (top left)

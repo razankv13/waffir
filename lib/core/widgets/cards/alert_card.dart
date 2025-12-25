@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:waffir/core/themes/extensions/notifications_alerts_theme.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 
 /// Alert card for notifications screen (Figma component 7774:4697 + 7774:6283)
 ///
@@ -61,15 +62,12 @@ class AlertCard extends StatelessWidget {
                     border: Border.all(color: naTheme.alertImageBorder, width: responsive.scale(1)),
                   ),
                   child: imageUrl != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(responsive.scale(8)),
-                          child: Image.network(
-                            imageUrl!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const SizedBox.shrink();
-                            },
-                          ),
+                      ? AppNetworkImage(
+                          imageUrl: imageUrl!,
+                          width: 48,
+                          height: 48,
+                          borderRadius: BorderRadius.circular(8),
+                          errorWidget: const SizedBox.shrink(),
                         )
                       : const SizedBox.shrink(),
                 ),

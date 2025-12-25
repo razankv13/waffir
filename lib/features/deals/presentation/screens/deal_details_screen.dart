@@ -9,6 +9,7 @@ import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/errors/failures.dart';
 import 'package:waffir/core/services/clarity_service.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/features/deals/domain/entities/deal_details_type.dart';
 import 'package:waffir/features/deals/presentation/controllers/deal_details_controller.dart';
 
@@ -206,12 +207,13 @@ class DealDetailsScreen extends HookConsumerWidget {
 
               return ClipRRect(
                 borderRadius: BorderRadius.circular(responsive.scale(16)),
-                child: Image.network(
-                  imageUrl,
-                  height: responsive.scale(220),
+                child: AppNetworkImage(
+                  imageUrl: imageUrl,
+                  height: 220,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
+                  contentType: ImageContentType.deal,
+                  errorWidget: Container(
                     height: responsive.scale(220),
                     width: double.infinity,
                     color: colorScheme.surfaceContainerHighest,

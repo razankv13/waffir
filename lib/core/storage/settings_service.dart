@@ -8,7 +8,6 @@ import 'package:waffir/core/utils/logger.dart';
 
 /// Service for managing app settings using Hive storage
 class SettingsService {
-
   SettingsService._internal() {
     _hiveService = HiveService.instance;
   }
@@ -25,7 +24,7 @@ class SettingsService {
   AppSettings getSettings() {
     try {
       final storedSettings = _hiveService.getSetting<AppSettings>(_settingsKey);
-      
+
       if (storedSettings != null) {
         AppLogger.debug('Retrieved app settings from storage');
         return storedSettings;
@@ -49,11 +48,7 @@ class SettingsService {
       await _hiveService.storeSetting(_settingsKey, settings);
       AppLogger.info('App settings saved successfully');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to save app settings',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to save app settings', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -66,11 +61,7 @@ class SettingsService {
       await saveSettings(settings);
       AppLogger.info('Theme mode updated to: ${themeMode.name}');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to update theme mode',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to update theme mode', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -83,11 +74,7 @@ class SettingsService {
       await saveSettings(updatedSettings);
       AppLogger.info('Language updated to: $languageCode');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to update language',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to update language', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -100,11 +87,7 @@ class SettingsService {
       await saveSettings(updatedSettings);
       AppLogger.info('Notifications enabled updated to: $enabled');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to update notifications setting',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to update notifications setting', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -117,11 +100,7 @@ class SettingsService {
       await saveSettings(updatedSettings);
       AppLogger.info('Biometrics enabled updated to: $enabled');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to update biometrics setting',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to update biometrics setting', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -134,11 +113,7 @@ class SettingsService {
       await saveSettings(updatedSettings);
       AppLogger.info('Onboarding marked as completed');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to mark onboarding as completed',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to mark onboarding as completed', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -147,17 +122,11 @@ class SettingsService {
   Future<void> updateLastSyncTime([DateTime? time]) async {
     try {
       final settings = getSettings();
-      final updatedSettings = settings.copyWith(
-        lastSyncTime: time ?? DateTime.now(),
-      );
+      final updatedSettings = settings.copyWith(lastSyncTime: time ?? DateTime.now());
       await saveSettings(updatedSettings);
       AppLogger.debug('Last sync time updated');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to update last sync time',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to update last sync time', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -170,11 +139,7 @@ class SettingsService {
       await saveSettings(updatedSettings);
       AppLogger.info('App version updated to: $version');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to update app version',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to update app version', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -187,11 +152,7 @@ class SettingsService {
       await saveSettings(updatedSettings);
       AppLogger.info('Analytics enabled updated to: $enabled');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to update analytics setting',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to update analytics setting', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -204,11 +165,7 @@ class SettingsService {
       await saveSettings(updatedSettings);
       AppLogger.info('Crash reporting enabled updated to: $enabled');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to update crash reporting setting',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to update crash reporting setting', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -221,11 +178,7 @@ class SettingsService {
       await saveSettings(settings);
       AppLogger.info('Feature flag $featureName set to: $enabled');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to set feature flag $featureName',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to set feature flag $featureName', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -236,11 +189,7 @@ class SettingsService {
       final settings = getSettings();
       return settings.isFeatureEnabled(featureName);
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to get feature flag $featureName',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to get feature flag $featureName', error: e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -248,16 +197,12 @@ class SettingsService {
   /// Set custom preference
   Future<void> setPreference<T>(String key, T value) async {
     try {
-      final settings = getSettings();
-      settings.setPreference(key, value);
+      var settings = getSettings();
+      settings = settings.setPreference(key, value);
       await saveSettings(settings);
       AppLogger.debug('Preference $key set');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to set preference $key',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to set preference $key', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -268,11 +213,7 @@ class SettingsService {
       final settings = getSettings();
       return settings.getPreference<T>(key, defaultValue: defaultValue);
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to get preference $key',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to get preference $key', error: e, stackTrace: stackTrace);
       return defaultValue;
     }
   }
@@ -285,11 +226,7 @@ class SettingsService {
       await saveSettings(settings);
       AppLogger.debug('Preference $key removed');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to remove preference $key',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to remove preference $key', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -301,11 +238,7 @@ class SettingsService {
       await saveSettings(defaultSettings);
       AppLogger.info('Settings reset to defaults');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to reset settings',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to reset settings', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -316,11 +249,7 @@ class SettingsService {
       final settings = getSettings();
       return settings.toJson();
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to export settings',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to export settings', error: e, stackTrace: stackTrace);
       return {};
     }
   }
@@ -332,20 +261,14 @@ class SettingsService {
       await saveSettings(settings);
       AppLogger.info('Settings imported successfully');
     } catch (e, stackTrace) {
-      AppLogger.error(
-        'Failed to import settings',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      AppLogger.error('Failed to import settings', error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
 
   /// Get default settings
   AppSettings _getDefaultSettings() {
-    return const AppSettings(
-      biometricsEnabled: AppConstants.enableBiometrics,
-    );
+    return const AppSettings(biometricsEnabled: AppConstants.enableBiometrics);
   }
 }
 
@@ -404,7 +327,6 @@ final crashReportingEnabledProvider = StateProvider<bool>((ref) {
 
 /// Helper notifier for updating settings
 class SettingsNotifier extends StateNotifier<AppSettings> {
-
   SettingsNotifier(this._settingsService) : super(_settingsService.getSettings());
   final SettingsService _settingsService;
 
@@ -460,8 +382,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
 }
 
 /// Settings notifier provider
-final settingsNotifierProvider = 
-    StateNotifierProvider<SettingsNotifier, AppSettings>((ref) {
+final settingsNotifierProvider = StateNotifierProvider<SettingsNotifier, AppSettings>((ref) {
   final settingsService = ref.read(settingsServiceProvider);
   return SettingsNotifier(settingsService);
 });

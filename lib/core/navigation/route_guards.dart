@@ -56,6 +56,7 @@ class AuthGuard extends RouteGuard {
       AppRoutes.citySelection,
       AppRoutes.onboarding,
       AppRoutes.welcome,
+      AppRoutes.accountDetails,
     ].contains(state.matchedLocation);
 
     // Don't redirect if not initialized yet
@@ -86,8 +87,9 @@ class AuthGuard extends RouteGuard {
       return '${AppRoutes.login}?${AppQueryParams.returnTo}=${Uri.encodeComponent(state.uri.toString())}';
     }
 
-    // If user is authenticated and trying to access auth pages
-    if (_isAuthenticated && isGoingToAuth) {
+    // If user is authenticated and trying to access auth pages (except accountDetails)
+    // accountDetails is part of auth flow but requires authenticated access for profile completion
+    if (_isAuthenticated && isGoingToAuth && state.matchedLocation != AppRoutes.accountDetails) {
       AppLogger.logNavigation(
         from: state.matchedLocation,
         to: AppRoutes.home,

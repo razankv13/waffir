@@ -2,6 +2,9 @@ import 'package:waffir/core/result/result.dart';
 import 'package:waffir/features/stores/data/datasources/stores_remote_data_source.dart';
 import 'package:waffir/features/stores/domain/repositories/stores_repository.dart';
 
+/// @deprecated Use [StoreCatalogRepositoryImpl] instead.
+// ignore: deprecated_member_use_from_same_package
+@Deprecated('Use StoreCatalogRepositoryImpl instead')
 class SupabaseStoresRepository implements StoresRepository {
   SupabaseStoresRepository(this._remote);
 

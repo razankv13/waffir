@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:waffir/core/constants/app_typography.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
@@ -87,7 +88,7 @@ class ProfileHeader extends StatelessWidget {
     final editBadgeSize = responsive.scale(_ProfileHeaderSpec.editBadgeSize);
     final editIconSize = responsive.scale(_ProfileHeaderSpec.editIconSize);
     final ImageProvider backgroundImageProvider = backgroundImage != null
-        ? NetworkImage(backgroundImage!)
+        ? CachedNetworkImageProvider(backgroundImage!)
         : Assets.images.profileHeaderBgBd1db0.provider();
 
     return RepaintBoundary(
@@ -155,7 +156,7 @@ class ProfileHeader extends StatelessWidget {
                               ),
                               image: avatarUrl != null
                                   ? DecorationImage(
-                                      image: NetworkImage(avatarUrl!),
+                                      image: CachedNetworkImageProvider(avatarUrl!),
                                       fit: BoxFit.cover,
                                     )
                                   : null,
@@ -270,7 +271,7 @@ class CompactProfileHeader extends StatelessWidget {
                 shape: BoxShape.circle,
                 image: avatarUrl != null
                     ? DecorationImage(
-                        image: NetworkImage(avatarUrl!),
+                        image: CachedNetworkImageProvider(avatarUrl!),
                         fit: BoxFit.cover,
                       )
                     : null,

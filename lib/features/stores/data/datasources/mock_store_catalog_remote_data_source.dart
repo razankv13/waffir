@@ -5,6 +5,47 @@ import 'package:waffir/features/stores/data/models/store_model.dart';
 import 'package:waffir/features/stores/domain/entities/store_offer.dart';
 
 class MockStoreCatalogRemoteDataSource implements StoreCatalogRemoteDataSource {
+  /// Maps category slugs to legacy category names used in mock data.
+  static const Map<String, String> _slugToCategory = {
+    'dining': 'Dining',
+    'fashion': 'Fashion',
+    'electronics': 'Electronics',
+    'beauty': 'Beauty',
+    'travel': 'Travel',
+    'lifestyle': 'Lifestyle',
+    'jewelry': 'Jewelry',
+    'entertainment': 'Entertainment',
+    'others': 'Other',
+  };
+
+  @override
+  Future<List<StoreModel>> fetchStores({
+    required String languageCode,
+    String? categorySlug,
+    String? searchQuery,
+  }) async {
+    // Simulate network delay
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+
+    var stores = StoresMockData.stores;
+
+    // Filter by category
+    if (categorySlug != null && categorySlug.isNotEmpty) {
+      final legacyCategory = _slugToCategory[categorySlug.toLowerCase()];
+      if (legacyCategory != null) {
+        stores = stores.where((s) => s.category == legacyCategory).toList();
+      }
+    }
+
+    // Filter by search
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      final query = searchQuery.toLowerCase();
+      stores = stores.where((s) => s.name.toLowerCase().contains(query)).toList();
+    }
+
+    return stores;
+  }
+
   @override
   Future<StoreModel> fetchStoreById({
     required String storeId,

@@ -73,6 +73,7 @@ class AppRoutes {
     forgotPassword,
     resetPassword,
     otpVerification,
+    accountDetails,
   ];
 
   /// Get all main app routes (requiring authentication)

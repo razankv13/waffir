@@ -5,11 +5,14 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/navigation/routes.dart';
+import 'package:waffir/core/storage/settings_service.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/core/widgets/inputs/gender_selector.dart';
 import 'package:waffir/core/widgets/widgets.dart';
 import 'package:waffir/features/auth/data/providers/auth_providers.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
+import 'package:waffir/features/profile/presentation/controllers/profile_controller.dart';
 
 /// Account details screen (pixel-perfect to Figma node `34:5441`)
 ///
@@ -30,12 +33,23 @@ class AccountDetailsScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(activeUserProvider);
     final nameController = useTextEditingController();
     useListenable(nameController);
 
     final selectedGender = useState<Gender?>(null);
     final acceptedTerms = useState(false);
     final isSubmitting = useState(false);
+
+    // Auto-fill name from OAuth provider data (Google/Apple)
+    useEffect(() {
+      if (nameController.text.isEmpty &&
+          user?.displayName != null &&
+          user!.displayName!.trim().isNotEmpty) {
+        nameController.text = user.displayName!;
+      }
+      return null;
+    }, [user?.displayName]);
 
     bool isFormValid() {
       return selectedGender.value != null &&
@@ -50,8 +64,8 @@ class AccountDetailsScreen extends HookConsumerWidget {
 
       isSubmitting.value = true;
       try {
-        final user = ref.read(activeUserProvider);
-        if (user == null) {
+        final currentUser = ref.read(activeUserProvider);
+        if (currentUser == null) {
           throw Exception(tr(LocaleKeys.errors.unauthorizedError));
         }
 
@@ -60,16 +74,29 @@ class AccountDetailsScreen extends HookConsumerWidget {
         final firstName = nameParts.isNotEmpty ? nameParts.first : null;
         final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : null;
 
-        final updated = user.copyWith(
+        final updated = currentUser.copyWith(
           displayName: fullName,
           firstName: firstName,
           lastName: lastName,
           gender: selectedGender.value?.name,
-          preferences: <String, dynamic>{...user.preferences, 'acceptedTerms': acceptedTerms.value},
+          photoURL: currentUser.photoURL, // Preserve OAuth avatar URL
+          preferences: <String, dynamic>{
+            ...currentUser.preferences,
+            'acceptedTerms': acceptedTerms.value,
+          },
         );
 
+        // Save user profile data to Supabase
         final authController = ref.read(authControllerProvider.notifier);
         await authController.updateUserData(updated);
+
+        // Sync city selection to Supabase if set
+        final settingsService = ref.read(settingsServiceProvider);
+        final selectedCity = settingsService.getPreference<String>('selected_city');
+        if (selectedCity != null && selectedCity.isNotEmpty) {
+          final profileController = ref.read(profileControllerProvider.notifier);
+          await profileController.updateSettings(cityId: selectedCity);
+        }
 
         if (!context.mounted) return;
         context.go(AppRoutes.home);
@@ -134,6 +161,37 @@ class AccountDetailsScreen extends HookConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 SizedBox(height: responsive.scale(context.responsive.topSafeArea)),
+
+                                // Avatar display for OAuth users (Google/Apple)
+                                if (user?.photoURL != null &&
+                                    user!.photoURL!.isNotEmpty) ...[
+                                  Center(
+                                    child: Container(
+                                      width: responsive.scale(80),
+                                      height: responsive.scale(80),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: colorScheme.surfaceContainerHighest,
+                                        border: Border.all(
+                                          color: colorScheme.primary.withValues(alpha: 0.3),
+                                          width: 2,
+                                        ),
+                                      ),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: AppNetworkImage.avatar(
+                                        imageUrl: user.photoURL!,
+                                        size: 80,
+                                        errorWidget: Icon(
+                                          Icons.person,
+                                          size: responsive.scale(40),
+                                          color: colorScheme.onSurfaceVariant,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: responsive.scale(24)),
+                                ],
+
                                 Align(
                                   alignment: AlignmentDirectional.centerStart,
                                   child: Text(

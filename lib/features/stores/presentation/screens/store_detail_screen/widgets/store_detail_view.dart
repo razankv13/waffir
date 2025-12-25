@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:waffir/core/themes/figma_product_page/product_page_theme.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/core/widgets/product_page_comments_section.dart';
 import 'package:waffir/features/stores/data/models/store_model.dart';
 import 'package:waffir/features/stores/domain/entities/catalog_category.dart';
@@ -50,6 +51,33 @@ class StoreDetailView extends StatelessWidget {
   final String? selectedCategoryId;
   final ValueChanged<String?> onSelectedCategoryChanged;
 
+  /// Derives details body from first offer's description.
+  /// Returns null if no offers or no description available.
+  String? _buildDetailsBody(List<StoreOffer> offers, bool isRTL) {
+    if (offers.isEmpty) return null;
+    // Try first offer's description
+    final description = offers.first.localizedDescription(isArabic: isRTL);
+    if (description != null && description.isNotEmpty) return description;
+    // Try other offers
+    for (final offer in offers.skip(1)) {
+      final desc = offer.localizedDescription(isArabic: isRTL);
+      if (desc != null && desc.isNotEmpty) return desc;
+    }
+    return null;
+  }
+
+  /// Derives features body from offer promo codes.
+  /// Returns null if no promo codes available.
+  String? _buildFeaturesBody(List<StoreOffer> offers) {
+    final promoCodes = offers
+        .where((o) => o.promoCode != null && o.promoCode!.trim().isNotEmpty)
+        .map((o) => o.promoCode!)
+        .take(3)
+        .toList();
+    if (promoCodes.isEmpty) return null;
+    return 'Use promo codes: ${promoCodes.join(", ")} when checking out.';
+  }
+
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
@@ -74,20 +102,11 @@ class StoreDetailView extends StatelessWidget {
         ? store.bannerUrl!
         : store.imageUrl;
 
-    final detailsBody =
-        store.description ??
-        'Levis has a 20% discount on selected items and 10% discount on discontinued items.';
+    // Derive details from first offer description (no hardcoded fallback)
+    final detailsBody = _buildDetailsBody(offers, isRTL);
 
-    final sanitizedId = store.id
-        .replaceAll(RegExp('[^A-Za-z0-9]'), '')
-        .toUpperCase();
-    final promoCode =
-        (sanitizedId.isEmpty ? 'LEVI2' : sanitizedId.padRight(5, '0'))
-            .substring(0, 5);
-
-    final featuresBody =
-        'Use Promo code: $promoCode when checking out, offers are online valid for Saudi Arabia residents. '
-        'Discount will expire on the 23rd of Oct, 2026 or while products last.';
+    // Derive features from offer promo codes (no hardcoded fallback)
+    final featuresBody = _buildFeaturesBody(offers);
 
     return Stack(
       children: [
@@ -121,13 +140,16 @@ class StoreDetailView extends StatelessWidget {
                     child: StoreActionsSection(
                       isFavorite: isFavorite,
                       onToggleFavorite: onToggleFavorite,
+                      offers: offers,
                     ),
                   ),
                 ),
                 SliverToBoxAdapter(
                   child: SizedBox(height: responsive.scale(6)),
                 ),
-                SliverToBoxAdapter(child: StorePricesSection(store: store)),
+                SliverToBoxAdapter(
+                  child: StorePricesSection(store: store, offers: offers),
+                ),
                 SliverToBoxAdapter(
                   child: SizedBox(height: responsive.scale(6)),
                 ),
@@ -145,6 +167,16 @@ class StoreDetailView extends StatelessWidget {
                     featuresBody: featuresBody,
                   ),
                 ),
+                // Website section - only if website URL exists
+                if (store.website != null && store.website!.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: StoreWebsiteSection(websiteUrl: store.website!),
+                  ),
+                // Categories chips - only if categories exist
+                if (store.categories.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: StoreCategoriesChips(categories: store.categories),
+                  ),
                 SliverToBoxAdapter(
                   child: SizedBox(height: responsive.scale(6)),
                 ),
@@ -302,12 +334,12 @@ class _StoreHeroImage extends StatelessWidget {
         child: Align(
           alignment: Alignment.bottomCenter,
           child: SizedBox.expand(
-            child: Image.network(
-              imageUrl,
+            child: AppNetworkImage(
+              imageUrl: imageUrl,
               fit: BoxFit.fill,
-              errorBuilder: (context, error, stackTrace) {
-                return const ColoredBox(color: Colors.white);
-              },
+              contentType: ImageContentType.store,
+              useResponsiveScaling: false,
+              errorWidget: const ColoredBox(color: Colors.white),
             ),
           ),
         ),
@@ -488,10 +520,12 @@ class _StoreOfferTile extends StatelessWidget {
                         borderRadius: BorderRadius.circular(
                           responsive.scale(10),
                         ),
-                        child: Image.network(
-                          offer.imageUrl!,
+                        child: AppNetworkImage(
+                          imageUrl: offer.imageUrl!,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Icon(
+                          contentType: ImageContentType.deal,
+                          useResponsiveScaling: false,
+                          errorWidget: Icon(
                             Icons.local_offer_outlined,
                             color: colorScheme.onSurfaceVariant,
                           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:waffir/core/constants/app_colors.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/core/widgets/switches/custom_toggle_switch.dart';
 
 /// Bank Selection Item Widget - Pixel-perfect Figma implementation
@@ -95,13 +96,12 @@ class BankSelectionItem extends StatelessWidget {
         ),
       ),
       child: logoUrl != null && logoUrl!.isNotEmpty
-          ? ClipRRect(
-              borderRadius: BorderRadius.circular(responsive.scale(8)),
-              child: Image.network(
-                logoUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => _buildPlaceholderLogo(responsive),
-              ),
+          ? AppNetworkImage(
+              imageUrl: logoUrl!,
+              width: 80,
+              height: 80,
+              borderRadius: BorderRadius.circular(8),
+              errorWidget: _buildPlaceholderLogo(responsive),
             )
           : _buildPlaceholderLogo(responsive),
     );

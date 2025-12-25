@@ -10,6 +10,7 @@ import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/buttons/app_button.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/auth/data/providers/auth_providers.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
@@ -573,20 +574,19 @@ class _AvatarWithEditBadge extends StatelessWidget {
                         color: colorScheme.onSurfaceVariant,
                       ),
                     )
-                  : Image.network(
-                      avatarUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) {
-                        return Container(
-                          color: colorScheme.surfaceContainerHighest,
-                          alignment: Alignment.center,
-                          child: Icon(
-                            Icons.person,
-                            size: size * 0.5,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        );
-                      },
+                  : AppNetworkImage.avatar(
+                      imageUrl: avatarUrl!,
+                      size: size,
+                      useResponsiveScaling: false, // Size already scaled
+                      errorWidget: Container(
+                        color: colorScheme.surfaceContainerHighest,
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.person,
+                          size: size * 0.5,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                     ),
             ),
           ),

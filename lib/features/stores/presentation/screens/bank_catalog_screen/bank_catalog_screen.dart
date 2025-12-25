@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:waffir/core/errors/failures.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/features/auth/data/providers/auth_providers.dart';
 import 'package:waffir/features/deals/domain/entities/deal_details_type.dart';
 import 'package:waffir/features/stores/domain/entities/bank_offer.dart';
@@ -460,10 +461,12 @@ class _BankOfferTile extends StatelessWidget {
                           borderRadius: BorderRadius.circular(
                             responsive.scale(10),
                           ),
-                          child: Image.network(
-                            offer.imageUrl!,
+                          child: AppNetworkImage(
+                            imageUrl: offer.imageUrl!,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Icon(
+                            contentType: ImageContentType.deal,
+                            useResponsiveScaling: false,
+                            errorWidget: Icon(
                               Icons.local_offer_outlined,
                               color: colorScheme.onSurfaceVariant,
                             ),

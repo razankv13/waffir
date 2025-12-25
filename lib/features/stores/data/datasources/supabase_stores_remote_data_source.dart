@@ -5,8 +5,10 @@ import 'package:waffir/features/stores/data/models/store_model.dart';
 
 /// Supabase-backed stores data source.
 ///
-/// This implementation is wired behind `USE_MOCK_STORES`. Keep that flag `true`
-/// until the Supabase schema/RLS and data are deployed.
+/// @deprecated Use [SupabaseStoreCatalogRemoteDataSource] instead which has
+/// working Supabase integration with fetchStores(), fetchStoreById(), etc.
+// ignore: deprecated_member_use_from_same_package
+@Deprecated('Use SupabaseStoreCatalogRemoteDataSource instead')
 class SupabaseStoresRemoteDataSource implements StoresRemoteDataSource {
   SupabaseStoresRemoteDataSource(this._client);
 

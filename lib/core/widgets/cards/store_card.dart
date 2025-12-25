@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
+import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/core/widgets/products/discount_tag_pill.dart';
 
 /// A pixel-perfect card widget for displaying store information
@@ -146,31 +147,11 @@ class StoreCard extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.zero, // No border radius per Figma
                     ),
-                    child: Image.network(
-                      imageUrl,
+                    child: AppNetworkImage(
+                      imageUrl: imageUrl,
                       fit: BoxFit.contain, // Contain (not cover) per Figma
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: const Color(0xFFFFFFFF),
-                          child: Icon(
-                            Icons.store,
-                            size: responsive.scale(32),
-                            color: const Color(0xFF9CA3AF),
-                          ),
-                        );
-                      },
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Container(
-                          color: const Color(0xFFFFFFFF),
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Color(0xFF00D9A3),
-                            ),
-                          ),
-                        );
-                      },
+                      contentType: ImageContentType.store,
+                      useResponsiveScaling: false, // Parent container handles scaling
                     ),
                   ),
                 ),

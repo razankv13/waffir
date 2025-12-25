@@ -158,10 +158,19 @@ class SplashScreen extends HookConsumerWidget {
           return; // Will retry when bootstrap state changes
         }
 
-        // If timeout reached while still loading, navigate to home anyway
+        // If timeout reached while still loading, check profile before navigating
         if (bootstrapTimeoutReached.value && bootstrap.isLoading) {
           hasNavigated.value = true;
-          if (context.mounted) context.go(AppRoutes.home);
+          if (context.mounted) {
+            final user = ref.read(activeUserProvider);
+            final acceptedTerms = user?.preferences['acceptedTerms'] == true;
+            final hasName = user?.displayName?.trim().isNotEmpty ?? false;
+            final hasGender = user?.gender?.trim().isNotEmpty ?? false;
+
+            context.go(
+              (hasName && hasGender && acceptedTerms) ? AppRoutes.home : AppRoutes.accountDetails,
+            );
+          }
           return;
         }
 
@@ -171,17 +180,35 @@ class SplashScreen extends HookConsumerWidget {
         }
 
         if (!bootstrap.hasValue) {
-          // No data yet but not loading - navigate to home as fallback
+          // No data yet but not loading - check profile before navigating
           hasNavigated.value = true;
-          if (context.mounted) context.go(AppRoutes.home);
+          if (context.mounted) {
+            final user = ref.read(activeUserProvider);
+            final acceptedTerms = user?.preferences['acceptedTerms'] == true;
+            final hasName = user?.displayName?.trim().isNotEmpty ?? false;
+            final hasGender = user?.gender?.trim().isNotEmpty ?? false;
+
+            context.go(
+              (hasName && hasGender && acceptedTerms) ? AppRoutes.home : AppRoutes.accountDetails,
+            );
+          }
           return;
         }
 
         final data = bootstrap.value;
         if (data == null) {
-          // Null data - navigate to home as fallback
+          // Null data - check profile before navigating
           hasNavigated.value = true;
-          if (context.mounted) context.go(AppRoutes.home);
+          if (context.mounted) {
+            final user = ref.read(activeUserProvider);
+            final acceptedTerms = user?.preferences['acceptedTerms'] == true;
+            final hasName = user?.displayName?.trim().isNotEmpty ?? false;
+            final hasGender = user?.gender?.trim().isNotEmpty ?? false;
+
+            context.go(
+              (hasName && hasGender && acceptedTerms) ? AppRoutes.home : AppRoutes.accountDetails,
+            );
+          }
           return;
         }
 
@@ -219,10 +246,17 @@ class SplashScreen extends HookConsumerWidget {
       return timer.cancel;
     }, [isAuthenticated, bootstrap.isLoading]);
 
+    // Use primitive values for dependencies to minimize unnecessary effect triggers
+    final bootstrapHasValue = bootstrap.hasValue;
+    final bootstrapHasError = bootstrap.hasError;
+    final bootstrapIsLoading = bootstrap.isLoading;
+
     useEffect(() {
+      // Early exit if already navigated
+      if (hasNavigated.value) return null;
       unawaited(maybeNavigate());
       return null;
-    }, [isAuthenticated, bootstrap, pendingInviteId, bootstrapTimeoutReached.value]);
+    }, [isAuthenticated, bootstrapHasValue, bootstrapHasError, bootstrapIsLoading, pendingInviteId, bootstrapTimeoutReached.value]);
 
     return Scaffold(
       backgroundColor: colorScheme.primary,

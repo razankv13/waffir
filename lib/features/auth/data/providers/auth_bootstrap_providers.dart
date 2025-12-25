@@ -39,18 +39,47 @@ final initialNavigationCompletedProvider =
     NotifierProvider<InitialNavigationController, bool>(InitialNavigationController.new);
 
 class AuthBootstrapController extends AsyncNotifier<AuthBootstrapData?> {
+  /// Tracks the last bootstrapped user ID to prevent redundant fetches.
+  String? _previousUserId;
+
+  /// Prevents concurrent bootstrap fetches.
+  bool _isFetching = false;
+
   @override
   Future<AuthBootstrapData?> build() async {
+    // Only use ref.listen for auth state changes - NOT ref.watch
+    // This prevents provider rebuilds and double-handling
     ref.listen(authStateProvider, (previous, next) {
-      unawaited(_handleAuthStateChange(next));
+      _handleAuthStateChange(next);
     });
 
-    final initialAuthState = await ref.watch(authStateProvider.future);
-    if (!initialAuthState.isAuthenticated) return null;
+    // Use ref.read for initial check (not watch) to avoid rebuild loops
+    final authStateAsync = ref.read(authStateProvider);
+    if (!authStateAsync.hasValue) {
+      // Auth state not ready yet - return null, listener will handle when ready
+      return null;
+    }
+
+    final initialAuthState = authStateAsync.value;
+    if (initialAuthState == null || !initialAuthState.isAuthenticated) {
+      return null;
+    }
+
+    final userId = initialAuthState.user?.id;
+    if (userId == null || userId.isEmpty) {
+      return null;
+    }
+
+    // Perform initial bootstrap
+    return _performBootstrap(userId);
+  }
+
+  Future<AuthBootstrapData?> _performBootstrap(String userId) async {
+    _previousUserId = userId;
 
     if (EnvironmentConfig.useMockAuth) {
       return AuthBootstrapData(
-        userId: initialAuthState.user!.id,
+        userId: userId,
         accountSummary: null,
         userSettings: null,
         hasHadSubscriptionBefore: null,
@@ -62,32 +91,39 @@ class AuthBootstrapController extends AsyncNotifier<AuthBootstrapData?> {
   }
 
   Future<void> refresh() async {
+    if (_isFetching) return;
+
+    final authStateAsync = ref.read(authStateProvider);
+    if (!authStateAsync.hasValue) return;
+
+    final authState = authStateAsync.value;
+    if (authState == null || !authState.isAuthenticated || authState.user == null) {
+      state = const AsyncValue.data(null);
+      return;
+    }
+
+    final userId = authState.user!.id;
+    if (userId.isEmpty) {
+      state = const AsyncValue.data(null);
+      return;
+    }
+
+    _isFetching = true;
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      if (EnvironmentConfig.useMockAuth) {
-        final authStateAsync = ref.read(authStateProvider);
-        final authState = authStateAsync.hasValue ? authStateAsync.value : null;
-        if (authState == null || !authState.isAuthenticated || authState.user == null) return null;
-        return AuthBootstrapData(
-          userId: authState.user!.id,
-          accountSummary: null,
-          userSettings: null,
-          hasHadSubscriptionBefore: null,
-          fetchedAt: DateTime.now(),
-        );
-      }
-      return ref.read(supabaseAuthBootstrapRepositoryProvider).bootstrap();
-    });
+    state = await AsyncValue.guard(() => _performBootstrap(userId));
+    _isFetching = false;
   }
 
-  Future<void> _handleAuthStateChange(AsyncValue<AuthState> next) async {
-    if (next.isLoading) return;
+  void _handleAuthStateChange(AsyncValue<AuthState> next) {
+    if (next.isLoading || !next.hasValue) return;
 
-    if (!next.hasValue) return;
     final authState = next.value;
     if (authState == null) return;
 
+    // Handle logout
     if (!authState.isAuthenticated) {
+      _previousUserId = null;
+      _isFetching = false;
       state = const AsyncValue.data(null);
       ref.read(pendingFamilyInviteIdProvider.notifier).clear();
       return;
@@ -99,22 +135,23 @@ class AuthBootstrapController extends AsyncNotifier<AuthBootstrapData?> {
       return;
     }
 
-    final current = state.hasValue ? state.value : null;
-    if (current != null && current.userId == nextUserId) return;
+    // CRITICAL: Skip if same user AND (already have data OR currently fetching)
+    // This prevents the infinite loop where loading state causes re-fetches
+    if (_previousUserId == nextUserId && (state.hasValue || _isFetching)) {
+      return;
+    }
 
+    // Prevent concurrent fetches
+    if (_isFetching) return;
+
+    _fetchBootstrapData(nextUserId);
+  }
+
+  Future<void> _fetchBootstrapData(String userId) async {
+    _isFetching = true;
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      if (EnvironmentConfig.useMockAuth) {
-        return AuthBootstrapData(
-          userId: nextUserId,
-          accountSummary: null,
-          userSettings: null,
-          hasHadSubscriptionBefore: null,
-          fetchedAt: DateTime.now(),
-        );
-      }
-      return ref.read(supabaseAuthBootstrapRepositoryProvider).bootstrap();
-    });
+    state = await AsyncValue.guard(() => _performBootstrap(userId));
+    _isFetching = false;
   }
 }
 
