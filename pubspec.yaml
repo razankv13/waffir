@@ -147,6 +147,7 @@ flutter:
     - assets/icons/nav/
     - assets/icons/categories/
     - assets/icons/profile/
+    - assets/icons/social/
     - assets/translations/
     - assets/images/credit_cards/
     - .env.dev

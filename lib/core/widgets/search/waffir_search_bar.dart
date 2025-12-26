@@ -84,19 +84,14 @@ class _WaffirSearchBarState extends State<WaffirSearchBar> {
         borderRadius: BorderRadius.circular(16), // Exact: 16px per Figma
         border: Border.all(
           color: AppColors.waffirGreen03, // #00C531 bright green
-          width: 1,
         ),
       ),
       child: Row(
         children: [
           // Search Icon (left)
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 8),
-            child: Icon(
-              Icons.search,
-              size: 20,
-              color: AppColors.gray03,
-            ),
+          const Padding(
+            padding: EdgeInsets.only(left: 16, right: 8),
+            child: Icon(Icons.search, size: 20, color: AppColors.gray03),
           ),
 
           // Search TextField
@@ -104,14 +99,10 @@ class _WaffirSearchBarState extends State<WaffirSearchBar> {
             child: TextField(
               controller: _controller,
               autofocus: widget.autofocus,
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.black,
-              ),
+              style: AppTypography.bodyMedium.copyWith(color: AppColors.black),
               decoration: InputDecoration(
                 hintText: widget.hintText,
-                hintStyle: AppTypography.bodyMedium.copyWith(
-                  color: AppColors.gray03,
-                ),
+                hintStyle: AppTypography.bodyMedium.copyWith(color: AppColors.gray03),
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -133,11 +124,7 @@ class _WaffirSearchBarState extends State<WaffirSearchBar> {
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: IconButton(
-                  icon: Icon(
-                    Icons.clear,
-                    size: 18,
-                    color: AppColors.gray03,
-                  ),
+                  icon: const Icon(Icons.clear, size: 18, color: AppColors.gray03),
                   onPressed: _clearSearch,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -163,7 +150,7 @@ class _WaffirSearchBarState extends State<WaffirSearchBar> {
               child: Container(
                 width: 44,
                 height: 44,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.waffirGreen04, // #0F352D dark green
                   shape: BoxShape.circle,
                 ),
@@ -172,10 +159,7 @@ class _WaffirSearchBarState extends State<WaffirSearchBar> {
                     'assets/icons/categories/arrow_filter_icon.svg',
                     width: 20,
                     height: 20,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.white,
-                      BlendMode.srcIn,
-                    ),
+                    colorFilter: const ColorFilter.mode(AppColors.white, BlendMode.srcIn),
                   ),
                 ),
               ),

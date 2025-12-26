@@ -163,8 +163,7 @@ class AccountDetailsScreen extends HookConsumerWidget {
                                 SizedBox(height: responsive.scale(context.responsive.topSafeArea)),
 
                                 // Avatar display for OAuth users (Google/Apple)
-                                if (user?.photoURL != null &&
-                                    user!.photoURL!.isNotEmpty) ...[
+                                if (user?.photoURL != null && user!.photoURL!.isNotEmpty) ...[
                                   Center(
                                     child: Container(
                                       width: responsive.scale(80),

@@ -8,6 +8,7 @@ import 'package:waffir/features/credit_cards/data/models/credit_card_model.dart'
 import 'package:waffir/features/credit_cards/data/mock_data/banks_mock_data.dart';
 import 'package:waffir/features/credit_cards/data/repositories/bank_cards_repository_impl.dart';
 import 'package:waffir/features/credit_cards/domain/repositories/bank_cards_repository.dart';
+import 'package:waffir/features/credit_cards/presentation/controllers/bank_cards_controller.dart';
 
 // =============================================================================
 // Supabase Backend Providers
@@ -83,4 +84,36 @@ class SelectedBanksNotifier extends StateNotifier<Set<String>> {
 /// Provider for selected banks
 final selectedBanksProvider = StateNotifierProvider<SelectedBanksNotifier, Set<String>>((ref) {
   return SelectedBanksNotifier();
+});
+
+// =============================================================================
+// Card Selection State Providers (for navigation and store filtering)
+// =============================================================================
+
+/// Provider that indicates whether user has confirmed their card selections.
+///
+/// Returns `true` if user has saved cards at least once (Credit Cards tab should be hidden).
+/// Returns `false` if user has never saved cards (first-time flow).
+/// Returns `null` while loading.
+final cardSelectionConfirmedProvider = Provider<bool?>((ref) {
+  final asyncState = ref.watch(bankCardsControllerProvider);
+  return asyncState.whenOrNull(
+    data: (_) {
+      final controller = ref.read(bankCardsControllerProvider.notifier);
+      return !controller.isFirstTimeSelection;
+    },
+  );
+});
+
+/// Provides the set of selected bank card IDs for filtering stores.
+///
+/// Used by StoresController to filter stores by selected bank cards.
+/// Returns an empty set while loading or on error.
+final selectedBankCardIdsProvider = Provider<Set<String>>((ref) {
+  final asyncState = ref.watch(bankCardsControllerProvider);
+  return asyncState.when(
+    data: (state) => state.selectedCardIds,
+    loading: () => const {},
+    error: (e, s) => const {},
+  );
 });

@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:waffir/core/constants/locale_keys.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 
 /// Gender options enum
@@ -14,7 +16,7 @@ enum Gender {
 /// - Material 3 compliant styling
 /// - Theme-based coloring (no hardcoded colors)
 /// - RTL support for Arabic layouts
-/// - Configurable labels
+/// - Internationalized labels via easy_localization
 /// - Selected state: filled primary color with white checkmark
 /// - Unselected state: border only with transparent fill
 ///
@@ -23,8 +25,16 @@ enum Gender {
 /// GenderSelector(
 ///   selectedGender: Gender.male,
 ///   onChanged: (gender) => setState(() => _selectedGender = gender),
-///   maleLabel: 'ذكر',
-///   femaleLabel: 'أنثى',
+/// )
+/// ```
+///
+/// To override default translations, use custom labels:
+/// ```dart
+/// GenderSelector(
+///   selectedGender: Gender.male,
+///   onChanged: (gender) => setState(() => _selectedGender = gender),
+///   maleLabel: 'Custom Male',
+///   femaleLabel: 'Custom Female',
 /// )
 /// ```
 class GenderSelector extends StatelessWidget {
@@ -32,16 +42,20 @@ class GenderSelector extends StatelessWidget {
     super.key,
     required this.selectedGender,
     required this.onChanged,
-    this.maleLabel = 'ذكر',
-    this.femaleLabel = 'أنثى',
+    this.maleLabel,
+    this.femaleLabel,
     this.optionGap,
     this.controlGap,
   });
 
   final Gender? selectedGender;
   final ValueChanged<Gender> onChanged;
-  final String maleLabel;
-  final String femaleLabel;
+
+  /// Custom label for male option. If null, uses translated value from LocaleKeys.
+  final String? maleLabel;
+
+  /// Custom label for female option. If null, uses translated value from LocaleKeys.
+  final String? femaleLabel;
   final double? optionGap;
   final double? controlGap;
 
@@ -59,6 +73,11 @@ class GenderSelector extends StatelessWidget {
       color: colorScheme.onSurface,
     );
 
+    // Use provided labels or fall back to translated values
+    final effectiveMaleLabel = maleLabel ?? LocaleKeys.common.gender.male.tr();
+    final effectiveFemaleLabel =
+        femaleLabel ?? LocaleKeys.common.gender.female.tr();
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -74,7 +93,7 @@ class GenderSelector extends StatelessWidget {
               ),
               SizedBox(width: computedControlGap),
               Text(
-                femaleLabel,
+                effectiveFemaleLabel,
                 style: textStyle,
               ),
             ],
@@ -95,7 +114,7 @@ class GenderSelector extends StatelessWidget {
               ),
               SizedBox(width: computedControlGap),
               Text(
-                maleLabel,
+                effectiveMaleLabel,
                 style: textStyle,
               ),
             ],

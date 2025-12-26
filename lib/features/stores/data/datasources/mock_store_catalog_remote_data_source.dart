@@ -3,6 +3,7 @@ import 'package:waffir/features/stores/data/datasources/store_catalog_remote_dat
 import 'package:waffir/features/stores/data/mock_data/stores_mock_data.dart';
 import 'package:waffir/features/stores/data/models/store_model.dart';
 import 'package:waffir/features/stores/domain/entities/store_offer.dart';
+import 'package:waffir/features/stores/domain/entities/top_offer.dart';
 
 class MockStoreCatalogRemoteDataSource implements StoreCatalogRemoteDataSource {
   /// Maps category slugs to legacy category names used in mock data.
@@ -23,6 +24,7 @@ class MockStoreCatalogRemoteDataSource implements StoreCatalogRemoteDataSource {
     required String languageCode,
     String? categorySlug,
     String? searchQuery,
+    Set<String>? selectedBankCardIds,
   }) async {
     // Simulate network delay
     await Future<void>.delayed(const Duration(milliseconds: 300));
@@ -47,17 +49,11 @@ class MockStoreCatalogRemoteDataSource implements StoreCatalogRemoteDataSource {
   }
 
   @override
-  Future<StoreModel> fetchStoreById({
-    required String storeId,
-    required String languageCode,
-  }) async {
+  Future<StoreModel> fetchStoreById({required String storeId, required String languageCode}) async {
     try {
       return StoresMockData.stores.firstWhere((store) => store.id == storeId);
     } catch (_) {
-      throw Failure.notFound(
-        message: 'Store not found',
-        code: 'STORE_NOT_FOUND',
-      );
+      throw const Failure.notFound(message: 'Store not found', code: 'STORE_NOT_FOUND');
     }
   }
 
@@ -76,5 +72,39 @@ class MockStoreCatalogRemoteDataSource implements StoreCatalogRemoteDataSource {
   @override
   Future<bool> toggleFavoriteStore({required String storeId}) async {
     return true;
+  }
+
+  @override
+  Future<StoresWithOffersResult> fetchStoresWithOffers({
+    required String languageCode,
+    String? categorySlug,
+    String? searchQuery,
+    Set<String>? selectedBankCardIds,
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    // Simulate network delay
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+
+    var stores = await fetchStores(
+      languageCode: languageCode,
+      categorySlug: categorySlug,
+      searchQuery: searchQuery,
+      selectedBankCardIds: selectedBankCardIds,
+    );
+
+    // Add mock top offers to stores
+    final storesWithOffers = stores.map((store) {
+      return store.copyWith(
+        topOffer: TopOffer(
+          id: 'mock_offer_${store.id}',
+          title: 'Up to 50% Off',
+          titleAr: 'خصم يصل إلى 50%',
+          discountMaxPercent: 50,
+        ),
+      );
+    }).toList();
+
+    return StoresWithOffersResult(stores: storesWithOffers, totalCount: storesWithOffers.length);
   }
 }

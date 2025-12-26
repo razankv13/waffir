@@ -122,7 +122,6 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
             const BlurredBackground(),
             Column(
               children: [
-                SizedBox(height: context.safeAreaTop),
                 if (showBackButton) WaffirBackButton(size: responsive.scale(44)),
                 // Header section with gradient fade
                 _buildHeaderSection(

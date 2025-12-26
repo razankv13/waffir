@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:waffir/core/navigation/models/nav_tab.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 
 /// Custom bottom navigation bar matching Figma design specifications
@@ -14,13 +15,24 @@ import 'package:waffir/core/utils/responsive_helper.dart';
 /// - Icons: 24x24px SVG
 /// - Gap between icon and label: 4px
 class CustomBottomNav extends StatelessWidget {
-  const CustomBottomNav({super.key, required this.selectedIndex, required this.onTap});
+  const CustomBottomNav({
+    super.key,
+    required this.tabs,
+    required this.selectedIndex,
+    required this.onTap,
+  });
 
   static const _backgroundColor = Color(0xFF0F352D);
   static const _activeColor = Color(0xFFFFFFFF);
   static const _inactiveColor = Color(0xFF00FF88);
 
+  /// Dynamic list of navigation tabs to display.
+  final List<NavTab> tabs;
+
+  /// Currently selected tab index.
   final int selectedIndex;
+
+  /// Callback when a tab is tapped.
   final ValueChanged<int> onTap;
 
   @override
@@ -40,40 +52,18 @@ class CustomBottomNav extends StatelessWidget {
           padding: responsive.scalePadding(const EdgeInsets.fromLTRB(16, 8, 16, 12)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _NavItem(
-                iconPath: 'assets/icons/nav/hot_deals_icon.svg',
-                label: 'Hot Deals',
-                isSelected: selectedIndex == 0,
+            children: tabs.asMap().entries.map((entry) {
+              final index = entry.key;
+              final tab = entry.value;
+              return _NavItem(
+                iconPath: tab.iconPath,
+                label: tab.label,
+                isSelected: index == selectedIndex,
                 activeColor: _activeColor,
                 inactiveColor: _inactiveColor,
-                onTap: () => onTap(0),
-              ),
-              _NavItem(
-                iconPath: 'assets/icons/nav/store_icon.svg',
-                label: 'Stores',
-                isSelected: selectedIndex == 1,
-                activeColor: _activeColor,
-                inactiveColor: _inactiveColor,
-                onTap: () => onTap(1),
-              ),
-              _NavItem(
-                iconPath: 'assets/icons/nav/credit_cards_icon.svg',
-                label: 'Credit Cards',
-                isSelected: selectedIndex == 2,
-                activeColor: _activeColor,
-                inactiveColor: _inactiveColor,
-                onTap: () => onTap(2),
-              ),
-              _NavItem(
-                iconPath: 'assets/icons/nav/profile_icon.svg',
-                label: 'Profile',
-                isSelected: selectedIndex == 3,
-                activeColor: _activeColor,
-                inactiveColor: _inactiveColor,
-                onTap: () => onTap(3),
-              ),
-            ],
+                onTap: () => onTap(index),
+              );
+            }).toList(),
           ),
         ),
       ),

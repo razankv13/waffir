@@ -16,15 +16,15 @@ import 'package:waffir/core/utils/responsive_helper.dart';
 class ProfileMenuItem extends StatelessWidget {
   const ProfileMenuItem({
     super.key,
-    required this.icon,
+    this.icon,
     required this.label,
     this.onTap,
     this.trailing,
     this.showDivider = true,
   });
 
-  /// The icon to display (24×24px from Figma)
-  final Widget icon;
+  /// The icon to display (24×24px from Figma). Optional - if null, no icon is shown.
+  final Widget? icon;
 
   /// The label text to display
   final String label;
@@ -59,15 +59,17 @@ class ProfileMenuItem extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // Icon: 24×24px (exact from Figma)
-                SizedBox(
-                  width: responsive.scale(24),
-                  height: responsive.scale(24),
-                  child: icon,
-                ),
+                // Icon: 24×24px (exact from Figma) - only show if provided
+                if (icon != null) ...[
+                  SizedBox(
+                    width: responsive.scale(24),
+                    height: responsive.scale(24),
+                    child: icon,
+                  ),
 
-                // Gap: 12px (exact from Figma)
-                SizedBox(width: responsive.scale(12)),
+                  // Gap: 12px (exact from Figma)
+                  SizedBox(width: responsive.scale(12)),
+                ],
 
                 // Label: Parkinsans 14px weight 500, line-height 1.25em
                 Expanded(
@@ -115,14 +117,14 @@ class ProfileMenuItem extends StatelessWidget {
 class ProfileMenuItemRTL extends StatelessWidget {
   const ProfileMenuItemRTL({
     super.key,
-    required this.icon,
+    this.icon,
     required this.label,
     this.onTap,
     this.trailing,
     this.showDivider = true,
   });
 
-  final Widget icon;
+  final Widget? icon;
   final String label;
   final VoidCallback? onTap;
   final Widget? trailing;
@@ -170,14 +172,16 @@ class ProfileMenuItemRTL extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(width: responsive.scale(12)),
+                // Icon on right for RTL - only show if provided
+                if (icon != null) ...[
+                  SizedBox(width: responsive.scale(12)),
 
-                // Icon on right for RTL
-                SizedBox(
-                  width: responsive.scale(24),
-                  height: responsive.scale(24),
-                  child: icon,
-                ),
+                  SizedBox(
+                    width: responsive.scale(24),
+                    height: responsive.scale(24),
+                    child: icon,
+                  ),
+                ],
               ],
             ),
           ),

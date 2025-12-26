@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:waffir/features/stores/domain/entities/top_offer.dart';
 
 part 'store.freezed.dart';
 
@@ -33,9 +34,20 @@ abstract class Store with _$Store {
     @Default(true) bool isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
+    TopOffer? topOffer,
   }) = _Store;
 
   const Store._();
 
   bool get hasHighRating => rating != null && rating! >= 4.5;
+
+  /// Returns the formatted display name for store cards.
+  ///
+  /// Format: "storeName - offerTitle" if offer exists, otherwise just "storeName".
+  String displayName({required bool isArabic}) {
+    if (topOffer == null) return name;
+    final offerTitle = topOffer!.localizedTitle(isArabic: isArabic);
+    if (offerTitle.isEmpty) return name;
+    return '$name - $offerTitle';
+  }
 }

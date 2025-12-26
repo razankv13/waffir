@@ -90,7 +90,8 @@ void main() {
         ),
       ).thenAnswer((_) async => Result.success(page(offset: 20, count: 5)));
 
-      final provider = storeCatalogControllerProvider('store-1');
+      final args = StoreCatalogArgs(storeId: 'store-1');
+      final provider = storeCatalogControllerProvider(args);
       final sub = container.listen(provider, (_, __) {});
       addTearDown(sub.close);
 

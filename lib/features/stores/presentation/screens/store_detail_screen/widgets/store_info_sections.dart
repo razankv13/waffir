@@ -60,8 +60,7 @@ class StoreOutletBanner extends StatelessWidget {
                     width: responsive.scale(12),
                     height: responsive.scale(12),
                     child: SvgPicture.asset(
-                      'assets/icons/arrow_icon.svg',
-                      fit: BoxFit.contain,
+                      Assets.icons.arrowIcon.path,
                       colorFilter: ColorFilter.mode(colorScheme.onPrimary, BlendMode.srcIn),
                     ),
                   ),
@@ -77,11 +76,7 @@ class StoreOutletBanner extends StatelessWidget {
 
 /// Prices + discount tag row (Figma node 54:5560).
 class StorePricesSection extends StatelessWidget {
-  const StorePricesSection({
-    super.key,
-    required this.store,
-    required this.offers,
-  });
+  const StorePricesSection({super.key, required this.store, required this.offers});
 
   final StoreModel store;
   final List<StoreOffer> offers;
@@ -121,7 +116,6 @@ class StorePricesSection extends StatelessWidget {
           SizedBox(height: responsive.scale(16)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (discountLabel != null)
                 StoreDiscountTag(
@@ -180,7 +174,6 @@ class StoreDiscountTag extends StatelessWidget {
               height: responsive.scale(16),
               child: SvgPicture.asset(
                 'assets/icons/store_detail/tag.svg',
-                fit: BoxFit.contain,
                 colorFilter: const ColorFilter.mode(Color(0xFF0F352D), BlendMode.srcIn),
               ),
             ),
@@ -210,9 +203,9 @@ class StoreAdditionalActions extends StatelessWidget {
       child: InkWell(
         onTap: () {
           unawaited(HapticFeedback.mediumImpact());
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(LocaleKeys.stores.detail.actions.reportSuccess.tr())));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(LocaleKeys.stores.detail.actions.reportSuccess.tr())),
+          );
         },
         child: Row(
           children: [
@@ -239,11 +232,7 @@ class StoreAdditionalActions extends StatelessWidget {
 /// Product info section (Figma node 54:5578).
 /// Handles nullable content - returns empty if both are null.
 class StoreProductInfoSection extends StatelessWidget {
-  const StoreProductInfoSection({
-    super.key,
-    this.detailsBody,
-    this.featuresBody,
-  });
+  const StoreProductInfoSection({super.key, this.detailsBody, this.featuresBody});
 
   final String? detailsBody;
   final String? featuresBody;
@@ -267,7 +256,9 @@ class StoreProductInfoSection extends StatelessWidget {
             StoreDetailsBlock(
               title: LocaleKeys.productPage.info.details.tr(),
               body: detailsBody!,
-              titleStyle: AppTextStyles.storePageDetailsTitle.copyWith(color: colorScheme.onSurface),
+              titleStyle: AppTextStyles.storePageDetailsTitle.copyWith(
+                color: colorScheme.onSurface,
+              ),
               bodyStyle: AppTextStyles.storePageInfoBody.copyWith(color: colorScheme.onSurface),
             ),
             if (featuresBody != null) SizedBox(height: responsive.scale(16)),
@@ -276,7 +267,9 @@ class StoreProductInfoSection extends StatelessWidget {
             StoreDetailsBlock(
               title: LocaleKeys.productPage.info.features.tr(),
               body: featuresBody!,
-              titleStyle: AppTextStyles.storePageFeaturesTitle.copyWith(color: colorScheme.onSurface),
+              titleStyle: AppTextStyles.storePageFeaturesTitle.copyWith(
+                color: colorScheme.onSurface,
+              ),
               bodyStyle: AppTextStyles.storePageInfoBody.copyWith(color: colorScheme.onSurface),
             ),
         ],
@@ -341,16 +334,10 @@ class StoreWebsiteSection extends StatelessWidget {
         }
       },
       child: Padding(
-        padding: responsive.scalePadding(
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        ),
+        padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
         child: Row(
           children: [
-            Icon(
-              Icons.language,
-              color: colorScheme.primary,
-              size: responsive.scale(24),
-            ),
+            Icon(Icons.language, color: colorScheme.primary, size: responsive.scale(24)),
             SizedBox(width: responsive.scale(12)),
             Expanded(
               child: Text(
@@ -392,9 +379,7 @@ class StoreCategoriesChips extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: responsive.scalePadding(
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      ),
+      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
       child: Wrap(
         spacing: responsive.scale(8),
         runSpacing: responsive.scale(8),
@@ -409,9 +394,7 @@ class StoreCategoriesChips extends StatelessWidget {
             ),
             child: Text(
               category,
-              style: textTheme.labelMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
+              style: textTheme.labelMedium?.copyWith(color: colorScheme.onSurfaceVariant),
             ),
           );
         }).toList(),

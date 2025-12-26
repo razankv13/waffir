@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:waffir/features/stores/domain/entities/store.dart';
+import 'package:waffir/features/stores/domain/entities/top_offer.dart';
 
 part 'store_model.freezed.dart';
 part 'store_model.g.dart';
@@ -35,6 +36,7 @@ abstract class StoreModel with _$StoreModel {
       isActive: store.isActive,
       createdAt: store.createdAt,
       updatedAt: store.updatedAt,
+      topOffer: store.topOffer,
     );
   }
   const factory StoreModel({
@@ -62,6 +64,7 @@ abstract class StoreModel with _$StoreModel {
     @Default(true) bool isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
+    @JsonKey(includeFromJson: false, includeToJson: false) TopOffer? topOffer,
   }) = _StoreModel;
 
   const StoreModel._();
@@ -96,6 +99,7 @@ abstract class StoreModel with _$StoreModel {
       isActive: isActive,
       createdAt: createdAt,
       updatedAt: updatedAt,
+      topOffer: topOffer,
     );
   }
 }

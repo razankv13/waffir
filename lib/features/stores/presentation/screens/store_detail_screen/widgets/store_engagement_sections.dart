@@ -27,10 +27,7 @@ class StoreActionsSection extends StatelessWidget {
   /// Calculates total popularity score from offers.
   String _calculateLikesCount() {
     if (offers.isEmpty) return '0';
-    final total = offers.fold<int>(
-      0,
-      (sum, offer) => sum + (offer.popularityScore ?? 0),
-    );
+    final total = offers.fold<int>(0, (sum, offer) => sum + (offer.popularityScore ?? 0));
     return total.toString();
   }
 
@@ -64,15 +61,15 @@ class StoreActionsSection extends StatelessWidget {
               ),
               SizedBox(width: responsive.scale(16)),
               StoreIconCountPill(
-                iconAsset: 'assets/icons/store_detail/comment.svg',
+                iconAsset: Assets.icons.storeDetail.comment.path,
                 label: offersCount,
                 textColor: colorScheme.onSurfaceVariant,
                 countColor: colorScheme.onSurfaceVariant,
               ),
               SizedBox(width: responsive.scale(16)),
               StoreIconOnlyPill(
-                iconAsset: 'assets/icons/store_detail/star.svg',
-                iconColor: promoColors?.actionCount ?? colorScheme.onSurfaceVariant,
+                iconAsset: Assets.icons.storeDetail.star.path,
+                iconColor: colorScheme.onSurfaceVariant,
               ),
             ],
           ),

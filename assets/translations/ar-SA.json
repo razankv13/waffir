@@ -115,7 +115,10 @@
     },
     "labels": {
       "promoCode": "رمز الخصم",
-      "terms": "الشروط"
+      "terms": "الشروط",
+      "productDeal": "عرض منتج",
+      "storeOffer": "عرض متجر",
+      "bankOffer": "عرض بنك"
     },
     "errors": {
       "loadFailed": "تعذر تحميل تفاصيل العرض.",
@@ -191,7 +194,12 @@
     "cancel": "إلغاء",
     "retry": "إعادة المحاولة",
     "yes": "نعم",
-    "no": "لا"
+    "no": "لا",
+    "gender": {
+      "male": "ذكر",
+      "female": "أنثى",
+      "label": "الجنس"
+    }
   },
   "success": {
     "dataSaved": "تم حفظ البيانات بنجاح",
@@ -327,6 +335,7 @@
     "searchHint": "اسم البطاقة أو البنك",
     "filterComingSoon": "ميزة التصفية قادمة قريبًا",
     "loading": "جاري تحميل البطاقات...",
+    "confirmAndContinue": "تأكيد ومشاهدة العروض",
     "empty": {
       "title": "لم يتم العثور على بنوك",
       "description": "جرّب مصطلح بحث مختلف"
@@ -469,5 +478,19 @@
     "jubail": "الجبيل",
     "najran": "نجران",
     "jizan": "جيزان"
+  },
+  "helpCenter": {
+    "title": "مركز المساعدة",
+    "customerCare": "خدمة العملاء",
+    "usefulResources": "موارد مفيدة",
+    "whatsapp": "واتساب",
+    "facebook": "فيسبوك",
+    "telegram": "تيليجرام",
+    "email": "البريد الإلكتروني",
+    "faqs": "الأسئلة الشائعة",
+    "rulesOfUse": "قواعد الاستخدام",
+    "termsAndConditions": "الشروط والأحكام",
+    "privacyPolicy": "سياسة الخصوصية",
+    "comingSoon": "قريباً"
   }
 }

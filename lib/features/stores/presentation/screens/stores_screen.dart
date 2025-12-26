@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:waffir/core/constants/app_typography.dart';
 import 'package:waffir/core/constants/locale_keys.dart';
+import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/bottom_login_overlay.dart';
 import 'package:waffir/core/widgets/cards/store_card.dart';
@@ -11,6 +13,7 @@ import 'package:waffir/core/widgets/headers/sticky_header_delegate.dart';
 import 'package:waffir/core/widgets/headers/waffir_sliver_app_bar.dart';
 import 'package:waffir/features/stores/domain/entities/catalog_category.dart';
 import 'package:waffir/features/stores/domain/entities/store.dart';
+import 'package:waffir/features/stores/domain/entities/store_detail_extra.dart';
 import 'package:waffir/features/stores/presentation/controllers/catalog_categories_controller.dart';
 import 'package:waffir/features/stores/presentation/controllers/stores_controller.dart';
 
@@ -235,7 +238,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                             nearYouStores.length,
                           ),
                           SizedBox(height: responsive.scale(12)),
-                          _buildStoreCarousel(context, nearYouStores),
+                          _buildStoreCarousel(context, nearYouStores, data),
                           SizedBox(height: responsive.scale(24)),
                         ],
 
@@ -249,7 +252,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                               namedArgs: {'mallName': entry.key},
                             ),
                             SizedBox(height: responsive.scale(12)),
-                            _buildStoreCarousel(context, entry.value),
+                            _buildStoreCarousel(context, entry.value, data),
                             SizedBox(height: responsive.scale(24)),
                           ],
                         ],
@@ -290,13 +293,14 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
     );
   }
 
-  Widget _buildStoreCarousel(BuildContext context, List<Store> stores) {
+  Widget _buildStoreCarousel(BuildContext context, List<Store> stores, StoresState storesState) {
     final responsive = context.responsive;
     final cardWidth = responsive.scale(160);
     final horizontalSpacing = responsive.scale(
       16,
     ); // 16px gap from Figma layout_ZNFSE6/layout_I888LG
     final carouselHeight = responsive.scale(248);
+    final isArabic = context.locale.languageCode == 'ar';
 
     return SizedBox(
       height: carouselHeight,
@@ -312,9 +316,15 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
             child: StoreCard(
               storeId: store.id,
               imageUrl: store.imageUrl,
-              storeName: store.name,
+              storeName: store.displayName(isArabic: isArabic),
               discountText: store.discountText,
-              // Removed category, distance, rating to match Figma Node 54:2349
+              onTap: () {
+                context.pushNamed(
+                  AppRouteNames.storeDetail,
+                  pathParameters: {'id': store.id},
+                  extra: StoreDetailExtra(store: store, offers: const []),
+                );
+              },
             ),
           );
         },
@@ -418,4 +428,3 @@ class _StoresErrorState extends StatelessWidget {
     );
   }
 }
-

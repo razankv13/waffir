@@ -216,6 +216,10 @@ class BankCardsController extends AsyncNotifier<BankCardsState> {
     return current.selectedCardIds != _originalSelectedIds;
   }
 
+  /// True if user has never saved card selections before.
+  /// Used to show first-time confirmation flow.
+  bool get isFirstTimeSelection => _originalSelectedIds.isEmpty;
+
   /// Revert to original selection
   void revertChanges() {
     final current = state.value;

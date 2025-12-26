@@ -46,8 +46,7 @@ class ResponsiveHelper {
 
   /// Device type detection
   bool get isMobile => screenWidth < mobileBreakpoint;
-  bool get isTablet =>
-      screenWidth >= mobileBreakpoint && screenWidth < tabletBreakpoint;
+  bool get isTablet => screenWidth >= mobileBreakpoint && screenWidth < tabletBreakpoint;
   bool get isDesktop => screenWidth >= tabletBreakpoint;
 
   /// Scale a dimension proportionally based on screen width
@@ -124,11 +123,7 @@ class ResponsiveHelper {
   ///   desktop: 32.0,
   /// );
   /// ```
-  T responsiveValue<T>({
-    required T mobile,
-    T? tablet,
-    T? desktop,
-  }) {
+  T responsiveValue<T>({required T mobile, T? tablet, T? desktop}) {
     if (isDesktop && desktop != null) return desktop;
     if (isTablet && tablet != null) return tablet;
     return mobile;
@@ -144,11 +139,7 @@ class ResponsiveHelper {
   ///   desktop: DesktopLayout(),
   /// );
   /// ```
-  Widget responsiveWidget({
-    required Widget mobile,
-    Widget? tablet,
-    Widget? desktop,
-  }) {
+  Widget responsiveWidget({required Widget mobile, Widget? tablet, Widget? desktop}) {
     if (isDesktop && desktop != null) return desktop;
     if (isTablet && tablet != null) return tablet;
     return mobile;
@@ -158,11 +149,7 @@ class ResponsiveHelper {
   ///
   /// Default: 2 for mobile, 3 for tablet, 4 for desktop
   int gridColumns({int? mobile, int? tablet, int? desktop}) {
-    return responsiveValue(
-      mobile: mobile ?? 2,
-      tablet: tablet ?? 3,
-      desktop: desktop ?? 4,
-    );
+    return responsiveValue(mobile: mobile ?? 2, tablet: tablet ?? 3, desktop: desktop ?? 4);
   }
 
   /// Get responsive horizontal padding
@@ -205,9 +192,7 @@ class ResponsiveHelper {
   BoxConstraints scaleConstraints(BoxConstraints constraints) {
     return BoxConstraints(
       minWidth: scale(constraints.minWidth),
-      maxWidth: constraints.maxWidth.isFinite
-          ? scale(constraints.maxWidth)
-          : constraints.maxWidth,
+      maxWidth: constraints.maxWidth.isFinite ? scale(constraints.maxWidth) : constraints.maxWidth,
       minHeight: scale(constraints.minHeight),
       maxHeight: constraints.maxHeight.isFinite
           ? scale(constraints.maxHeight)
@@ -282,10 +267,7 @@ extension ResponsiveContext on BuildContext {
 /// )
 /// ```
 class ResponsiveBuilder extends StatelessWidget {
-  const ResponsiveBuilder({
-    super.key,
-    required this.builder,
-  });
+  const ResponsiveBuilder({super.key, required this.builder});
 
   final Widget Function(BuildContext context, ResponsiveHelper responsive) builder;
 
@@ -333,11 +315,7 @@ class ResponsiveValue<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
-    final value = responsive.responsiveValue(
-      mobile: mobile,
-      tablet: tablet,
-      desktop: desktop,
-    );
+    final value = responsive.responsiveValue(mobile: mobile, tablet: tablet, desktop: desktop);
     return builder(context, value);
   }
 }

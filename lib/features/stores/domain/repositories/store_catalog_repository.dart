@@ -9,12 +9,15 @@ abstract class StoreCatalogRepository {
   /// - [languageCode]: 'en' or 'ar' for localized names
   /// - [categorySlug]: Optional category slug (e.g., 'fashion', 'dining')
   /// - [searchQuery]: Optional search term for store name
+  /// - [selectedBankCardIds]: Optional set of bank card IDs to filter stores
+  ///   that have offers from these cards. If empty or null, all stores are returned.
   ///
   /// The split between sections is randomized (~30% Near You, ~70% Mall).
   AsyncResult<StoresFeed> fetchStoresFeed({
     required String languageCode,
     String? categorySlug,
     String? searchQuery,
+    Set<String>? selectedBankCardIds,
   });
 
   AsyncResult<StoreModel> fetchStoreById({

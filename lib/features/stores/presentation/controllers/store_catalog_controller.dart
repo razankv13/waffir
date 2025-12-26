@@ -6,9 +6,36 @@ import 'package:waffir/core/result/result.dart';
 import 'package:waffir/core/storage/settings_service.dart';
 import 'package:waffir/features/stores/data/providers/catalog_backend_providers.dart';
 import 'package:waffir/features/stores/data/models/store_model.dart';
+import 'package:waffir/features/stores/domain/entities/store.dart';
 import 'package:waffir/features/stores/domain/entities/store_offer.dart';
 import 'package:waffir/features/stores/domain/repositories/store_catalog_repository.dart';
 import 'package:waffir/features/stores/presentation/controllers/offset_paginated_list_controller.dart';
+
+/// Arguments for the StoreCatalogController family provider.
+///
+/// Supports both navigation with pre-loaded data (from StoresScreen) and
+/// deep links that require fetching from the backend.
+class StoreCatalogArgs {
+  const StoreCatalogArgs({
+    required this.storeId,
+    this.initialStore,
+    this.initialOffers,
+  });
+
+  final String storeId;
+  final Store? initialStore;
+  final List<StoreOffer>? initialOffers;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StoreCatalogArgs &&
+          runtimeType == other.runtimeType &&
+          storeId == other.storeId;
+
+  @override
+  int get hashCode => storeId.hashCode;
+}
 
 class StoreCatalogState {
   const StoreCatalogState({
@@ -59,14 +86,18 @@ class StoreCatalogState {
 }
 
 final storeCatalogControllerProvider = AsyncNotifierProvider.autoDispose
-    .family<StoreCatalogController, StoreCatalogState, String>(
+    .family<StoreCatalogController, StoreCatalogState, StoreCatalogArgs>(
       StoreCatalogController.new,
     );
 
 class StoreCatalogController extends AsyncNotifier<StoreCatalogState> {
-  StoreCatalogController(this.storeId);
+  StoreCatalogController(this._args);
 
-  final String storeId;
+  final StoreCatalogArgs _args;
+
+  String get storeId => _args.storeId;
+  Store? get _initialStore => _args.initialStore;
+  List<StoreOffer>? get _initialOffers => _args.initialOffers;
 
   StoreCatalogRepository get _repository =>
       ref.read(storeCatalogRepositoryProvider);
@@ -96,6 +127,35 @@ class StoreCatalogController extends AsyncNotifier<StoreCatalogState> {
   Future<StoreCatalogState> build() async {
     final languageCode = ref.watch(localeProvider).languageCode;
 
+    // Use initial data if available (from StoresScreen navigation)
+    if (_initialStore != null) {
+      final storeModel = StoreModel.fromDomain(_initialStore!);
+      final offers = _initialOffers ?? const <StoreOffer>[];
+      final hasInitialOffers = offers.isNotEmpty;
+
+      final initial = StoreCatalogState(
+        store: storeModel,
+        offers: offers,
+        searchQuery: '',
+        selectedCategoryId: null,
+        isLoadingOffers: !hasInitialOffers,
+        hasMore: !hasInitialOffers, // If we have initial offers, assume no more to load
+        isLoadingMore: false,
+      );
+
+      // Only load offers if none were provided
+      if (!hasInitialOffers) {
+        unawaited(
+          Future<void>.delayed(
+            Duration.zero,
+            _loadOffersWithController,
+          ),
+        );
+      }
+      return initial;
+    }
+
+    // Fallback: Fetch from backend (for deep links)
     final storeResult = await _repository.fetchStoreById(
       storeId: storeId,
       languageCode: languageCode,
@@ -133,7 +193,6 @@ class StoreCatalogController extends AsyncNotifier<StoreCatalogState> {
     final current = state.value;
     if (current == null) return;
 
-    final languageCode = ref.read(localeProvider).languageCode;
     final next = await _offersController.applySearch(
       _offersStateFrom(current),
       searchQuery: query,

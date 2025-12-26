@@ -1,12 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:waffir/core/constants/locale_keys.dart';
+import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/storage/settings_service.dart';
 import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/images/app_network_image.dart';
-import 'package:waffir/core/widgets/search/search_bar_widget.dart';
+import 'package:waffir/core/widgets/buttons/app_button.dart';
+import 'package:waffir/core/widgets/search/waffir_search_bar.dart';
 import 'package:waffir/core/widgets/switches/custom_toggle_switch.dart';
 import 'package:waffir/core/widgets/waffir_back_button.dart';
 import 'package:waffir/features/auth/presentation/widgets/blurred_background.dart';
@@ -90,7 +93,7 @@ class CreditCardsScreen extends HookConsumerWidget {
             Icon(
               Icons.credit_card_outlined,
               size: responsive.scale(80),
-              color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
             ),
             SizedBox(height: responsive.scale(16)),
             Text(
@@ -124,10 +127,7 @@ class CreditCardsScreen extends HookConsumerWidget {
             SizedBox(
               width: responsive.scale(48),
               height: responsive.scale(48),
-              child: CircularProgressIndicator(
-                strokeWidth: 3,
-                color: theme.colorScheme.primary,
-              ),
+              child: CircularProgressIndicator(strokeWidth: 3, color: theme.colorScheme.primary),
             ),
             SizedBox(height: responsive.scale(16)),
             Text(
@@ -146,11 +146,7 @@ class CreditCardsScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: responsive.scale(64),
-              color: theme.colorScheme.error,
-            ),
+            Icon(Icons.error_outline, size: responsive.scale(64), color: theme.colorScheme.error),
             SizedBox(height: responsive.scale(16)),
             Text(
               LocaleKeys.creditCards.error.title.tr(),
@@ -250,10 +246,9 @@ class CreditCardsScreen extends HookConsumerWidget {
                       topSpacing: searchTopSpacing,
                       backgroundColor: theme.colorScheme.surface,
                       horizontalPadding: horizontalPadding,
-                      child: SearchBarWidget(
+                      child: WaffirSearchBar(
                         controller: searchController,
                         hintText: searchHint,
-                        showFilterButton: true,
                         onChanged: handleSearch,
                         onSearch: handleSearch,
                         onFilterTap: showComingSoonSnackBar,
@@ -312,6 +307,31 @@ class CreditCardsScreen extends HookConsumerWidget {
               left: responsive.scale(16),
               top: MediaQuery.paddingOf(context).top + responsive.scale(16),
               child: WaffirBackButton(size: responsive.scale(44)),
+            ),
+          // First-time confirm button - show when user selects cards for the first time
+          if (controller.isFirstTimeSelection)
+            bankCardsAsync.maybeWhen(
+              data: (state) {
+                if (state.selectedCardIds.isEmpty) return const SizedBox.shrink();
+
+                return Positioned(
+                  bottom: responsive.scale(100),
+                  left: responsive.scale(16),
+                  right: responsive.scale(16),
+                  child: AppButton.primary(
+                    text: LocaleKeys.creditCards.confirmAndContinue.tr(),
+                    width: double.infinity,
+                    isLoading: state.isSaving,
+                    onPressed: () async {
+                      final success = await controller.saveSelection();
+                      if (success && context.mounted) {
+                        context.goNamed(AppRouteNames.stores);
+                      }
+                    },
+                  ),
+                );
+              },
+              orElse: () => const SizedBox.shrink(),
             ),
         ],
       ),
@@ -445,32 +465,9 @@ class _BankCardSelectionTile extends StatelessWidget {
       imageUrl: imageUrl,
       width: size,
       height: size,
-      fit: BoxFit.cover,
       contentType: ImageContentType.creditCard,
       useResponsiveScaling: false, // Size already scaled by caller
       errorWidget: _buildPlaceholder(theme, size),
-    );
-  }
-
-  Widget _buildLoadingIndicator(
-    ThemeData theme,
-    double size,
-    ImageChunkEvent loadingProgress,
-  ) {
-    final progress = loadingProgress.expectedTotalBytes != null
-        ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-        : null;
-
-    return Center(
-      child: SizedBox(
-        width: size * 0.4,
-        height: size * 0.4,
-        child: CircularProgressIndicator(
-          value: progress,
-          strokeWidth: 2,
-          color: theme.colorScheme.primary.withOpacity(0.6),
-        ),
-      ),
     );
   }
 
@@ -479,7 +476,7 @@ class _BankCardSelectionTile extends StatelessWidget {
       child: Icon(
         Icons.credit_card,
         size: size * 0.5,
-        color: theme.colorScheme.onSurfaceVariant.withOpacity(0.4),
+        color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
       ),
     );
   }

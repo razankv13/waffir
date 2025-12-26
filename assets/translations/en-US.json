@@ -115,7 +115,10 @@
     },
     "labels": {
       "promoCode": "Promo code",
-      "terms": "Terms"
+      "terms": "Terms",
+      "productDeal": "Product Deal",
+      "storeOffer": "Store Offer",
+      "bankOffer": "Bank Offer"
     },
     "errors": {
       "loadFailed": "Failed to load deal details.",
@@ -191,7 +194,12 @@
     "cancel": "Cancel",
     "retry": "Retry",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "gender": {
+      "male": "Male",
+      "female": "Female",
+      "label": "Gender"
+    }
   },
   "success": {
     "dataSaved": "Data saved successfully",
@@ -327,6 +335,7 @@
     "searchHint": "Card, or Bank Name",
     "filterComingSoon": "Filter functionality coming soon",
     "loading": "Loading cards...",
+    "confirmAndContinue": "Confirm & See Offers",
     "empty": {
       "title": "No banks found",
       "description": "Try a different search term"
@@ -480,5 +489,19 @@
     "jubail": "Jubail",
     "najran": "Najran",
     "jizan": "Jizan"
+  },
+  "helpCenter": {
+    "title": "Help Center",
+    "customerCare": "Customer Care",
+    "usefulResources": "Useful Resources",
+    "whatsapp": "Whatsapp",
+    "facebook": "Facebook",
+    "telegram": "Telegram",
+    "email": "Email",
+    "faqs": "FAQs",
+    "rulesOfUse": "Rules of Use",
+    "termsAndConditions": "Terms and Conditions",
+    "privacyPolicy": "Privacy Policy",
+    "comingSoon": "Coming Soon"
   }
 }

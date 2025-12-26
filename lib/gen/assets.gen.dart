@@ -87,6 +87,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/riyal.svg
   SvgGenImage get riyal => const SvgGenImage('assets/icons/riyal.svg');
 
+  /// Directory path: assets/icons/social
+  $AssetsIconsSocialGen get social => const $AssetsIconsSocialGen();
+
   /// Directory path: assets/icons/store_detail
   $AssetsIconsStoreDetailGen get storeDetail =>
       const $AssetsIconsStoreDetailGen();
@@ -393,6 +396,32 @@ class $AssetsIconsProfileGen {
   ];
 }
 
+class $AssetsIconsSocialGen {
+  const $AssetsIconsSocialGen();
+
+  /// File path: assets/icons/social/ic_email.svg
+  SvgGenImage get icEmail =>
+      const SvgGenImage('assets/icons/social/ic_email.svg');
+
+  /// File path: assets/icons/social/ic_facebook.svg
+  SvgGenImage get icFacebook =>
+      const SvgGenImage('assets/icons/social/ic_facebook.svg');
+
+  /// File path: assets/icons/social/ic_telegram.png
+  AssetGenImage get icTelegram =>
+      const AssetGenImage('assets/icons/social/ic_telegram.png');
+
+  /// File path: assets/icons/social/ic_whatsapp.svg
+  SvgGenImage get icWhatsapp =>
+      const SvgGenImage('assets/icons/social/ic_whatsapp.svg');
+
+  /// Directory path: assets/icons/social
+  String get path => 'assets/icons/social';
+
+  /// List of all assets
+  List<dynamic> get values => [icEmail, icFacebook, icTelegram, icWhatsapp];
+}
+
 class $AssetsIconsStoreDetailGen {
   const $AssetsIconsStoreDetailGen();
 
@@ -474,13 +503,13 @@ class Assets {
 
   static const String devEnv = '.env.dev';
   static const String productionEnv = '.env.production';
-  static const String stagingEnv = '.env.staging';
+  static const String aEnv = '.env.staging';
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsTranslationsGen translations = $AssetsTranslationsGen();
 
   /// List of all assets
-  static List<String> get values => [devEnv, productionEnv, stagingEnv];
+  static List<String> get values => [aEnv, aEnv, aEnv];
 }
 
 class AssetGenImage {

@@ -4,6 +4,7 @@ import 'package:waffir/core/utils/logger.dart';
 import 'package:waffir/features/stores/data/datasources/store_catalog_remote_data_source.dart';
 import 'package:waffir/features/stores/data/models/store_model.dart';
 import 'package:waffir/features/stores/domain/entities/store_offer.dart';
+import 'package:waffir/features/stores/domain/entities/top_offer.dart';
 
 class SupabaseStoreCatalogRemoteDataSource implements StoreCatalogRemoteDataSource {
   SupabaseStoreCatalogRemoteDataSource(this._client);
@@ -14,12 +15,14 @@ class SupabaseStoreCatalogRemoteDataSource implements StoreCatalogRemoteDataSour
   static const String _categoriesTable = 'categories';
   static const String _rpcGetStoreOffers = 'get_store_offers';
   static const String _rpcToggleFavoriteStore = 'toggle_favorite_store';
+  static const String _rpcGetStoresWithTopOffers = 'get_stores_with_top_offers';
 
   @override
   Future<List<StoreModel>> fetchStores({
     required String languageCode,
     String? categorySlug,
     String? searchQuery,
+    Set<String>? selectedBankCardIds,
   }) async {
     try {
       final stopwatch = Stopwatch()..start();
@@ -79,12 +82,19 @@ class SupabaseStoreCatalogRemoteDataSource implements StoreCatalogRemoteDataSour
         'rows=${rows.length}',
       );
 
-      return rows
+      var stores = rows
           .map((row) {
             final data = _normalizeRow(row);
             return _mapRowToStoreModel(data, isArabic);
           })
           .toList(growable: false);
+
+      // Filter stores by selected bank cards if provided
+      if (selectedBankCardIds != null && selectedBankCardIds.isNotEmpty) {
+        stores = await _filterStoresByBankCards(stores, selectedBankCardIds);
+      }
+
+      return stores;
     } on PostgrestException catch (e) {
       throw Failure.server(message: e.message, code: e.code);
     } catch (e, stackTrace) {
@@ -128,6 +138,67 @@ class SupabaseStoreCatalogRemoteDataSource implements StoreCatalogRemoteDataSour
       createdAt: _parseDateTime(data['created_at']),
       updatedAt: _parseDateTime(data['updated_at']),
     );
+  }
+
+  /// Filters stores to only include those with offers from the selected bank cards.
+  ///
+  /// Queries the bank_offers table to find store IDs that have offers for the
+  /// given bank card IDs, then filters the stores list accordingly.
+  Future<List<StoreModel>> _filterStoresByBankCards(
+    List<StoreModel> stores,
+    Set<String> selectedBankCardIds,
+  ) async {
+    if (stores.isEmpty || selectedBankCardIds.isEmpty) return stores;
+
+    try {
+      final stopwatch = Stopwatch()..start();
+
+      // Query bank_offers to find store IDs with offers for selected cards
+      final cardIdsList = selectedBankCardIds.toList();
+      final response = await _client
+          .from('bank_offers')
+          .select('merchant_store_id')
+          .inFilter('bank_card_id', cardIdsList)
+          .not('merchant_store_id', 'is', null);
+
+      // Extract unique store IDs that have matching offers
+      final matchingStoreIds = <String>{};
+      for (final row in response) {
+        final storeId = row['merchant_store_id']?.toString();
+        if (storeId != null && storeId.isNotEmpty) {
+          matchingStoreIds.add(storeId);
+        }
+      }
+
+      stopwatch.stop();
+      AppLogger.debug(
+        'Supabase _filterStoresByBankCards: '
+        'selectedCards=${selectedBankCardIds.length} '
+        'matchingStores=${matchingStoreIds.length} '
+        'took=${stopwatch.elapsedMilliseconds}ms',
+      );
+
+      // If no matching stores found, return empty list
+      if (matchingStoreIds.isEmpty) {
+        return const [];
+      }
+
+      // Filter stores to only those with matching offers
+      return stores.where((store) => matchingStoreIds.contains(store.id)).toList();
+    } on PostgrestException catch (e) {
+      AppLogger.warning(
+        'Failed to filter stores by bank cards: ${e.message}. '
+        'Returning all stores as fallback.',
+      );
+      // On error, return all stores as fallback (graceful degradation)
+      return stores;
+    } catch (e) {
+      AppLogger.warning(
+        'Unexpected error filtering stores by bank cards: $e. '
+        'Returning all stores as fallback.',
+      );
+      return stores;
+    }
   }
 
   @override
@@ -332,6 +403,128 @@ class SupabaseStoreCatalogRemoteDataSource implements StoreCatalogRemoteDataSour
         stackTrace: stackTrace.toString(),
       );
     }
+  }
+
+  @override
+  Future<StoresWithOffersResult> fetchStoresWithOffers({
+    required String languageCode,
+    String? categorySlug,
+    String? searchQuery,
+    Set<String>? selectedBankCardIds,
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    try {
+      final stopwatch = Stopwatch()..start();
+      final isArabic = languageCode.toLowerCase() == 'ar';
+
+      // Build RPC params
+      final params = <String, dynamic>{
+        'p_category_slug': categorySlug,
+        'p_search_query': searchQuery,
+        'p_bank_card_ids': null,
+        'p_limit': limit,
+        'p_offset': offset,
+      };
+
+      // Single optimized RPC call
+      final raw = await _client.rpc(_rpcGetStoresWithTopOffers, params: params);
+
+      stopwatch.stop();
+      final rows = raw is List ? raw : const <dynamic>[];
+      AppLogger.debug(
+        'Supabase RPC $_rpcGetStoresWithTopOffers '
+        'categorySlug=$categorySlug search=${searchQuery ?? ''} '
+        'limit=$limit offset=$offset rows=${rows.length} '
+        'took=${stopwatch.elapsedMilliseconds}ms',
+      );
+
+      if (rows.isEmpty) {
+        return const StoresWithOffersResult(stores: [], totalCount: 0);
+      }
+
+      // Parse total count from first row
+      final firstRow = _normalizeRow(rows.first);
+      final totalCount = _parseInt(firstRow['total_count']) ?? 0;
+
+      // Map rows to StoreModel with TopOffer
+      final stores = rows.map((row) {
+        final data = _normalizeRow(row);
+        return _mapRpcRowToStoreModel(data, isArabic);
+      }).toList(growable: false);
+
+      return StoresWithOffersResult(
+        stores: stores,
+        totalCount: totalCount,
+      );
+    } on PostgrestException catch (e, stackTrace) {
+      AppLogger.error(
+        'Supabase RPC $_rpcGetStoresWithTopOffers failed code=${e.code ?? ''}',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      throw Failure.server(message: e.message, code: e.code);
+    } catch (e, stackTrace) {
+      AppLogger.error('fetchStoresWithOffers crashed', error: e, stackTrace: stackTrace);
+      throw Failure.unknown(
+        message: 'Failed to load stores with offers',
+        originalError: e.toString(),
+        stackTrace: stackTrace.toString(),
+      );
+    }
+  }
+
+  /// Maps a row from the get_stores_with_top_offers RPC to StoreModel.
+  StoreModel _mapRpcRowToStoreModel(Map<String, dynamic> data, bool isArabic) {
+    final name = _pickLocalizedText(
+      isArabic: isArabic,
+      primary: data['store_name_ar'],
+      fallback: data['store_name'],
+    );
+    final categoryName = _pickLocalizedText(
+      isArabic: isArabic,
+      primary: data['category_name_ar'],
+      fallback: data['category_name'],
+    );
+    final logoUrl = (data['logo_url'] as String?)?.trim();
+    final websiteUrl = (data['website_url'] as String?)?.trim();
+
+    // Build TopOffer if present
+    TopOffer? topOffer;
+    final topOfferId = data['top_offer_id'];
+    if (topOfferId != null) {
+      final offerTitle = _pickLocalizedText(
+        isArabic: isArabic,
+        primary: data['top_offer_title_ar'],
+        fallback: data['top_offer_title'],
+      );
+      topOffer = TopOffer(
+        id: topOfferId.toString(),
+        title: offerTitle,
+        titleAr: data['top_offer_title_ar']?.toString(),
+        discountMaxPercent: _parseNum(data['top_offer_discount']),
+      );
+    }
+
+    return StoreModel(
+      id: (data['store_id'] ?? '').toString(),
+      name: name,
+      category: categoryName,
+      imageUrl: logoUrl ?? '',
+      logoUrl: logoUrl,
+      bannerUrl: logoUrl,
+      website: websiteUrl,
+      isActive: (data['is_active'] as bool?) ?? true,
+      createdAt: _parseDateTime(data['created_at']),
+      updatedAt: _parseDateTime(data['updated_at']),
+      topOffer: topOffer,
+    );
+  }
+
+  static num? _parseNum(Object? value) {
+    if (value == null) return null;
+    if (value is num) return value;
+    return num.tryParse(value.toString());
   }
 
   static Map<String, dynamic> _normalizeRow(Object? value) {

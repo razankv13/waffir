@@ -8,6 +8,8 @@ import 'package:waffir/features/stores/domain/entities/store_offer.dart';
 import 'package:waffir/features/stores/domain/repositories/store_catalog_repository.dart';
 import 'package:waffir/features/stores/domain/repositories/stores_repository.dart';
 
+// StoreOffer import kept for fetchStoreOffers method
+
 class StoreCatalogRepositoryImpl implements StoreCatalogRepository {
   StoreCatalogRepositoryImpl(this._remote);
 
@@ -18,21 +20,27 @@ class StoreCatalogRepositoryImpl implements StoreCatalogRepository {
     required String languageCode,
     String? categorySlug,
     String? searchQuery,
+    Set<String>? selectedBankCardIds,
   }) {
     return Result.guard(() async {
-      final storeModels = await _remote.fetchStores(
+      final result = await _remote.fetchStoresWithOffers(
         languageCode: languageCode,
         categorySlug: categorySlug,
         searchQuery: searchQuery,
+        selectedBankCardIds: selectedBankCardIds,
       );
 
       // Convert models to domain entities
-      final stores = storeModels.map((m) => m.toDomain()).toList();
+      final stores = result.stores.map((m) => m.toDomain()).toList();
 
       // Split stores randomly: ~30% Near You, ~70% Mall
       final (nearYou, mall) = _splitStoresRandomly(stores);
 
-      return StoresFeed(nearYou: nearYou, mall: mall);
+      return StoresFeed(
+        nearYou: nearYou,
+        mall: mall,
+        totalCount: result.totalCount,
+      );
     });
   }
 

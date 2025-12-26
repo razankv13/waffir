@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:waffir/core/errors/failures.dart';
 import 'package:waffir/core/result/result.dart';
 import 'package:waffir/core/storage/settings_service.dart';
+import 'package:waffir/features/credit_cards/data/providers/credit_cards_providers.dart';
 import 'package:waffir/features/stores/data/providers/catalog_backend_providers.dart';
 import 'package:waffir/features/stores/domain/entities/store.dart';
 import 'package:waffir/features/stores/domain/repositories/store_catalog_repository.dart';
@@ -15,6 +16,7 @@ class StoresState {
     required this.mallStores,
     required this.selectedCategory,
     required this.searchQuery,
+    this.totalCount = 0,
     this.failure,
   });
 
@@ -23,12 +25,14 @@ class StoresState {
       mallStores = const [],
       selectedCategory = defaultStoresCategory,
       searchQuery = '',
+      totalCount = 0,
       failure = null;
 
   final List<Store> nearYouStores;
   final List<Store> mallStores;
   final String selectedCategory;
   final String searchQuery;
+  final int totalCount;
   final Failure? failure;
 
   bool get hasError => failure != null;
@@ -43,21 +47,32 @@ class StoresController extends AsyncNotifier<StoresState> {
 
   List<Store> _allNearYouStores = const [];
   List<Store> _allMallStores = const [];
+  int _totalCount = 0;
 
   @override
   Future<StoresState> build() async {
     // Watch locale to rebuild when language changes
     ref.watch(localeProvider);
-    return _fetchAllAndApply(category: defaultStoresCategory, searchQuery: '');
+
+    // Watch selected bank card IDs to filter stores
+    final selectedBankCardIds = ref.watch(selectedBankCardIdsProvider);
+
+    return _fetchAllAndApply(
+      category: defaultStoresCategory,
+      searchQuery: '',
+      selectedBankCardIds: selectedBankCardIds,
+    );
   }
 
   Future<void> refresh() async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final currentState = state.value ?? const StoresState.initial();
+      final selectedBankCardIds = ref.read(selectedBankCardIdsProvider);
       return _fetchAllAndApply(
         category: currentState.selectedCategory,
         searchQuery: currentState.searchQuery,
+        selectedBankCardIds: selectedBankCardIds,
       );
     });
   }
@@ -72,14 +87,22 @@ class StoresController extends AsyncNotifier<StoresState> {
     state = AsyncValue.data(_applyFilters(category: currentState.selectedCategory, searchQuery: query));
   }
 
-  Future<StoresState> _fetchAllAndApply({required String category, required String searchQuery}) async {
+  Future<StoresState> _fetchAllAndApply({
+    required String category,
+    required String searchQuery,
+    Set<String>? selectedBankCardIds,
+  }) async {
     final languageCode = ref.read(localeProvider).languageCode;
-    final result = await _repository.fetchStoresFeed(languageCode: languageCode);
+    final result = await _repository.fetchStoresFeed(
+      languageCode: languageCode,
+      selectedBankCardIds: selectedBankCardIds,
+    );
 
     return result.when(
       success: (feed) {
         _allNearYouStores = feed.nearYou;
         _allMallStores = feed.mall;
+        _totalCount = feed.totalCount;
         return _applyFilters(category: category, searchQuery: searchQuery);
       },
       failure: (failure) => StoresState(
@@ -123,6 +146,7 @@ class StoresController extends AsyncNotifier<StoresState> {
       mallStores: mall,
       selectedCategory: category,
       searchQuery: searchQuery,
+      totalCount: _totalCount,
     );
   }
 }

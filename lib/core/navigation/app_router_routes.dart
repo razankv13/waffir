@@ -12,7 +12,7 @@ import 'package:waffir/features/auth/presentation/screens/phone_login_screen.dar
 import 'package:waffir/features/auth/presentation/screens/signup_screen.dart';
 import 'package:waffir/features/credit_cards/presentation/screens/credit_cards_screen.dart';
 import 'package:waffir/features/deals/domain/entities/deal_details_type.dart';
-import 'package:waffir/features/deals/presentation/screens/deal_details_screen.dart';
+import 'package:waffir/features/deals/presentation/screens/deal_details_screen/deal_details_screen.dart';
 import 'package:waffir/features/deals/presentation/screens/hot_deals_screen.dart';
 import 'package:waffir/features/deals/presentation/screens/notifications_screen.dart';
 import 'package:waffir/features/onboarding/presentation/screens/city_selection_screen.dart';
@@ -29,6 +29,7 @@ import 'package:waffir/features/profile/presentation/screens/my_account.dart';
 import 'package:waffir/features/profile/presentation/screens/profile_edit_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/profile_screen/profile_screen.dart';
 import 'package:waffir/features/profile/presentation/screens/saved_deals_screen.dart';
+import 'package:waffir/features/stores/domain/entities/store_detail_extra.dart';
 import 'package:waffir/features/stores/presentation/screens/bank_catalog_screen/bank_catalog_screen.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/store_detail_screen.dart';
 import 'package:waffir/features/stores/presentation/screens/stores_screen.dart';
@@ -237,7 +238,12 @@ List<RouteBase> buildAppRoutes({required GlobalKey<NavigatorState> shellNavigato
       name: AppRouteNames.storeDetail,
       builder: (context, state) {
         final storeId = state.pathParameters['id']!;
-        return StoreDetailScreen(storeId: storeId);
+        final extra = state.extra as StoreDetailExtra?;
+        return StoreDetailScreen(
+          storeId: storeId,
+          initialStore: extra?.store,
+          initialOffers: extra?.offers,
+        );
       },
     ),
 

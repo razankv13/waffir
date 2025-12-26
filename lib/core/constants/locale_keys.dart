@@ -23,6 +23,7 @@ abstract class LocaleKeys {
 
   static const chooseLanguage = 'choose_language';
   static const productPage = _ProductPageKeys();
+  static const helpCenter = _HelpCenterKeys();
 }
 
 class _CommonKeys {
@@ -32,6 +33,14 @@ class _CommonKeys {
   final retry = 'common.retry';
   final yes = 'common.yes';
   final no = 'common.no';
+  final gender = const _GenderKeys();
+}
+
+class _GenderKeys {
+  const _GenderKeys();
+  final male = 'common.gender.male';
+  final female = 'common.gender.female';
+  final label = 'common.gender.label';
 }
 
 class _AppKeys {
@@ -145,6 +154,9 @@ class _DealDetailsLabelsKeys {
   const _DealDetailsLabelsKeys();
   final promoCode = 'dealDetails.labels.promoCode';
   final terms = 'dealDetails.labels.terms';
+  final productDeal = 'dealDetails.labels.productDeal';
+  final storeOffer = 'dealDetails.labels.storeOffer';
+  final bankOffer = 'dealDetails.labels.bankOffer';
 }
 
 class _DealDetailsErrorsKeys {
@@ -346,6 +358,7 @@ class _CreditCardsKeys {
   final searchHint = 'creditCards.searchHint';
   final filterComingSoon = 'creditCards.filterComingSoon';
   final loading = 'creditCards.loading';
+  final confirmAndContinue = 'creditCards.confirmAndContinue';
   final empty = const _CreditCardsEmptyKeys();
   final error = const _CreditCardsErrorKeys();
 }
@@ -695,4 +708,20 @@ class _ProductPageCommentsKeys {
   const _ProductPageCommentsKeys();
   final writeComment = 'productPage.comments.writeComment';
   final noComments = 'productPage.comments.noComments';
+}
+
+class _HelpCenterKeys {
+  const _HelpCenterKeys();
+  final title = 'helpCenter.title';
+  final customerCare = 'helpCenter.customerCare';
+  final usefulResources = 'helpCenter.usefulResources';
+  final whatsapp = 'helpCenter.whatsapp';
+  final facebook = 'helpCenter.facebook';
+  final telegram = 'helpCenter.telegram';
+  final email = 'helpCenter.email';
+  final faqs = 'helpCenter.faqs';
+  final rulesOfUse = 'helpCenter.rulesOfUse';
+  final termsAndConditions = 'helpCenter.termsAndConditions';
+  final privacyPolicy = 'helpCenter.privacyPolicy';
+  final comingSoon = 'helpCenter.comingSoon';
 }

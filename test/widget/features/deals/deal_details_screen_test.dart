@@ -13,7 +13,7 @@ import 'package:waffir/features/deals/data/repositories/deal_details_repository.
 import 'package:waffir/features/deals/domain/entities/deal.dart';
 import 'package:waffir/features/deals/domain/entities/deal_details_type.dart';
 import 'package:waffir/features/deals/domain/repositories/deals_repository.dart';
-import 'package:waffir/features/deals/presentation/screens/deal_details_screen.dart';
+import 'package:waffir/features/deals/presentation/screens/deal_details_screen/deal_details_screen.dart';
 import 'package:waffir/features/stores/domain/entities/bank_offer.dart';
 import 'package:waffir/features/stores/domain/entities/store_offer.dart';
 

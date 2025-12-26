@@ -23,9 +23,13 @@ class StoresFeed {
   const StoresFeed({
     required this.nearYou,
     required this.mall,
+    this.totalCount = 0,
   });
 
   final List<Store> nearYou;
   final List<Store> mall;
+
+  /// Total count of stores matching the filter (for pagination).
+  final int totalCount;
 }
 

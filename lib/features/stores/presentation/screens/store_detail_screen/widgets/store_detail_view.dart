@@ -4,14 +4,11 @@ import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/core/widgets/images/app_network_image.dart';
 import 'package:waffir/core/widgets/product_page_comments_section.dart';
 import 'package:waffir/features/stores/data/models/store_model.dart';
-import 'package:waffir/features/stores/domain/entities/catalog_category.dart';
 import 'package:waffir/features/stores/domain/entities/store_offer.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/store_detail_controller.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/widgets/store_detail_cta.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/widgets/store_engagement_sections.dart';
 import 'package:waffir/features/stores/presentation/screens/store_detail_screen/widgets/store_info_sections.dart';
-import 'package:waffir/features/stores/presentation/widgets/catalog_search_filter_bar.dart';
-import 'package:waffir/features/stores/presentation/widgets/catalog_status_card.dart';
 
 class StoreDetailView extends StatelessWidget {
   const StoreDetailView({
@@ -24,14 +21,6 @@ class StoreDetailView extends StatelessWidget {
     required this.offers,
     required this.onOfferTap,
     required this.isLoadingOffers,
-    required this.hasMoreOffers,
-    required this.isLoadingMoreOffers,
-    required this.onLoadMoreOffers,
-    required this.offersSearchController,
-    required this.onSearchChanged,
-    required this.categories,
-    required this.selectedCategoryId,
-    required this.onSelectedCategoryChanged,
   });
 
   final StoreModel store;
@@ -42,28 +31,16 @@ class StoreDetailView extends StatelessWidget {
   final List<StoreOffer> offers;
   final ValueChanged<StoreOffer> onOfferTap;
   final bool isLoadingOffers;
-  final bool hasMoreOffers;
-  final bool isLoadingMoreOffers;
-  final VoidCallback onLoadMoreOffers;
-  final TextEditingController offersSearchController;
-  final ValueChanged<String> onSearchChanged;
-  final List<CatalogCategory> categories;
-  final String? selectedCategoryId;
-  final ValueChanged<String?> onSelectedCategoryChanged;
 
-  /// Derives details body from first offer's description.
-  /// Returns null if no offers or no description available.
-  String? _buildDetailsBody(List<StoreOffer> offers, bool isRTL) {
+  /// Gets the top offer with highest discount.
+  /// Falls back to first offer if no discount data available.
+  StoreOffer? _getTopOffer(List<StoreOffer> offers) {
     if (offers.isEmpty) return null;
-    // Try first offer's description
-    final description = offers.first.localizedDescription(isArabic: isRTL);
-    if (description != null && description.isNotEmpty) return description;
-    // Try other offers
-    for (final offer in offers.skip(1)) {
-      final desc = offer.localizedDescription(isArabic: isRTL);
-      if (desc != null && desc.isNotEmpty) return desc;
-    }
-    return null;
+    return offers.reduce((best, current) {
+      final bestDiscount = best.discountMaxPercent ?? 0;
+      final currentDiscount = current.discountMaxPercent ?? 0;
+      return currentDiscount > bestDiscount ? current : best;
+    });
   }
 
   /// Derives features body from offer promo codes.
@@ -102,8 +79,8 @@ class StoreDetailView extends StatelessWidget {
         ? store.bannerUrl!
         : store.imageUrl;
 
-    // Derive details from first offer description (no hardcoded fallback)
-    final detailsBody = _buildDetailsBody(offers, isRTL);
+    // Get top offer (highest discount)
+    final topOffer = _getTopOffer(offers);
 
     // Derive features from offer promo codes (no hardcoded fallback)
     final featuresBody = _buildFeaturesBody(offers);
@@ -117,15 +94,7 @@ class StoreDetailView extends StatelessWidget {
               SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
             ];
           },
-          body: NotificationListener<ScrollNotification>(
-            onNotification: (notification) {
-              if (!hasMoreOffers || isLoadingMoreOffers) return false;
-              if (notification.metrics.extentAfter > responsive.scale(500))
-                return false;
-              onLoadMoreOffers();
-              return false;
-            },
-            child: CustomScrollView(
+          body: CustomScrollView(
               slivers: [
                 const SliverToBoxAdapter(child: StoreOutletBanner()),
                 SliverToBoxAdapter(
@@ -162,10 +131,7 @@ class StoreDetailView extends StatelessWidget {
                   child: SizedBox(height: responsive.scale(6)),
                 ),
                 SliverToBoxAdapter(
-                  child: StoreProductInfoSection(
-                    detailsBody: detailsBody,
-                    featuresBody: featuresBody,
-                  ),
+                  child: StoreProductInfoSection(featuresBody: featuresBody),
                 ),
                 // Website section - only if website URL exists
                 if (store.website != null && store.website!.isNotEmpty)
@@ -184,36 +150,7 @@ class StoreDetailView extends StatelessWidget {
                 SliverToBoxAdapter(
                   child: SizedBox(height: responsive.scale(16)),
                 ),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: responsive.scale(16),
-                  ),
-                  sliver: SliverToBoxAdapter(
-                    child: _OffersHeader(storeName: store.name),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(height: responsive.scale(12)),
-                ),
-                SliverToBoxAdapter(
-                  child: CatalogSearchFilterBar(
-                    controller: offersSearchController,
-                    onSearchChanged: onSearchChanged,
-                    searchPadding: const EdgeInsets.symmetric(horizontal: 16),
-                    filters: [
-                      if (categories.isNotEmpty)
-                        _CategoryChips(
-                          categories: categories,
-                          selectedCategoryId: selectedCategoryId,
-                          isArabic: isRTL,
-                          onSelectedCategoryChanged: onSelectedCategoryChanged,
-                        ),
-                    ],
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(height: responsive.scale(12)),
-                ),
+                // Single top offer display
                 if (isLoadingOffers)
                   SliverToBoxAdapter(
                     child: Padding(
@@ -223,38 +160,17 @@ class StoreDetailView extends StatelessWidget {
                       child: const Center(child: CircularProgressIndicator()),
                     ),
                   )
-                else if (offers.isEmpty)
+                else if (topOffer != null)
                   SliverPadding(
                     padding: EdgeInsets.symmetric(
                       horizontal: responsive.scale(16),
                     ),
-                    sliver: const SliverToBoxAdapter(
-                      child: _EmptyOffersState(),
-                    ),
-                  )
-                else
-                  SliverPadding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: responsive.scale(16),
-                    ),
-                    sliver: SliverList.separated(
-                      itemBuilder: (context, index) => _StoreOfferTile(
-                        offer: offers[index],
+                    sliver: SliverToBoxAdapter(
+                      child: _StoreOfferTile(
+                        offer: topOffer,
                         isRTL: isRTL,
-                        onTap: () => onOfferTap(offers[index]),
+                        onTap: () => onOfferTap(topOffer),
                       ),
-                      separatorBuilder: (context, _) =>
-                          SizedBox(height: responsive.scale(12)),
-                      itemCount: offers.length,
-                    ),
-                  ),
-                if (isLoadingMoreOffers)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: responsive.scale(16),
-                      ),
-                      child: const Center(child: CircularProgressIndicator()),
                     ),
                   ),
                 SliverToBoxAdapter(
@@ -280,7 +196,6 @@ class StoreDetailView extends StatelessWidget {
                 ),
               ],
             ),
-          ),
         ),
         Positioned(
           top: 0,
@@ -358,105 +273,6 @@ class StoreSectionDivider extends StatelessWidget {
     return SizedBox(
       height: 1,
       child: ColoredBox(color: colorScheme.surfaceContainerHighest),
-    );
-  }
-}
-
-class _OffersHeader extends StatelessWidget {
-  const _OffersHeader({required this.storeName});
-
-  final String storeName;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Offers',
-          style: textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: colorScheme.onSurface,
-          ),
-        ),
-        Text(
-          storeName,
-          style: textTheme.bodyMedium?.copyWith(
-            color: colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _CategoryChips extends StatelessWidget {
-  const _CategoryChips({
-    required this.categories,
-    required this.selectedCategoryId,
-    required this.isArabic,
-    required this.onSelectedCategoryChanged,
-  });
-
-  final List<CatalogCategory> categories;
-  final String? selectedCategoryId;
-  final bool isArabic;
-  final ValueChanged<String?> onSelectedCategoryChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final responsive = context.responsive;
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return SizedBox(
-      height: responsive.scale(40),
-      child: ListView.separated(
-        padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          final isAll = index == 0;
-          final category = isAll ? null : categories[index - 1];
-          final isSelected = isAll
-              ? selectedCategoryId == null
-              : category!.id == selectedCategoryId;
-          final label = isAll
-              ? 'All'
-              : category!.localizedName(isArabic: isArabic);
-
-          return ChoiceChip(
-            label: Text(label),
-            selected: isSelected,
-            onSelected: (_) => onSelectedCategoryChanged(category?.id),
-            selectedColor: colorScheme.primaryContainer,
-            labelStyle: textTheme.labelMedium?.copyWith(
-              color: isSelected
-                  ? colorScheme.onPrimaryContainer
-                  : colorScheme.onSurfaceVariant,
-              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            ),
-            backgroundColor: colorScheme.surfaceContainerHighest,
-            side: BorderSide(color: colorScheme.outlineVariant),
-          );
-        },
-        separatorBuilder: (context, _) => SizedBox(width: responsive.scale(8)),
-        itemCount: categories.length + 1,
-      ),
-    );
-  }
-}
-
-class _EmptyOffersState extends StatelessWidget {
-  const _EmptyOffersState();
-
-  @override
-  Widget build(BuildContext context) {
-    return const CatalogStatusCard(
-      variant: CatalogStatusCardVariant.empty,
-      message: 'No offers available right now.',
     );
   }
 }
