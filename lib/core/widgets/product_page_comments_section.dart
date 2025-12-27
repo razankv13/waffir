@@ -34,7 +34,7 @@ class ProductPageCommentsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     final children = <Widget>[];
 
@@ -50,19 +50,19 @@ class ProductPageCommentsSection extends StatelessWidget {
     }
 
     if (comments.isEmpty) {
-      children.add(SizedBox(height: responsive.scale(12)));
+      children.add(SizedBox(height: responsive.s(12)));
       children.add(
         Text(
           LocaleKeys.productPage.comments.noComments.tr(),
           style: theme.textStyles.body.copyWith(
             color: theme.colors.textSecondary,
-            fontSize: responsive.scaleFontSize(theme.textStyles.body.fontSize ?? 14),
+            fontSize: responsive.sFont(theme.textStyles.body.fontSize ?? 14),
           ),
         ),
       );
     } else {
       if (showComposer) {
-        children.add(SizedBox(height: responsive.scale(12)));
+        children.add(SizedBox(height: responsive.s(12)));
       }
 
       for (var i = 0; i < comments.length; i++) {
@@ -76,13 +76,13 @@ class ProductPageCommentsSection extends StatelessWidget {
 
         final isLast = i == comments.length - 1;
         if (!isLast) {
-          children.add(SizedBox(height: responsive.scale(16)));
+          children.add(SizedBox(height: responsive.s(16)));
         }
       }
     }
 
     return SliverPadding(
-      padding: padding ?? responsive.scalePadding(const EdgeInsets.all(16)),
+      padding: padding ?? responsive.sPadding(const EdgeInsets.all(16)),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) => children[index],
@@ -124,7 +124,7 @@ class _ProductPageCommentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     final avatarPath = comment.avatarAssetPath ?? defaultAvatarAssetPath;
 
@@ -134,11 +134,11 @@ class _ProductPageCommentCard extends StatelessWidget {
         Row(
           children: [
             Container(
-              width: responsive.scale(40),
-              height: responsive.scale(40),
+              width: responsive.s(40),
+              height: responsive.s(40),
               decoration: BoxDecoration(
                 color: theme.colors.surfaceContainer,
-                borderRadius: BorderRadius.circular(responsive.scale(1000)),
+                borderRadius: BorderRadius.circular(responsive.s(1000)),
                 image: avatarPath != null
                     ? DecorationImage(image: AssetImage(avatarPath), fit: BoxFit.cover)
                     : null,
@@ -146,12 +146,12 @@ class _ProductPageCommentCard extends StatelessWidget {
               child: avatarPath == null
                   ? Icon(
                       Icons.person_outline,
-                      size: responsive.scale(22),
+                      size: responsive.s(22),
                       color: theme.colors.textSecondary,
                     )
                   : null,
             ),
-            SizedBox(width: responsive.scale(10.699578285217285)),
+            SizedBox(width: responsive.s(10.699578285217285)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -159,36 +159,36 @@ class _ProductPageCommentCard extends StatelessWidget {
                   comment.author,
                   style: theme.textStyles.sectionLabelBold.copyWith(
                     color: theme.colors.textPrimary,
-                    fontSize: responsive.scaleFontSize(theme.textStyles.sectionLabelBold.fontSize ?? 14),
+                    fontSize: responsive.sFont(theme.textStyles.sectionLabelBold.fontSize ?? 14),
                   ),
                 ),
                 Text(
                   comment.subtitle,
                   style: theme.textStyles.sectionLabelRegular.copyWith(
                     color: theme.colors.textSecondary,
-                    fontSize: responsive.scaleFontSize(theme.textStyles.sectionLabelRegular.fontSize ?? 12),
+                    fontSize: responsive.sFont(theme.textStyles.sectionLabelRegular.fontSize ?? 12),
                   ),
                 ),
               ],
             ),
           ],
         ),
-        SizedBox(height: responsive.scale(12.482841491699219)),
+        SizedBox(height: responsive.s(12.482841491699219)),
         Text(
           comment.body,
           style: theme.textStyles.body.copyWith(
             color: theme.colors.textPrimary,
-            fontSize: responsive.scaleFontSize(theme.textStyles.body.fontSize ?? 12),
+            fontSize: responsive.sFont(theme.textStyles.body.fontSize ?? 12),
           ),
         ),
-        SizedBox(height: responsive.scale(12.482841491699219)),
+        SizedBox(height: responsive.s(12.482841491699219)),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
               decoration: BoxDecoration(
                 color: theme.colors.surfaceContainer,
-                borderRadius: BorderRadius.circular(responsive.scale(1000)),
+                borderRadius: BorderRadius.circular(responsive.s(1000)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -201,7 +201,7 @@ class _ProductPageCommentCard extends StatelessWidget {
                     '${comment.helpfulCount}',
                     style: theme.textStyles.count.copyWith(
                       color: theme.colors.textMid,
-                      fontSize: responsive.scaleFontSize(theme.textStyles.count.fontSize ?? 14),
+                      fontSize: responsive.sFont(theme.textStyles.count.fontSize ?? 14),
                     ),
                   ),
                   ProductPageIconBubble(
@@ -215,7 +215,7 @@ class _ProductPageCommentCard extends StatelessWidget {
               comment.timeText,
               style: theme.textStyles.timestamp.copyWith(
                 color: theme.colors.textSecondary,
-                fontSize: responsive.scaleFontSize(theme.textStyles.timestamp.fontSize ?? 12),
+                fontSize: responsive.sFont(theme.textStyles.timestamp.fontSize ?? 12),
               ),
             ),
           ],
@@ -240,19 +240,19 @@ class _ProductPageCommentComposer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final avatarPath = avatarAssetPath;
 
     return Row(
       children: [
         Container(
-          width: responsive.scale(64),
-          height: responsive.scale(64),
+          width: responsive.s(64),
+          height: responsive.s(64),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
               color: theme.colors.brandBrightGreen.withOpacity(0.4),
-              width: responsive.scale(1.6),
+              width: responsive.s(1.6),
             ),
           ),
           child: ClipOval(
@@ -262,25 +262,25 @@ class _ProductPageCommentComposer extends StatelessWidget {
                     color: theme.colors.surfaceContainer,
                     child: Icon(
                       Icons.person_outline,
-                      size: responsive.scale(28),
+                      size: responsive.s(28),
                       color: theme.colors.textSecondary,
                     ),
                   ),
           ),
         ),
-        SizedBox(width: responsive.scale(12)),
+        SizedBox(width: responsive.s(12)),
         Expanded(
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: responsive.scale(232)),
+            constraints: BoxConstraints(maxWidth: responsive.s(232)),
             child: SizedBox(
-              height: responsive.scale(56),
+              height: responsive.s(56),
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: theme.colors.surfaceContainer,
-                  borderRadius: BorderRadius.circular(responsive.scale(16)),
+                  borderRadius: BorderRadius.circular(responsive.s(16)),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+                  padding: EdgeInsets.symmetric(horizontal: responsive.s(16)),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -288,7 +288,7 @@ class _ProductPageCommentComposer extends StatelessWidget {
                       textAlign: TextAlign.left,
                       style: theme.textStyles.commentPlaceholder.copyWith(
                         color: theme.colors.textSecondary,
-                        fontSize: responsive.scaleFontSize(
+                        fontSize: responsive.sFont(
                           theme.textStyles.commentPlaceholder.fontSize ?? 14,
                         ),
                       ),
@@ -301,10 +301,10 @@ class _ProductPageCommentComposer extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: responsive.scale(11)),
+        SizedBox(width: responsive.s(11)),
         SizedBox(
-          width: responsive.scale(44),
-          height: responsive.scale(44),
+          width: responsive.s(44),
+          height: responsive.s(44),
           child: Material(
             color: theme.colors.brandDarkGreen,
             shape: const CircleBorder(),
@@ -317,8 +317,8 @@ class _ProductPageCommentComposer extends StatelessWidget {
               child: Center(
                 child: SvgPicture.asset(
                   Assets.icons.arrowIcon.path,
-                  width: responsive.scale(20),
-                  height: responsive.scale(20),
+                  width: responsive.s(20),
+                  height: responsive.s(20),
                   colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                 ),
               ),

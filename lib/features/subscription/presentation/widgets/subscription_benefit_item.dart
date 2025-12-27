@@ -22,7 +22,7 @@ class SubscriptionBenefitItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final theme = Theme.of(context);
 
     return Row(
@@ -31,15 +31,15 @@ class SubscriptionBenefitItem extends StatelessWidget {
         // Tick icon
         Icon(
           Icons.check_circle,
-          size: responsive.scale(16),
+          size: responsive.s(16),
           color: const Color(0xFF00D9A3), // Bright green from design
         ),
-        SizedBox(width: responsive.scale(8)), // Reduced spacing from 12 to 8
+        SizedBox(width: responsive.s(8)), // Reduced spacing from 12 to 8
         // Benefit text
         Text(
           text,
           style: AppTypography.bodyMedium.copyWith(
-            fontSize: responsive.scaleFontSize(13, minSize: 11), // Slightly smaller
+            fontSize: responsive.sFont(13, minSize: 11), // Slightly smaller
             color: theme.colorScheme.onSurface,
             fontWeight: FontWeight.w400,
             height: 1.25,

@@ -25,7 +25,7 @@ class NotificationsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final naTheme = Theme.of(context).extension<NotificationsAlertsTheme>()!;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final showDealAlerts = ref.watch(notificationsFilterProvider);
 
     return Scaffold(
@@ -45,7 +45,7 @@ class NotificationsScreen extends ConsumerWidget {
                 // Scrollable content
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: responsive.scalePadding(const EdgeInsets.all(16)),
+                    padding: responsive.sPadding(const EdgeInsets.all(16)),
                     child: showDealAlerts
                         ? const DealAlertsSection()
                         : const SystemNotificationsSection(),

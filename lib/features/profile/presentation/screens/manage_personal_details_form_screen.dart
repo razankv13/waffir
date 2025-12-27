@@ -27,7 +27,7 @@ class ManagePersonalDetailsFormScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     // Watch profile state
     final profileAsync = ref.watch(profileControllerProvider);
@@ -96,19 +96,19 @@ class ManagePersonalDetailsFormScreen extends HookConsumerWidget {
     final bottomInset = MediaQuery.paddingOf(context).bottom;
 
     // Figma: back row padding top = 64. On iOS, 64 ~ status bar (44) + 20.
-    final headerTopPadding = topInset + responsive.scale(20);
+    final headerTopPadding = topInset + responsive.s(20);
 
     // Figma root padding bottom = 120.
-    final bottomPadding = responsive.scale(120) + bottomInset;
+    final bottomPadding = responsive.s(120) + bottomInset;
 
-    final horizontalPadding = responsive.scale(16);
+    final horizontalPadding = responsive.s(16);
 
-    final fieldHeight = responsive.scaleWithRange(56, min: 52, max: 64);
-    final fieldRadius = responsive.scaleBorderRadius(BorderRadius.circular(16));
+    final fieldHeight = responsive.sConstrained(56, min: 52, max: 64);
+    final fieldRadius = responsive.sBorderRadius(BorderRadius.circular(16));
 
     final titleStyle = TextStyle(
       fontFamily: 'Parkinsans',
-      fontSize: responsive.scaleFontSize(16, minSize: 14),
+      fontSize: responsive.sFont(16, minSize: 14),
       fontWeight: FontWeight.w500,
       height: 1.15,
       color: colorScheme.onSurface,
@@ -116,7 +116,7 @@ class ManagePersonalDetailsFormScreen extends HookConsumerWidget {
 
     final fieldTextStyle = TextStyle(
       fontFamily: 'Parkinsans',
-      fontSize: responsive.scaleFontSize(16, minSize: 14),
+      fontSize: responsive.sFont(16, minSize: 14),
       fontWeight: FontWeight.w500,
       height: 1.15,
       color: colorScheme.onSurface,
@@ -140,19 +140,19 @@ class ManagePersonalDetailsFormScreen extends HookConsumerWidget {
 
           // Blurred shape (Figma: x=-40, y=-85.54, w=467.78, h=394.6, blur=100)
           Positioned(
-            left: responsive.scale(-40),
-            top: responsive.scale(-85.54),
+            left: responsive.s(-40),
+            top: responsive.s(-85.54),
             child: ImageFiltered(
               imageFilter: ImageFilter.blur(
-                sigmaX: responsive.scale(100),
-                sigmaY: responsive.scale(100),
+                sigmaX: responsive.s(100),
+                sigmaY: responsive.s(100),
                 tileMode: TileMode.decal,
               ),
               child: Container(
-                width: responsive.scale(467.78),
-                height: responsive.scale(394.6),
+                width: responsive.s(467.78),
+                height: responsive.s(394.6),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(responsive.scale(200)),
+                  borderRadius: BorderRadius.circular(responsive.s(200)),
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -176,19 +176,19 @@ class ManagePersonalDetailsFormScreen extends HookConsumerWidget {
                 children: [
                   // Back button row
                   Padding(
-                    padding: responsive.scalePadding(
+                    padding: responsive.sPadding(
                       EdgeInsets.only(left: 16, right: 16, top: headerTopPadding),
                     ),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: WaffirBackButton(
-                        size: responsive.scale(44),
+                        size: responsive.s(44),
                         onTap: () => context.pop(),
                       ),
                     ),
                   ),
 
-                  SizedBox(height: responsive.scale(32)),
+                  SizedBox(height: responsive.s(32)),
 
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -196,7 +196,7 @@ class ManagePersonalDetailsFormScreen extends HookConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(LocaleKeys.profile.myAccount.managePersonalDetails.tr(), style: titleStyle),
-                        SizedBox(height: responsive.scale(24)),
+                        SizedBox(height: responsive.s(24)),
 
                         // Fields (gap 8)
                         _FilledClearField(
@@ -206,7 +206,7 @@ class ManagePersonalDetailsFormScreen extends HookConsumerWidget {
                           fillColor: colorScheme.surfaceContainerHighest,
                           textStyle: fieldTextStyle,
                         ),
-                        SizedBox(height: responsive.scale(8)),
+                        SizedBox(height: responsive.s(8)),
                         _FilledClearField(
                           controller: emailController,
                           height: fieldHeight,
@@ -216,7 +216,7 @@ class ManagePersonalDetailsFormScreen extends HookConsumerWidget {
                           keyboardType: TextInputType.emailAddress,
                           enabled: false, // Email is not editable
                         ),
-                        SizedBox(height: responsive.scale(8)),
+                        SizedBox(height: responsive.s(8)),
                         _FilledClearField(
                           controller: phoneController,
                           height: fieldHeight,
@@ -233,20 +233,20 @@ class ManagePersonalDetailsFormScreen extends HookConsumerWidget {
                   const Spacer(),
 
                   Padding(
-                    padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
+                    padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16)),
                     child: Center(
                       child: SizedBox(
-                        width: responsive.scale(330),
-                        height: responsive.scale(48),
+                        width: responsive.s(330),
+                        height: responsive.s(48),
                         child: AppButton.primary(
                           onPressed: isSaving.value ? null : save,
                           isLoading: isSaving.value,
-                          borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
+                          borderRadius: responsive.sBorderRadius(BorderRadius.circular(30)),
                           child: Text(
                             LocaleKeys.buttons.save.tr(),
                             style: theme.textTheme.labelLarge?.copyWith(
                               fontFamily: 'Parkinsans',
-                              fontSize: responsive.scaleFontSize(14, minSize: 12),
+                              fontSize: responsive.sFont(14, minSize: 12),
                               fontWeight: FontWeight.w600,
                               height: 1.0,
                               color: colorScheme.onPrimary,
@@ -287,7 +287,7 @@ class _FilledClearField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     final closeBg = const Color(0xFF595959); // Figma fill_ERW5KG
@@ -298,7 +298,7 @@ class _FilledClearField extends StatelessWidget {
         color: enabled ? fillColor : fillColor.withValues(alpha: 0.5),
         borderRadius: borderRadius,
       ),
-      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
+      padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16)),
       child: Row(
         children: [
           Expanded(
@@ -322,18 +322,18 @@ class _FilledClearField extends StatelessWidget {
             ),
           ),
           if (enabled) ...[
-            SizedBox(width: responsive.scale(12)),
+            SizedBox(width: responsive.s(12)),
             GestureDetector(
               onTap: controller.clear,
               child: Container(
-                width: responsive.scale(24),
-                height: responsive.scale(24),
-                padding: responsive.scalePadding(const EdgeInsets.all(4)),
+                width: responsive.s(24),
+                height: responsive.s(24),
+                padding: responsive.sPadding(const EdgeInsets.all(4)),
                 decoration: BoxDecoration(color: closeBg, shape: BoxShape.circle),
                 alignment: Alignment.center,
                 child: Icon(
                   Icons.close,
-                  size: responsive.scaleWithRange(16, min: 14, max: 18),
+                  size: responsive.sConstrained(16, min: 14, max: 18),
                   color: colorScheme.surface,
                 ),
               ),

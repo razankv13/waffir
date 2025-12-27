@@ -20,7 +20,7 @@ class ProductPageBottomCtaOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Container(
       decoration: BoxDecoration(
@@ -28,23 +28,23 @@ class ProductPageBottomCtaOverlay extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsets.only(
-          left: responsive.scale(16),
-          right: responsive.scale(16),
-          bottom: responsive.scale(48),
+          left: responsive.s(16),
+          right: responsive.s(16),
+          bottom: responsive.s(48),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             SizedBox(
-              width: responsive.scale(247),
-              height: responsive.scale(48),
+              width: responsive.s(247),
+              height: responsive.s(48),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colors.brandDarkGreen,
                   foregroundColor: theme.colors.background,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(responsive.scale(30)),
+                    borderRadius: BorderRadius.circular(responsive.s(30)),
                   ),
                   elevation: 0,
                   padding: EdgeInsets.zero,
@@ -58,29 +58,29 @@ class ProductPageBottomCtaOverlay extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: theme.textStyles.cta.copyWith(
                     color: theme.colors.background,
-                    fontSize: responsive.scaleFontSize(theme.textStyles.cta.fontSize ?? 14, minSize: 10),
+                    fontSize: responsive.sFont(theme.textStyles.cta.fontSize ?? 14, minSize: 10),
                   ),
                 ),
               ),
             ),
-            SizedBox(width: responsive.scale(16)),
+            SizedBox(width: responsive.s(16)),
             GestureDetector(
               onTap: () {
                 HapticFeedback.lightImpact();
                 onShareTap();
               },
               child: Container(
-                width: responsive.scale(44),
-                height: responsive.scale(44),
+                width: responsive.s(44),
+                height: responsive.s(44),
                 decoration: BoxDecoration(
                   color: theme.colors.brandDarkGreen,
-                  borderRadius: BorderRadius.circular(responsive.scale(1000)),
+                  borderRadius: BorderRadius.circular(responsive.s(1000)),
                 ),
                 child: Center(
                   child: SvgPicture.asset(
                     'assets/icons/product_page/share_ios.svg',
-                    width: responsive.scale(13.33),
-                    height: responsive.scale(16.67),
+                    width: responsive.s(13.33),
+                    height: responsive.s(16.67),
                     colorFilter: ColorFilter.mode(theme.colors.background, BlendMode.srcIn),
                   ),
                 ),

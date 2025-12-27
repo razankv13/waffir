@@ -15,7 +15,7 @@ class CatalogSearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return TextField(
@@ -25,7 +25,7 @@ class CatalogSearchField extends StatelessWidget {
         filled: true,
         fillColor: colorScheme.surfaceContainerHighest,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(responsive.scale(12)),
+          borderRadius: BorderRadius.circular(responsive.s(12)),
           borderSide: BorderSide.none,
         ),
         prefixIcon: const Icon(Icons.search),

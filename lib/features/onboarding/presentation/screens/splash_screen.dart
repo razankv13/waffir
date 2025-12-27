@@ -23,7 +23,7 @@ class SplashScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     final animationController = useAnimationController(
       duration: const Duration(milliseconds: 1500),
@@ -77,7 +77,7 @@ class SplashScreen extends HookConsumerWidget {
           builder: (dialogContext) {
             final theme = Theme.of(dialogContext);
             final colorScheme = theme.colorScheme;
-            final responsive = dialogContext.responsive;
+            final responsive = dialogContext.rs;
             return AlertDialog(
               title: Text(LocaleKeys.onboarding.familyInvite.title.tr()),
               content: Text(
@@ -94,7 +94,7 @@ class SplashScreen extends HookConsumerWidget {
                 FilledButton(
                   onPressed: () => Navigator.of(dialogContext).pop('accept'),
                   style: FilledButton.styleFrom(
-                    padding: responsive.scalePadding(
+                    padding: responsive.sPadding(
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
                   ),
@@ -268,13 +268,13 @@ class SplashScreen extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildLogo(context),
-                SizedBox(height: responsive.scale(40)),
+                SizedBox(height: responsive.s(40)),
                 _buildAppName(context),
                 if (isAuthenticated && bootstrap.isLoading) ...[
-                  SizedBox(height: responsive.scale(24)),
+                  SizedBox(height: responsive.s(24)),
                   CircularProgressIndicator(color: colorScheme.secondary),
                   if (bootstrapTimeoutReached.value) ...[
-                    SizedBox(height: responsive.scale(16)),
+                    SizedBox(height: responsive.s(16)),
                     Text(
                       LocaleKeys.onboarding.splash.takingLonger.tr(),
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -285,16 +285,16 @@ class SplashScreen extends HookConsumerWidget {
                   ],
                 ],
                 if (bootstrapErrorMessage.value != null) ...[
-                  SizedBox(height: responsive.scale(24)),
+                  SizedBox(height: responsive.s(24)),
                   Padding(
-                    padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 24)),
+                    padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 24)),
                     child: Text(
                       bootstrapErrorMessage.value!,
                       style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onPrimary),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  SizedBox(height: responsive.scale(16)),
+                  SizedBox(height: responsive.s(16)),
                   FilledButton(
                     onPressed: () => ref.read(authBootstrapControllerProvider.notifier).refresh(),
                     child: Text(LocaleKeys.buttons.retry.tr()),
@@ -316,13 +316,13 @@ class SplashScreen extends HookConsumerWidget {
   }
 
   Widget _buildLogo(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     return Hero(
       tag: 'app_logo',
       child: Image.asset(
         Assets.icons.appIconNoBg.path,
-        width: responsive.scaleWithRange(220, min: 160, max: 280),
-        height: responsive.scaleWithRange(217, min: 156, max: 280),
+        width: responsive.sConstrained(220, min: 160, max: 280),
+        height: responsive.sConstrained(217, min: 156, max: 280),
         fit: BoxFit.contain,
       ),
     );
@@ -331,7 +331,7 @@ class SplashScreen extends HookConsumerWidget {
   Widget _buildAppName(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Hero(
       tag: 'app_name',
@@ -344,7 +344,7 @@ class SplashScreen extends HookConsumerWidget {
               'وفـــــــر',
               style: TextStyle(
                 fontFamily: 'Parkinsans',
-                fontSize: responsive.scaleFontSize(52, minSize: 28),
+                fontSize: responsive.sFont(52, minSize: 28),
                 fontWeight: FontWeight.w900,
                 color: colorScheme.secondary,
                 height: 1.0,
@@ -352,12 +352,12 @@ class SplashScreen extends HookConsumerWidget {
               textAlign: TextAlign.center,
               textDirection: ui.TextDirection.rtl,
             ),
-            SizedBox(height: responsive.scale(8)),
+            SizedBox(height: responsive.s(8)),
             Text(
               'waffir',
               style: TextStyle(
                 fontFamily: 'Parkinsans',
-                fontSize: responsive.scaleFontSize(40, minSize: 22),
+                fontSize: responsive.sFont(40, minSize: 22),
                 fontWeight: FontWeight.w700,
                 color: colorScheme.secondary,
                 height: 1.0,

@@ -10,21 +10,21 @@ class NotificationsBackgroundBlur extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Positioned(
-      left: responsive.scale(-40),
-      top: responsive.scale(-100),
+      left: responsive.s(-40),
+      top: responsive.s(-100),
       child: Image.asset(
         'assets/images/notifications_alerts_blur_shape.png',
-        width: responsive.scale(467.78),
-        height: responsive.scale(461.3),
+        width: responsive.s(467.78),
+        height: responsive.s(461.3),
         fit: BoxFit.contain,
         errorBuilder: (context, error, stackTrace) {
           // Fallback if image is missing
           return SizedBox(
-            width: responsive.scale(467.78),
-            height: responsive.scale(461.3),
+            width: responsive.s(467.78),
+            height: responsive.s(461.3),
           );
         },
       ),

@@ -42,10 +42,10 @@ class ProfileScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final bottomInset = MediaQuery.paddingOf(context).bottom;
-    final logoutOverlayHeight = responsive.scale(56 + 8 + 16) + bottomInset;
-    final headerHeight = responsive.scale(150) + MediaQuery.paddingOf(context).top;
+    final logoutOverlayHeight = responsive.s(56 + 8 + 16) + bottomInset;
+    final headerHeight = responsive.s(150) + MediaQuery.paddingOf(context).top;
 
     // Watch profile state
     final profileAsync = ref.watch(profileControllerProvider);
@@ -75,28 +75,28 @@ class ProfileScreen extends HookConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => Center(
           child: Padding(
-            padding: responsive.scalePadding(const EdgeInsets.all(24)),
+            padding: responsive.sPadding(const EdgeInsets.all(24)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.error_outline,
-                  size: responsive.scale(48),
+                  size: responsive.s(48),
                   color: Theme.of(context).colorScheme.error,
                 ),
-                SizedBox(height: responsive.scale(16)),
+                SizedBox(height: responsive.s(16)),
                 Text(
                   'Failed to load profile',
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: responsive.scale(8)),
+                SizedBox(height: responsive.s(8)),
                 Text(
                   error.toString(),
                   style: Theme.of(context).textTheme.bodySmall,
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: responsive.scale(24)),
+                SizedBox(height: responsive.s(24)),
                 ElevatedButton(
                   onPressed: () => ref.read(profileControllerProvider.notifier).refresh(),
                   child: const Text('Retry'),
@@ -139,7 +139,7 @@ class ProfileScreen extends HookConsumerWidget {
                   },
                   body: BlurryEdgeListView.builder(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: responsive.scalePadding(
+                    padding: responsive.sPadding(
                       EdgeInsets.only(
                         left: 16,
                         right: 16,
@@ -160,7 +160,7 @@ class ProfileScreen extends HookConsumerWidget {
                             },
                           );
                         case 1:
-                          return SizedBox(height: responsive.scale(24));
+                          return SizedBox(height: responsive.s(24));
                         case 2:
                           return ProfileMenuSection(
                             onPersonalDetailsTap: () {
@@ -186,7 +186,7 @@ class ProfileScreen extends HookConsumerWidget {
                             },
                           );
                         case 3:
-                          return SizedBox(height: responsive.scale(24));
+                          return SizedBox(height: responsive.s(24));
                         default:
                           return const SizedBox.shrink();
                       }
@@ -201,7 +201,7 @@ class ProfileScreen extends HookConsumerWidget {
                 right: 0,
                 bottom: 0,
                 child: ProfileLogoutButton(
-                  onLogoutTap: () => ProfileDialogs.showSignOutDialog(context),
+                  onLogoutTap: () => ProfileDialogs.showSignOutDialog(context, ref),
                 ),
               ),
             ],

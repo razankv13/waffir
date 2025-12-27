@@ -29,7 +29,7 @@ class HelpCenterScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Scaffold(
       body: Stack(
@@ -45,15 +45,15 @@ class HelpCenterScreen extends HookConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    WaffirBackButton(size: responsive.scale(44)),
-                    SizedBox(height: responsive.scale(16)),
+                    WaffirBackButton(size: responsive.s(44)),
+                    SizedBox(height: responsive.s(16)),
                     Padding(
-                      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
+                      padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16)),
                       child: Text(
                         LocaleKeys.helpCenter.title.tr(),
                         style: textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
-                          fontSize: responsive.scaleFontSize(20),
+                          fontSize: responsive.sFont(20),
                         ),
                       ),
                     ),
@@ -64,7 +64,7 @@ class HelpCenterScreen extends HookConsumerWidget {
               // Scrollable content
               Expanded(
                 child: SingleChildScrollView(
-                  padding: responsive.scalePadding(
+                  padding: responsive.sPadding(
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
                   ),
                   child: Column(
@@ -73,7 +73,7 @@ class HelpCenterScreen extends HookConsumerWidget {
                       // Customer Care section
                       _buildCustomerCareSection(context),
 
-                      SizedBox(height: responsive.scale(32)),
+                      SizedBox(height: responsive.s(32)),
 
                       // Useful Resources section
                       _buildUsefulResourcesSection(context),
@@ -90,7 +90,7 @@ class HelpCenterScreen extends HookConsumerWidget {
 
   /// Builds the Customer Care section with contact cards
   Widget _buildCustomerCareSection(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +98,7 @@ class HelpCenterScreen extends HookConsumerWidget {
         // Section header
         ProfileSectionHeader(
           title: LocaleKeys.helpCenter.customerCare.tr(),
-          padding: EdgeInsets.only(bottom: responsive.scale(16)),
+          padding: EdgeInsets.only(bottom: responsive.s(16)),
         ),
 
         // Contact cards row
@@ -108,47 +108,47 @@ class HelpCenterScreen extends HookConsumerWidget {
             ContactCard(
               icon: SvgPicture.asset(
                 Assets.icons.social.icWhatsapp.path,
-                width: responsive.scale(27),
-                height: responsive.scale(27),
+                width: responsive.s(27),
+                height: responsive.s(27),
               ),
               label: LocaleKeys.helpCenter.whatsapp.tr(),
               onTap: () => _launchUrl(context, _whatsappUrl),
             ),
 
-            SizedBox(width: responsive.scale(12)),
+            SizedBox(width: responsive.s(12)),
 
             // Facebook
             ContactCard(
               icon: SvgPicture.asset(
                 Assets.icons.social.icFacebook.path,
-                width: responsive.scale(27),
-                height: responsive.scale(27),
+                width: responsive.s(27),
+                height: responsive.s(27),
               ),
               label: LocaleKeys.helpCenter.facebook.tr(),
               onTap: () => _launchUrl(context, _facebookUrl),
             ),
 
-            SizedBox(width: responsive.scale(12)),
+            SizedBox(width: responsive.s(12)),
 
             // Telegram
             ContactCard(
               icon: Image.asset(
                 Assets.icons.social.icTelegram.path,
-                width: responsive.scale(27),
-                height: responsive.scale(27),
+                width: responsive.s(27),
+                height: responsive.s(27),
               ),
               label: LocaleKeys.helpCenter.telegram.tr(),
               onTap: () => _launchUrl(context, _telegramUrl),
             ),
 
-            SizedBox(width: responsive.scale(12)),
+            SizedBox(width: responsive.s(12)),
 
             // Email
             ContactCard(
               icon: SvgPicture.asset(
                 Assets.icons.social.icEmail.path,
-                width: responsive.scale(27),
-                height: responsive.scale(27),
+                width: responsive.s(27),
+                height: responsive.s(27),
               ),
               label: LocaleKeys.helpCenter.email.tr(),
               onTap: () => _launchUrl(context, _emailUrl),
@@ -161,7 +161,7 @@ class HelpCenterScreen extends HookConsumerWidget {
 
   /// Builds the Useful Resources section with menu items
   Widget _buildUsefulResourcesSection(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,7 +169,7 @@ class HelpCenterScreen extends HookConsumerWidget {
         // Section header
         ProfileSectionHeader(
           title: LocaleKeys.helpCenter.usefulResources.tr(),
-          padding: EdgeInsets.only(bottom: responsive.scale(16)),
+          padding: EdgeInsets.only(bottom: responsive.s(16)),
         ),
 
         // Menu items (no card wrapper, no icons - matching Figma)

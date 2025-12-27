@@ -48,7 +48,7 @@ class DealDetailView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final isTermsExpanded = useState(false);
 
     final hasRefUrl = (refUrl ?? '').trim().isNotEmpty;
@@ -59,7 +59,7 @@ class DealDetailView extends HookWidget {
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               SliverToBoxAdapter(child: DealHeroImage(imageUrl: imageUrl)),
-              SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+              SliverToBoxAdapter(child: SizedBox(height: responsive.s(6))),
             ];
           },
           body: CustomScrollView(
@@ -67,13 +67,13 @@ class DealDetailView extends HookWidget {
               // Title section
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: responsive.scale(12)),
+                  padding: EdgeInsets.symmetric(vertical: responsive.s(12)),
                   child: DealTitleSection(title: title, subtitle: subtitle.isNotEmpty ? subtitle : null),
                 ),
               ),
               // Section divider
               const SliverToBoxAdapter(child: StoreSectionDivider()),
-              SliverToBoxAdapter(child: SizedBox(height: responsive.scale(12))),
+              SliverToBoxAdapter(child: SizedBox(height: responsive.s(12))),
 
               // Price section (for product deals)
               if (price != null) ...[
@@ -84,17 +84,17 @@ class DealDetailView extends HookWidget {
                     discountPercent: discountPercent,
                   ),
                 ),
-                SliverToBoxAdapter(child: SizedBox(height: responsive.scale(12))),
+                SliverToBoxAdapter(child: SizedBox(height: responsive.s(12))),
                 const SliverToBoxAdapter(child: StoreSectionDivider()),
-                SliverToBoxAdapter(child: SizedBox(height: responsive.scale(12))),
+                SliverToBoxAdapter(child: SizedBox(height: responsive.s(12))),
               ],
 
               // Description section
               if (description.isNotEmpty) ...[
                 SliverToBoxAdapter(child: DealDescriptionSection(description: description)),
-                SliverToBoxAdapter(child: SizedBox(height: responsive.scale(12))),
+                SliverToBoxAdapter(child: SizedBox(height: responsive.s(12))),
                 const SliverToBoxAdapter(child: StoreSectionDivider()),
-                SliverToBoxAdapter(child: SizedBox(height: responsive.scale(12))),
+                SliverToBoxAdapter(child: SizedBox(height: responsive.s(12))),
               ],
 
               // Promo code section
@@ -106,9 +106,9 @@ class DealDetailView extends HookWidget {
                     dealType: dealType.routeValue,
                   ),
                 ),
-                SliverToBoxAdapter(child: SizedBox(height: responsive.scale(12))),
+                SliverToBoxAdapter(child: SizedBox(height: responsive.s(12))),
                 const SliverToBoxAdapter(child: StoreSectionDivider()),
-                SliverToBoxAdapter(child: SizedBox(height: responsive.scale(12))),
+                SliverToBoxAdapter(child: SizedBox(height: responsive.s(12))),
               ],
 
               // Terms section
@@ -122,9 +122,9 @@ class DealDetailView extends HookWidget {
                     dealType: dealType.routeValue,
                   ),
                 ),
-                SliverToBoxAdapter(child: SizedBox(height: responsive.scale(12))),
+                SliverToBoxAdapter(child: SizedBox(height: responsive.s(12))),
                 const SliverToBoxAdapter(child: StoreSectionDivider()),
-                SliverToBoxAdapter(child: SizedBox(height: responsive.scale(12))),
+                SliverToBoxAdapter(child: SizedBox(height: responsive.s(12))),
               ],
 
               // Reference URL section
@@ -136,13 +136,13 @@ class DealDetailView extends HookWidget {
                     dealType: dealType.routeValue,
                   ),
                 ),
-                SliverToBoxAdapter(child: SizedBox(height: responsive.scale(12))),
+                SliverToBoxAdapter(child: SizedBox(height: responsive.s(12))),
               ],
 
               // Bottom padding for CTA overlay
               SliverToBoxAdapter(
                 child: SizedBox(
-                  height: responsive.scale(96) + responsive.bottomSafeArea + responsive.scale(32),
+                  height: responsive.s(96) + responsive.bottomSafeArea + responsive.s(32),
                 ),
               ),
             ],

@@ -23,16 +23,16 @@ class SubscriptionTabSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final monthlyLabel = LocaleKeys.subscription.management.tabs.monthly.tr();
     final yearlyLabel = LocaleKeys.subscription.management.tabs.yearlySaveMore.tr();
 
     return Container(
-      height: responsive.scale(64),
-      padding: responsive.scalePadding(const EdgeInsets.all(4)),
+      height: responsive.s(64),
+      padding: responsive.sPadding(const EdgeInsets.all(4)),
       decoration: BoxDecoration(
         color: const Color(0xFF151515), // Figma Container fill
-        borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(9999)),
+        borderRadius: responsive.sBorderRadius(BorderRadius.circular(9999)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -41,13 +41,13 @@ class SubscriptionTabSwitcher extends StatelessWidget {
             label: monthlyLabel,
             isSelected: selectedTab == SubscriptionPeriod.monthly,
             onTap: () => onTabChanged(SubscriptionPeriod.monthly),
-            width: responsive.scale(120),
+            width: responsive.s(120),
           ),
           _TabItem(
             label: yearlyLabel,
             isSelected: selectedTab == SubscriptionPeriod.yearly,
             onTap: () => onTabChanged(SubscriptionPeriod.yearly),
-            width: responsive.scale(120),
+            width: responsive.s(120),
           ),
         ],
       ),
@@ -70,7 +70,7 @@ class _TabItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     // Removed unused theme dependency as we use constant colors from Figma
 
     return GestureDetector(
@@ -81,7 +81,7 @@ class _TabItem extends StatelessWidget {
         width: width,
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF0F352D) : Colors.transparent,
-          borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(9999)),
+          borderRadius: responsive.sBorderRadius(BorderRadius.circular(9999)),
         ),
         alignment: Alignment.center,
         child: Text(
@@ -91,7 +91,7 @@ class _TabItem extends StatelessWidget {
           overflow: TextOverflow.visible,
           style: AppTypography.labelLarge.copyWith(
             fontFamily: 'Parkinsans', // Explicitly use Parkinsans
-            fontSize: responsive.scaleFontSize(14, minSize: 12),
+            fontSize: responsive.sFont(14, minSize: 12),
             fontWeight: FontWeight.w500,
             color: isSelected ? const Color(0xFF00FF88) : Colors.white,
             height: 1.5,

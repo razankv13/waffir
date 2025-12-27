@@ -34,7 +34,7 @@ class CreditCardsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final searchController = useTextEditingController();
     final languageCode = ref.watch(localeProvider).languageCode;
 
@@ -44,13 +44,13 @@ class CreditCardsScreen extends HookConsumerWidget {
 
     final headerTitleStyle = theme.textTheme.titleLarge?.copyWith(
       fontWeight: FontWeight.w700,
-      fontSize: responsive.scaleFontSize(18, minSize: 16),
+      fontSize: responsive.sFont(18, minSize: 16),
       height: 1.0,
       color: theme.colorScheme.onSurface,
     );
     final headerSubtitleStyle = theme.textTheme.bodyLarge?.copyWith(
       fontWeight: FontWeight.w400,
-      fontSize: responsive.scaleFontSize(16, minSize: 14),
+      fontSize: responsive.sFont(16, minSize: 14),
       height: 1.15,
       color: theme.colorScheme.onSurface,
     );
@@ -79,7 +79,7 @@ class CreditCardsScreen extends HookConsumerWidget {
       return Column(
         children: [
           Text(title, textAlign: TextAlign.center, style: headerTitleStyle),
-          SizedBox(height: responsive.scale(16)),
+          SizedBox(height: responsive.s(16)),
           Text(subtitle, textAlign: TextAlign.center, style: headerSubtitleStyle),
         ],
       );
@@ -92,25 +92,25 @@ class CreditCardsScreen extends HookConsumerWidget {
           children: [
             Icon(
               Icons.credit_card_outlined,
-              size: responsive.scale(80),
+              size: responsive.s(80),
               color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
             ),
-            SizedBox(height: responsive.scale(16)),
+            SizedBox(height: responsive.s(16)),
             Text(
               title,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                fontSize: responsive.scaleFontSize(18, minSize: 16),
+                fontSize: responsive.sFont(18, minSize: 16),
                 color: theme.colorScheme.onSurface,
               ),
             ),
-            SizedBox(height: responsive.scale(8)),
+            SizedBox(height: responsive.s(8)),
             Text(
               description,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w400,
-                fontSize: responsive.scaleFontSize(14, minSize: 12),
+                fontSize: responsive.sFont(14, minSize: 12),
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
@@ -125,11 +125,11 @@ class CreditCardsScreen extends HookConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: responsive.scale(48),
-              height: responsive.scale(48),
+              width: responsive.s(48),
+              height: responsive.s(48),
               child: CircularProgressIndicator(strokeWidth: 3, color: theme.colorScheme.primary),
             ),
-            SizedBox(height: responsive.scale(16)),
+            SizedBox(height: responsive.s(16)),
             Text(
               LocaleKeys.creditCards.loading.tr(),
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -146,8 +146,8 @@ class CreditCardsScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: responsive.scale(64), color: theme.colorScheme.error),
-            SizedBox(height: responsive.scale(16)),
+            Icon(Icons.error_outline, size: responsive.s(64), color: theme.colorScheme.error),
+            SizedBox(height: responsive.s(16)),
             Text(
               LocaleKeys.creditCards.error.title.tr(),
               style: theme.textTheme.titleMedium?.copyWith(
@@ -155,7 +155,7 @@ class CreditCardsScreen extends HookConsumerWidget {
                 color: theme.colorScheme.onSurface,
               ),
             ),
-            SizedBox(height: responsive.scale(8)),
+            SizedBox(height: responsive.s(8)),
             Text(
               LocaleKeys.creditCards.error.description.tr(),
               textAlign: TextAlign.center,
@@ -163,7 +163,7 @@ class CreditCardsScreen extends HookConsumerWidget {
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
-            SizedBox(height: responsive.scale(24)),
+            SizedBox(height: responsive.s(24)),
             FilledButton.tonal(
               onPressed: () => ref.invalidate(bankCardsControllerProvider),
               child: Text(LocaleKeys.creditCards.error.retry.tr()),
@@ -189,11 +189,11 @@ class CreditCardsScreen extends HookConsumerWidget {
             child: NestedScrollView(
               floatHeaderSlivers: true,
               headerSliverBuilder: (context, _) {
-                final horizontalPadding = responsive.scale(16);
+                final horizontalPadding = responsive.s(16);
                 final maxHeaderWidth = MediaQuery.sizeOf(context).width - (horizontalPadding * 2);
 
                 // Header: top spacer + title/subtitle block.
-                final topSpacer = responsive.scale(90);
+                final topSpacer = responsive.s(90);
 
                 final titlePainter = TextPainter(
                   text: TextSpan(text: headerTitle, style: headerTitleStyle),
@@ -210,11 +210,11 @@ class CreditCardsScreen extends HookConsumerWidget {
                 )..layout(maxWidth: maxHeaderWidth);
 
                 final headerBodyHeight =
-                    titlePainter.height + responsive.scale(16) + subtitlePainter.height;
+                    titlePainter.height + responsive.s(16) + subtitlePainter.height;
                 final headerHeight = topSpacer + headerBodyHeight;
 
                 // Search: pinned, with small top spacing.
-                final searchTopSpacing = responsive.scale(12);
+                final searchTopSpacing = responsive.s(12);
                 const searchHeight = 68.0;
                 final pinnedSearchHeight = searchTopSpacing + searchHeight;
 
@@ -267,10 +267,10 @@ class CreditCardsScreen extends HookConsumerWidget {
                     return ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.only(
-                        left: responsive.scale(16),
-                        right: responsive.scale(16),
-                        top: responsive.scale(32),
-                        bottom: responsive.scale(120),
+                        left: responsive.s(16),
+                        right: responsive.s(16),
+                        top: responsive.s(32),
+                        bottom: responsive.s(120),
                       ),
                       children: [buildEmptyState(emptyTitle, emptyDescription)],
                     );
@@ -278,14 +278,14 @@ class CreditCardsScreen extends HookConsumerWidget {
 
                   return ListView.separated(
                     padding: EdgeInsets.only(
-                      left: responsive.scale(16),
-                      right: responsive.scale(16),
-                      top: responsive.scale(32),
-                      bottom: responsive.scale(120),
+                      left: responsive.s(16),
+                      right: responsive.s(16),
+                      top: responsive.s(32),
+                      bottom: responsive.s(120),
                     ),
                     physics: const BouncingScrollPhysics(),
                     itemCount: filteredCards.length,
-                    separatorBuilder: (context, index) => SizedBox(height: responsive.scale(16)),
+                    separatorBuilder: (context, index) => SizedBox(height: responsive.s(16)),
                     itemBuilder: (context, index) {
                       final card = filteredCards[index];
                       final isSelected = state.isSelected(card.id);
@@ -304,9 +304,9 @@ class CreditCardsScreen extends HookConsumerWidget {
           ),
           if (showBackButton)
             Positioned(
-              left: responsive.scale(16),
-              top: MediaQuery.paddingOf(context).top + responsive.scale(16),
-              child: WaffirBackButton(size: responsive.scale(44)),
+              left: responsive.s(16),
+              top: MediaQuery.paddingOf(context).top + responsive.s(16),
+              child: WaffirBackButton(size: responsive.s(44)),
             ),
           // First-time confirm button - show when user selects cards for the first time
           if (controller.isFirstTimeSelection)
@@ -315,9 +315,9 @@ class CreditCardsScreen extends HookConsumerWidget {
                 if (state.selectedCardIds.isEmpty) return const SizedBox.shrink();
 
                 return Positioned(
-                  bottom: responsive.scale(100),
-                  left: responsive.scale(16),
-                  right: responsive.scale(16),
+                  bottom: responsive.s(100),
+                  left: responsive.s(16),
+                  right: responsive.s(16),
                   child: AppButton.primary(
                     text: LocaleKeys.creditCards.confirmAndContinue.tr(),
                     width: double.infinity,
@@ -404,8 +404,8 @@ class _BankCardSelectionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final logoSize = responsive.scale(80);
-    final borderRadius = responsive.scaleBorderRadius(BorderRadius.circular(8));
+    final logoSize = responsive.s(80);
+    final borderRadius = responsive.sBorderRadius(BorderRadius.circular(8));
 
     return Row(
       children: [
@@ -420,7 +420,7 @@ class _BankCardSelectionTile extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: _buildCardImage(context, logoSize),
         ),
-        SizedBox(width: responsive.scale(12)),
+        SizedBox(width: responsive.s(12)),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -429,17 +429,17 @@ class _BankCardSelectionTile extends StatelessWidget {
                 card.localizedBankName(languageCode),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w700,
-                  fontSize: responsive.scaleFontSize(14, minSize: 12),
+                  fontSize: responsive.sFont(14, minSize: 12),
                   height: 1.0,
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              SizedBox(height: responsive.scale(4)),
+              SizedBox(height: responsive.s(4)),
               Text(
                 card.localizedName(languageCode),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
-                  fontSize: responsive.scaleFontSize(12),
+                  fontSize: responsive.sFont(12),
                   height: 1.0,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -447,7 +447,7 @@ class _BankCardSelectionTile extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(width: responsive.scale(12)),
+        SizedBox(width: responsive.s(12)),
         CustomToggleSwitch(value: isSelected, onChanged: (_) => onToggle()),
       ],
     );

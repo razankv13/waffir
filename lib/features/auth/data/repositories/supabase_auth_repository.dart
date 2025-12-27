@@ -42,9 +42,22 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   AsyncResult<AuthState> signInWithEmailAndPassword({required String email, required String password}) async {
-    return const Result.failure(
-      Failure.featureNotAvailable(message: 'Email/password auth is disabled. Use Phone (OTP) or Social login.'),
-    );
+    try {
+      AppLogger.info('🔐 Signing in with email: $email');
+      final response = await _client.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      final session = response.session ?? _client.auth.currentSession;
+      AppLogger.info('✅ Email sign-in successful');
+      return Result.success(_toDomainAuthState(event: sb.AuthChangeEvent.signedIn, session: session));
+    } on sb.AuthException catch (e) {
+      AppLogger.error('❌ Email sign-in failed: ${e.message}');
+      return Result.failure(Failure.auth(message: e.message));
+    } catch (e, stackTrace) {
+      AppLogger.error('❌ Email sign-in failed: $e');
+      return Result.failure(ExceptionToFailure.convert(e, stackTrace));
+    }
   }
 
   @override
@@ -53,9 +66,35 @@ class SupabaseAuthRepository implements AuthRepository {
     required String password,
     String? displayName,
   }) async {
-    return const Result.failure(
-      Failure.featureNotAvailable(message: 'Email/password sign up is disabled. Use Phone (OTP) or Social login.'),
-    );
+    try {
+      AppLogger.info('🔐 Creating account with email: $email');
+      final response = await _client.auth.signUp(
+        email: email,
+        password: password,
+        data: displayName != null && displayName.trim().isNotEmpty
+            ? {'full_name': displayName.trim()}
+            : null,
+      );
+
+      // Check if email confirmation is required
+      if (response.user != null && response.user!.emailConfirmedAt == null && response.session == null) {
+        AppLogger.info('📧 Email confirmation required for: $email');
+        return Result.success(AuthState.emailVerificationRequired(
+          user: _toDomainUser(response.user!),
+          message: 'Please check your email to confirm your account.',
+        ));
+      }
+
+      final session = response.session ?? _client.auth.currentSession;
+      AppLogger.info('✅ Account created successfully');
+      return Result.success(_toDomainAuthState(event: sb.AuthChangeEvent.signedIn, session: session));
+    } on sb.AuthException catch (e) {
+      AppLogger.error('❌ Account creation failed: ${e.message}');
+      return Result.failure(Failure.auth(message: e.message));
+    } catch (e, stackTrace) {
+      AppLogger.error('❌ Account creation failed: $e');
+      return Result.failure(ExceptionToFailure.convert(e, stackTrace));
+    }
   }
 
   @override
@@ -189,9 +228,18 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   AsyncResult<void> sendPasswordResetEmail({required String email}) async {
-    return const Result.failure(
-      Failure.featureNotAvailable(message: 'Email/password auth is disabled. Password reset is not available.'),
-    );
+    try {
+      AppLogger.info('🔐 Sending password reset email to: $email');
+      await _client.auth.resetPasswordForEmail(email);
+      AppLogger.info('✅ Password reset email sent');
+      return const Result.success(null);
+    } on sb.AuthException catch (e) {
+      AppLogger.error('❌ Password reset failed: ${e.message}');
+      return Result.failure(Failure.auth(message: e.message));
+    } catch (e, stackTrace) {
+      AppLogger.error('❌ Password reset failed: $e');
+      return Result.failure(ExceptionToFailure.convert(e, stackTrace));
+    }
   }
 
   @override

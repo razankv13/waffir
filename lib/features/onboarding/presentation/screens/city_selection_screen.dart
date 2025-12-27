@@ -99,7 +99,7 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final size = MediaQuery.of(context).size;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     // Responsive dimensions
     final horizontalPadding = size.width > 600 ? 32.0 : 24.0;
@@ -122,7 +122,7 @@ class _CitySelectionScreenState extends ConsumerState<CitySelectionScreen> {
             const BlurredBackground(),
             Column(
               children: [
-                if (showBackButton) WaffirBackButton(size: responsive.scale(44)),
+                if (showBackButton) WaffirBackButton(size: responsive.s(44)),
                 // Header section with gradient fade
                 _buildHeaderSection(
                   context,

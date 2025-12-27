@@ -54,13 +54,13 @@ class StoresCategoryChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return SizedBox(
-      height: responsive.scaleWithMin(71, min: 58),
+      height: responsive.s(71),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
+        padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16)),
         itemCount: categories.length,
         itemBuilder: (context, index) {
           final category = categories[index];
@@ -96,15 +96,15 @@ class _CategoryChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final filterColors = theme.extension<FilterColors>()!;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
-    final chipWidth = responsive.scaleWithMin(100, min: 88);
-    final verticalPadding = responsive.scale(8);
-    final horizontalPadding = responsive.scale(9.127);
-    final iconSize = responsive.scaleWithMin(24, min: 20);
-    final gap = responsive.scale(4);
-    final fontSize = responsive.scaleFontSize(14, minSize: 11);
-    final borderWidth = responsive.scaleWithMin(2, min: 2);
+    final chipWidth = responsive.s(100);
+    final verticalPadding = responsive.s(8);
+    final horizontalPadding = responsive.s(9.127);
+    final iconSize = responsive.s(24);
+    final gap = responsive.s(4);
+    final fontSize = responsive.sFont(14, minSize: 11);
+    final borderWidth = responsive.s(2);
 
     return GestureDetector(
       onTap: onTap,

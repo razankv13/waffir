@@ -15,17 +15,17 @@ class NotificationsSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final naTheme = Theme.of(context).extension<NotificationsAlertsTheme>()!;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Container(
-      height: responsive.scale(68),
-      padding: responsive.scalePadding(const EdgeInsets.all(12)),
+      height: responsive.s(68),
+      padding: responsive.sPadding(const EdgeInsets.all(12)),
       decoration: BoxDecoration(
         color: naTheme.background,
-        borderRadius: BorderRadius.circular(responsive.scale(16)),
+        borderRadius: BorderRadius.circular(responsive.s(16)),
         border: Border.all(
           color: naTheme.searchBorder,
-          width: responsive.scale(1),
+          width: responsive.s(1),
         ),
       ),
       child: Row(
@@ -40,14 +40,14 @@ class NotificationsSearchBar extends StatelessWidget {
                   LocaleKeys.notifications.search.label.tr(),
                   style: naTheme.searchLabelStyle.copyWith(
                     color: naTheme.textPrimary,
-                    fontSize: responsive.scaleFontSize(14, minSize: 12),
+                    fontSize: responsive.sFont(14, minSize: 12),
                   ),
                 ),
                 Text(
                   LocaleKeys.notifications.search.placeholder.tr(),
                   style: naTheme.searchPlaceholderStyle.copyWith(
                     color: naTheme.unselectedColor,
-                    fontSize: responsive.scaleFontSize(12, minSize: 10),
+                    fontSize: responsive.sFont(12, minSize: 10),
                   ),
                 ),
               ],
@@ -56,16 +56,16 @@ class NotificationsSearchBar extends StatelessWidget {
 
           // Vertical divider
           Container(
-            width: responsive.scale(1),
-            height: responsive.scale(24),
-            margin: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 8)),
+            width: responsive.s(1),
+            height: responsive.s(24),
+            margin: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 8)),
             color: naTheme.dividerColor,
           ),
 
           // Right: Arrow button
           Container(
-            width: responsive.scale(44),
-            height: responsive.scale(44),
+            width: responsive.s(44),
+            height: responsive.s(44),
             decoration: BoxDecoration(
               color: naTheme.searchButtonBackground,
               shape: BoxShape.circle,
@@ -73,8 +73,8 @@ class NotificationsSearchBar extends StatelessWidget {
             child: Center(
               child: SvgPicture.asset(
                 'assets/icons/categories/arrow_filter_icon.svg',
-                width: responsive.scale(20),
-                height: responsive.scale(20),
+                width: responsive.s(20),
+                height: responsive.s(20),
                 colorFilter: ColorFilter.mode(
                   naTheme.background, // White icon on dark background
                   BlendMode.srcIn,

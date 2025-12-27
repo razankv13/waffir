@@ -11,7 +11,7 @@ Use this skill when:
 - Converting Figma designs to Flutter
 - Creating any UI with dimensions, padding, or fonts
 - Building layouts that work on mobile, tablet, and desktop
-- Implementing device-specific variations
+- Implementing device-specific or orientation-specific variations
 
 ## Design Reference
 
@@ -19,32 +19,66 @@ Use this skill when:
 
 **Golden Rule:** NEVER hardcode pixel values. ALWAYS use ResponsiveHelper.
 
+## Setup (Required)
+
+The app must wrap `MaterialApp` with `ResponsiveScope`:
+
+```dart
+import 'package:waffir/core/utils/responsive_helper.dart';
+
+ResponsiveScope(
+  // Optional: customize config (defaults shown)
+  config: const ResponsiveConfig(
+    figmaWidth: 393,
+    figmaHeight: 852,
+    mobileBreakpoint: 600,
+    tabletBreakpoint: 900,
+    desktopBreakpoint: 1200,
+    minScaleFactor: 0.8,
+    maxScaleFactor: 1.4,
+    scalingCurve: ScalingCurve.bounded,
+  ),
+  child: MaterialApp(...),
+)
+```
+
 ## Device Breakpoints
 
-- **Mobile:** < 600px width
-- **Tablet:** 600px - 900px width
-- **Desktop:** >= 900px width
+- **Mobile:** < 900px width
+- **Tablet:** 900px - 1199px width
+- **Desktop:** >= 1200px width
+
+## Scaling Curves
+
+| Curve | Behavior |
+|-------|----------|
+| `ScalingCurve.linear` | Pure linear: `size * scaleFactor` (can be extreme) |
+| `ScalingCurve.bounded` | Clamped between `minScaleFactor` and `maxScaleFactor` (default) |
+| `ScalingCurve.diminishing` | Logarithmic scaling, gentler on large screens |
 
 ## Basic Usage
 
 ### Access ResponsiveHelper
 
 ```dart
-// Via context extension (preferred)
-final responsive = context.responsive;
+// Via context extension (preferred, shortest)
+context.rs.s(16)
+context.s(16)           // Even shorter direct access
+context.sFont(16)
+context.sHeight(16)
 
-// Or create instance
-final responsive = ResponsiveHelper(context);
+// Or get full helper
+final rs = context.rs;
+rs.s(200)
 ```
 
 ### Scale Dimensions (Most Common)
 
 ```dart
-// Scale any dimension from Figma
 Container(
-  width: context.responsive.scale(343),   // 343px from Figma
-  height: context.responsive.scale(200),
-  margin: context.responsive.scalePadding(
+  width: context.s(343),               // 343px from Figma
+  height: context.rs.sHeight(200),     // Height-based scaling
+  margin: context.rs.sPadding(
     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
   ),
 )
@@ -56,7 +90,7 @@ Container(
 Text(
   'Hello World',
   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-    fontSize: context.responsive.scaleFontSize(16, minSize: 12),
+    fontSize: context.sFont(16),  // Respects system accessibility settings
   ),
 )
 ```
@@ -64,17 +98,20 @@ Text(
 ### Scale Padding & Margins
 
 ```dart
+// Full EdgeInsets
 Padding(
-  padding: context.responsive.scalePadding(
-    const EdgeInsets.all(16),
-  ),
+  padding: context.rs.sPadding(const EdgeInsets.all(16)),
   child: child,
 )
 
-Container(
-  margin: context.responsive.scalePadding(
-    const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-  ),
+// Symmetric
+Padding(
+  padding: context.rs.sPaddingSymmetric(horizontal: 24, vertical: 16),
+)
+
+// All sides equal
+Padding(
+  padding: context.rs.sPaddingAll(16),
 )
 ```
 
@@ -83,38 +120,26 @@ Container(
 ```dart
 Container(
   decoration: BoxDecoration(
-    borderRadius: context.responsive.scaleBorderRadius(
-      BorderRadius.circular(12),
-    ),
+    borderRadius: context.rs.sBorderRadius(BorderRadius.circular(12)),
+    // Or simpler for circular:
+    borderRadius: context.rs.sBorderRadiusCircular(12),
   ),
 )
 ```
 
 ## Constrained Scaling
 
-### Minimum Size (Prevent Too Small)
+### With Min/Max Constraints
 
 ```dart
-// Element won't shrink below 80px
-final width = context.responsive.scaleWithMin(100, min: 80);
-```
+// Constrain between 80px and 400px
+final width = context.rs.sConstrained(200, min: 80, max: 400);
 
-### Maximum Size (Prevent Too Large)
+// Only minimum
+final height = context.rs.sConstrained(100, min: 80);
 
-```dart
-// Element won't grow beyond 400px
-final width = context.responsive.scaleWithMax(300, max: 400);
-```
-
-### Both Min and Max
-
-```dart
-// Constrain between 120px and 200px
-final width = context.responsive.scaleWithRange(
-  150,
-  min: 120,
-  max: 200,
-);
+// Only maximum
+final size = context.rs.sConstrained(300, max: 400);
 ```
 
 ## Device-Specific Values
@@ -123,45 +148,64 @@ final width = context.responsive.scaleWithRange(
 
 ```dart
 // Different column counts
-final columns = context.responsive.responsiveValue(
+final columns = context.rs.byDevice(
   mobile: 2,
   tablet: 3,
   desktop: 4,
 );
 
 // Different padding
-final padding = context.responsive.responsiveValue(
+final padding = context.rs.byDevice(
   mobile: 16.0,
   tablet: 24.0,
   desktop: 32.0,
 );
 ```
 
-### Different Widgets Per Device
+### Different Values Per Orientation
 
 ```dart
-context.responsive.responsiveWidget(
+final columns = context.rs.byOrientation(
+  portrait: 2,
+  landscape: 4,
+);
+```
+
+### Responsive Widgets
+
+```dart
+// Use ResponsiveLayout widget
+ResponsiveLayout(
   mobile: MobileProductGrid(),
   tablet: TabletProductGrid(),
   desktop: DesktopProductGrid(),
 )
+
+// Or OrientationLayout
+OrientationLayout(
+  portrait: PortraitView(),
+  landscape: LandscapeView(),
+)
 ```
 
-## Device Detection
+## Device & Orientation Detection
 
 ```dart
-// Check device type
-if (context.isMobile) {
-  // Mobile-specific code
-} else if (context.isTablet) {
-  // Tablet-specific code
-} else if (context.isDesktop) {
-  // Desktop-specific code
-}
+// Device type
+if (context.isMobile) { /* Mobile-specific */ }
+if (context.isTablet) { /* Tablet-specific */ }
+if (context.isDesktop) { /* Desktop-specific */ }
 
-// Screen dimensions
-final width = context.screenWidth;
-final height = context.screenHeight;
+// Orientation
+if (context.isPortrait) { /* Portrait */ }
+if (context.isLandscape) { /* Landscape */ }
+
+// Full access
+final rs = context.rs;
+rs.screenWidth
+rs.screenHeight
+rs.deviceType   // DeviceType.mobile | .tablet | .desktop
+rs.orientation  // Orientation.portrait | .landscape
 ```
 
 ## Complete Widget Example
@@ -174,38 +218,34 @@ class ProductDetailScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final rs = context.rs;
 
     return Scaffold(
       body: SingleChildScrollView(
-        padding: responsive.scalePadding(
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        ),
+        padding: rs.sPaddingSymmetric(horizontal: 16, vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Product Image
             Container(
-              height: responsive.scale(300),
+              height: rs.sHeight(300),
               decoration: BoxDecoration(
                 color: colorScheme.surfaceContainerHighest,
-                borderRadius: responsive.scaleBorderRadius(
-                  BorderRadius.circular(16),
-                ),
+                borderRadius: rs.sBorderRadiusCircular(16),
               ),
             ),
 
-            SizedBox(height: responsive.scale(24)),
+            ResponsiveGap(24),  // Scaled vertical gap
 
             // Product Title
             Text(
               'Product Name',
               style: theme.textTheme.headlineMedium?.copyWith(
-                fontSize: responsive.scaleFontSize(24, minSize: 18),
+                fontSize: rs.sFont(24),
               ),
             ),
 
-            SizedBox(height: responsive.scale(8)),
+            ResponsiveGap(8),
 
             // Price Row
             Row(
@@ -213,47 +253,23 @@ class ProductDetailScreen extends HookConsumerWidget {
                 Text(
                   '\$99.99',
                   style: theme.textTheme.titleLarge?.copyWith(
-                    fontSize: responsive.scaleFontSize(20, minSize: 16),
+                    fontSize: rs.sFont(20),
                     color: colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(width: responsive.scale(12)),
+                ResponsiveGap(12, horizontal: true),
                 Text(
                   '\$129.99',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    fontSize: responsive.scaleFontSize(14, minSize: 12),
+                    fontSize: rs.sFont(14),
                     decoration: TextDecoration.lineThrough,
                     color: colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
-
-            SizedBox(height: responsive.scale(24)),
-
-            // Description
-            Text(
-              'Product description goes here...',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontSize: responsive.scaleFontSize(14, minSize: 12),
-              ),
-            ),
           ],
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: responsive.scalePadding(
-            const EdgeInsets.all(16),
-          ),
-          child: SizedBox(
-            height: responsive.scale(56),
-            child: AppButton(
-              text: tr(LocaleKeys.addToCart),
-              onPressed: () {},
-            ),
-          ),
         ),
       ),
     );
@@ -266,15 +282,36 @@ class ProductDetailScreen extends HookConsumerWidget {
 ```dart
 GridView.builder(
   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: context.responsive.gridColumns(), // 2/3/4 based on device
-    crossAxisSpacing: context.responsive.scale(16),
-    mainAxisSpacing: context.responsive.scale(16),
+    crossAxisCount: context.rs.gridColumns(),  // 2/3/4 based on device
+    crossAxisSpacing: context.s(16),
+    mainAxisSpacing: context.s(16),
     childAspectRatio: 0.75,
   ),
-  padding: context.responsive.scalePadding(
-    const EdgeInsets.all(16),
-  ),
+  padding: context.rs.sPaddingAll(16),
   itemBuilder: (context, index) => ProductCard(...),
+)
+```
+
+## Responsive Widgets
+
+### ResponsiveGap
+
+```dart
+// Vertical gap (default)
+ResponsiveGap(24)
+
+// Horizontal gap
+ResponsiveGap(16, horizontal: true)
+```
+
+### ResponsiveContent
+
+Constrains content width on large screens:
+
+```dart
+ResponsiveContent(
+  maxWidth: 1200,  // Optional, uses defaults by device
+  child: YourContent(),
 )
 ```
 
@@ -282,67 +319,86 @@ GridView.builder(
 
 ```dart
 // Standard horizontal padding (16/24/32 based on device)
-final horizontalPad = context.responsive.horizontalPadding();
+final horizontalPad = context.rs.horizontalPadding();
 
 // Standard vertical padding (16/20/24 based on device)
-final verticalPad = context.responsive.verticalPadding();
+final verticalPad = context.rs.verticalPadding();
 
-// Max content width (full on mobile, 900 tablet, 1200 desktop)
-Container(
-  width: context.responsive.contentMaxWidth(),
-  child: content,
-)
+// Max content width (full on mobile, 720 tablet, 1200 desktop)
+final maxWidth = context.rs.contentMaxWidth();
 ```
 
-## Safe Area Handling
+## Safe Area & Keyboard
 
 ```dart
-// Check for notch/safe area
-if (context.responsive.hasBottomNotch) {
-  // Add extra bottom padding
-}
+final rs = context.rs;
 
-// Access safe area insets
-final safeArea = context.responsive.safeAreaInsets;
-final bottomSafe = context.responsive.bottomSafeArea;
+// Safe area
+rs.safeArea          // EdgeInsets
+rs.topSafeArea       // double
+rs.bottomSafeArea    // double
+rs.hasBottomNotch    // bool
+rs.hasTopNotch       // bool
+rs.safeWidth         // screen width minus safe areas
+rs.safeHeight        // screen height minus safe areas
+
+// Keyboard
+rs.keyboardHeight    // double
+rs.isKeyboardVisible // bool
+rs.availableHeight   // screen height minus keyboard
 ```
 
 ## Method Reference
 
 | Method | Use Case |
 |--------|----------|
-| `scale(double)` | General dimensions |
-| `scaleWithMin(double, min)` | Prevent too small |
-| `scaleWithMax(double, max)` | Prevent too large |
-| `scaleWithRange(double, min, max)` | Constrain both |
-| `scaleFontSize(double, minSize)` | Font sizes |
-| `scalePadding(EdgeInsets)` | Padding/margins |
-| `scaleBorderRadius(BorderRadius)` | Border radius |
-| `scaleSize(Size)` | Size objects |
-| `scaleOffset(Offset)` | Offset values |
-| `scaleConstraints(BoxConstraints)` | Constraints |
-| `responsiveValue<T>()` | Device-specific values |
-| `responsiveWidget()` | Device-specific widgets |
-| `gridColumns()` | Grid column count (2/3/4) |
+| `s(double)` | Scale any dimension |
+| `sHeight(double)` | Scale height-based values (vertical) |
+| `sFont(double, {minSize})` | Scale fonts with accessibility |
+| `sIcon(double, {minSize})` | Scale icons with minimum |
+| `sConstrained(double, {min, max})` | Scale with constraints |
+| `sPadding(EdgeInsets)` | Scale EdgeInsets |
+| `sPaddingSymmetric({h, v})` | Scale symmetric padding |
+| `sPaddingAll(double)` | Scale uniform padding |
+| `sBorderRadius(BorderRadius)` | Scale border radius |
+| `sBorderRadiusCircular(double)` | Scale circular radius |
+| `sSize(Size)` | Scale Size objects |
+| `sOffset(Offset)` | Scale Offset values |
+| `sConstraints(BoxConstraints)` | Scale constraints |
+| `byDevice<T>({mobile, tablet, desktop})` | Device-specific values |
+| `byOrientation<T>({portrait, landscape})` | Orientation-specific values |
+| `gridColumns({mobile, tablet, desktop})` | Grid column count |
 | `horizontalPadding()` | Standard h-padding |
 | `verticalPadding()` | Standard v-padding |
 | `contentMaxWidth()` | Max content width |
 
+## Responsive Widgets
+
+| Widget | Use Case |
+|--------|----------|
+| `ResponsiveScope` | Wrap app root (required) |
+| `ResponsiveBuilder` | Build with ResponsiveHelper |
+| `ResponsiveLayout` | Different widgets per device |
+| `OrientationLayout` | Different widgets per orientation |
+| `ResponsiveContent` | Constrained content wrapper |
+| `ResponsiveGap` | Scaled SizedBox gaps |
+
 ## Critical Rules
 
-1. **NEVER hardcode pixels** - Always use `scale()` or related methods
-2. **ALWAYS scale Figma values** - `scale(343)` not `343.0`
-3. **Scale fonts with minSize** - `scaleFontSize(16, minSize: 12)`
-4. **Scale ALL padding** - Use `scalePadding()` for EdgeInsets
+1. **NEVER hardcode pixels** - Always use `s()` or related methods
+2. **ALWAYS scale Figma values** - `s(343)` not `343.0`
+3. **Use sFont for text** - `sFont(16)` respects accessibility
+4. **Use sHeight for vertical** - `sHeight(24)` for vertical spacing
 5. **Use Theme.of(context)** - Colors come from theme, not hardcoded
 
 ## Figma to Flutter Workflow
 
 1. Get dimension from Figma design (e.g., width: 343px)
-2. Use `context.responsive.scale(343)` in Flutter
-3. For fonts: `context.responsive.scaleFontSize(16)`
-4. For padding: `context.responsive.scalePadding(EdgeInsets...)`
-5. For radius: `context.responsive.scaleBorderRadius(...)`
+2. Use `context.s(343)` in Flutter
+3. For fonts: `context.sFont(16)`
+4. For vertical spacing: `context.rs.sHeight(24)` or `ResponsiveGap(24)`
+5. For padding: `context.rs.sPadding(EdgeInsets...)` or `sPaddingSymmetric(...)`
+6. For radius: `context.rs.sBorderRadiusCircular(12)`
 
 ## File Location
 

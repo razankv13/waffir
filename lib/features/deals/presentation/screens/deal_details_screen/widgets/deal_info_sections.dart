@@ -23,18 +23,18 @@ class DealHeroImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return SizedBox(
-      height: responsive.scale(390),
+      height: responsive.s(390),
       child: Container(
-        padding: responsive.scalePadding(const EdgeInsets.all(16)),
+        padding: responsive.sPadding(const EdgeInsets.all(16)),
         decoration: BoxDecoration(
           color: colorScheme.surface,
           border: Border.all(
             color: Colors.black.withValues(alpha: 0.05),
-            width: responsive.scale(1),
+            width: responsive.s(1),
           ),
         ),
         child: Align(
@@ -43,12 +43,12 @@ class DealHeroImage extends StatelessWidget {
               ? Container(
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(responsive.scale(16)),
+                    borderRadius: BorderRadius.circular(responsive.s(16)),
                   ),
                   alignment: Alignment.center,
                   child: Icon(
                     Icons.local_offer_outlined,
-                    size: responsive.scale(64),
+                    size: responsive.s(64),
                     color: colorScheme.onSurfaceVariant,
                   ),
                 )
@@ -63,7 +63,7 @@ class DealHeroImage extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Icon(
                         Icons.broken_image_outlined,
-                        size: responsive.scale(64),
+                        size: responsive.s(64),
                         color: colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -88,11 +88,11 @@ class DealTitleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+      padding: EdgeInsets.symmetric(horizontal: responsive.s(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -101,7 +101,7 @@ class DealTitleSection extends StatelessWidget {
             style: AppTextStyles.storePageDealHeadline.copyWith(color: colorScheme.onSurface),
           ),
           if (subtitle != null && subtitle!.isNotEmpty) ...[
-            SizedBox(height: responsive.scale(6)),
+            SizedBox(height: responsive.s(6)),
             Text(
               subtitle!,
               style: AppTextStyles.storePageInfoBody.copyWith(color: colorScheme.onSurfaceVariant),
@@ -130,18 +130,18 @@ class DealPriceSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final promoColors = Theme.of(context).extension<PromoColors>();
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+      padding: EdgeInsets.symmetric(horizontal: responsive.s(16)),
       child: Container(
-        padding: responsive.scalePadding(const EdgeInsets.all(12)),
+        padding: responsive.sPadding(const EdgeInsets.all(12)),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(responsive.scale(12)),
+          borderRadius: BorderRadius.circular(responsive.s(12)),
         ),
         child: Row(
           children: [
@@ -153,7 +153,7 @@ class DealPriceSection extends StatelessWidget {
               ),
             ),
             if (hasDiscount) ...[
-              SizedBox(width: responsive.scale(12)),
+              SizedBox(width: responsive.s(12)),
               Text(
                 '\$${originalPrice!.toStringAsFixed(2)}',
                 style: textTheme.titleMedium?.copyWith(
@@ -161,15 +161,15 @@ class DealPriceSection extends StatelessWidget {
                   decoration: TextDecoration.lineThrough,
                 ),
               ),
-              SizedBox(width: responsive.scale(10)),
+              SizedBox(width: responsive.s(10)),
               if (discountPercent != null)
                 Container(
-                  padding: responsive.scalePadding(
+                  padding: responsive.sPadding(
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   ),
                   decoration: BoxDecoration(
                     color: promoColors?.discountBg ?? colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(responsive.scale(999)),
+                    borderRadius: BorderRadius.circular(responsive.s(999)),
                   ),
                   child: Text(
                     '-$discountPercent%',
@@ -204,17 +204,17 @@ class DealPromoCodeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     if (promoCode.trim().isEmpty) return const SizedBox.shrink();
 
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+      padding: EdgeInsets.symmetric(horizontal: responsive.s(16)),
       child: Container(
-        padding: responsive.scalePadding(const EdgeInsets.all(12)),
+        padding: responsive.sPadding(const EdgeInsets.all(12)),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(responsive.scale(12)),
+          borderRadius: BorderRadius.circular(responsive.s(12)),
           border: Border.all(color: colorScheme.outlineVariant),
         ),
         child: Row(
@@ -227,19 +227,19 @@ class DealPromoCodeCard extends StatelessWidget {
                     LocaleKeys.dealDetails.labels.promoCode.tr(),
                     style: textTheme.labelLarge?.copyWith(color: colorScheme.onSurface),
                   ),
-                  SizedBox(height: responsive.scale(6)),
+                  SizedBox(height: responsive.s(6)),
                   Text(
                     promoCode,
                     style: textTheme.titleMedium?.copyWith(
                       color: colorScheme.primary,
                       fontWeight: FontWeight.w800,
-                      letterSpacing: responsive.scale(1),
+                      letterSpacing: responsive.s(1),
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(width: responsive.scale(12)),
+            SizedBox(width: responsive.s(12)),
             FilledButton.tonalIcon(
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: promoCode));
@@ -292,18 +292,18 @@ class DealTermsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (terms.trim().isEmpty) return const SizedBox.shrink();
 
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final maxLines = isExpanded ? null : 4;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+      padding: EdgeInsets.symmetric(horizontal: responsive.s(16)),
       child: Container(
-        padding: responsive.scalePadding(const EdgeInsets.all(12)),
+        padding: responsive.sPadding(const EdgeInsets.all(12)),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(responsive.scale(12)),
+          borderRadius: BorderRadius.circular(responsive.s(12)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,14 +315,14 @@ class DealTermsSection extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(height: responsive.scale(8)),
+            SizedBox(height: responsive.s(8)),
             Text(
               terms,
               style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
               maxLines: maxLines,
               overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
             ),
-            SizedBox(height: responsive.scale(8)),
+            SizedBox(height: responsive.s(8)),
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
@@ -359,11 +359,11 @@ class DealDescriptionSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (description.trim().isEmpty) return const SizedBox.shrink();
 
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+      padding: EdgeInsets.symmetric(horizontal: responsive.s(16)),
       child: Text(
         description,
         style: AppTextStyles.storePageInfoBody.copyWith(color: colorScheme.onSurfaceVariant),
@@ -389,7 +389,7 @@ class DealRefUrlSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (refUrl.trim().isEmpty) return const SizedBox.shrink();
 
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -397,12 +397,12 @@ class DealRefUrlSection extends StatelessWidget {
     final displayUrl = refUrl.replaceFirst(RegExp(r'^https?://'), '');
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+      padding: EdgeInsets.symmetric(horizontal: responsive.s(16)),
       child: Material(
         color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(responsive.scale(12)),
+        borderRadius: BorderRadius.circular(responsive.s(12)),
         child: InkWell(
-          borderRadius: BorderRadius.circular(responsive.scale(12)),
+          borderRadius: BorderRadius.circular(responsive.s(12)),
           onTap: () async {
             unawaited(HapticFeedback.lightImpact());
             final uri = Uri.tryParse(refUrl.startsWith('http') ? refUrl : 'https://$refUrl');
@@ -424,11 +424,11 @@ class DealRefUrlSection extends StatelessWidget {
             }
           },
           child: Padding(
-            padding: responsive.scalePadding(const EdgeInsets.all(12)),
+            padding: responsive.sPadding(const EdgeInsets.all(12)),
             child: Row(
               children: [
-                Icon(Icons.language, color: colorScheme.primary, size: responsive.scale(24)),
-                SizedBox(width: responsive.scale(12)),
+                Icon(Icons.language, color: colorScheme.primary, size: responsive.s(24)),
+                SizedBox(width: responsive.s(12)),
                 Expanded(
                   child: Text(
                     displayUrl,
@@ -444,7 +444,7 @@ class DealRefUrlSection extends StatelessWidget {
                 Icon(
                   Icons.open_in_new,
                   color: colorScheme.onSurfaceVariant,
-                  size: responsive.scale(18),
+                  size: responsive.s(18),
                 ),
               ],
             ),

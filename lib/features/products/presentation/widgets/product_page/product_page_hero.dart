@@ -15,19 +15,19 @@ class ProductPageHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Container(
       height: height,
-      padding: responsive.scalePadding(const EdgeInsets.all(16)),
+      padding: responsive.sPadding(const EdgeInsets.all(16)),
       decoration: BoxDecoration(
         color: Colors.transparent,
         border: Border(
-          bottom: BorderSide(color: borderColor, width: responsive.scale(1)),
+          bottom: BorderSide(color: borderColor, width: responsive.s(1)),
         ),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(responsive.scale(0)),
+        borderRadius: BorderRadius.circular(responsive.s(0)),
         child: Image.asset(imageAssetPath, fit: BoxFit.cover),
       ),
     );

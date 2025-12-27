@@ -10,7 +10,7 @@ class StoreNotFoundView extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Center(
       child: Column(
@@ -18,10 +18,10 @@ class StoreNotFoundView extends StatelessWidget {
         children: [
           Icon(
             Icons.store_outlined,
-            size: responsive.scale(64),
+            size: responsive.s(64),
             color: colorScheme.onSurfaceVariant.withOpacity(0.5),
           ),
-          SizedBox(height: responsive.scale(16)),
+          SizedBox(height: responsive.s(16)),
           Text(
             LocaleKeys.stores.detail.notFound.tr(),
             style: textTheme.titleLarge?.copyWith(

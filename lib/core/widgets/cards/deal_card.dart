@@ -36,12 +36,12 @@ class DealCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final naTheme = Theme.of(context).extension<NotificationsAlertsTheme>()!;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: responsive.scalePadding(const EdgeInsets.symmetric(vertical: 8)),
+        padding: responsive.sPadding(const EdgeInsets.symmetric(vertical: 8)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -51,14 +51,14 @@ class DealCard extends StatelessWidget {
                 children: [
                   // Avatar tile with initial letter
                   Container(
-                    width: responsive.scale(64),
-                    height: responsive.scale(64),
+                    width: responsive.s(64),
+                    height: responsive.s(64),
                     decoration: BoxDecoration(
                       color: naTheme.dealTileBackground,
-                      borderRadius: BorderRadius.circular(responsive.scale(8)),
+                      borderRadius: BorderRadius.circular(responsive.s(8)),
                       border: Border.all(
                         color: naTheme.dealTileBorder,
-                        width: responsive.scale(1.600000023841858),
+                        width: responsive.s(1.600000023841858),
                       ),
                     ),
                     alignment: Alignment.center,
@@ -66,12 +66,12 @@ class DealCard extends StatelessWidget {
                       initial,
                       style: naTheme.dealLetterStyle.copyWith(
                         color: naTheme.dealTileLetterColor,
-                        fontSize: responsive.scaleFontSize(20, minSize: 16),
+                        fontSize: responsive.sFont(20, minSize: 16),
                       ),
                     ),
                   ),
 
-                  SizedBox(width: responsive.scale(12)),
+                  SizedBox(width: responsive.s(12)),
 
                   // Title and subtitle column
                   Expanded(
@@ -82,17 +82,17 @@ class DealCard extends StatelessWidget {
                           title,
                           style: naTheme.dealTitleStyle.copyWith(
                             color: naTheme.textPrimary,
-                            fontSize: responsive.scaleFontSize(16, minSize: 14),
+                            fontSize: responsive.sFont(16, minSize: 14),
                           ),
                         ),
-                        SizedBox(height: responsive.scale(12)),
+                        SizedBox(height: responsive.s(12)),
                         Text(
                           subtitle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: naTheme.dealSubtitleStyle.copyWith(
                             color: naTheme.textPrimary,
-                            fontSize: responsive.scaleFontSize(12),
+                            fontSize: responsive.sFont(12),
                           ),
                         ),
                       ],
@@ -105,8 +105,8 @@ class DealCard extends StatelessWidget {
             // Right: Chevron indicator
             SvgPicture.asset(
               'assets/icons/chevron_right.svg',
-              width: responsive.scale(24),
-              height: responsive.scale(24),
+              width: responsive.s(24),
+              height: responsive.s(24),
               colorFilter: ColorFilter.mode(naTheme.chevronColor, BlendMode.srcIn),
             ),
           ],

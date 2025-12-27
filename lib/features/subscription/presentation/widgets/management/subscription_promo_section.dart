@@ -19,35 +19,35 @@ class SubscriptionPromoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final theme = Theme.of(context);
 
     return Column(
       children: [
         SizedBox(
-          width: responsive.scale(243),
+          width: responsive.s(243),
           child: Text(
             LocaleKeys.subscription.management.promo.question.tr(),
             textAlign: TextAlign.center,
             style: AppTypography.bodyMedium.copyWith(
-              fontSize: responsive.scaleFontSize(16, minSize: 14),
+              fontSize: responsive.sFont(16, minSize: 14),
               fontWeight: FontWeight.w400,
               color: theme.colorScheme.onSurface,
               height: 1.4,
             ),
           ),
         ),
-        SizedBox(height: responsive.scale(16)),
+        SizedBox(height: responsive.s(16)),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: responsive.scale(232),
-              height: responsive.scale(56),
-              padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
+              width: responsive.s(232),
+              height: responsive.s(56),
+              padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16)),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(16)),
+                borderRadius: responsive.sBorderRadius(BorderRadius.circular(16)),
               ),
               child: Center(
                 child: TextField(
@@ -55,14 +55,14 @@ class SubscriptionPromoSection extends StatelessWidget {
                   onChanged: onPromoChanged,
                   textAlign: TextAlign.center,
                   style: AppTypography.bodyMedium.copyWith(
-                    fontSize: responsive.scaleFontSize(16, minSize: 14),
+                    fontSize: responsive.sFont(16, minSize: 14),
                     fontWeight: FontWeight.w500,
                     color: theme.colorScheme.onSurface,
                   ),
                   decoration: InputDecoration(
                     hintText: LocaleKeys.subscription.management.promo.placeholder.tr(),
                     hintStyle: AppTypography.bodyMedium.copyWith(
-                      fontSize: responsive.scaleFontSize(16, minSize: 14),
+                      fontSize: responsive.sFont(16, minSize: 14),
                       fontWeight: FontWeight.w500,
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -78,19 +78,19 @@ class SubscriptionPromoSection extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: responsive.scale(11)),
+            SizedBox(width: responsive.s(11)),
             GestureDetector(
               onTap: onApplyPromo,
               child: Container(
-                width: responsive.scale(44),
-                height: responsive.scale(44),
+                width: responsive.s(44),
+                height: responsive.s(44),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.arrow_forward,
-                  size: responsive.scale(20),
+                  size: responsive.s(20),
                   color: theme.colorScheme.onPrimary,
                 ),
               ),

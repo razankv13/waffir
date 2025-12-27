@@ -103,11 +103,11 @@ class _PhoneInputWidgetState extends State<PhoneInputWidget> with SingleTickerPr
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
-    double s(double value) => responsive.scaleWithMax(value, max: value); // downscale-only
+    double s(double value) => responsive.s(value); // downscale-only
     double sf(double value, {double min = 10.0}) =>
-        responsive.scaleWithRange(value, min: min, max: value); // downscale-only
+        responsive.sConstrained(value, min: min, max: value); // downscale-only
 
     return SizedBox(
       height: s(56),

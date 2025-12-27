@@ -25,13 +25,13 @@ class BlurredBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     final isRTL = context.locale.languageCode == 'ar';
     return Positioned(
-      left: isRTL ? null : -responsive.scaleWithMax(40, max: 60),
-      right: isRTL ? -responsive.scaleWithMax(40, max: 60) : null,
-      top: -responsive.scaleWithMax(100, max: 140),
+      left: isRTL ? null : -responsive.s(40),
+      right: isRTL ? -responsive.s(40) : null,
+      top: -responsive.s(100),
       child: Transform(
         alignment: Alignment.center,
         transform: isRTL
@@ -39,8 +39,8 @@ class BlurredBackground extends StatelessWidget {
             : Matrix4.identity(),
         child: Image.asset(
           Assets.images.onboardingShape.path,
-          width: responsive.scaleWithMax(467.78, max: 560),
-          height: responsive.scaleWithMax(461.3, max: 555),
+          width: double.infinity,
+          height: double.infinity,
           fit: BoxFit.cover,
         ),
       ),

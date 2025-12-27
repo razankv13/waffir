@@ -19,7 +19,7 @@ class SubscriptionOptionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final isMonthly = selection.period == SubscriptionPeriod.monthly;
 
     final individualPrices = LocaleKeys.subscription.management.options.individual;
@@ -37,7 +37,7 @@ class SubscriptionOptionsSection extends StatelessWidget {
           onTap: () => onOptionSelected(AppSubscriptionOption.individual),
           badges: _individualBadges(isMonthly),
         ).animate().fadeIn(delay: 200.ms, duration: 400.ms).slideX(begin: -0.2, duration: 400.ms),
-        SizedBox(height: responsive.scale(24)),
+        SizedBox(height: responsive.s(24)),
         SubscriptionOptionCard(
           price: isMonthly
               ? familyPrices.priceMonthly.tr()

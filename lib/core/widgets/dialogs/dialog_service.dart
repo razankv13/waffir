@@ -169,27 +169,25 @@ class DialogService {
       context: context,
       barrierDismissible: dismissible,
       useBlur: useBlur,
-      child: BaseDialog(
-        type: isDestructive ? DialogType.error : DialogType.confirmation,
-        title: title,
-        content: content,
-        primaryButtonText: confirmText ?? 'Confirm',
-        secondaryButtonText: cancelText ?? 'Cancel',
-        onPrimaryPressed: onConfirm != null 
-            ? () {
-                onConfirm();
-                Navigator.of(context).pop(true);
-              }
-            : () => Navigator.of(context).pop(true),
-        onSecondaryPressed: onCancel != null
-            ? () {
-                onCancel();
-                Navigator.of(context).pop(false);
-              }
-            : () => Navigator.of(context).pop(false),
-        customContent: customContent,
-        dismissible: dismissible,
-        showCloseButton: showCloseButton,
+      child: Builder(
+        builder: (dialogContext) => BaseDialog(
+          type: isDestructive ? DialogType.error : DialogType.confirmation,
+          title: title,
+          content: content,
+          primaryButtonText: confirmText ?? 'Confirm',
+          secondaryButtonText: cancelText ?? 'Cancel',
+          onPrimaryPressed: () {
+            onConfirm?.call();
+            Navigator.of(dialogContext).pop(true);
+          },
+          onSecondaryPressed: () {
+            onCancel?.call();
+            Navigator.of(dialogContext).pop(false);
+          },
+          customContent: customContent,
+          dismissible: dismissible,
+          showCloseButton: showCloseButton,
+        ),
       ),
     );
   }

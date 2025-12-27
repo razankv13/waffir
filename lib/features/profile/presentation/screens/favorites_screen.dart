@@ -20,10 +20,10 @@ class FavoritesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final bottomInset = MediaQuery.paddingOf(context).bottom;
-    final horizontalPadding = responsive.scale(16);
-    final bottomPadding = responsive.scale(120) + bottomInset;
+    final horizontalPadding = responsive.s(16);
+    final bottomPadding = responsive.s(120) + bottomInset;
 
     // Watch the new favorites controller
     final favoritesAsync = ref.watch(favoritesControllerProvider);
@@ -45,10 +45,10 @@ class FavoritesScreen extends ConsumerWidget {
                   // Back button row
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: WaffirBackButton(size: responsive.scale(44), onTap: () => context.pop()),
+                    child: WaffirBackButton(size: responsive.s(44), onTap: () => context.pop()),
                   ),
 
-                  SizedBox(height: responsive.scale(32)),
+                  SizedBox(height: responsive.s(32)),
 
                   // Title
                   Padding(
@@ -56,7 +56,7 @@ class FavoritesScreen extends ConsumerWidget {
                     child: Text(LocaleKeys.profile.favorites.title.tr(), style: theme.textTheme.titleLarge),
                   ),
 
-                  SizedBox(height: responsive.scale(32)),
+                  SizedBox(height: responsive.s(32)),
 
                   Expanded(
                     child: favoritesAsync.when(
@@ -121,14 +121,14 @@ class FavoritesScreen extends ConsumerWidget {
                         return ListView.separated(
                           padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                           itemCount: items.length,
-                          separatorBuilder: (context, index) => SizedBox(height: responsive.scale(16)),
+                          separatorBuilder: (context, index) => SizedBox(height: responsive.s(16)),
                           itemBuilder: (context, index) => items[index],
                         );
                       },
                       loading: () => Center(
                         child: SizedBox(
-                          width: responsive.scale(28),
-                          height: responsive.scale(28),
+                          width: responsive.s(28),
+                          height: responsive.s(28),
                           child: const CircularProgressIndicator(strokeWidth: 2),
                         ),
                       ),
@@ -158,38 +158,38 @@ class _EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Center(
       child: Padding(
-        padding: responsive.scalePadding(const EdgeInsets.all(32)),
+        padding: responsive.sPadding(const EdgeInsets.all(32)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Icons.star_outline,
-              size: responsive.scaleWithRange(72, min: 56, max: 88),
+              size: responsive.sConstrained(72, min: 56, max: 88),
               color: colorScheme.onSurface.withValues(alpha: 0.2),
             ),
-            SizedBox(height: responsive.scale(16)),
+            SizedBox(height: responsive.s(16)),
             Text(
               title,
               textAlign: TextAlign.center,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontFamily: 'Parkinsans',
                 fontWeight: FontWeight.w600,
-                fontSize: responsive.scaleFontSize(16, minSize: 14),
+                fontSize: responsive.sFont(16, minSize: 14),
                 color: colorScheme.onSurface,
               ),
             ),
-            SizedBox(height: responsive.scale(8)),
+            SizedBox(height: responsive.s(8)),
             Text(
               subtitle,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontFamily: 'Parkinsans',
                 fontWeight: FontWeight.w400,
-                fontSize: responsive.scaleFontSize(14, minSize: 12),
+                fontSize: responsive.sFont(14, minSize: 12),
                 height: 1.4,
                 color: colorScheme.onSurface.withValues(alpha: 0.7),
               ),
@@ -211,32 +211,32 @@ class _ErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Center(
       child: Padding(
-        padding: responsive.scalePadding(const EdgeInsets.all(32)),
+        padding: responsive.sPadding(const EdgeInsets.all(32)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Icons.error_outline,
-              size: responsive.scaleWithRange(64, min: 52, max: 80),
+              size: responsive.sConstrained(64, min: 52, max: 80),
               color: colorScheme.error.withValues(alpha: 0.8),
             ),
-            SizedBox(height: responsive.scale(16)),
+            SizedBox(height: responsive.s(16)),
             Text(
               message,
               textAlign: TextAlign.center,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontFamily: 'Parkinsans',
                 fontWeight: FontWeight.w600,
-                fontSize: responsive.scaleFontSize(16, minSize: 14),
+                fontSize: responsive.sFont(16, minSize: 14),
                 color: colorScheme.onSurface,
               ),
             ),
             if (details.trim().isNotEmpty) ...[
-              SizedBox(height: responsive.scale(8)),
+              SizedBox(height: responsive.s(8)),
               Text(
                 details,
                 textAlign: TextAlign.center,

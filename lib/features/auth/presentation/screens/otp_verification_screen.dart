@@ -165,15 +165,15 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
     final isRTL = context.locale.languageCode == 'ar';
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final isSmallScreen = responsive.screenHeight < 700;
 
-    final horizontalPadding = responsive.scaleWithRange(16, min: 16, max: 32);
-    final bottomPadding = responsive.scaleWithRange(isSmallScreen ? 60 : 120, min: 40, max: 160);
-    final contentWidth = responsive.scaleWithMax(309, max: 420);
-    final buttonWidth = responsive.scaleWithMax(330, max: 420);
-    final pinBoxSize = responsive.scaleWithRange(50, min: 44, max: 60);
-    final pinRadius = responsive.scaleWithRange(16, min: 12, max: 20);
+    final horizontalPadding = responsive.sConstrained(16, min: 16, max: 32);
+    final bottomPadding = responsive.sConstrained(isSmallScreen ? 60 : 120, min: 40, max: 160);
+    final contentWidth = responsive.s(309);
+    final buttonWidth = responsive.s(330);
+    final pinBoxSize = responsive.sConstrained(50, min: 44, max: 60);
+    final pinRadius = responsive.sConstrained(16, min: 12, max: 20);
 
     // Pinput theme matching Figma design
     final defaultPinTheme = PinTheme(
@@ -196,8 +196,8 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
         boxShadow: [
           BoxShadow(
             color: colorScheme.primary.withValues(alpha: 0.2),
-            blurRadius: responsive.scale(12),
-            offset: Offset(0, responsive.scale(4)),
+            blurRadius: responsive.s(12),
+            offset: Offset(0, responsive.s(4)),
           ),
         ],
       ),
@@ -224,7 +224,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
             // Background shape image (matching Figma design)
             const BlurredBackground(),
             // Back button (RTL-aware)
-            WaffirBackButton(size: responsive.scale(44)),
+            WaffirBackButton(size: responsive.s(44)),
             // Main content
             Padding(
               padding: EdgeInsets.only(
@@ -244,7 +244,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
                           child: _buildHeader(textTheme, colorScheme, responsive),
                         ),
                         SizedBox(
-                          height: responsive.scaleWithRange(
+                          height: responsive.sConstrained(
                             isSmallScreen ? 24 : 32,
                             min: 16,
                             max: 40,
@@ -256,7 +256,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
                           submittedPinTheme,
                           errorPinTheme,
                         ),
-                        SizedBox(height: responsive.scaleWithRange(32, min: 20, max: 40)),
+                        SizedBox(height: responsive.sConstrained(32, min: 20, max: 40)),
                         ConstrainedBox(
                           constraints: BoxConstraints(maxWidth: contentWidth),
                           child: _buildActionLinks(textTheme, colorScheme, responsive),
@@ -281,18 +281,18 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
           LocaleKeys.auth.otpTitle.tr(),
           style: textTheme.headlineLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            fontSize: responsive.scaleFontSize(20, minSize: 18),
+            fontSize: responsive.sFont(20, minSize: 18),
             color: colorScheme.onSurface,
             letterSpacing: -0.5,
             height: 1.15,
           ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: responsive.scaleWithRange(16, min: 12, max: 20)),
+        SizedBox(height: responsive.sConstrained(16, min: 12, max: 20)),
         Text(
           LocaleKeys.auth.otpSubtitle.tr(namedArgs: {'contact': widget.phoneNumber}),
           style: textTheme.bodyLarge?.copyWith(
-            fontSize: responsive.scaleFontSize(16, minSize: 14),
+            fontSize: responsive.sFont(16, minSize: 14),
             color: colorScheme.onSurfaceVariant,
             height: 1.2,
             letterSpacing: 0.1,
@@ -344,13 +344,13 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
   ) {
     final isResendEnabled = _resendCountdown <= 0 && !_isResending;
     final resendTextStyle = textTheme.bodyMedium?.copyWith(
-      fontSize: responsive.scaleFontSize(14, minSize: 12),
+      fontSize: responsive.sFont(14, minSize: 12),
       color: isResendEnabled ? colorScheme.onSurface : colorScheme.onSurfaceVariant,
       fontWeight: FontWeight.w400,
     );
 
     final changeNumberTextStyle = textTheme.bodyMedium?.copyWith(
-      fontSize: responsive.scaleFontSize(14, minSize: 12),
+      fontSize: responsive.sFont(14, minSize: 12),
       color: colorScheme.onSurface,
       fontWeight: FontWeight.w700,
     );
@@ -374,8 +374,8 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
           ),
           child: _isResending
               ? SizedBox(
-                  height: responsive.scaleWithRange(16, min: 14, max: 20),
-                  width: responsive.scaleWithRange(16, min: 14, max: 20),
+                  height: responsive.sConstrained(16, min: 14, max: 20),
+                  width: responsive.sConstrained(16, min: 14, max: 20),
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),

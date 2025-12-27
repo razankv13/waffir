@@ -112,19 +112,19 @@ class AccountDetailsScreen extends HookConsumerWidget {
     final size = MediaQuery.of(context).size;
     final isRTL = context.locale.languageCode == 'ar';
     final isSmallScreen = size.height < 700;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
-    final horizontalPadding = responsive.scale(16);
-    final double contentVerticalGap = responsive.scale(32);
-    final double labelToFieldSpacing = responsive.scale(16);
-    final double optionGap = responsive.scale(80);
-    final double genderControlGap = responsive.scale(10);
-    final double termsCheckboxGap = responsive.scale(8);
-    final double termsButtonGap = responsive.scale(32);
-    final double buttonWidth = responsive.scaleWithRange(330, min: 280, max: 360);
+    final horizontalPadding = responsive.s(16);
+    final double contentVerticalGap = responsive.s(32);
+    final double labelToFieldSpacing = responsive.s(16);
+    final double optionGap = responsive.s(80);
+    final double genderControlGap = responsive.s(10);
+    final double termsCheckboxGap = responsive.s(8);
+    final double termsButtonGap = responsive.s(32);
+    final double buttonWidth = responsive.sConstrained(330, min: 280, max: 360);
     final double buttonBottomPadding = isSmallScreen
-        ? responsive.scaleWithRange(80, min: 64, max: 90)
-        : responsive.scaleWithRange(120, min: 100, max: 140);
+        ? responsive.sConstrained(80, min: 64, max: 90)
+        : responsive.sConstrained(120, min: 100, max: 140);
     final isFormValidValue = isFormValid();
 
     return Directionality(
@@ -160,14 +160,14 @@ class AccountDetailsScreen extends HookConsumerWidget {
                             Column(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                SizedBox(height: responsive.scale(context.responsive.topSafeArea)),
+                                SizedBox(height: responsive.s(context.rs.topSafeArea)),
 
                                 // Avatar display for OAuth users (Google/Apple)
                                 if (user?.photoURL != null && user!.photoURL!.isNotEmpty) ...[
                                   Center(
                                     child: Container(
-                                      width: responsive.scale(80),
-                                      height: responsive.scale(80),
+                                      width: responsive.s(80),
+                                      height: responsive.s(80),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: colorScheme.surfaceContainerHighest,
@@ -182,13 +182,13 @@ class AccountDetailsScreen extends HookConsumerWidget {
                                         size: 80,
                                         errorWidget: Icon(
                                           Icons.person,
-                                          size: responsive.scale(40),
+                                          size: responsive.s(40),
                                           color: colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: responsive.scale(24)),
+                                  SizedBox(height: responsive.s(24)),
                                 ],
 
                                 Align(
@@ -196,7 +196,7 @@ class AccountDetailsScreen extends HookConsumerWidget {
                                   child: Text(
                                     tr(LocaleKeys.accountDetails.nameLabel),
                                     style: theme.textTheme.titleLarge?.copyWith(
-                                      fontSize: responsive.scaleFontSize(20, minSize: 18),
+                                      fontSize: responsive.sFont(20, minSize: 18),
                                       fontWeight: FontWeight.w700,
                                       height: 1.15,
                                       color: colorScheme.primary,
@@ -216,7 +216,7 @@ class AccountDetailsScreen extends HookConsumerWidget {
                                   child: Text(
                                     tr(LocaleKeys.accountDetails.detailsTitle),
                                     style: theme.textTheme.titleLarge?.copyWith(
-                                      fontSize: responsive.scaleFontSize(20, minSize: 18),
+                                      fontSize: responsive.sFont(20, minSize: 18),
                                       fontWeight: FontWeight.w700,
                                       height: 1.15,
                                       color: colorScheme.primary,
@@ -225,7 +225,7 @@ class AccountDetailsScreen extends HookConsumerWidget {
                                 ),
                                 SizedBox(height: labelToFieldSpacing),
                                 Container(
-                                  padding: EdgeInsets.symmetric(vertical: responsive.scale(12)),
+                                  padding: EdgeInsets.symmetric(vertical: responsive.s(12)),
                                   child: GenderSelector(
                                     selectedGender: selectedGender.value,
                                     onChanged: (gender) => selectedGender.value = gender,
@@ -235,7 +235,7 @@ class AccountDetailsScreen extends HookConsumerWidget {
                                 ),
                               ],
                             ),
-                            SizedBox(height: context.responsive.screenHeight * .2),
+                            SizedBox(height: context.rs.screenHeight * .2),
                             Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -255,7 +255,7 @@ class AccountDetailsScreen extends HookConsumerWidget {
                                         child: Text(
                                           tr(LocaleKeys.accountDetails.termsAcceptance),
                                           style: theme.textTheme.bodySmall?.copyWith(
-                                            fontSize: responsive.scaleFontSize(14, minSize: 12),
+                                            fontSize: responsive.sFont(14, minSize: 12),
                                             fontWeight: FontWeight.w400,
                                             height: 1.4,
                                             color: colorScheme.onSurfaceVariant,
@@ -275,7 +275,7 @@ class AccountDetailsScreen extends HookConsumerWidget {
                                   isLoading: isSubmitting.value,
                                   enabled: isFormValidValue && !isSubmitting.value,
                                   width: buttonWidth,
-                                  borderRadius: responsive.scaleBorderRadius(
+                                  borderRadius: responsive.sBorderRadius(
                                     BorderRadius.circular(30),
                                   ),
                                 ),
@@ -314,27 +314,27 @@ class _PillTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
-    final double fieldHeight = responsive.scaleWithRange(48, min: 44, max: 56);
+    final responsive = ResponsiveHelper.of(context);
+    final double fieldHeight = responsive.sConstrained(48, min: 44, max: 56);
     return Container(
       height: fieldHeight,
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest,
-        borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(16)),
+        borderRadius: responsive.sBorderRadius(BorderRadius.circular(16)),
       ),
-      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 12)),
+      padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 12)),
       alignment: Alignment.centerLeft,
       child: TextField(
         controller: controller,
         style: theme.textTheme.bodyMedium?.copyWith(
-          fontSize: responsive.scaleFontSize(16, minSize: 14),
+          fontSize: responsive.sFont(16, minSize: 14),
           fontWeight: FontWeight.w500,
           color: colorScheme.onSurface,
         ),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: theme.textTheme.bodyMedium?.copyWith(
-            fontSize: responsive.scaleFontSize(16, minSize: 14),
+            fontSize: responsive.sFont(16, minSize: 14),
             fontWeight: FontWeight.w500,
             color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
@@ -362,17 +362,17 @@ class _RoundedSquareCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
-    final double boxSize = responsive.scaleWithRange(24, min: 20, max: 28);
-    final double borderWidth = responsive.scaleWithRange(2, min: 1.5, max: 2.5);
-    final double iconSize = responsive.scaleWithRange(12.15, min: 10, max: 14);
+    final responsive = ResponsiveHelper.of(context);
+    final double boxSize = responsive.sConstrained(24, min: 20, max: 28);
+    final double borderWidth = responsive.sConstrained(2, min: 1.5, max: 2.5);
+    final double iconSize = responsive.sConstrained(12.15, min: 10, max: 14);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
       width: boxSize,
       height: boxSize,
       decoration: BoxDecoration(
-        borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(4)),
+        borderRadius: responsive.sBorderRadius(BorderRadius.circular(4)),
         color: isSelected ? colorScheme.primary : Colors.transparent,
         border: Border.all(color: colorScheme.primary, width: borderWidth),
       ),

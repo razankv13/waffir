@@ -101,14 +101,14 @@ class StoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
-    final imageSize = responsive.scale(160);
-    final favoriteOffset = responsive.scale(8);
-    final favoriteSize = responsive.scale(32);
-    final favoriteIconSize = responsive.scale(18);
-    final gapSmall = responsive.scale(4);
-    final gapMedium = responsive.scale(8);
-    final borderWidth = responsive.scaleWithRange(1, min: 1, max: 1.5);
+    final responsive = context.rs;
+    final imageSize = responsive.s(160);
+    final favoriteOffset = responsive.s(8);
+    final favoriteSize = responsive.s(32);
+    final favoriteIconSize = responsive.s(18);
+    final gapSmall = responsive.s(4);
+    final gapMedium = responsive.s(8);
+    final borderWidth = responsive.sConstrained(1, min: 1, max: 1.5);
     final borderColor = Colors.black.withOpacity(0.05);
 
     return InkWell(
@@ -138,7 +138,7 @@ class StoreCard extends StatelessWidget {
                   child: Container(
                     width: imageSize,
                     height: imageSize,
-                    padding: responsive.scalePadding(const EdgeInsets.all(8)),
+                    padding: responsive.sPadding(const EdgeInsets.all(8)),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFFFFF), // White background from Figma
                       border: Border.all(
@@ -172,8 +172,8 @@ class StoreCard extends StatelessWidget {
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.08),
-                              blurRadius: responsive.scale(4),
-                              offset: responsive.scaleOffset(const Offset(0, 2)),
+                              blurRadius: responsive.s(4),
+                              offset: responsive.sOffset(const Offset(0, 2)),
                             ),
                           ],
                         ),
@@ -208,7 +208,7 @@ class StoreCard extends StatelessWidget {
                       storeName,
                       style: TextStyle(
                         fontFamily: 'Parkinsans',
-                        fontSize: responsive.scaleFontSize(14),
+                        fontSize: responsive.sFont(14),
                         fontWeight: FontWeight.w700, // Bold (700)
                         height: 1.4, // 1.4em line height from Figma
                         color: const Color(0xFF151515), // Exact color from Figma
@@ -232,7 +232,7 @@ class StoreCard extends StatelessWidget {
                     distance!,
                     style: TextStyle(
                       fontFamily: 'Parkinsans',
-                      fontSize: responsive.scaleFontSize(12),
+                      fontSize: responsive.sFont(12),
                       fontWeight: FontWeight.w500,
                       height: 1.15, // 1.15em line height from Figma
                       color: const Color(0xFF595959), // Exact color from Figma
@@ -247,7 +247,7 @@ class StoreCard extends StatelessWidget {
                     category!,
                     style: TextStyle(
                       fontFamily: 'Parkinsans',
-                      fontSize: responsive.scaleFontSize(12),
+                      fontSize: responsive.sFont(12),
                       fontWeight: FontWeight.w400,
                       color: const Color(0xFFA3A3A3),
                     ),
@@ -260,13 +260,13 @@ class StoreCard extends StatelessWidget {
                   SizedBox(height: gapMedium),
                   Row(
                     children: [
-                      Icon(Icons.star, size: responsive.scale(12), color: const Color(0xFFFBBF24)),
+                      Icon(Icons.star, size: responsive.s(12), color: const Color(0xFFFBBF24)),
                       SizedBox(width: gapSmall),
                       Text(
                         rating!.toStringAsFixed(1),
                         style: TextStyle(
                           fontFamily: 'Parkinsans',
-                          fontSize: responsive.scaleFontSize(12),
+                          fontSize: responsive.sFont(12),
                           fontWeight: FontWeight.w500,
                           color: const Color(0xFF151515),
                         ),

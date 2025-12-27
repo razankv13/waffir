@@ -12,22 +12,22 @@ class ProductPageActionsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     Widget pill({required Widget child, EdgeInsets padding = EdgeInsets.zero}) {
       return Container(
-        height: responsive.scale(44),
-        padding: responsive.scalePadding(padding),
+        height: responsive.s(44),
+        padding: responsive.sPadding(padding),
         decoration: BoxDecoration(
           color: theme.colors.surfaceContainer,
-          borderRadius: BorderRadius.circular(responsive.scale(1000)),
+          borderRadius: BorderRadius.circular(responsive.s(1000)),
         ),
         child: child,
       );
     }
 
     return Padding(
-      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
+      padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -44,15 +44,15 @@ class ProductPageActionsRow extends StatelessWidget {
                         theme: theme,
                         asset: 'assets/icons/product_page/like_active.svg',
                       ),
-                      SizedBox(width: responsive.scale(6)),
+                      SizedBox(width: responsive.s(6)),
                       Text(
                         '21',
                         style: theme.textStyles.count.copyWith(
                           color: theme.colors.textMid,
-                          fontSize: responsive.scaleFontSize(theme.textStyles.count.fontSize ?? 14),
+                          fontSize: responsive.sFont(theme.textStyles.count.fontSize ?? 14),
                         ),
                       ),
-                      SizedBox(width: responsive.scale(6)),
+                      SizedBox(width: responsive.s(6)),
                       ProductPageIconBubble(
                         theme: theme,
                         asset: 'assets/icons/product_page/like_inactive.svg',
@@ -61,59 +61,59 @@ class ProductPageActionsRow extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(width: responsive.scale(16)),
+                SizedBox(width: responsive.s(16)),
 
                 // Comment pill
                 Container(
-                  padding: responsive.scalePadding(const EdgeInsets.all(12)),
+                  padding: responsive.sPadding(const EdgeInsets.all(12)),
                   decoration: BoxDecoration(
                     color: theme.colors.surfaceContainer,
-                    borderRadius: BorderRadius.circular(responsive.scale(1000)),
+                    borderRadius: BorderRadius.circular(responsive.s(1000)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SizedBox(
-                        width: responsive.scale(20),
-                        height: responsive.scale(20),
+                        width: responsive.s(20),
+                        height: responsive.s(20),
                         child: Center(
                           child: SvgPicture.asset(
                             'assets/icons/product_page/comment.svg',
-                            width: responsive.scale(17.22),
-                            height: responsive.scale(17.22),
+                            width: responsive.s(17.22),
+                            height: responsive.s(17.22),
                             colorFilter: const ColorFilter.mode(AppColors.gray03, BlendMode.srcIn),
                           ),
                         ),
                       ),
-                      SizedBox(width: responsive.scale(6)),
+                      SizedBox(width: responsive.s(6)),
                       Text(
                         '45',
                         style: theme.textStyles.count.copyWith(
                           color: theme.colors.textMid,
-                          fontSize: responsive.scaleFontSize(theme.textStyles.count.fontSize ?? 14),
+                          fontSize: responsive.sFont(theme.textStyles.count.fontSize ?? 14),
                         ),
                       ),
                     ],
                   ),
                 ),
 
-                SizedBox(width: responsive.scale(16)),
+                SizedBox(width: responsive.s(16)),
 
                 // Third circular action
                 Container(
-                  padding: responsive.scalePadding(const EdgeInsets.all(12)),
+                  padding: responsive.sPadding(const EdgeInsets.all(12)),
                   decoration: BoxDecoration(
                     color: theme.colors.surfaceContainer,
-                    borderRadius: BorderRadius.circular(responsive.scale(1000)),
+                    borderRadius: BorderRadius.circular(responsive.s(1000)),
                   ),
                   child: SizedBox(
-                    width: responsive.scale(20),
-                    height: responsive.scale(20),
+                    width: responsive.s(20),
+                    height: responsive.s(20),
                     child: Center(
                       child: SvgPicture.asset(
                         Assets.icons.productPage.tag.path,
-                        width: responsive.scale(19.17),
-                        height: responsive.scale(18.31),
+                        width: responsive.s(19.17),
+                        height: responsive.s(18.31),
                         colorFilter: const ColorFilter.mode(AppColors.gray03, BlendMode.srcIn),
                       ),
                     ),
@@ -126,7 +126,7 @@ class ProductPageActionsRow extends StatelessWidget {
             '3 hours ago',
             style: theme.textStyles.timestamp.copyWith(
               color: theme.colors.textSecondary,
-              fontSize: responsive.scaleFontSize(theme.textStyles.timestamp.fontSize ?? 12),
+              fontSize: responsive.sFont(theme.textStyles.timestamp.fontSize ?? 12),
             ),
           ),
         ],
@@ -143,20 +143,20 @@ class ProductPageIconBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Container(
-      width: responsive.scale(40),
-      height: responsive.scale(40),
+      width: responsive.s(40),
+      height: responsive.s(40),
       decoration: BoxDecoration(
         color: theme.colors.surfaceContainer,
-        borderRadius: BorderRadius.circular(responsive.scale(1000)),
+        borderRadius: BorderRadius.circular(responsive.s(1000)),
       ),
       child: Center(
         child: SvgPicture.asset(
           asset,
-          width: responsive.scale(24),
-          height: responsive.scale(24),
+          width: responsive.s(24),
+          height: responsive.s(24),
           colorFilter: const ColorFilter.mode(AppColors.gray03, BlendMode.srcIn),
         ),
       ),

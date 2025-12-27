@@ -33,7 +33,7 @@ class ProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Container(
       margin: margin,
@@ -42,7 +42,7 @@ class ProfileCard extends StatelessWidget {
         // Background: #F2F2F2 (gray01) from Figma
         color: backgroundColor ?? colorScheme.surfaceContainerHighest,
         // Border radius: 8px (exact from Figma)
-        borderRadius: responsive.scaleBorderRadius(
+        borderRadius: responsive.sBorderRadius(
           BorderRadius.circular(8),
         ),
       ),
@@ -96,14 +96,14 @@ class ProfileCardWithTitle extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Container(
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
         color: backgroundColor ?? colorScheme.surfaceContainerHighest,
-        borderRadius: responsive.scaleBorderRadius(
+        borderRadius: responsive.sBorderRadius(
           BorderRadius.circular(8),
         ),
       ),
@@ -116,7 +116,7 @@ class ProfileCardWithTitle extends StatelessWidget {
             children: [
               if (titleIcon != null) ...[
                 titleIcon!,
-                SizedBox(width: responsive.scale(8)),
+                SizedBox(width: responsive.s(8)),
               ],
               Expanded(
                 child: Text(
@@ -130,7 +130,7 @@ class ProfileCardWithTitle extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: responsive.scale(titleGap)),
+          SizedBox(height: responsive.s(titleGap)),
 
           // Content
           child,
@@ -160,13 +160,13 @@ class ProfileDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Divider(
-      height: responsive.scale(height),
+      height: responsive.s(height),
       thickness: thickness,
-      indent: responsive.scale(indent),
-      endIndent: responsive.scale(endIndent),
+      indent: responsive.s(indent),
+      endIndent: responsive.s(endIndent),
       color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
     );
   }
@@ -188,7 +188,7 @@ class ProfileSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Padding(
       padding: padding,
@@ -196,7 +196,7 @@ class ProfileSectionHeader extends StatelessWidget {
         title,
         style: textTheme.labelLarge?.copyWith(
           fontWeight: FontWeight.w600,
-          fontSize: responsive.scaleFontSize(14, minSize: 12),
+          fontSize: responsive.sFont(14, minSize: 12),
           letterSpacing: 0.5,
         ),
       ),

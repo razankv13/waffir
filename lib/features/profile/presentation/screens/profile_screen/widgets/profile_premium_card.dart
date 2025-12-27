@@ -49,7 +49,7 @@ class ProfilePremiumCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final subscriptionLabel = isPremium
         ? LocaleKeys.profile.subscription.premiumPlan.tr()
         : LocaleKeys.profile.subscription.freePlan.tr();
@@ -61,7 +61,7 @@ class ProfilePremiumCard extends StatelessWidget {
         : LocaleKeys.profile.subscription.upgradeToPremium.tr();
 
     return ProfileCard(
-      padding: responsive.scalePadding(const EdgeInsets.all(16)),
+      padding: responsive.sPadding(const EdgeInsets.all(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -70,23 +70,23 @@ class ProfilePremiumCard extends StatelessWidget {
             children: [
               // Premium Icon: 32×32px circular, #0F352D background (exact from Figma)
               Container(
-                width: responsive.scale(32),
-                height: responsive.scale(32),
+                width: responsive.s(32),
+                height: responsive.s(32),
                 decoration: BoxDecoration(
                   color: colorScheme.primary, // #0F352D
-                  borderRadius: responsive.scaleBorderRadius(
+                  borderRadius: responsive.sBorderRadius(
                     BorderRadius.circular(727), // Circular from Figma
                   ),
                 ),
                 child: Icon(
                   Icons.workspace_premium,
                   color: colorScheme.surface, // White
-                  size: responsive.scale(18),
+                  size: responsive.s(18),
                 ),
               ),
 
               // Gap between icon and text: 12px (exact from Figma)
-              SizedBox(width: responsive.scale(12)),
+              SizedBox(width: responsive.s(12)),
 
               // Title and subtitle column (text on RIGHT per Figma)
               Expanded(
@@ -98,13 +98,13 @@ class ProfilePremiumCard extends StatelessWidget {
                       subscriptionLabel,
                       style: AppTypography.premiumTitle.copyWith(
                         color: colorScheme.onSurface, // #151515
-                        fontSize: responsive.scaleFontSize(16, minSize: 14),
+                        fontSize: responsive.sFont(16, minSize: 14),
                       ),
                     ),
 
                     // Gap: 8px (exact from Figma) - Only show if premium with expiry date
                     if (expiryLabel != null)
-                      SizedBox(height: responsive.scale(8)),
+                      SizedBox(height: responsive.s(8)),
 
                     // Subtitle: "Valid until Dec 2023" - 12px weight 400, line-height 1em
                     if (expiryLabel != null)
@@ -112,7 +112,7 @@ class ProfilePremiumCard extends StatelessWidget {
                         expiryLabel,
                         style: AppTypography.premiumSubtitle.copyWith(
                           color: colorScheme.onSurface, // #151515
-                          fontSize: responsive.scaleFontSize(12, minSize: 10),
+                          fontSize: responsive.sFont(12, minSize: 10),
                         ),
                       ),
                   ],
@@ -122,7 +122,7 @@ class ProfilePremiumCard extends StatelessWidget {
           ),
 
           // Gap: 16px (exact from Figma)
-          SizedBox(height: responsive.scale(16)),
+          SizedBox(height: responsive.s(16)),
 
           // Manage Subscription Button (Secondary style, full width)
           AppButton.secondary(

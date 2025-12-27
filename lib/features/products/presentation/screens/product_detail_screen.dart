@@ -62,7 +62,7 @@ class ProductDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final isRTL = context.locale.languageCode == 'ar';
     final productTheme = Theme.of(context).extension<ProductPageTheme>() ?? ProductPageTheme.light;
 
@@ -77,38 +77,38 @@ class ProductDetailScreen extends StatelessWidget {
                 return [
                   SliverToBoxAdapter(
                     child: ProductPageHero(
-                      height: responsive.scale(390),
+                      height: responsive.s(390),
                       borderColor: productTheme.colors.heroBorder,
                       imageAssetPath: 'assets/images/product_page/hero.png',
                     ),
                   ),
-                  SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+                  SliverToBoxAdapter(child: SizedBox(height: responsive.s(6))),
                 ];
               },
               body: CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(child: ProductPageActionsRow(theme: productTheme)),
-                  SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+                  SliverToBoxAdapter(child: SizedBox(height: responsive.s(6))),
                   SliverToBoxAdapter(child: ProductPagePricesSection(theme: productTheme)),
-                  SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+                  SliverToBoxAdapter(child: SizedBox(height: responsive.s(6))),
                   SliverToBoxAdapter(child: ProductPageAdditionalActions(theme: productTheme)),
-                  SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+                  SliverToBoxAdapter(child: SizedBox(height: responsive.s(6))),
                   SliverToBoxAdapter(
                     child: ProductPageDividerLine(color: productTheme.colors.divider),
                   ),
-                  SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+                  SliverToBoxAdapter(child: SizedBox(height: responsive.s(6))),
                   SliverToBoxAdapter(child: ProductPageProductInfo(theme: productTheme)),
-                  SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+                  SliverToBoxAdapter(child: SizedBox(height: responsive.s(6))),
                   SliverToBoxAdapter(
                     child: ProductPageDividerLine(color: productTheme.colors.divider),
                   ),
-                  SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+                  SliverToBoxAdapter(child: SizedBox(height: responsive.s(6))),
                   ProductPageCommentsSection(
                     theme: productTheme,
                     comments: _mockProductComments,
                     defaultAvatarAssetPath: 'assets/images/product_page/avatar.png',
                   ),
-                  SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+                  SliverToBoxAdapter(child: SizedBox(height: responsive.s(6))),
                   SliverToBoxAdapter(
                     child: ProductPageBottomCtaOverlay(
                       theme: productTheme,
@@ -116,7 +116,7 @@ class ProductDetailScreen extends StatelessWidget {
                       onShareTap: () {},
                     ),
                   ),
-                  SliverToBoxAdapter(child: SizedBox(height: responsive.scale(24))),
+                  SliverToBoxAdapter(child: SizedBox(height: responsive.s(24))),
                 ],
               ),
             ),

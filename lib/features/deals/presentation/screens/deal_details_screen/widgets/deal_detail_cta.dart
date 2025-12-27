@@ -31,13 +31,13 @@ class DealPageHeaderOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     final shadow = BoxShadow(
       color: colorScheme.surfaceContainerHighest,
-      blurRadius: responsive.scale(8),
-      spreadRadius: responsive.scale(2),
+      blurRadius: responsive.s(8),
+      spreadRadius: responsive.s(2),
     );
 
     return Container(
@@ -50,14 +50,14 @@ class DealPageHeaderOverlay extends StatelessWidget {
         ),
       ),
       padding: EdgeInsets.only(
-        top: responsive.scale(64),
-        left: responsive.scale(16),
-        right: responsive.scale(16),
+        top: responsive.s(64),
+        left: responsive.s(16),
+        right: responsive.s(16),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          WaffirBackButton(size: responsive.scale(44), padding: EdgeInsets.zero),
+          WaffirBackButton(size: responsive.s(44), padding: EdgeInsets.zero),
           _DealTypePill(label: _getPillLabel(), shadow: shadow),
         ],
       ),
@@ -73,17 +73,17 @@ class _DealTypePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return DecoratedBox(
       decoration: BoxDecoration(
         color: colorScheme.secondary,
-        borderRadius: BorderRadius.circular(responsive.scale(60)),
+        borderRadius: BorderRadius.circular(responsive.s(60)),
         boxShadow: [shadow],
       ),
       child: Padding(
-        padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+        padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
         child: Text(
           label,
           style: AppTextStyles.storePageHeaderLabel.copyWith(color: colorScheme.onSurface),
@@ -108,11 +108,11 @@ class DealPageBottomCta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      height: responsive.scale(96),
+      height: responsive.s(96),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -122,22 +122,22 @@ class DealPageBottomCta extends StatelessWidget {
         ),
       ),
       padding: EdgeInsets.only(
-        left: responsive.scale(16),
-        right: responsive.scale(16),
-        bottom: responsive.scale(48),
+        left: responsive.s(16),
+        right: responsive.s(16),
+        bottom: responsive.s(48),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           SizedBox(
-            width: responsive.scale(247),
-            height: responsive.scale(48),
+            width: responsive.s(247),
+            height: responsive.s(48),
             child: Material(
               color: hasRefUrl ? colorScheme.primary : colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(responsive.scale(30)),
+              borderRadius: BorderRadius.circular(responsive.s(30)),
               child: InkWell(
-                borderRadius: BorderRadius.circular(responsive.scale(30)),
+                borderRadius: BorderRadius.circular(responsive.s(30)),
                 onTap: hasRefUrl
                     ? () {
                         unawaited(HapticFeedback.mediumImpact());
@@ -156,10 +156,10 @@ class DealPageBottomCta extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: responsive.scale(16)),
+          SizedBox(width: responsive.s(16)),
           SizedBox(
-            width: responsive.scale(44),
-            height: responsive.scale(44),
+            width: responsive.s(44),
+            height: responsive.s(44),
             child: Material(
               color: colorScheme.primary,
               shape: const CircleBorder(),
@@ -171,8 +171,8 @@ class DealPageBottomCta extends StatelessWidget {
                 },
                 child: Center(
                   child: SizedBox(
-                    width: responsive.scale(20),
-                    height: responsive.scale(20),
+                    width: responsive.s(20),
+                    height: responsive.s(20),
                     child: SvgPicture.asset(
                       'assets/icons/store_detail/share_ios.svg',
                       colorFilter: ColorFilter.mode(colorScheme.onPrimary, BlendMode.srcIn),

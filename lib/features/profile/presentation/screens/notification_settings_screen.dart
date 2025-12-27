@@ -27,7 +27,7 @@ class NotificationSettingsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     // Watch profile state
     final profileAsync = ref.watch(profileControllerProvider);
@@ -147,7 +147,7 @@ class NotificationSettingsScreen extends HookConsumerWidget {
     }
 
     final topInset = MediaQuery.paddingOf(context).top;
-    final contentTop = topInset + responsive.scale(context.responsive.topSafeArea + 8);
+    final contentTop = topInset + responsive.s(context.rs.topSafeArea + 8);
 
     // Show loading if profile is not loaded yet
     if (profileAsync.isLoading) {
@@ -168,10 +168,10 @@ class NotificationSettingsScreen extends HookConsumerWidget {
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.only(
-                    left: responsive.scale(16),
-                    right: responsive.scale(16),
+                    left: responsive.s(16),
+                    right: responsive.s(16),
                     top: contentTop,
-                    bottom: responsive.scale(32),
+                    bottom: responsive.s(32),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,7 +187,7 @@ class NotificationSettingsScreen extends HookConsumerWidget {
                               responsive: responsive,
                               onChanged: handlePushToggle,
                             ),
-                            SizedBox(height: responsive.scale(12)),
+                            SizedBox(height: responsive.s(12)),
                             _CheckboxGroup(
                               responsive: responsive,
                               enabled: pushEnabled.value,
@@ -209,9 +209,9 @@ class NotificationSettingsScreen extends HookConsumerWidget {
                                 ),
                               ],
                             ),
-                            SizedBox(height: responsive.scale(12)),
+                            SizedBox(height: responsive.s(12)),
                             _DividerLine(responsive: responsive),
-                            SizedBox(height: responsive.scale(12)),
+                            SizedBox(height: responsive.s(12)),
                             _ToggleRow(
                               title: LocaleKeys.profile.notificationSettings.emailNotifications.tr(),
                               value: emailEnabled.value,
@@ -221,7 +221,7 @@ class NotificationSettingsScreen extends HookConsumerWidget {
                           ],
                         ),
                       ),
-                      SizedBox(height: responsive.scale(32)),
+                      SizedBox(height: responsive.s(32)),
                       _Section(
                         title: LocaleKeys.profile.notificationSettings.typeTitle.tr(),
                         responsive: responsive,
@@ -234,9 +234,9 @@ class NotificationSettingsScreen extends HookConsumerWidget {
                               responsive: responsive,
                               onTap: () => notificationType.value = _NotificationType.allOffers,
                             ),
-                            SizedBox(height: responsive.scale(12)),
+                            SizedBox(height: responsive.s(12)),
                             _DividerLine(responsive: responsive),
-                            SizedBox(height: responsive.scale(12)),
+                            SizedBox(height: responsive.s(12)),
                             _RadioRow(
                               title: LocaleKeys.profile.notificationSettings.topOffers.tr(),
                               subtitle: LocaleKeys.profile.notificationSettings.topOffersSubtitle.tr(),
@@ -253,20 +253,20 @@ class NotificationSettingsScreen extends HookConsumerWidget {
               ),
               Padding(
                 padding: EdgeInsets.only(
-                  left: responsive.scale(16),
-                  right: responsive.scale(16),
-                  bottom: responsive.scale(120),
+                  left: responsive.s(16),
+                  right: responsive.s(16),
+                  bottom: responsive.s(120),
                 ),
                 child: Center(
                   child: SizedBox(
-                    width: responsive.scale(330),
+                    width: responsive.s(330),
                     child: AppButton.primary(
                       text: LocaleKeys.buttons.save.tr(),
                       isLoading: isSaving.value,
                       enabled: !isSaving.value,
                       onPressed: isSaving.value ? null : save,
-                      width: responsive.scale(330),
-                      borderRadius: BorderRadius.circular(responsive.scale(30)),
+                      width: responsive.s(330),
+                      borderRadius: BorderRadius.circular(responsive.s(30)),
                     ),
                   ),
                 ),
@@ -275,7 +275,7 @@ class NotificationSettingsScreen extends HookConsumerWidget {
           ),
 
           // Back button
-          WaffirBackButton(size: responsive.scale(44)),
+          WaffirBackButton(size: responsive.s(44)),
         ],
       ),
     );
@@ -302,12 +302,12 @@ class _Section extends StatelessWidget {
           title,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
-            fontSize: responsive.scaleFontSize(20, minSize: 16),
+            fontSize: responsive.sFont(20, minSize: 16),
             height: 1.15,
             color: _kTitleColor,
           ),
         ),
-        SizedBox(height: responsive.scale(32)),
+        SizedBox(height: responsive.s(32)),
         child,
       ],
     );
@@ -334,7 +334,7 @@ class _ToggleRow extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: responsive.scale(8)),
+      padding: EdgeInsets.symmetric(vertical: responsive.s(8)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -343,7 +343,7 @@ class _ToggleRow extends StatelessWidget {
               title,
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w500,
-                fontSize: responsive.scaleFontSize(16, minSize: 14),
+                fontSize: responsive.sFont(16, minSize: 14),
                 height: 1.15,
                 color: _kTextColor,
               ),
@@ -370,8 +370,8 @@ class _ScaledToggleSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: responsive.scale(52),
-      height: responsive.scale(32),
+      width: responsive.s(52),
+      height: responsive.s(32),
       child: FittedBox(
         fit: BoxFit.fill,
         child: CustomToggleSwitch(value: value, onChanged: onChanged),
@@ -402,7 +402,7 @@ class _CheckboxGroup extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: responsive.scale(12)),
+      padding: EdgeInsets.symmetric(horizontal: responsive.s(12)),
       child: Column(
         children: [
           for (int i = 0; i < items.length; i++) ...[
@@ -413,13 +413,13 @@ class _CheckboxGroup extends StatelessWidget {
               responsive: responsive,
               textStyle: theme.textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w400,
-                fontSize: responsive.scaleFontSize(12),
+                fontSize: responsive.sFont(12),
                 height: 1.15,
                 color: _kSubtleTextColor,
               ),
               onTap: () => items[i].onChanged(!items[i].value),
             ),
-            if (i != items.length - 1) SizedBox(height: responsive.scale(8)),
+            if (i != items.length - 1) SizedBox(height: responsive.s(8)),
           ],
         ],
       ),
@@ -453,7 +453,7 @@ class _CheckboxRow extends StatelessWidget {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       child: SizedBox(
-        height: responsive.scale(24),
+        height: responsive.s(24),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -480,7 +480,7 @@ class _FigmaCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = responsive.scale(24);
+    final size = responsive.s(24);
 
     final fillColor = enabled ? _kCheckedFill : _kDisabledFill;
     final checkColor = enabled ? _kAccentColor : _kDisabledCheck;
@@ -491,11 +491,11 @@ class _FigmaCheckbox extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: checked ? fillColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(responsive.scale(4)),
+          borderRadius: BorderRadius.circular(responsive.s(4)),
         ),
         child: checked
             ? Center(
-                child: Icon(Icons.check, size: responsive.scale(14), color: checkColor),
+                child: Icon(Icons.check, size: responsive.s(14), color: checkColor),
               )
             : const SizedBox.shrink(),
       ),
@@ -529,7 +529,7 @@ class _RadioRow extends StatelessWidget {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: responsive.scale(8)),
+        padding: EdgeInsets.symmetric(vertical: responsive.s(8)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -541,17 +541,17 @@ class _RadioRow extends StatelessWidget {
                     title,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w500,
-                      fontSize: responsive.scaleFontSize(16, minSize: 14),
+                      fontSize: responsive.sFont(16, minSize: 14),
                       height: 1.15,
                       color: _kTextColor,
                     ),
                   ),
-                  SizedBox(height: responsive.scale(12)),
+                  SizedBox(height: responsive.s(12)),
                   Text(
                     subtitle,
                     style: theme.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w400,
-                      fontSize: responsive.scaleFontSize(11.9),
+                      fontSize: responsive.sFont(11.9),
                       height: 1.15,
                       color: _kTextColor,
                     ),
@@ -578,7 +578,7 @@ class _FigmaRadio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = responsive.scale(24);
+    final size = responsive.s(24);
 
     if (selected) {
       return SizedBox(
@@ -591,8 +591,8 @@ class _FigmaRadio extends StatelessWidget {
           ),
           child: Center(
             child: Container(
-              width: responsive.scale(8),
-              height: responsive.scale(8),
+              width: responsive.s(8),
+              height: responsive.s(8),
               decoration: const BoxDecoration(color: _kDotColor, shape: BoxShape.circle),
             ),
           ),
@@ -606,7 +606,7 @@ class _FigmaRadio extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(size / 2),
-          border: Border.all(color: _kRingColor, width: responsive.scale(2)),
+          border: Border.all(color: _kRingColor, width: responsive.s(2)),
         ),
       ),
     );
@@ -622,6 +622,6 @@ class _DividerLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(width: double.infinity, height: responsive.scale(1), color: _kDividerColor);
+    return Container(width: double.infinity, height: responsive.s(1), color: _kDividerColor);
   }
 }

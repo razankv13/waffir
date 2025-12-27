@@ -98,6 +98,7 @@ class _AuthKeys {
   final otpVerificationFailed = 'auth.otpVerificationFailed';
   final verificationIdMissing = 'auth.verificationIdMissing';
   final codeTimeout = 'auth.codeTimeout';
+  final emailVerificationSent = 'auth.emailVerificationSent';
 }
 
 class _ValidationKeys {

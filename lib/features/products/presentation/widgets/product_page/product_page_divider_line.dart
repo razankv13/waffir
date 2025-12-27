@@ -11,9 +11,9 @@ class ProductPageDividerLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     return Container(
-      height: responsive.scale(1),
+      height: responsive.s(1),
       color: color,
     );
   }

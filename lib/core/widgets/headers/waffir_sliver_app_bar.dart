@@ -54,12 +54,12 @@ class WaffirSliverAppBar extends StatelessWidget {
   ///
   /// Call this to set [SliverAppBar.collapsedHeight] and [SliverAppBar.expandedHeight].
   static double computeHeaderHeight(BuildContext context) {
-    final responsive = context.responsive;
-    final headerVerticalPadding = responsive.scale(12);
-    final logoHeight = responsive.scale(56);
-    final notificationSize = responsive.scale(44);
+    final responsive = context.rs;
+    final headerVerticalPadding = responsive.s(12);
+    final logoHeight = responsive.s(56);
+    final notificationSize = responsive.s(44);
     const searchBarHeight = 68.0;
-    final searchPadding = responsive.scale(16);
+    final searchPadding = responsive.s(16);
 
     final rowHeight = logoHeight > notificationSize ? logoHeight : notificationSize;
     return (headerVerticalPadding * 2) + rowHeight + (searchPadding * 2) + searchBarHeight;
@@ -68,15 +68,15 @@ class WaffirSliverAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
-    final headerHorizontalPadding = responsive.scale(16);
-    final headerVerticalPadding = responsive.scale(12);
-    final logoHeight = responsive.scale(56);
-    final notificationSize = responsive.scale(44);
-    final notificationIconSize = responsive.scale(22);
-    final notificationSplashRadius = responsive.scale(24);
-    final searchPadding = responsive.scale(16);
+    final headerHorizontalPadding = responsive.s(16);
+    final headerVerticalPadding = responsive.s(12);
+    final logoHeight = responsive.s(56);
+    final notificationSize = responsive.s(44);
+    final notificationIconSize = responsive.s(22);
+    final notificationSplashRadius = responsive.s(24);
+    final searchPadding = responsive.s(16);
 
     final headerHeight = computeHeaderHeight(context);
 

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -30,7 +28,7 @@ class MyAccount extends HookConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     // Watch profile state
     final profileAsync = ref.watch(profileControllerProvider);
@@ -48,23 +46,23 @@ class MyAccount extends HookConsumerWidget {
     final bottomInset = MediaQuery.paddingOf(context).bottom;
 
     // Figma: back row padding top = 64. On iOS, 64 ≈ status bar (44) + 20.
-    final headerTopPadding = topInset + responsive.scale(20);
+    final headerTopPadding = topInset + responsive.s(20);
 
-    final horizontalPadding = responsive.scale(16);
+    final horizontalPadding = responsive.s(16);
 
     // Figma: root padding bottom = 120.
-    final bottomPadding = responsive.scale(120) + bottomInset;
+    final bottomPadding = responsive.s(120) + bottomInset;
 
-    final cardGap = responsive.scale(12);
+    final cardGap = responsive.s(12);
 
-    final activityRowWidth = context.screenWidth - (horizontalPadding * 2);
+    final activityRowWidth = responsive.screenWidth - (horizontalPadding * 2);
 
-    final avatarSize = responsive.scale(80);
-    final editBadgeSize = responsive.scale(24);
+    final avatarSize = responsive.s(80);
+    final editBadgeSize = responsive.s(24);
 
     final titleWelcomeStyle = TextStyle(
       fontFamily: 'Parkinsans',
-      fontSize: responsive.scaleFontSize(14, minSize: 12),
+      fontSize: responsive.sFont(14, minSize: 12),
       fontWeight: FontWeight.w500,
       height: 1.0,
       color: colorScheme.onSurface,
@@ -72,7 +70,7 @@ class MyAccount extends HookConsumerWidget {
 
     final titleNameStyle = TextStyle(
       fontFamily: 'Parkinsans',
-      fontSize: responsive.scaleFontSize(20, minSize: 16),
+      fontSize: responsive.sFont(20, minSize: 16),
       fontWeight: FontWeight.w600,
       height: 1.0,
       color: colorScheme.onSurface,
@@ -80,7 +78,7 @@ class MyAccount extends HookConsumerWidget {
 
     final menuTextStyle = TextStyle(
       fontFamily: 'Parkinsans',
-      fontSize: responsive.scaleFontSize(14, minSize: 12),
+      fontSize: responsive.sFont(14, minSize: 12),
       fontWeight: FontWeight.w500,
       height: 1.25,
       color: colorScheme.onSurface,
@@ -166,10 +164,10 @@ class MyAccount extends HookConsumerWidget {
                   // Back button row
                   Align(
                     alignment: Alignment.topLeft,
-                    child: WaffirBackButton(size: responsive.scale(44), onTap: () => context.pop()),
+                    child: WaffirBackButton(size: responsive.s(44), onTap: () => context.pop()),
                   ),
 
-                  SizedBox(height: responsive.scale(32)),
+                  SizedBox(height: responsive.s(32)),
 
                   // Avatar + welcome/name
                   Padding(
@@ -187,7 +185,7 @@ class MyAccount extends HookConsumerWidget {
                             context.pushNamed(AppRouteNames.profilePersonalDetails);
                           },
                         ),
-                        SizedBox(width: responsive.scale(16)),
+                        SizedBox(width: responsive.s(16)),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -195,7 +193,7 @@ class MyAccount extends HookConsumerWidget {
                               LocaleKeys.profile.myAccount.welcome.tr(),
                               style: titleWelcomeStyle,
                             ),
-                            SizedBox(height: responsive.scale(8)),
+                            SizedBox(height: responsive.s(8)),
                             Text(profile?.displayName ?? 'User', style: titleNameStyle),
                           ],
                         ),
@@ -203,7 +201,7 @@ class MyAccount extends HookConsumerWidget {
                     ),
                   ),
 
-                  SizedBox(height: responsive.scale(32)),
+                  SizedBox(height: responsive.s(32)),
 
                   // Activity cards row (width=362, gap=12)
                   Center(
@@ -217,15 +215,15 @@ class MyAccount extends HookConsumerWidget {
                                 assetPath: 'assets/icons/like_inactive.svg',
                                 gradientStart: gradientStart,
                                 gradientEnd: gradientEnd,
-                                size: responsive.scale(24),
+                                size: responsive.s(24),
                               ),
                               label: LocaleKeys.profile.myAccount.likes.tr(
                                 namedArgs: {'count': '200k'},
                               ),
                               borderColor: colorScheme.onSurface.withValues(alpha: 0.05),
                               textStyle: menuTextStyle,
-                              paddingVertical: responsive.scale(16),
-                              gap: responsive.scale(16),
+                              paddingVertical: responsive.s(16),
+                              gap: responsive.s(16),
                             ),
                           ),
                           SizedBox(width: cardGap),
@@ -235,15 +233,15 @@ class MyAccount extends HookConsumerWidget {
                                 assetPath: 'assets/icons/comment.svg',
                                 gradientStart: gradientStart,
                                 gradientEnd: gradientEnd,
-                                size: responsive.scale(24),
+                                size: responsive.s(24),
                               ),
                               label: LocaleKeys.profile.myAccount.comments.tr(
                                 namedArgs: {'count': '20'},
                               ),
                               borderColor: colorScheme.onSurface.withValues(alpha: 0.05),
                               textStyle: menuTextStyle,
-                              paddingVertical: responsive.scale(16),
-                              gap: responsive.scale(16),
+                              paddingVertical: responsive.s(16),
+                              gap: responsive.s(16),
                             ),
                           ),
                           SizedBox(width: cardGap),
@@ -253,15 +251,15 @@ class MyAccount extends HookConsumerWidget {
                                 icon: Icons.favorite,
                                 gradientStart: gradientStart,
                                 gradientEnd: gradientEnd,
-                                size: responsive.scale(24),
+                                size: responsive.s(24),
                               ),
                               label: LocaleKeys.profile.myAccount.votes.tr(
                                 namedArgs: {'count': '201'},
                               ),
                               borderColor: colorScheme.onSurface.withValues(alpha: 0.05),
                               textStyle: menuTextStyle,
-                              paddingVertical: responsive.scale(16),
-                              gap: responsive.scale(16),
+                              paddingVertical: responsive.s(16),
+                              gap: responsive.s(16),
                             ),
                           ),
                         ],
@@ -269,7 +267,7 @@ class MyAccount extends HookConsumerWidget {
                     ),
                   ),
 
-                  SizedBox(height: responsive.scale(24)),
+                  SizedBox(height: responsive.s(24)),
 
                   // Menu list + dividers
                   Padding(
@@ -319,21 +317,21 @@ class MyAccount extends HookConsumerWidget {
 
                   // Bottom Log out button (330×48, radius 30)
                   Padding(
-                    padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
+                    padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16)),
                     child: Center(
                       child: SizedBox(
-                        width: responsive.scale(330),
-                        height: responsive.scale(48),
+                        width: responsive.s(330),
+                        height: responsive.s(48),
                         child: AppButton.primary(
                           onPressed: () {
-                            ProfileDialogs.showSignOutDialog(context);
+                            ProfileDialogs.showSignOutDialog(context, ref);
                           },
-                          borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
+                          borderRadius: responsive.sBorderRadius(BorderRadius.circular(30)),
                           child: Text(
                             LocaleKeys.auth.logout.tr(),
                             style: textTheme.labelLarge?.copyWith(
                               fontFamily: 'Parkinsans',
-                              fontSize: responsive.scaleFontSize(14, minSize: 12),
+                              fontSize: responsive.sFont(14, minSize: 12),
                               fontWeight: FontWeight.w600,
                               height: 1.0,
                               color: colorScheme.onPrimary,
@@ -363,20 +361,20 @@ class _DeleteAccountBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final bottomInset = MediaQuery.paddingOf(context).bottom;
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(bottom: responsive.scale(48) + bottomInset),
+      padding: EdgeInsets.only(bottom: responsive.s(48) + bottomInset),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(responsive.scale(24))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(responsive.s(24))),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF1B1B1B).withValues(alpha: 0.12),
-            blurRadius: responsive.scale(25),
-            offset: Offset(responsive.scale(2), responsive.scale(4)),
+            blurRadius: responsive.s(25),
+            offset: Offset(responsive.s(2), responsive.s(4)),
           ),
         ],
       ),
@@ -384,21 +382,21 @@ class _DeleteAccountBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: responsive.scalePadding(const EdgeInsets.fromLTRB(6, 6, 6, 0)),
+            padding: responsive.sPadding(const EdgeInsets.fromLTRB(6, 6, 6, 0)),
             child: SizedBox(
-              height: responsive.scale(44),
+              height: responsive.s(44),
               child: Stack(
                 children: [
                   Align(
                     alignment: Alignment.topCenter,
                     child: Padding(
-                      padding: EdgeInsets.only(top: responsive.scale(10)),
+                      padding: EdgeInsets.only(top: responsive.s(10)),
                       child: Container(
-                        width: responsive.scale(32),
-                        height: responsive.scale(6),
+                        width: responsive.s(32),
+                        height: responsive.s(6),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF2F2F2),
-                          borderRadius: BorderRadius.circular(responsive.scale(9999)),
+                          borderRadius: BorderRadius.circular(responsive.s(9999)),
                         ),
                       ),
                     ),
@@ -406,8 +404,8 @@ class _DeleteAccountBottomSheet extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerRight,
                     child: SizedBox(
-                      width: responsive.scale(44),
-                      height: responsive.scale(44),
+                      width: responsive.s(44),
+                      height: responsive.s(44),
                       child: Center(
                         child: Material(
                           color: Colors.transparent,
@@ -415,8 +413,8 @@ class _DeleteAccountBottomSheet extends StatelessWidget {
                             onTap: onCancel,
                             customBorder: const CircleBorder(),
                             child: Container(
-                              width: responsive.scale(32),
-                              height: responsive.scale(32),
+                              width: responsive.s(32),
+                              height: responsive.s(32),
                               decoration: const BoxDecoration(
                                 color: Color(0xFFF2F2F2),
                                 shape: BoxShape.circle,
@@ -424,7 +422,7 @@ class _DeleteAccountBottomSheet extends StatelessWidget {
                               alignment: Alignment.center,
                               child: Icon(
                                 Icons.close_rounded,
-                                size: responsive.scaleWithRange(16, min: 14, max: 18),
+                                size: responsive.sConstrained(16, min: 14, max: 18),
                                 color: colorScheme.onSurface,
                               ),
                             ),
@@ -438,13 +436,13 @@ class _DeleteAccountBottomSheet extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: responsive.scale(24)),
+            padding: EdgeInsets.symmetric(horizontal: responsive.s(24)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(height: responsive.scale(8)),
+                SizedBox(height: responsive.s(8)),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+                  padding: EdgeInsets.symmetric(horizontal: responsive.s(16)),
                   child: Column(
                     children: [
                       Text(
@@ -453,19 +451,19 @@ class _DeleteAccountBottomSheet extends StatelessWidget {
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontFamily: 'Parkinsans',
                           fontWeight: FontWeight.w700,
-                          fontSize: responsive.scaleFontSize(18, minSize: 16),
+                          fontSize: responsive.sFont(18, minSize: 16),
                           height: 1.4,
                           color: colorScheme.onSurface,
                         ),
                       ),
-                      SizedBox(height: responsive.scale(12)),
+                      SizedBox(height: responsive.s(12)),
                       Text(
                         LocaleKeys.profile.myAccount.deleteDescription.tr(),
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontFamily: 'Parkinsans',
                           fontWeight: FontWeight.w400,
-                          fontSize: responsive.scaleFontSize(14, minSize: 12),
+                          fontSize: responsive.sFont(14, minSize: 12),
                           height: 1.4,
                           color: colorScheme.onSurface,
                         ),
@@ -473,43 +471,43 @@ class _DeleteAccountBottomSheet extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: responsive.scale(32)),
+                SizedBox(height: responsive.s(32)),
                 Column(
                   children: [
                     SizedBox(
                       width: double.infinity,
-                      height: responsive.scale(48),
+                      height: responsive.s(48),
                       child: AppButton.primary(
                         onPressed: onConfirm,
                         backgroundColor: const Color(0xFFFF0000),
                         foregroundColor: Colors.white,
-                        borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
+                        borderRadius: responsive.sBorderRadius(BorderRadius.circular(30)),
                         child: Text(
                           LocaleKeys.profile.myAccount.confirmDelete.tr(),
                           style: theme.textTheme.labelLarge?.copyWith(
                             fontFamily: 'Parkinsans',
                             fontWeight: FontWeight.w600,
-                            fontSize: responsive.scaleFontSize(14, minSize: 12),
+                            fontSize: responsive.sFont(14, minSize: 12),
                             height: 1.0,
                             color: Colors.white,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: responsive.scale(12)),
+                    SizedBox(height: responsive.s(12)),
                     SizedBox(
                       width: double.infinity,
-                      height: responsive.scale(48),
+                      height: responsive.s(48),
                       child: AppButton.secondary(
                         onPressed: onCancel,
-                        borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(30)),
+                        borderRadius: responsive.sBorderRadius(BorderRadius.circular(30)),
                         foregroundColor: colorScheme.onSurface,
                         child: Text(
                           LocaleKeys.buttons.cancel.tr(),
                           style: theme.textTheme.labelLarge?.copyWith(
                             fontFamily: 'Parkinsans',
                             fontWeight: FontWeight.w600,
-                            fontSize: responsive.scaleFontSize(14, minSize: 12),
+                            fontSize: responsive.sFont(14, minSize: 12),
                             height: 1.0,
                             color: colorScheme.onSurface,
                           ),
@@ -546,7 +544,7 @@ class _AvatarWithEditBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -561,7 +559,7 @@ class _AvatarWithEditBadge extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: borderColor, width: responsive.scale(2)),
+              border: Border.all(color: borderColor, width: responsive.s(2)),
             ),
             child: ClipOval(
               child: avatarUrl == null || avatarUrl!.isEmpty
@@ -593,8 +591,8 @@ class _AvatarWithEditBadge extends StatelessWidget {
 
           // Edit badge (24×24) with shadow
           Positioned(
-            right: responsive.scale(-2),
-            top: responsive.scale(-2),
+            right: responsive.s(-2),
+            top: responsive.s(-2),
             child: GestureDetector(
               onTap: onEditTap,
               child: Container(
@@ -606,15 +604,15 @@ class _AvatarWithEditBadge extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(
                       color: shadowColor,
-                      blurRadius: responsive.scale(12),
-                      offset: Offset(0, responsive.scale(0)),
+                      blurRadius: responsive.s(12),
+                      offset: Offset(0, responsive.s(0)),
                     ),
                   ],
                 ),
                 alignment: Alignment.center,
                 child: Icon(
                   Icons.edit,
-                  size: responsive.scaleWithRange(11, min: 10, max: 14),
+                  size: responsive.sConstrained(11, min: 10, max: 14),
                   color: colorScheme.primary,
                 ),
               ),
@@ -645,12 +643,12 @@ class _ActivityStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        border: Border.all(color: borderColor, width: responsive.scale(1)),
+        border: Border.all(color: borderColor, width: responsive.s(1)),
       ),
       padding: EdgeInsets.symmetric(vertical: paddingVertical),
       child: Column(
@@ -684,26 +682,26 @@ class _MenuRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Column(
       children: [
         SizedBox(
-          height: responsive.scale(44),
+          height: responsive.s(44),
           child: InkWell(
             onTap: onTap,
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: responsive.scale(8)),
+              padding: EdgeInsets.symmetric(vertical: responsive.s(8)),
               child: Row(
                 children: [
                   Expanded(child: Text(label, style: textStyle)),
-                  Icon(Icons.chevron_right, size: responsive.scale(24), color: chevronColor),
+                  Icon(Icons.chevron_right, size: responsive.s(24), color: chevronColor),
                 ],
               ),
             ),
           ),
         ),
-        if (showDivider) Divider(height: responsive.scale(8), thickness: 1, color: dividerColor),
+        if (showDivider) Divider(height: responsive.s(8), thickness: 1, color: dividerColor),
       ],
     );
   }

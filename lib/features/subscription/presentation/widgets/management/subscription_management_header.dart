@@ -13,7 +13,7 @@ class SubscriptionManagementHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final theme = Theme.of(context);
 
     return Column(
@@ -22,22 +22,22 @@ class SubscriptionManagementHeader extends StatelessWidget {
           LocaleKeys.subscription.management.title.tr(),
           textAlign: TextAlign.center,
           style: AppTypography.headlineSmall.copyWith(
-            fontSize: responsive.scaleFontSize(18, minSize: 16),
+            fontSize: responsive.sFont(18, minSize: 16),
             fontWeight: FontWeight.w700,
             color: theme.colorScheme.onSurface,
             height: 1.4,
           ),
         ),
-        SizedBox(height: responsive.scale(16)),
+        SizedBox(height: responsive.s(16)),
         SizedBox(
           width: selectedPeriod == SubscriptionPeriod.monthly
-              ? responsive.scale(243)
-              : responsive.scale(323),
+              ? responsive.s(243)
+              : responsive.s(323),
           child: Text(
             LocaleKeys.subscription.management.subtitle.tr(),
             textAlign: TextAlign.center,
             style: AppTypography.bodyMedium.copyWith(
-              fontSize: responsive.scaleFontSize(16, minSize: 14),
+              fontSize: responsive.sFont(16, minSize: 14),
               fontWeight: FontWeight.w400,
               color: theme.colorScheme.onSurface,
               height: 1.4,

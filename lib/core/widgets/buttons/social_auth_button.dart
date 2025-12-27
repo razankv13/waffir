@@ -84,10 +84,10 @@ class _SocialAuthButtonState extends State<SocialAuthButton> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
-    double s(double value) => responsive.scaleWithMax(value, max: value); // downscale-only
-    double sf(double value, {double min = 10.0}) => responsive.scaleWithRange(value, min: min, max: value); // downscale-only
+    double s(double value) => responsive.s(value); // downscale-only
+    double sf(double value, {double min = 10.0}) => responsive.sConstrained(value, min: min, max: value); // downscale-only
 
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 

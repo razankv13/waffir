@@ -10,16 +10,16 @@ class SubscriptionBenefitsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Padding(
-      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 32)),
+      padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 32)),
       child: Column(
         children: [
           SubscriptionBenefitItem(text: LocaleKeys.subscription.management.benefits.cancelAnytime.tr()),
-          SizedBox(height: responsive.scale(8)),
+          SizedBox(height: responsive.s(8)),
           SubscriptionBenefitItem(text: LocaleKeys.subscription.management.benefits.dailyVerified.tr()),
-          SizedBox(height: responsive.scale(8)),
+          SizedBox(height: responsive.s(8)),
           SubscriptionBenefitItem(text: LocaleKeys.subscription.management.benefits.oneApp.tr()),
         ],
       ),

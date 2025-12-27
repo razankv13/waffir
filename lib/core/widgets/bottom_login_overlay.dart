@@ -65,15 +65,15 @@ class BottomLoginOverlay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
-    final overlayHeight = height != null ? responsive.scale(height!) : responsive.scale(215);
-    final contentPadding = responsive.scalePadding(const EdgeInsets.all(16));
+    final overlayHeight = height != null ? responsive.s(height!) : responsive.s(215);
+    final contentPadding = responsive.sPadding(const EdgeInsets.all(16));
     final effectiveButtonPadding = buttonPadding != null
-        ? responsive.scalePadding(buttonPadding!)
-        : responsive.scalePadding(const EdgeInsets.symmetric(vertical: 14));
-    final effectiveBorderRadius = responsive.scaleBorderRadius(
+        ? responsive.sPadding(buttonPadding!)
+        : responsive.sPadding(const EdgeInsets.symmetric(vertical: 14));
+    final effectiveBorderRadius = responsive.sBorderRadius(
       borderRadius ?? BorderRadius.circular(30),
     );
 

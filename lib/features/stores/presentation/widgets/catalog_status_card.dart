@@ -19,7 +19,7 @@ class CatalogStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -29,16 +29,16 @@ class CatalogStatusCard extends StatelessWidget {
     };
 
     return Container(
-      padding: responsive.scalePadding(const EdgeInsets.all(16)),
+      padding: responsive.sPadding(const EdgeInsets.all(16)),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(responsive.scale(12)),
+        borderRadius: BorderRadius.circular(responsive.s(12)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: responsive.scale(22), color: colorScheme.onSurfaceVariant),
-          SizedBox(width: responsive.scale(12)),
+          Icon(icon, size: responsive.s(22), color: colorScheme.onSurfaceVariant),
+          SizedBox(width: responsive.s(12)),
           Expanded(
             child: Text(
               message,
@@ -46,7 +46,7 @@ class CatalogStatusCard extends StatelessWidget {
             ),
           ),
           if (actionLabel != null && onAction != null) ...[
-            SizedBox(width: responsive.scale(8)),
+            SizedBox(width: responsive.s(8)),
             TextButton(onPressed: onAction, child: Text(actionLabel!)),
           ],
         ],

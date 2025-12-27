@@ -16,16 +16,16 @@ class NotificationsEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final naTheme = Theme.of(context).extension<NotificationsAlertsTheme>()!;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Center(
       child: Padding(
-        padding: responsive.scalePadding(const EdgeInsets.all(32)),
+        padding: responsive.sPadding(const EdgeInsets.all(32)),
         child: Text(
           message,
           style: naTheme.subtitleStyle.copyWith(
             color: naTheme.unselectedColor,
-            fontSize: responsive.scaleFontSize(16, minSize: 14),
+            fontSize: responsive.sFont(16, minSize: 14),
           ),
           textAlign: TextAlign.center,
         ),

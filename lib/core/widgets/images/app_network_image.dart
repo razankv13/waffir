@@ -164,24 +164,24 @@ class AppNetworkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     // Calculate scaled dimensions
     final scaledWidth = useResponsiveScaling && width != null
-        ? responsive.scale(width!)
+        ? responsive.s(width!)
         : width;
     final scaledHeight = useResponsiveScaling && height != null
-        ? responsive.scale(height!)
+        ? responsive.s(height!)
         : height;
     final scaledBorderRadius = useResponsiveScaling && borderRadius != null
-        ? responsive.scaleBorderRadius(borderRadius!)
+        ? responsive.sBorderRadius(borderRadius!)
         : borderRadius;
 
     // For circular variant
     if (_isCircular) {
       final scaledSize = useResponsiveScaling && _size != null
-          ? responsive.scale(_size!)
+          ? responsive.s(_size!)
           : _size;
 
       return ClipOval(

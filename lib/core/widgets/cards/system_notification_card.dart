@@ -45,32 +45,32 @@ class SystemNotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final naTheme = Theme.of(context).extension<NotificationsAlertsTheme>()!;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: responsive.scalePadding(const EdgeInsets.symmetric(vertical: 12)),
+        padding: responsive.sPadding(const EdgeInsets.symmetric(vertical: 12)),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Left: Icon tile (48×48)
             Container(
-              width: responsive.scale(48),
-              height: responsive.scale(48),
+              width: responsive.s(48),
+              height: responsive.s(48),
               decoration: BoxDecoration(
                 color: naTheme.notificationTileBackground,
-                borderRadius: BorderRadius.circular(responsive.scale(8)),
+                borderRadius: BorderRadius.circular(responsive.s(8)),
                 border: Border.all(
                   color: naTheme.notificationTileBorder,
-                  width: responsive.scale(1),
+                  width: responsive.s(1),
                 ),
               ),
               child: Center(
                 child: SvgPicture.asset(
                   iconAssetPath,
-                  width: responsive.scale(24),
-                  height: responsive.scale(24),
+                  width: responsive.s(24),
+                  height: responsive.s(24),
                   colorFilter: ColorFilter.mode(
                     naTheme.selectedColor,
                     BlendMode.srcIn,
@@ -79,7 +79,7 @@ class SystemNotificationCard extends StatelessWidget {
               ),
             ),
 
-            SizedBox(width: responsive.scale(12)),
+            SizedBox(width: responsive.s(12)),
 
             // Middle: Title, subtitle, timestamp
             Expanded(
@@ -91,14 +91,14 @@ class SystemNotificationCard extends StatelessWidget {
                       // Unread dot (if unread)
                       if (!isRead) ...[
                         Container(
-                          width: responsive.scale(8),
-                          height: responsive.scale(8),
+                          width: responsive.s(8),
+                          height: responsive.s(8),
                           decoration: BoxDecoration(
                             color: naTheme.selectedColor,
                             shape: BoxShape.circle,
                           ),
                         ),
-                        SizedBox(width: responsive.scale(8)),
+                        SizedBox(width: responsive.s(8)),
                       ],
 
                       // Title
@@ -107,7 +107,7 @@ class SystemNotificationCard extends StatelessWidget {
                           title,
                           style: naTheme.notificationTitleStyle.copyWith(
                             color: naTheme.textPrimary,
-                            fontSize: responsive.scaleFontSize(16, minSize: 14),
+                            fontSize: responsive.sFont(16, minSize: 14),
                             fontWeight: isRead ? FontWeight.w500 : FontWeight.w600,
                           ),
                           maxLines: 1,
@@ -117,40 +117,40 @@ class SystemNotificationCard extends StatelessWidget {
                     ],
                   ),
 
-                  SizedBox(height: responsive.scale(4)),
+                  SizedBox(height: responsive.s(4)),
 
                   // Subtitle
                   Text(
                     subtitle,
                     style: naTheme.notificationSubtitleStyle.copyWith(
                       color: naTheme.unselectedColor,
-                      fontSize: responsive.scaleFontSize(12, minSize: 10),
+                      fontSize: responsive.sFont(12, minSize: 10),
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
 
-                  SizedBox(height: responsive.scale(4)),
+                  SizedBox(height: responsive.s(4)),
 
                   // Timestamp
                   Text(
                     timeAgo,
                     style: naTheme.notificationTimestampStyle.copyWith(
                       color: naTheme.timestampColor,
-                      fontSize: responsive.scaleFontSize(11.899999618530273, minSize: 10),
+                      fontSize: responsive.sFont(11.899999618530273, minSize: 10),
                     ),
                   ),
                 ],
               ),
             ),
 
-            SizedBox(width: responsive.scale(8)),
+            SizedBox(width: responsive.s(8)),
 
             // Right: Chevron indicator
             SvgPicture.asset(
               'assets/icons/chevron_right.svg',
-              width: responsive.scale(20),
-              height: responsive.scale(20),
+              width: responsive.s(20),
+              height: responsive.s(20),
               colorFilter: ColorFilter.mode(
                 naTheme.unselectedColor,
                 BlendMode.srcIn,
@@ -162,6 +162,8 @@ class SystemNotificationCard extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

@@ -34,7 +34,7 @@ class ContactCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Expanded(
       child: Material(
@@ -44,11 +44,11 @@ class ContactCard extends StatelessWidget {
             HapticFeedback.lightImpact();
             onTap();
           },
-          borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(10)),
+          borderRadius: responsive.sBorderRadius(BorderRadius.circular(10)),
           child: Ink(
             decoration: BoxDecoration(
               color: colorScheme.surface,
-              borderRadius: responsive.scaleBorderRadius(
+              borderRadius: responsive.sBorderRadius(
                 BorderRadius.circular(10),
               ),
               border: Border.all(
@@ -56,7 +56,7 @@ class ContactCard extends StatelessWidget {
               ),
             ),
             child: Container(
-              padding: responsive.scalePadding(
+              padding: responsive.sPadding(
                 const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
               ),
               child: Column(
@@ -64,17 +64,17 @@ class ContactCard extends StatelessWidget {
                 children: [
                   // Icon: 27×27px (from Figma)
                   SizedBox(
-                    width: responsive.scale(27),
-                    height: responsive.scale(27),
+                    width: responsive.s(27),
+                    height: responsive.s(27),
                     child: icon,
                   ),
                   // Gap: 8px (from Figma)
-                  SizedBox(height: responsive.scale(8)),
+                  SizedBox(height: responsive.s(8)),
                   // Label: Parkinsans 500, 9px (from Figma)
                   Text(
                     label,
                     style: theme.textTheme.labelSmall?.copyWith(
-                      fontSize: responsive.scaleFontSize(9, minSize: 8),
+                      fontSize: responsive.sFont(9, minSize: 8),
                       fontWeight: FontWeight.w500,
                       color: colorScheme.primary, // #0F352D
                     ),

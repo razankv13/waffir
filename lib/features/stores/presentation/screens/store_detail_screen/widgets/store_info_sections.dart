@@ -20,15 +20,15 @@ class StoreOutletBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return SizedBox(
-      height: responsive.scale(48.25),
+      height: responsive.s(48.25),
       child: DecoratedBox(
         decoration: BoxDecoration(color: colorScheme.primary),
         child: Padding(
-          padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
+          padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -40,8 +40,8 @@ class StoreOutletBanner extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(
-                    width: responsive.scale(171.95),
-                    height: responsive.scale(16.98),
+                    width: responsive.s(171.95),
+                    height: responsive.s(16.98),
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
@@ -55,10 +55,10 @@ class StoreOutletBanner extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: responsive.scale(4)),
+                  SizedBox(width: responsive.s(4)),
                   SizedBox(
-                    width: responsive.scale(12),
-                    height: responsive.scale(12),
+                    width: responsive.s(12),
+                    height: responsive.s(12),
                     child: SvgPicture.asset(
                       Assets.icons.arrowIcon.path,
                       colorFilter: ColorFilter.mode(colorScheme.onPrimary, BlendMode.srcIn),
@@ -99,13 +99,13 @@ class StorePricesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final promoColors = Theme.of(context).extension<PromoColors>();
     final discountLabel = _getDiscountRange();
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+      padding: EdgeInsets.symmetric(horizontal: responsive.s(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -113,7 +113,7 @@ class StorePricesSection extends StatelessWidget {
             LocaleKeys.stores.detail.discountTitle.tr(args: [store.name]),
             style: AppTextStyles.storePageDealHeadline.copyWith(color: colorScheme.onSurface),
           ),
-          SizedBox(height: responsive.scale(16)),
+          SizedBox(height: responsive.s(16)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -125,7 +125,7 @@ class StorePricesSection extends StatelessWidget {
                 )
               else
                 const SizedBox.shrink(),
-              SizedBox(width: responsive.scale(8)),
+              SizedBox(width: responsive.s(8)),
               Expanded(
                 child: Text(
                   LocaleKeys.stores.detail.atStore.tr(args: [store.name]),
@@ -157,27 +157,27 @@ class StoreDiscountTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return DecoratedBox(
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(responsive.scale(26.726573944091797)),
+        borderRadius: BorderRadius.circular(responsive.s(26.726573944091797)),
       ),
       child: Padding(
-        padding: responsive.scalePadding(const EdgeInsets.all(8)),
+        padding: responsive.sPadding(const EdgeInsets.all(8)),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              width: responsive.scale(16),
-              height: responsive.scale(16),
+              width: responsive.s(16),
+              height: responsive.s(16),
               child: SvgPicture.asset(
                 'assets/icons/store_detail/tag.svg',
                 colorFilter: const ColorFilter.mode(Color(0xFF0F352D), BlendMode.srcIn),
               ),
             ),
-            SizedBox(width: responsive.scale(4)),
+            SizedBox(width: responsive.s(4)),
             Text(label, style: AppTextStyles.storePageDiscountLabel.copyWith(color: textColor)),
           ],
         ),
@@ -192,13 +192,13 @@ class StoreAdditionalActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: responsive.scale(16),
-        vertical: responsive.scale(8),
+        horizontal: responsive.s(16),
+        vertical: responsive.s(8),
       ),
       child: InkWell(
         onTap: () {
@@ -210,14 +210,14 @@ class StoreAdditionalActions extends StatelessWidget {
         child: Row(
           children: [
             SizedBox(
-              width: responsive.scale(24),
-              height: responsive.scale(24),
+              width: responsive.s(24),
+              height: responsive.s(24),
               child: SvgPicture.asset(
                 Assets.icons.storeDetail.error.path,
                 colorFilter: ColorFilter.mode(colorScheme.onSurface, BlendMode.srcIn),
               ),
             ),
-            SizedBox(width: responsive.scale(4)),
+            SizedBox(width: responsive.s(4)),
             Text(
               LocaleKeys.productPage.actions.reportExpired.tr(),
               style: AppTextStyles.storePageReportExpired.copyWith(color: colorScheme.onSurface),
@@ -244,11 +244,11 @@ class StoreProductInfoSection extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: responsive.scalePadding(const EdgeInsets.all(16)),
+      padding: responsive.sPadding(const EdgeInsets.all(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -261,7 +261,7 @@ class StoreProductInfoSection extends StatelessWidget {
               ),
               bodyStyle: AppTextStyles.storePageInfoBody.copyWith(color: colorScheme.onSurface),
             ),
-            if (featuresBody != null) SizedBox(height: responsive.scale(16)),
+            if (featuresBody != null) SizedBox(height: responsive.s(16)),
           ],
           if (featuresBody != null)
             StoreDetailsBlock(
@@ -294,13 +294,13 @@ class StoreDetailsBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(title, style: titleStyle),
-        SizedBox(height: responsive.scale(8)),
+        SizedBox(height: responsive.s(8)),
         Text(body, style: bodyStyle),
       ],
     );
@@ -316,7 +316,7 @@ class StoreWebsiteSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -334,11 +334,11 @@ class StoreWebsiteSection extends StatelessWidget {
         }
       },
       child: Padding(
-        padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
+        padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
         child: Row(
           children: [
-            Icon(Icons.language, color: colorScheme.primary, size: responsive.scale(24)),
-            SizedBox(width: responsive.scale(12)),
+            Icon(Icons.language, color: colorScheme.primary, size: responsive.s(24)),
+            SizedBox(width: responsive.s(12)),
             Expanded(
               child: Text(
                 displayUrl,
@@ -354,7 +354,7 @@ class StoreWebsiteSection extends StatelessWidget {
             Icon(
               Icons.open_in_new,
               color: colorScheme.onSurfaceVariant,
-              size: responsive.scale(18),
+              size: responsive.s(18),
             ),
           ],
         ),
@@ -374,23 +374,23 @@ class StoreCategoriesChips extends StatelessWidget {
   Widget build(BuildContext context) {
     if (categories.isEmpty) return const SizedBox.shrink();
 
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
+      padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
       child: Wrap(
-        spacing: responsive.scale(8),
-        runSpacing: responsive.scale(8),
+        spacing: responsive.s(8),
+        runSpacing: responsive.s(8),
         children: categories.map((category) {
           return Container(
-            padding: responsive.scalePadding(
+            padding: responsive.sPadding(
               const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             ),
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(responsive.scale(16)),
+              borderRadius: BorderRadius.circular(responsive.s(16)),
             ),
             child: Text(
               category,

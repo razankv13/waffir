@@ -19,7 +19,7 @@ class SubscriptionProceedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final theme = Theme.of(context);
 
     return Positioned(
@@ -28,14 +28,14 @@ class SubscriptionProceedButton extends StatelessWidget {
       right: 0,
       child: Container(
         color: theme.colorScheme.surface,
-        padding: responsive.scalePadding(const EdgeInsets.all(16)),
+        padding: responsive.sPadding(const EdgeInsets.all(16)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Center(
               child: Container(
-                width: responsive.scale(330),
-                height: responsive.scale(48),
+                width: responsive.s(330),
+                height: responsive.s(48),
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
@@ -49,8 +49,8 @@ class SubscriptionProceedButton extends StatelessWidget {
                   onPressed: isLoading ? null : onPressed,
                   child: isLoading
                       ? SizedBox(
-                          width: responsive.scale(20),
-                          height: responsive.scale(20),
+                          width: responsive.s(20),
+                          height: responsive.s(20),
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
@@ -61,7 +61,7 @@ class SubscriptionProceedButton extends StatelessWidget {
                       : Text(
                           LocaleKeys.subscription.management.proceed.tr(),
                           style: AppTypography.labelLarge.copyWith(
-                            fontSize: responsive.scaleFontSize(14, minSize: 12),
+                            fontSize: responsive.sFont(14, minSize: 12),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -69,13 +69,13 @@ class SubscriptionProceedButton extends StatelessWidget {
               ),
             ),
             if (onRestorePressed != null) ...[
-              SizedBox(height: responsive.scale(12)),
+              SizedBox(height: responsive.s(12)),
               TextButton(
                 onPressed: isLoading ? null : onRestorePressed,
                 child: Text(
                   LocaleKeys.subscription.restore.button.tr(),
                   style: AppTypography.bodySmall.copyWith(
-                    fontSize: responsive.scaleFontSize(12, minSize: 10),
+                    fontSize: responsive.sFont(12, minSize: 10),
                     color: isLoading
                         ? theme.colorScheme.onSurface.withOpacity(0.38)
                         : theme.colorScheme.primary,

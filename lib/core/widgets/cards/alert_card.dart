@@ -37,13 +37,13 @@ class AlertCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final naTheme = Theme.of(context).extension<NotificationsAlertsTheme>()!;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Container(
-      padding: responsive.scalePadding(const EdgeInsets.all(16)),
+      padding: responsive.sPadding(const EdgeInsets.all(16)),
       decoration: BoxDecoration(
         color: naTheme.alertCardBackground,
-        borderRadius: BorderRadius.circular(responsive.scale(8)),
+        borderRadius: BorderRadius.circular(responsive.s(8)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -54,12 +54,12 @@ class AlertCard extends StatelessWidget {
               children: [
                 // Image tile (48×48)
                 Container(
-                  width: responsive.scale(48),
-                  height: responsive.scale(48),
+                  width: responsive.s(48),
+                  height: responsive.s(48),
                   decoration: BoxDecoration(
                     color: naTheme.addButtonBackground,
-                    borderRadius: BorderRadius.circular(responsive.scale(8)),
-                    border: Border.all(color: naTheme.alertImageBorder, width: responsive.scale(1)),
+                    borderRadius: BorderRadius.circular(responsive.s(8)),
+                    border: Border.all(color: naTheme.alertImageBorder, width: responsive.s(1)),
                   ),
                   child: imageUrl != null
                       ? AppNetworkImage(
@@ -72,7 +72,7 @@ class AlertCard extends StatelessWidget {
                       : const SizedBox.shrink(),
                 ),
 
-                SizedBox(width: responsive.scale(12)),
+                SizedBox(width: responsive.s(12)),
 
                 // Alert title
                 Expanded(
@@ -82,7 +82,7 @@ class AlertCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: naTheme.alertTitleStyle.copyWith(
                       color: naTheme.textPrimary,
-                      fontSize: responsive.scaleFontSize(16, minSize: 14),
+                      fontSize: responsive.sFont(16, minSize: 14),
                     ),
                   ),
                 ),
@@ -93,16 +93,16 @@ class AlertCard extends StatelessWidget {
           // Right: Add button
           InkWell(
             onTap: () => onToggle?.call(!isSubscribed),
-            borderRadius: BorderRadius.circular(responsive.scale(100)),
+            borderRadius: BorderRadius.circular(responsive.s(100)),
             child: Container(
-              height: responsive.scale(40),
-              padding: responsive.scalePadding(
+              height: responsive.s(40),
+              padding: responsive.sPadding(
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               ),
               decoration: BoxDecoration(
                 color: naTheme.addButtonBackground,
-                borderRadius: BorderRadius.circular(responsive.scale(100)),
-                border: Border.all(color: naTheme.addButtonBorder, width: responsive.scale(1)),
+                borderRadius: BorderRadius.circular(responsive.s(100)),
+                border: Border.all(color: naTheme.addButtonBorder, width: responsive.s(1)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -111,14 +111,14 @@ class AlertCard extends StatelessWidget {
                     'Add',
                     style: naTheme.addButtonTextStyle.copyWith(
                       color: naTheme.textPrimary,
-                      fontSize: responsive.scaleFontSize(12, minSize: 10),
+                      fontSize: responsive.sFont(12, minSize: 10),
                     ),
                   ),
-                  SizedBox(width: responsive.scale(4)),
+                  SizedBox(width: responsive.s(4)),
                   SvgPicture.asset(
                     'assets/icons/plus.svg',
-                    width: responsive.scale(16),
-                    height: responsive.scale(16),
+                    width: responsive.s(16),
+                    height: responsive.s(16),
                     colorFilter: ColorFilter.mode(naTheme.plusIconColor, BlendMode.srcIn),
                   ),
                 ],

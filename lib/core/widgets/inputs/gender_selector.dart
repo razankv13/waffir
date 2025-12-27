@@ -63,11 +63,11 @@ class GenderSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = ResponsiveHelper(context);
-    final double computedOptionGap = optionGap ?? responsive.scale(80);
-    final double computedControlGap = controlGap ?? responsive.scale(10);
+    final responsive = ResponsiveHelper.of(context);
+    final double computedOptionGap = optionGap ?? responsive.s(80);
+    final double computedControlGap = controlGap ?? responsive.s(10);
     final textStyle = theme.textTheme.bodyMedium?.copyWith(
-      fontSize: responsive.scaleFontSize(16, minSize: 14),
+      fontSize: responsive.sFont(16, minSize: 14),
       fontWeight: FontWeight.w400,
       height: 1,
       color: colorScheme.onSurface,
@@ -143,17 +143,17 @@ class _RoundedSquareCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
-    final double boxSize = responsive.scaleWithRange(24, min: 20, max: 28);
-    final double borderWidth = responsive.scaleWithRange(2, min: 1.5, max: 2.5);
-    final double iconSize = responsive.scaleWithRange(12.15, min: 10, max: 14);
+    final responsive = ResponsiveHelper.of(context);
+    final double boxSize = responsive.sConstrained(24, min: 20, max: 28);
+    final double borderWidth = responsive.sConstrained(2, min: 1.5, max: 2.5);
+    final double iconSize = responsive.sConstrained(12.15, min: 10, max: 14);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
       width: boxSize,
       height: boxSize,
       decoration: BoxDecoration(
-        borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(4)),
+        borderRadius: responsive.sBorderRadius(BorderRadius.circular(4)),
         color: isSelected ? colorScheme.primary : Colors.transparent,
         border: Border.all(
           color: colorScheme.primary,

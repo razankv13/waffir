@@ -42,19 +42,19 @@ class ProfileMenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         InkWell(
           onTap: onTap,
-          borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(8)),
+          borderRadius: responsive.sBorderRadius(BorderRadius.circular(8)),
           child: Container(
             // Exact height from Figma: 44px
-            height: responsive.scale(44),
+            height: responsive.s(44),
             // Exact padding from Figma: 8px vertical only
-            padding: responsive.scalePadding(
+            padding: responsive.sPadding(
               const EdgeInsets.symmetric(vertical: 8),
             ),
             child: Row(
@@ -62,13 +62,13 @@ class ProfileMenuItem extends StatelessWidget {
                 // Icon: 24×24px (exact from Figma) - only show if provided
                 if (icon != null) ...[
                   SizedBox(
-                    width: responsive.scale(24),
-                    height: responsive.scale(24),
+                    width: responsive.s(24),
+                    height: responsive.s(24),
                     child: icon,
                   ),
 
                   // Gap: 12px (exact from Figma)
-                  SizedBox(width: responsive.scale(12)),
+                  SizedBox(width: responsive.s(12)),
                 ],
 
                 // Label: Parkinsans 14px weight 500, line-height 1.25em
@@ -77,7 +77,7 @@ class ProfileMenuItem extends StatelessWidget {
                     label,
                     style: AppTypography.menuItemText.copyWith(
                       color: colorScheme.onSurface, // #151515
-                      fontSize: responsive.scaleFontSize(14, minSize: 12),
+                      fontSize: responsive.sFont(14, minSize: 12),
                     ),
                   ),
                 ),
@@ -90,7 +90,7 @@ class ProfileMenuItem extends StatelessWidget {
                 if (trailing == null && onTap != null)
                   Icon(
                     Icons.chevron_right,
-                    size: responsive.scale(24),
+                    size: responsive.s(24),
                     color: colorScheme.onSurface, // #151515 per Figma
                   ),
               ],
@@ -101,7 +101,7 @@ class ProfileMenuItem extends StatelessWidget {
         // Divider: 1px stroke, color #F2F2F2 (gray01 from Figma)
         if (showDivider)
           Divider(
-            height: responsive.scale(8),
+            height: responsive.s(8),
             thickness: 1,
             color: Theme.of(context).colorScheme.surfaceContainerHighest, // gray01
           ),
@@ -134,17 +134,17 @@ class ProfileMenuItemRTL extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         InkWell(
           onTap: onTap,
-          borderRadius: responsive.scaleBorderRadius(BorderRadius.circular(8)),
+          borderRadius: responsive.sBorderRadius(BorderRadius.circular(8)),
           child: Container(
-            height: responsive.scale(44),
-            padding: responsive.scalePadding(
+            height: responsive.s(44),
+            padding: responsive.sPadding(
               const EdgeInsets.symmetric(vertical: 8),
             ),
             child: Row(
@@ -153,7 +153,7 @@ class ProfileMenuItemRTL extends StatelessWidget {
                 if (trailing == null && onTap != null)
                   Icon(
                     Icons.chevron_left,
-                    size: responsive.scale(24),
+                    size: responsive.s(24),
                     color: colorScheme.onSurface,
                   ),
 
@@ -167,18 +167,18 @@ class ProfileMenuItemRTL extends StatelessWidget {
                     textAlign: TextAlign.right,
                     style: AppTypography.menuItemText.copyWith(
                       color: colorScheme.onSurface,
-                      fontSize: responsive.scaleFontSize(14, minSize: 12),
+                      fontSize: responsive.sFont(14, minSize: 12),
                     ),
                   ),
                 ),
 
                 // Icon on right for RTL - only show if provided
                 if (icon != null) ...[
-                  SizedBox(width: responsive.scale(12)),
+                  SizedBox(width: responsive.s(12)),
 
                   SizedBox(
-                    width: responsive.scale(24),
-                    height: responsive.scale(24),
+                    width: responsive.s(24),
+                    height: responsive.s(24),
                     child: icon,
                   ),
                 ],
@@ -190,7 +190,7 @@ class ProfileMenuItemRTL extends StatelessWidget {
         // Divider
         if (showDivider)
           Divider(
-            height: responsive.scale(8),
+            height: responsive.s(8),
             thickness: 1,
             color: colorScheme.surfaceContainerHighest,
           ),

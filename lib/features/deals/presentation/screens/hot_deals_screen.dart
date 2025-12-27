@@ -35,7 +35,7 @@ class HotDealsScreen extends HookConsumerWidget {
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     final selectedCategory = hotDealsState.value?.selectedCategory ?? defaultCategory;
     final categoryLabels = [
@@ -63,8 +63,8 @@ class HotDealsScreen extends HookConsumerWidget {
             child: NestedScrollView(
               floatHeaderSlivers: true,
               headerSliverBuilder: (context, _) {
-                final chipsHeight = responsive.scale(71);
-                final chipsTopSpacing = responsive.scale(6);
+                final chipsHeight = responsive.s(71);
+                final chipsTopSpacing = responsive.s(6);
                 final chipsHeaderHeight = chipsTopSpacing + chipsHeight;
 
                 return [
@@ -98,7 +98,7 @@ class HotDealsScreen extends HookConsumerWidget {
                 onNotification: (notification) {
                   if (notification is ScrollUpdateNotification) {
                     final metrics = notification.metrics;
-                    if (metrics.extentAfter < responsive.scale(320)) {
+                    if (metrics.extentAfter < responsive.s(320)) {
                       hotDealsController.loadMore();
                     }
                   }
@@ -123,7 +123,7 @@ class HotDealsScreen extends HookConsumerWidget {
                     if (data.deals.isEmpty) {
                       return ListView(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        padding: responsive.scalePadding(
+                        padding: responsive.sPadding(
                           const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
                         ),
                         children: [_buildEmptyState(context, data.searchQuery)],
@@ -132,7 +132,7 @@ class HotDealsScreen extends HookConsumerWidget {
 
                     return ListView.builder(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: responsive.scalePadding(
+                      padding: responsive.sPadding(
                         const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
                       ),
                       itemCount: data.deals.length + 1,
@@ -140,7 +140,7 @@ class HotDealsScreen extends HookConsumerWidget {
                         if (index == data.deals.length) {
                           if (data.isLoadingMore) {
                             return Padding(
-                              padding: responsive.scalePadding(
+                              padding: responsive.sPadding(
                                 const EdgeInsets.symmetric(vertical: 16),
                               ),
                               child: const Center(child: CircularProgressIndicator()),
@@ -148,7 +148,7 @@ class HotDealsScreen extends HookConsumerWidget {
                           }
                           if (data.loadMoreFailure != null) {
                             return Padding(
-                              padding: responsive.scalePadding(
+                              padding: responsive.sPadding(
                                 const EdgeInsets.symmetric(vertical: 16),
                               ),
                               child: Center(
@@ -159,7 +159,7 @@ class HotDealsScreen extends HookConsumerWidget {
                               ),
                             );
                           }
-                          return SizedBox(height: responsive.scale(16));
+                          return SizedBox(height: responsive.s(16));
                         }
 
                         final deal = data.deals[index];
@@ -244,7 +244,7 @@ class HotDealsScreen extends HookConsumerWidget {
   Widget _buildEmptyState(BuildContext context, String searchQuery) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Center(
       child: Column(
@@ -252,10 +252,10 @@ class HotDealsScreen extends HookConsumerWidget {
         children: [
           Icon(
             Icons.shopping_bag_outlined,
-            size: responsive.scale(80),
+            size: responsive.s(80),
             color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
-          SizedBox(height: responsive.scale(16)),
+          SizedBox(height: responsive.s(16)),
           Text(
             LocaleKeys.deals.empty.title.tr(),
             style: theme.textTheme.titleLarge?.copyWith(
@@ -263,7 +263,7 @@ class HotDealsScreen extends HookConsumerWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: responsive.scale(8)),
+          SizedBox(height: responsive.s(8)),
           Text(
             searchQuery.isEmpty
                 ? LocaleKeys.deals.empty.categorySuggestion.tr()
@@ -282,10 +282,10 @@ class _HotDealsLoadingState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: responsive.scalePadding(
+      padding: responsive.sPadding(
         const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
       ),
       children: const [
@@ -307,23 +307,23 @@ class _HotDealsErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: responsive.scalePadding(
+      padding: responsive.sPadding(
         const EdgeInsets.only(top: 24, left: 16, right: 16, bottom: 280),
       ),
       children: [
-        SizedBox(height: responsive.scale(48)),
-        Icon(Icons.error_outline, size: responsive.scale(56), color: colorScheme.error),
-        SizedBox(height: responsive.scale(12)),
+        SizedBox(height: responsive.s(48)),
+        Icon(Icons.error_outline, size: responsive.s(56), color: colorScheme.error),
+        SizedBox(height: responsive.s(12)),
         Text(
           message,
           style: theme.textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: responsive.scale(12)),
+        SizedBox(height: responsive.s(12)),
         Center(
           child: TextButton(onPressed: onRetry, child: Text(LocaleKeys.buttons.retry.tr())),
         ),

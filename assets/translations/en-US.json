@@ -69,6 +69,7 @@
     "otpVerificationFailed": "OTP verification failed. Please try again.",
     "verificationIdMissing": "Missing verification ID. Please request a new code.",
     "codeTimeout": "Code timeout. Please try again.",
+    "emailVerificationSent": "We've sent a verification link to your email. Please check your inbox and verify your email to continue.",
     "accountDetails": {
       "nameLabel": "Name",
       "nameHint": "Full Name",

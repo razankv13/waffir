@@ -15,10 +15,10 @@ class PopularAlertItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Container(
-      padding: responsive.scalePadding(const EdgeInsets.all(16)),
+      padding: responsive.sPadding(const EdgeInsets.all(16)),
       decoration: BoxDecoration(
         color: const Color(0xFFF2F2F2),
         borderRadius: BorderRadius.circular(8),
@@ -27,8 +27,8 @@ class PopularAlertItem extends StatelessWidget {
         children: [
           // Profile Icon/Image Placeholder
           Container(
-            width: responsive.scale(48),
-            height: responsive.scale(48),
+            width: responsive.s(48),
+            height: responsive.s(48),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
@@ -46,7 +46,7 @@ class PopularAlertItem extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: responsive.scale(12)),
+          SizedBox(width: responsive.s(12)),
           // Title
           Expanded(
             child: Text(
@@ -65,8 +65,8 @@ class PopularAlertItem extends StatelessWidget {
             onTap: onAdd,
             borderRadius: BorderRadius.circular(100),
             child: Container(
-              height: responsive.scale(40),
-              padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
+              height: responsive.s(40),
+              padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16)),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(100),
@@ -82,16 +82,16 @@ class PopularAlertItem extends StatelessWidget {
                     'Add',
                     style: theme.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.w500,
-                      fontSize: responsive.scaleFontSize(12),
+                      fontSize: responsive.sFont(12),
                       color: const Color(0xFF151515),
                       height: 1.15,
                     ),
                   ),
-                  SizedBox(width: responsive.scale(4)),
+                  SizedBox(width: responsive.s(4)),
                   SvgPicture.asset(
                     'assets/icons/plus.svg',
-                    width: responsive.scale(16),
-                    height: responsive.scale(16),
+                    width: responsive.s(16),
+                    height: responsive.s(16),
                   ),
                 ],
               ),

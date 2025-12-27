@@ -12,20 +12,20 @@ class ProductPageTopOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Container(
       decoration: BoxDecoration(gradient: theme.colors.topOverlayGradient),
       child: Padding(
         padding: EdgeInsets.only(
-          top: responsive.scale(64),
-          left: responsive.scale(16),
-          right: responsive.scale(16),
+          top: responsive.s(64),
+          left: responsive.s(16),
+          right: responsive.s(16),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            WaffirBackButton(size: responsive.scale(44), padding: EdgeInsets.zero),
+            WaffirBackButton(size: responsive.s(44), padding: EdgeInsets.zero),
             _OnlinePill(theme: theme),
           ],
         ),
@@ -41,27 +41,27 @@ class _OnlinePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Container(
       decoration: BoxDecoration(
         color: theme.colors.brandBrightGreen,
-        borderRadius: BorderRadius.circular(responsive.scale(60)),
+        borderRadius: BorderRadius.circular(responsive.s(60)),
         boxShadow: [
           BoxShadow(
             color: theme.colors.backShadowColor,
-            blurRadius: responsive.scale(8),
-            spreadRadius: responsive.scale(2),
+            blurRadius: responsive.s(8),
+            spreadRadius: responsive.s(2),
             offset: Offset.zero,
           ),
         ],
       ),
-      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+      padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
       child: Text(
         LocaleKeys.productPage.availability.online.tr(),
         style: theme.textStyles.onlinePill.copyWith(
           color: theme.colors.textPrimary,
-          fontSize: responsive.scaleFontSize(
+          fontSize: responsive.sFont(
             theme.textStyles.onlinePill.fontSize ?? 12,
             minSize: 10,
           ),

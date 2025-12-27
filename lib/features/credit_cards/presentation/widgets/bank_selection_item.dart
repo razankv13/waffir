@@ -56,7 +56,7 @@ class BankSelectionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -67,7 +67,7 @@ class BankSelectionItem extends StatelessWidget {
             // Bank Logo - 80×80px with exact specs
             _buildBankLogo(responsive),
 
-            SizedBox(width: responsive.scale(12)), // Exact gap from Figma
+            SizedBox(width: responsive.s(12)), // Exact gap from Figma
 
             // Bank info column
             _buildBankInfo(theme, responsive),
@@ -85,11 +85,11 @@ class BankSelectionItem extends StatelessWidget {
 
   Widget _buildBankLogo(ResponsiveHelper responsive) {
     return Container(
-      width: responsive.scale(80), // Exact Figma dimension
-      height: responsive.scale(80), // Exact Figma dimension
+      width: responsive.s(80), // Exact Figma dimension
+      height: responsive.s(80), // Exact Figma dimension
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(responsive.scale(8)), // Exact Figma radius
+        borderRadius: BorderRadius.circular(responsive.s(8)), // Exact Figma radius
         border: Border.all(
           color: AppColors.borderLight, // #F2F2F2
           width: 1, // Exact 1px border
@@ -116,7 +116,7 @@ class BankSelectionItem extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.waffirGreen01, // Light green background
-        borderRadius: BorderRadius.circular(responsive.scale(8)),
+        borderRadius: BorderRadius.circular(responsive.s(8)),
       ),
       child: Center(
         child: Text(
@@ -124,7 +124,7 @@ class BankSelectionItem extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Parkinsans',
             fontWeight: FontWeight.bold,
-            fontSize: responsive.scaleFontSize(20, minSize: 18),
+            fontSize: responsive.sFont(20, minSize: 18),
             color: AppColors.waffirGreen02,
           ),
         ),
@@ -142,13 +142,13 @@ class BankSelectionItem extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Parkinsans',
             fontWeight: FontWeight.w700, // Exact Figma weight
-            fontSize: responsive.scaleFontSize(14, minSize: 12),
+            fontSize: responsive.sFont(14, minSize: 12),
             height: 1.0, // Exact 1em line-height from Figma
             color: AppColors.black, // #151515
           ),
         ),
 
-        SizedBox(height: responsive.scale(4)), // Exact gap from Figma (4.417px ≈ 4px)
+        SizedBox(height: responsive.s(4)), // Exact gap from Figma (4.417px ≈ 4px)
 
         // Card Type - 12px medium #A3A3A3
         Text(
@@ -156,7 +156,7 @@ class BankSelectionItem extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Parkinsans',
             fontWeight: FontWeight.w500, // Exact Figma weight
-            fontSize: responsive.scaleFontSize(12, minSize: 10),
+            fontSize: responsive.sFont(12, minSize: 10),
             height: 1.0, // Exact 1em line-height from Figma
             color: AppColors.textTertiary, // #A3A3A3
           ),

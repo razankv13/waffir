@@ -84,7 +84,7 @@ class BlurryEdgeSliverList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final overlayHeight = context.responsive.scale(blurHeight);
+    final overlayHeight = context.rs.s(blurHeight);
     final theme = Theme.of(context);
 
     return Stack(

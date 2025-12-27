@@ -18,20 +18,20 @@ class CatalogSearchFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: responsive.scalePadding(searchPadding),
+          padding: responsive.sPadding(searchPadding),
           child: CatalogSearchField(
             controller: controller,
             onChanged: onSearchChanged,
           ),
         ),
         for (var i = 0; i < filters.length; i++) ...[
-          SizedBox(height: responsive.scale(12)),
+          SizedBox(height: responsive.s(12)),
           filters[i],
         ],
       ],

@@ -38,7 +38,7 @@ class StoreActionsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final promoColors = Theme.of(context).extension<PromoColors>();
 
@@ -59,14 +59,14 @@ class StoreActionsSection extends StatelessWidget {
                   onToggleFavorite();
                 },
               ),
-              SizedBox(width: responsive.scale(16)),
+              SizedBox(width: responsive.s(16)),
               StoreIconCountPill(
                 iconAsset: Assets.icons.storeDetail.comment.path,
                 label: offersCount,
                 textColor: colorScheme.onSurfaceVariant,
                 countColor: colorScheme.onSurfaceVariant,
               ),
-              SizedBox(width: responsive.scale(16)),
+              SizedBox(width: responsive.s(16)),
               StoreIconOnlyPill(
                 iconAsset: Assets.icons.storeDetail.star.path,
                 iconColor: colorScheme.onSurfaceVariant,
@@ -74,7 +74,7 @@ class StoreActionsSection extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(width: responsive.scale(8)),
+        SizedBox(width: responsive.s(8)),
         Align(
           alignment: Alignment.centerRight,
           child: Text(
@@ -106,31 +106,31 @@ class StoreLikeDislikePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Material(
       color: colorScheme.surfaceContainerHighest, // #F2F2F2
-      borderRadius: BorderRadius.circular(responsive.scale(1000)),
+      borderRadius: BorderRadius.circular(responsive.s(1000)),
       child: InkWell(
-        borderRadius: BorderRadius.circular(responsive.scale(1000)),
+        borderRadius: BorderRadius.circular(responsive.s(1000)),
         onTap: onTap,
         child: SizedBox(
-          height: responsive.scale(44),
+          height: responsive.s(44),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: responsive.scale(6)),
+            padding: EdgeInsets.symmetric(horizontal: responsive.s(6)),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 _ActionIconBox(assetPath: Assets.icons.storeDetail.likeActive.path),
-                SizedBox(width: responsive.scale(6)),
+                SizedBox(width: responsive.s(6)),
                 Text(
                   countText,
                   style: AppTextStyles.storePageActionCount.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
                 ),
-                SizedBox(width: responsive.scale(6)),
+                SizedBox(width: responsive.s(6)),
                 _ActionIconBox(assetPath: Assets.icons.productPage.likeInactive.path),
               ],
             ),
@@ -148,16 +148,16 @@ class _ActionIconBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return SizedBox(
-      width: responsive.scale(40),
-      height: responsive.scale(40),
+      width: responsive.s(40),
+      height: responsive.s(40),
       child: Center(
         child: SizedBox(
-          width: responsive.scale(24),
-          height: responsive.scale(24),
+          width: responsive.s(24),
+          height: responsive.s(24),
           child: SvgPicture.asset(
             assetPath,
             colorFilter: ColorFilter.mode(colorScheme.onSurfaceVariant, BlendMode.srcIn),
@@ -184,28 +184,28 @@ class StoreIconCountPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return DecoratedBox(
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest, // #F2F2F2
-        borderRadius: BorderRadius.circular(responsive.scale(1000)),
+        borderRadius: BorderRadius.circular(responsive.s(1000)),
       ),
       child: Padding(
-        padding: responsive.scalePadding(const EdgeInsets.all(12)),
+        padding: responsive.sPadding(const EdgeInsets.all(12)),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              width: responsive.scale(20),
-              height: responsive.scale(20),
+              width: responsive.s(20),
+              height: responsive.s(20),
               child: SvgPicture.asset(
                 iconAsset,
                 colorFilter: ColorFilter.mode(colorScheme.onSurfaceVariant, BlendMode.srcIn),
               ),
             ),
-            SizedBox(width: responsive.scale(6)),
+            SizedBox(width: responsive.s(6)),
             Text(label, style: AppTextStyles.storePageActionCount.copyWith(color: countColor)),
           ],
         ),
@@ -222,19 +222,19 @@ class StoreIconOnlyPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
 
     return DecoratedBox(
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(responsive.scale(1000)),
+        borderRadius: BorderRadius.circular(responsive.s(1000)),
       ),
       child: Padding(
-        padding: responsive.scalePadding(const EdgeInsets.all(12)),
+        padding: responsive.sPadding(const EdgeInsets.all(12)),
         child: SizedBox(
-          width: responsive.scale(20),
-          height: responsive.scale(20),
+          width: responsive.s(20),
+          height: responsive.s(20),
           child: SvgPicture.asset(
             iconAsset,
             colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),

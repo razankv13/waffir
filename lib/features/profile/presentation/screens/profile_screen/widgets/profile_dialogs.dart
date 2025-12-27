@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waffir/core/navigation/routes.dart';
 import 'package:waffir/core/widgets/dialogs/dialog_service.dart';
+import 'package:waffir/features/auth/presentation/controllers/auth_controller.dart';
 
 /// Profile-related dialog helpers using DialogService
 ///
@@ -15,16 +17,17 @@ class ProfileDialogs {
   ///
   /// **Flow:**
   /// 1. Show confirmation dialog
-  /// 2. If confirmed, show success snackbar
-  /// 3. Navigate to login screen
+  /// 2. If confirmed, call auth signOut
+  /// 3. Show success snackbar
+  /// 4. Navigate to login screen
   ///
   /// **Returns:** `true` if user confirmed, `false` if cancelled, `null` if dismissed
   ///
   /// **Usage:**
   /// ```dart
-  /// await ProfileDialogs.showSignOutDialog(context);
+  /// await ProfileDialogs.showSignOutDialog(context, ref);
   /// ```
-  static Future<bool?> showSignOutDialog(BuildContext context) async {
+  static Future<bool?> showSignOutDialog(BuildContext context, WidgetRef ref) async {
     final result = await DialogService.showConfirmationDialog(
       context: context,
       title: 'Sign Out',
@@ -36,16 +39,33 @@ class ProfileDialogs {
 
     // If user confirmed sign out
     if (result == true && context.mounted) {
-      // Show success feedback
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Successfully signed out'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+      try {
+        // Actually sign out the user
+        await ref.read(authControllerProvider.notifier).signOut();
 
-      // Navigate to login screen
-      context.go(AppRoutes.login);
+        if (context.mounted) {
+          // Show success feedback
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Successfully signed out'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+
+          // Navigate to login screen
+          context.go(AppRoutes.login);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to sign out: ${e.toString()}'),
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+        return false;
+      }
     }
 
     return result;

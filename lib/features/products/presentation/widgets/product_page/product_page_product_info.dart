@@ -28,7 +28,7 @@ class ProductPageProductInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     Widget section({
       required String label,
@@ -43,15 +43,15 @@ class ProductPageProductInfo extends StatelessWidget {
             label,
             style: labelStyle.copyWith(
               color: theme.colors.textPrimary,
-              fontSize: responsive.scaleFontSize(labelStyle.fontSize ?? 16, minSize: 10),
+              fontSize: responsive.sFont(labelStyle.fontSize ?? 16, minSize: 10),
             ),
           ),
-          SizedBox(height: responsive.scale(8)),
+          SizedBox(height: responsive.s(8)),
           Text(
             body,
             style: bodyStyle.copyWith(
               color: theme.colors.textPrimary,
-              fontSize: responsive.scaleFontSize(bodyStyle.fontSize ?? 14, minSize: 10),
+              fontSize: responsive.sFont(bodyStyle.fontSize ?? 14, minSize: 10),
             ),
           ),
         ],
@@ -59,7 +59,7 @@ class ProductPageProductInfo extends StatelessWidget {
     }
 
     return Padding(
-      padding: responsive.scalePadding(const EdgeInsets.all(16)),
+      padding: responsive.sPadding(const EdgeInsets.all(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -69,14 +69,14 @@ class ProductPageProductInfo extends StatelessWidget {
             body: detailsText,
             bodyStyle: theme.textStyles.body,
           ),
-          SizedBox(height: responsive.scale(16)),
+          SizedBox(height: responsive.s(16)),
           section(
             label: LocaleKeys.productPage.info.features.tr(),
             labelStyle: theme.textStyles.sectionLabelBold,
             body: featuresText,
             bodyStyle: theme.textStyles.body,
           ),
-          SizedBox(height: responsive.scale(16)),
+          SizedBox(height: responsive.s(16)),
           section(
             label: LocaleKeys.productPage.info.priceResearch.tr(),
             labelStyle: theme.textStyles.sectionLabelBold,

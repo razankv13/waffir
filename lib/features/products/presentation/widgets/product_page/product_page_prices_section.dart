@@ -12,7 +12,7 @@ class ProductPagePricesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     Widget pill({
       required Widget child,
@@ -21,17 +21,17 @@ class ProductPagePricesSection extends StatelessWidget {
       EdgeInsets padding = const EdgeInsets.all(8),
     }) {
       return Container(
-        padding: responsive.scalePadding(padding),
+        padding: responsive.sPadding(padding),
         decoration: BoxDecoration(
           color: background,
-          borderRadius: radius ?? BorderRadius.circular(responsive.scale(1000)),
+          borderRadius: radius ?? BorderRadius.circular(responsive.s(1000)),
         ),
         child: child,
       );
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+      padding: EdgeInsets.symmetric(horizontal: responsive.s(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -39,13 +39,13 @@ class ProductPagePricesSection extends StatelessWidget {
             "Nike Men’s Air Max 2025 Shoes (3 Colors)",
             style: theme.textStyles.title.copyWith(
               color: theme.colors.textPrimary,
-              fontSize: responsive.scaleFontSize(
+              fontSize: responsive.sFont(
                 theme.textStyles.title.fontSize ?? 18,
                 minSize: 12,
               ),
             ),
           ),
-          SizedBox(height: responsive.scale(16)),
+          SizedBox(height: responsive.s(16)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -57,8 +57,8 @@ class ProductPagePricesSection extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(
-                          width: responsive.scale(20),
-                          height: responsive.scale(20),
+                          width: responsive.s(20),
+                          height: responsive.s(20),
                           child: SvgPicture.asset(
                             'assets/icons/product_page/riyal.svg',
                             colorFilter: ColorFilter.mode(
@@ -67,12 +67,12 @@ class ProductPagePricesSection extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width: responsive.scale(4)),
+                        SizedBox(width: responsive.s(4)),
                         Text(
                           '400',
                           style: theme.textStyles.price.copyWith(
                             color: theme.colors.brandBrightGreen,
-                            fontSize: responsive.scaleFontSize(
+                            fontSize: responsive.sFont(
                               theme.textStyles.price.fontSize ?? 20,
                               minSize: 12,
                             ),
@@ -81,27 +81,27 @@ class ProductPagePricesSection extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(width: responsive.scale(8)),
+                  SizedBox(width: responsive.s(8)),
                   pill(
                     background: theme.colors.surfaceContainer,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(
-                          width: responsive.scale(14),
-                          height: responsive.scale(14),
+                          width: responsive.s(14),
+                          height: responsive.s(14),
                           child: SvgPicture.asset(
                             Assets.icons.productPage.riyal.path,
                             colorFilter: const ColorFilter.mode(AppColors.red, BlendMode.srcIn),
                           ),
                         ),
-                        SizedBox(width: responsive.scale(4)),
+                        SizedBox(width: responsive.s(4)),
                         Text(
                           '809',
                           style: theme.textStyles.originalPrice.copyWith(
                             color: AppColors.red,
                             decoration: TextDecoration.lineThrough,
-                            fontSize: responsive.scaleFontSize(
+                            fontSize: responsive.sFont(
                               theme.textStyles.originalPrice.fontSize ?? 16,
                             ),
                           ),
@@ -109,16 +109,16 @@ class ProductPagePricesSection extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(width: responsive.scale(8)),
+                  SizedBox(width: responsive.s(8)),
                   pill(
                     background: theme.colors.badgeMint,
-                    radius: BorderRadius.circular(responsive.scale(26.726573944091797)),
+                    radius: BorderRadius.circular(responsive.s(26.726573944091797)),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(
-                          width: responsive.scale(16),
-                          height: responsive.scale(16),
+                          width: responsive.s(16),
+                          height: responsive.s(16),
                           child: SvgPicture.asset(
                             Assets.icons.productPage.tag.path,
                             colorFilter: ColorFilter.mode(
@@ -127,7 +127,7 @@ class ProductPagePricesSection extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width: responsive.scale(4)),
+                        SizedBox(width: responsive.s(4)),
                         Text(
                           '13% off',
                           style:
@@ -136,7 +136,7 @@ class ProductPagePricesSection extends StatelessWidget {
                                 fontWeight: FontWeight.w500,
                                 height: 1.149999976158142,
                               ).copyWith(
-                                fontSize: responsive.scaleFontSize(16),
+                                fontSize: responsive.sFont(16),
                                 color: theme.colors.brandDarkGreen,
                               ),
                         ),
@@ -149,7 +149,7 @@ class ProductPagePricesSection extends StatelessWidget {
                 'At Nike store',
                 style: theme.textStyles.storeLine.copyWith(
                   color: theme.colors.textPrimary,
-                  fontSize: responsive.scaleFontSize(
+                  fontSize: responsive.sFont(
                     theme.textStyles.storeLine.fontSize ?? 14.266104698181152,
                   ),
                 ),

@@ -136,7 +136,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Scaffold(
       body: Stack(
@@ -149,7 +149,7 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
               headerSliverBuilder: (context, _) {
                 // StoresCategoryChips has a fixed height of 74px currently.
                 const chipsHeight = 74.0;
-                final chipsTopSpacing = responsive.scale(6);
+                final chipsTopSpacing = responsive.s(6);
                 final chipsHeaderHeight = chipsTopSpacing + chipsHeight;
 
                 return [
@@ -209,13 +209,13 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                       return ListView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: EdgeInsets.only(
-                          left: responsive.scale(16),
-                          right: responsive.scale(16),
-                          top: responsive.scale(16),
-                          bottom: responsive.scale(300), // CTA overlay + nav
+                          left: responsive.s(16),
+                          right: responsive.s(16),
+                          top: responsive.s(16),
+                          bottom: responsive.s(300), // CTA overlay + nav
                         ),
                         children: [
-                          SizedBox(height: responsive.scale(120)),
+                          SizedBox(height: responsive.s(120)),
                           _buildEmptyState(context, data.searchQuery),
                         ],
                       );
@@ -224,10 +224,10 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                     return ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.only(
-                        left: responsive.scale(16),
-                        right: responsive.scale(16),
-                        top: responsive.scale(16),
-                        bottom: responsive.scale(300), // CTA overlay + nav
+                        left: responsive.s(16),
+                        right: responsive.s(16),
+                        top: responsive.s(16),
+                        bottom: responsive.s(300), // CTA overlay + nav
                       ),
                       children: [
                         // Near You Section
@@ -237,9 +237,9 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                             LocaleKeys.stores.section.nearYou,
                             nearYouStores.length,
                           ),
-                          SizedBox(height: responsive.scale(12)),
+                          SizedBox(height: responsive.s(12)),
                           _buildStoreCarousel(context, nearYouStores, data),
-                          SizedBox(height: responsive.scale(24)),
+                          SizedBox(height: responsive.s(24)),
                         ],
 
                         // Mall Stores Sections
@@ -251,9 +251,9 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
                               entry.value.length,
                               namedArgs: {'mallName': entry.key},
                             ),
-                            SizedBox(height: responsive.scale(12)),
+                            SizedBox(height: responsive.s(12)),
                             _buildStoreCarousel(context, entry.value, data),
-                            SizedBox(height: responsive.scale(24)),
+                            SizedBox(height: responsive.s(24)),
                           ],
                         ],
                       ],
@@ -294,12 +294,12 @@ class _StoresScreenState extends ConsumerState<StoresScreen> {
   }
 
   Widget _buildStoreCarousel(BuildContext context, List<Store> stores, StoresState storesState) {
-    final responsive = context.responsive;
-    final cardWidth = responsive.scale(160);
-    final horizontalSpacing = responsive.scale(
+    final responsive = context.rs;
+    final cardWidth = responsive.s(160);
+    final horizontalSpacing = responsive.s(
       16,
     ); // 16px gap from Figma layout_ZNFSE6/layout_I888LG
-    final carouselHeight = responsive.scale(248);
+    final carouselHeight = responsive.s(248);
     final isArabic = context.locale.languageCode == 'ar';
 
     return SizedBox(
@@ -372,15 +372,15 @@ class _StoresLoadingState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.only(
-        top: responsive.scale(24),
-        left: responsive.scale(16),
-        right: responsive.scale(16),
-        bottom: responsive.scale(280),
+        top: responsive.s(24),
+        left: responsive.s(16),
+        right: responsive.s(16),
+        bottom: responsive.s(280),
       ),
       children: const [
         Center(
@@ -401,26 +401,26 @@ class _StoresErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.only(
-        top: responsive.scale(24),
-        left: responsive.scale(16),
-        right: responsive.scale(16),
-        bottom: responsive.scale(280),
+        top: responsive.s(24),
+        left: responsive.s(16),
+        right: responsive.s(16),
+        bottom: responsive.s(280),
       ),
       children: [
-        SizedBox(height: responsive.scale(48)),
-        Icon(Icons.error_outline, size: responsive.scale(56), color: colorScheme.error),
-        SizedBox(height: responsive.scale(12)),
+        SizedBox(height: responsive.s(48)),
+        Icon(Icons.error_outline, size: responsive.s(56), color: colorScheme.error),
+        SizedBox(height: responsive.s(12)),
         Text(
           message,
           style: theme.textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: responsive.scale(12)),
+        SizedBox(height: responsive.s(12)),
         Center(
           child: TextButton(onPressed: onRetry, child: Text(LocaleKeys.buttons.retry).tr()),
         ),

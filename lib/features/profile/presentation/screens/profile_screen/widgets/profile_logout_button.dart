@@ -34,12 +34,12 @@ class ProfileLogoutButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return SafeArea(
       top: false, // Only apply safe area to bottom (notch handling)
       child: Padding(
-        padding: responsive.scalePadding(
+        padding: responsive.sPadding(
           const EdgeInsets.only(
             left: 16,
             right: 16,
@@ -48,8 +48,8 @@ class ProfileLogoutButton extends StatelessWidget {
           ),
         ),
         child: SizedBox(
-          width: responsive.scale(361), // Exact width from Figma
-          height: responsive.scale(56), // Exact height from Figma
+          width: responsive.s(361), // Exact width from Figma
+          height: responsive.s(56), // Exact height from Figma
           child: AppButton.primary(
             onPressed: onLogoutTap,
             child: Text(LocaleKeys.auth.logout.tr()),

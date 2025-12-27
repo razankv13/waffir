@@ -38,16 +38,16 @@ class HorizontalStoreCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
-    final imageSize = responsive.scale(120);
-    final imagePadding = responsive.scale(8);
-    final gap = responsive.scale(12);
-    final cardRadius = responsive.scale(12);
+    final imageSize = responsive.s(120);
+    final imagePadding = responsive.s(8);
+    final gap = responsive.s(12);
+    final cardRadius = responsive.s(12);
 
-    final favoriteOffset = responsive.scale(8);
-    final favoriteSize = responsive.scale(32);
-    final favoriteIconSize = responsive.scale(18);
+    final favoriteOffset = responsive.s(8);
+    final favoriteSize = responsive.s(32);
+    final favoriteIconSize = responsive.s(18);
 
     return InkWell(
       onTap:
@@ -79,15 +79,15 @@ class HorizontalStoreCard extends StatelessWidget {
                 padding: EdgeInsets.all(imagePadding),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(responsive.scale(11)),
-                    bottomLeft: Radius.circular(responsive.scale(11)),
+                    topLeft: Radius.circular(responsive.s(11)),
+                    bottomLeft: Radius.circular(responsive.s(11)),
                   ),
                   border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
                 ),
                 child: Stack(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(responsive.scale(8)),
+                      borderRadius: BorderRadius.circular(responsive.s(8)),
                       child: AppNetworkImage(
                         imageUrl: imageUrl,
                         contentType: ImageContentType.store,
@@ -110,8 +110,8 @@ class HorizontalStoreCard extends StatelessWidget {
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withValues(alpha: 0.08),
-                                  blurRadius: responsive.scale(4),
-                                  offset: responsive.scaleOffset(const Offset(0, 2)),
+                                  blurRadius: responsive.s(4),
+                                  offset: responsive.sOffset(const Offset(0, 2)),
                                 ),
                               ],
                             ),
@@ -135,9 +135,9 @@ class HorizontalStoreCard extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    top: responsive.scale(8),
-                    right: responsive.scale(8),
-                    bottom: responsive.scale(8),
+                    top: responsive.s(8),
+                    right: responsive.s(8),
+                    bottom: responsive.s(8),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -147,7 +147,7 @@ class HorizontalStoreCard extends StatelessWidget {
                         storeName,
                         style: TextStyle(
                           fontFamily: 'Parkinsans',
-                          fontSize: responsive.scaleFontSize(14),
+                          fontSize: responsive.sFont(14),
                           fontWeight: FontWeight.w700,
                           height: 1.4,
                           color: colorScheme.onSurface,
@@ -157,17 +157,17 @@ class HorizontalStoreCard extends StatelessWidget {
                       ),
 
                       if (discountText != null && discountText!.isNotEmpty) ...[
-                        SizedBox(height: responsive.scale(8)),
+                        SizedBox(height: responsive.s(8)),
                         DiscountTagPill(discountText: discountText!),
                       ],
 
                       if (distance != null && distance!.isNotEmpty) ...[
-                        SizedBox(height: responsive.scale(8)),
+                        SizedBox(height: responsive.s(8)),
                         Text(
                           distance!,
                           style: TextStyle(
                             fontFamily: 'Parkinsans',
-                            fontSize: responsive.scaleFontSize(12),
+                            fontSize: responsive.sFont(12),
                             fontWeight: FontWeight.w500,
                             height: 1.15,
                             color: const Color(0xFF595959),

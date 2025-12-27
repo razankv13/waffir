@@ -23,19 +23,19 @@ class DealAlertItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: responsive.scalePadding(const EdgeInsets.symmetric(vertical: 8)),
+        padding: responsive.sPadding(const EdgeInsets.symmetric(vertical: 8)),
         child: Row(
           children: [
             // Profile Letter
             Container(
-              width: responsive.scale(64),
-              height: responsive.scale(64),
+              width: responsive.s(64),
+              height: responsive.s(64),
               decoration: BoxDecoration(
                 color: backgroundColor ?? const Color(0xFFDCFCE7), // Default light green
                 borderRadius: BorderRadius.circular(8),
@@ -50,13 +50,13 @@ class DealAlertItem extends StatelessWidget {
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: textColor ?? const Color(0xFF00C531), // Default green
-                    fontSize: responsive.scaleFontSize(20),
+                    fontSize: responsive.sFont(20),
                     height: 1.15,
                   ),
                 ),
               ),
             ),
-            SizedBox(width: responsive.scale(12)),
+            SizedBox(width: responsive.s(12)),
             // Info
             Expanded(
               child: Column(
@@ -72,11 +72,11 @@ class DealAlertItem extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: responsive.scale(4)), // Assuming slight gap
+                  SizedBox(height: responsive.s(4)), // Assuming slight gap
                   Text(
                     subtitle,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: responsive.scaleFontSize(12),
+                      fontSize: responsive.sFont(12),
                       fontWeight: FontWeight.w400,
                       color: const Color(0xFF151515),
                       height: 1.15,
@@ -90,8 +90,8 @@ class DealAlertItem extends StatelessWidget {
             // Chevron
             SvgPicture.asset(
               'assets/icons/chevron_right.svg',
-              width: responsive.scale(24),
-              height: responsive.scale(24),
+              width: responsive.s(24),
+              height: responsive.s(24),
             ),
           ],
         ),

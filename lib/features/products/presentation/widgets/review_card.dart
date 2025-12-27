@@ -24,15 +24,15 @@ class ReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Container(
-      padding: responsive.scalePadding(const EdgeInsets.all(16)),
+      padding: responsive.sPadding(const EdgeInsets.all(16)),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
             color: colorScheme.outline.withValues(alpha: 0.2),
-            width: responsive.scale(1),
+            width: responsive.s(1),
           ),
         ),
       ),
@@ -42,7 +42,7 @@ class ReviewCard extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                radius: responsive.scale(20),
+                radius: responsive.s(20),
                 backgroundColor: colorScheme.primaryContainer,
                 backgroundImage: review.userAvatarUrl != null ? CachedNetworkImageProvider(review.userAvatarUrl!) : null,
                 child: review.userAvatarUrl == null
@@ -55,7 +55,7 @@ class ReviewCard extends StatelessWidget {
                       )
                     : null,
               ),
-              SizedBox(width: responsive.scale(12)),
+              SizedBox(width: responsive.s(12)),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,18 +66,18 @@ class ReviewCard extends StatelessWidget {
                         fontFamily: 'Parkinsans',
                         fontWeight: FontWeight.w500,
                       ).copyWith(
-                        fontSize: responsive.scaleFontSize(14, minSize: 10),
+                        fontSize: responsive.sFont(14, minSize: 10),
                         color: colorScheme.onSurface,
                       ),
                     ),
-                    SizedBox(height: responsive.scale(2)),
+                    SizedBox(height: responsive.s(2)),
                     Text(
                       review.createdAt != null ? DateFormat('MMM yyyy').format(review.createdAt!) : '',
                       style: const TextStyle(
                         fontFamily: 'Parkinsans',
                         fontWeight: FontWeight.w400,
                       ).copyWith(
-                        fontSize: responsive.scaleFontSize(12, minSize: 10),
+                        fontSize: responsive.sFont(12, minSize: 10),
                         color: colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -86,7 +86,7 @@ class ReviewCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: responsive.scale(12)),
+          SizedBox(height: responsive.s(12)),
           Text(
             review.comment,
             style: const TextStyle(
@@ -94,22 +94,22 @@ class ReviewCard extends StatelessWidget {
               fontWeight: FontWeight.w500,
               height: 1.4,
             ).copyWith(
-              fontSize: responsive.scaleFontSize(12, minSize: 10),
+              fontSize: responsive.sFont(12, minSize: 10),
               color: colorScheme.onSurface,
             ),
           ),
           if (review.imageUrls.isNotEmpty) ...[
-            SizedBox(height: responsive.scale(12)),
+            SizedBox(height: responsive.s(12)),
             SizedBox(
-              height: responsive.scale(80),
+              height: responsive.s(80),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
                     for (int i = 0; i < review.imageUrls.length; i++) ...[
-                      if (i != 0) SizedBox(width: responsive.scale(8)),
+                      if (i != 0) SizedBox(width: responsive.s(8)),
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(responsive.scale(8)),
+                        borderRadius: BorderRadius.circular(responsive.s(8)),
                         child: AppNetworkImage(
                           imageUrl: review.imageUrls[i],
                           width: 80,
@@ -117,8 +117,8 @@ class ReviewCard extends StatelessWidget {
                           fit: BoxFit.cover,
                           contentType: ImageContentType.generic,
                           errorWidget: Container(
-                            width: responsive.scale(80),
-                            height: responsive.scale(80),
+                            width: responsive.s(80),
+                            height: responsive.s(80),
                             color: colorScheme.surfaceContainerHighest,
                             child: Icon(
                               Icons.image_not_supported_outlined,
@@ -133,33 +133,33 @@ class ReviewCard extends StatelessWidget {
               ),
             ),
           ],
-          SizedBox(height: responsive.scale(12)),
+          SizedBox(height: responsive.s(12)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               InkWell(
-                borderRadius: BorderRadius.circular(responsive.scale(1000)),
+                borderRadius: BorderRadius.circular(responsive.s(1000)),
                 onTap: onHelpfulTap,
                 child: Container(
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(responsive.scale(1000)),
+                    borderRadius: BorderRadius.circular(responsive.s(1000)),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: responsive.scale(6)),
+                  padding: EdgeInsets.symmetric(horizontal: responsive.s(6)),
                   child: Row(
                     children: [
                       Container(
-                        width: responsive.scale(40),
-                        height: responsive.scale(40),
+                        width: responsive.s(40),
+                        height: responsive.s(40),
                         alignment: Alignment.center,
                         child: SvgPicture.asset(
                           'assets/icons/comment_figma.svg',
-                          width: responsive.scale(20),
-                          height: responsive.scale(20),
+                          width: responsive.s(20),
+                          height: responsive.s(20),
                           colorFilter: ColorFilter.mode(colorScheme.onSurfaceVariant, BlendMode.srcIn),
                         ),
                       ),
-                      SizedBox(width: responsive.scale(6)),
+                      SizedBox(width: responsive.s(6)),
                       Text(
                         '${review.helpfulCount}',
                         style: const TextStyle(
@@ -167,19 +167,19 @@ class ReviewCard extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                           height: 1.15,
                         ).copyWith(
-                          fontSize: responsive.scaleFontSize(14, minSize: 10),
+                          fontSize: responsive.sFont(14, minSize: 10),
                           color: colorScheme.onSurfaceVariant,
                         ),
                       ),
-                      SizedBox(width: responsive.scale(6)),
+                      SizedBox(width: responsive.s(6)),
                       Container(
-                        width: responsive.scale(40),
-                        height: responsive.scale(40),
+                        width: responsive.s(40),
+                        height: responsive.s(40),
                         alignment: Alignment.center,
                         child: SvgPicture.asset(
                           'assets/icons/comment_figma.svg',
-                          width: responsive.scale(20),
-                          height: responsive.scale(20),
+                          width: responsive.s(20),
+                          height: responsive.s(20),
                           colorFilter: ColorFilter.mode(colorScheme.onSurfaceVariant, BlendMode.srcIn),
                         ),
                       ),
@@ -194,7 +194,7 @@ class ReviewCard extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                   height: 1.4,
                 ).copyWith(
-                  fontSize: responsive.scaleFontSize(12, minSize: 10),
+                  fontSize: responsive.sFont(12, minSize: 10),
                   color: colorScheme.onSurfaceVariant,
                 ),
               ),

@@ -57,7 +57,7 @@ class StoreDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final productTheme =
         Theme.of(context).extension<ProductPageTheme>() ??
         ProductPageTheme.light;
@@ -91,19 +91,19 @@ class StoreDetailView extends StatelessWidget {
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               SliverToBoxAdapter(child: _StoreHeroImage(imageUrl: heroUrl)),
-              SliverToBoxAdapter(child: SizedBox(height: responsive.scale(6))),
+              SliverToBoxAdapter(child: SizedBox(height: responsive.s(6))),
             ];
           },
           body: CustomScrollView(
               slivers: [
                 const SliverToBoxAdapter(child: StoreOutletBanner()),
                 SliverToBoxAdapter(
-                  child: SizedBox(height: responsive.scale(6)),
+                  child: SizedBox(height: responsive.s(6)),
                 ),
                 SliverPadding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: responsive.scale(16),
-                    vertical: responsive.scale(12),
+                    horizontal: responsive.s(16),
+                    vertical: responsive.s(12),
                   ),
                   sliver: SliverToBoxAdapter(
                     child: StoreActionsSection(
@@ -114,21 +114,21 @@ class StoreDetailView extends StatelessWidget {
                   ),
                 ),
                 SliverToBoxAdapter(
-                  child: SizedBox(height: responsive.scale(6)),
+                  child: SizedBox(height: responsive.s(6)),
                 ),
                 SliverToBoxAdapter(
                   child: StorePricesSection(store: store, offers: offers),
                 ),
                 SliverToBoxAdapter(
-                  child: SizedBox(height: responsive.scale(6)),
+                  child: SizedBox(height: responsive.s(6)),
                 ),
                 const SliverToBoxAdapter(child: StoreAdditionalActions()),
                 SliverToBoxAdapter(
-                  child: SizedBox(height: responsive.scale(6)),
+                  child: SizedBox(height: responsive.s(6)),
                 ),
                 const SliverToBoxAdapter(child: StoreSectionDivider()),
                 SliverToBoxAdapter(
-                  child: SizedBox(height: responsive.scale(6)),
+                  child: SizedBox(height: responsive.s(6)),
                 ),
                 SliverToBoxAdapter(
                   child: StoreProductInfoSection(featuresBody: featuresBody),
@@ -144,18 +144,18 @@ class StoreDetailView extends StatelessWidget {
                     child: StoreCategoriesChips(categories: store.categories),
                   ),
                 SliverToBoxAdapter(
-                  child: SizedBox(height: responsive.scale(6)),
+                  child: SizedBox(height: responsive.s(6)),
                 ),
                 const SliverToBoxAdapter(child: StoreSectionDivider()),
                 SliverToBoxAdapter(
-                  child: SizedBox(height: responsive.scale(16)),
+                  child: SizedBox(height: responsive.s(16)),
                 ),
                 // Single top offer display
                 if (isLoadingOffers)
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                        vertical: responsive.scale(16),
+                        vertical: responsive.s(16),
                       ),
                       child: const Center(child: CircularProgressIndicator()),
                     ),
@@ -163,7 +163,7 @@ class StoreDetailView extends StatelessWidget {
                 else if (topOffer != null)
                   SliverPadding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: responsive.scale(16),
+                      horizontal: responsive.s(16),
                     ),
                     sliver: SliverToBoxAdapter(
                       child: _StoreOfferTile(
@@ -174,11 +174,11 @@ class StoreDetailView extends StatelessWidget {
                     ),
                   ),
                 SliverToBoxAdapter(
-                  child: SizedBox(height: responsive.scale(6)),
+                  child: SizedBox(height: responsive.s(6)),
                 ),
                 const SliverToBoxAdapter(child: StoreSectionDivider()),
                 SliverToBoxAdapter(
-                  child: SizedBox(height: responsive.scale(6)),
+                  child: SizedBox(height: responsive.s(6)),
                 ),
                 ProductPageCommentsSection(
                   theme: productTheme,
@@ -189,9 +189,9 @@ class StoreDetailView extends StatelessWidget {
                 SliverToBoxAdapter(
                   child: SizedBox(
                     height:
-                        responsive.scale(96) +
+                        responsive.s(96) +
                         responsive.bottomSafeArea +
-                        responsive.scale(32),
+                        responsive.s(32),
                   ),
                 ),
               ],
@@ -216,7 +216,7 @@ class StoreDetailView extends StatelessWidget {
           right: 0,
           child: IgnorePointer(
             child: SizedBox(
-              height: responsive.scale(0),
+              height: responsive.s(0),
               width: double.infinity,
             ),
           ),
@@ -233,17 +233,17 @@ class _StoreHeroImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return SizedBox(
-      height: responsive.scale(390),
+      height: responsive.s(390),
       child: Container(
-        padding: responsive.scalePadding(const EdgeInsets.all(16)),
+        padding: responsive.sPadding(const EdgeInsets.all(16)),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           border: Border.all(
             color: Colors.black.withValues(alpha: 0.05),
-            width: responsive.scale(1),
+            width: responsive.s(1),
           ),
         ),
         child: Align(
@@ -290,7 +290,7 @@ class _StoreOfferTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -311,21 +311,21 @@ class _StoreOfferTile extends StatelessWidget {
 
     return Material(
       color: colorScheme.surface,
-      borderRadius: BorderRadius.circular(responsive.scale(12)),
+      borderRadius: BorderRadius.circular(responsive.s(12)),
       child: InkWell(
-        borderRadius: BorderRadius.circular(responsive.scale(12)),
+        borderRadius: BorderRadius.circular(responsive.s(12)),
         onTap: onTap,
         child: Padding(
-          padding: responsive.scalePadding(const EdgeInsets.all(12)),
+          padding: responsive.sPadding(const EdgeInsets.all(12)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: responsive.scale(72),
-                height: responsive.scale(72),
+                width: responsive.s(72),
+                height: responsive.s(72),
                 decoration: BoxDecoration(
                   color: colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(responsive.scale(10)),
+                  borderRadius: BorderRadius.circular(responsive.s(10)),
                 ),
                 child: offer.imageUrl == null || offer.imageUrl!.trim().isEmpty
                     ? Icon(
@@ -334,7 +334,7 @@ class _StoreOfferTile extends StatelessWidget {
                       )
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(
-                          responsive.scale(10),
+                          responsive.s(10),
                         ),
                         child: AppNetworkImage(
                           imageUrl: offer.imageUrl!,
@@ -348,7 +348,7 @@ class _StoreOfferTile extends StatelessWidget {
                         ),
                       ),
               ),
-              SizedBox(width: responsive.scale(12)),
+              SizedBox(width: responsive.s(12)),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -363,7 +363,7 @@ class _StoreOfferTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (subtitle != null) ...[
-                      SizedBox(height: responsive.scale(4)),
+                      SizedBox(height: responsive.s(4)),
                       Text(
                         subtitle,
                         style: textTheme.bodySmall?.copyWith(
@@ -374,11 +374,11 @@ class _StoreOfferTile extends StatelessWidget {
                       ),
                     ],
                     if (label != null) ...[
-                      SizedBox(height: responsive.scale(8)),
+                      SizedBox(height: responsive.s(8)),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Container(
-                          padding: responsive.scalePadding(
+                          padding: responsive.sPadding(
                             const EdgeInsets.symmetric(
                               horizontal: 10,
                               vertical: 6,
@@ -387,7 +387,7 @@ class _StoreOfferTile extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(
-                              responsive.scale(999),
+                              responsive.s(999),
                             ),
                           ),
                           child: Text(

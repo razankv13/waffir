@@ -13,29 +13,29 @@ class ProductPageAdditionalActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
     return Padding(
-      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
+      padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
       child: Row(
         children: [
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(
-                width: responsive.scale(16),
-                height: responsive.scale(16),
+                width: responsive.s(16),
+                height: responsive.s(16),
                 child: SvgPicture.asset(
                   Assets.icons.productPage.report.path,
                   colorFilter: ColorFilter.mode(theme.colors.textPrimary, BlendMode.srcIn),
                 ),
               ),
-              SizedBox(width: responsive.scale(4)),
+              SizedBox(width: responsive.s(4)),
               Text(
                 LocaleKeys.productPage.actions.reportExpired.tr(),
                 style: theme.textStyles.reportExpired.copyWith(
                   color: theme.colors.textPrimary,
-                  fontSize: responsive.scaleFontSize(theme.textStyles.reportExpired.fontSize ?? 12),
+                  fontSize: responsive.sFont(theme.textStyles.reportExpired.fontSize ?? 12),
                 ),
               ),
             ],

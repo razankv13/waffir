@@ -70,23 +70,23 @@ class ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final safeTop = responsive.topSafeArea;
     final headerHeight =
-        responsive.scale(_ProfileHeaderSpec.frameHeight) + safeTop;
-    final avatarSize = responsive.scale(_ProfileHeaderSpec.avatarSize);
-    final avatarBorderWidth = responsive.scale(
+        responsive.s(_ProfileHeaderSpec.frameHeight) + safeTop;
+    final avatarSize = responsive.s(_ProfileHeaderSpec.avatarSize);
+    final avatarBorderWidth = responsive.s(
       _ProfileHeaderSpec.avatarBorderWidth,
     );
-    final placeholderIconSize = responsive.scale(
+    final placeholderIconSize = responsive.s(
       _ProfileHeaderSpec.avatarIconSize,
     );
-    final borderRadius = responsive.scaleBorderRadius(
+    final borderRadius = responsive.sBorderRadius(
       _ProfileHeaderSpec.borderRadius,
     );
-    final gap = responsive.scale(_ProfileHeaderSpec.verticalGap);
-    final editBadgeSize = responsive.scale(_ProfileHeaderSpec.editBadgeSize);
-    final editIconSize = responsive.scale(_ProfileHeaderSpec.editIconSize);
+    final gap = responsive.s(_ProfileHeaderSpec.verticalGap);
+    final editBadgeSize = responsive.s(_ProfileHeaderSpec.editBadgeSize);
+    final editIconSize = responsive.s(_ProfileHeaderSpec.editIconSize);
     final ImageProvider backgroundImageProvider = backgroundImage != null
         ? CachedNetworkImageProvider(backgroundImage!)
         : Assets.images.profileHeaderBgBd1db0.provider();
@@ -134,7 +134,7 @@ class ProfileHeader extends StatelessWidget {
               SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: responsive.scalePadding(
+                  padding: responsive.sPadding(
                     const EdgeInsets.all(_ProfileHeaderSpec.basePadding),
                   ),
                   child: Column(
@@ -189,7 +189,7 @@ class ProfileHeader extends StatelessWidget {
                                         color: Colors.black.withValues(
                                           alpha: 0.25,
                                         ),
-                                        blurRadius: responsive.scale(12),
+                                        blurRadius: responsive.s(12),
                                       ),
                                     ],
                                   ),
@@ -208,7 +208,7 @@ class ProfileHeader extends StatelessWidget {
                         name,
                         style: AppTypography.profileName.copyWith(
                           color: colorScheme.surface,
-                          fontSize: responsive.scaleFontSize(20, minSize: 16),
+                          fontSize: responsive.sFont(20, minSize: 16),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -217,7 +217,7 @@ class ProfileHeader extends StatelessWidget {
                         email,
                         style: AppTypography.profileEmail.copyWith(
                           color: colorScheme.surface,
-                          fontSize: responsive.scaleFontSize(14, minSize: 12),
+                          fontSize: responsive.sFont(14, minSize: 12),
                         ),
                         textAlign: TextAlign.center,
                       ),

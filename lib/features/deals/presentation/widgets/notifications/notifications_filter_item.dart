@@ -24,18 +24,18 @@ class NotificationsFilterItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final naTheme = Theme.of(context).extension<NotificationsAlertsTheme>()!;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: responsive.scalePadding(const EdgeInsets.symmetric(vertical: 8)),
+        padding: responsive.sPadding(const EdgeInsets.symmetric(vertical: 8)),
         decoration: BoxDecoration(
           border: isSelected
               ? Border(
                   bottom: BorderSide(
                     color: naTheme.selectedColor,
-                    width: responsive.scale(2),
+                    width: responsive.s(2),
                   ),
                 )
               : null,
@@ -45,14 +45,14 @@ class NotificationsFilterItem extends StatelessWidget {
           children: [
             SvgPicture.asset(
               iconPath,
-              width: responsive.scale(24),
-              height: responsive.scale(24),
+              width: responsive.s(24),
+              height: responsive.s(24),
               colorFilter: ColorFilter.mode(
                 isSelected ? naTheme.selectedColor : naTheme.unselectedColor,
                 BlendMode.srcIn,
               ),
             ),
-            SizedBox(height: responsive.scale(4)),
+            SizedBox(height: responsive.s(4)),
             Text(
               label,
               style: (isSelected
@@ -60,7 +60,7 @@ class NotificationsFilterItem extends StatelessWidget {
                       : naTheme.filterUnselectedStyle)
                   .copyWith(
                 color: isSelected ? naTheme.selectedColor : naTheme.unselectedColor,
-                fontSize: responsive.scaleFontSize(14, minSize: 12),
+                fontSize: responsive.sFont(14, minSize: 12),
               ),
               textAlign: TextAlign.center,
             ),

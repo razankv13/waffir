@@ -37,7 +37,7 @@ class CustomBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     // Full width bottom bar
     return Container(
@@ -49,7 +49,7 @@ class CustomBottomNav extends StatelessWidget {
         top: false,
         child: Padding(
           // Figma padding: 8px top, 16px horizontal, 12px bottom
-          padding: responsive.scalePadding(const EdgeInsets.fromLTRB(16, 8, 16, 12)),
+          padding: responsive.sPadding(const EdgeInsets.fromLTRB(16, 8, 16, 12)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: tabs.asMap().entries.map((entry) {
@@ -91,13 +91,13 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final targetColor = isSelected ? activeColor : inactiveColor;
 
     // Figma typography: Parkinsans, 10px, 1.6 height
     final labelStyle = TextStyle(
       fontFamily: 'Parkinsans',
-      fontSize: responsive.scaleFontSize(10),
+      fontSize: responsive.sFont(10),
       height: 1.6,
       // Active: Bold (700), Inactive: Medium (500)
       fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
@@ -119,12 +119,12 @@ class _NavItem extends StatelessWidget {
               tween: ColorTween(end: targetColor),
               builder: (context, color, child) {
                 return SizedBox(
-                  width: responsive.scale(24),
-                  height: responsive.scale(24),
+                  width: responsive.s(24),
+                  height: responsive.s(24),
                   child: SvgPicture.asset(
                     iconPath,
-                    width: responsive.scale(24),
-                    height: responsive.scale(24),
+                    width: responsive.s(24),
+                    height: responsive.s(24),
                     colorFilter: ColorFilter.mode(color ?? targetColor, BlendMode.srcIn),
                   ),
                 );
@@ -139,7 +139,7 @@ class _NavItem extends StatelessWidget {
                   curve: Curves.easeOutCubic,
                 ),
 
-            SizedBox(height: responsive.scale(4)), // 4px gap
+            SizedBox(height: responsive.s(4)), // 4px gap
 
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 200),

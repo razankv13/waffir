@@ -18,7 +18,7 @@ class SystemNotificationsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final naTheme = Theme.of(context).extension<NotificationsAlertsTheme>()!;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final systemNotifications = ref.watch(systemNotificationsProvider);
 
     if (systemNotifications.isEmpty) {
@@ -32,9 +32,9 @@ class SystemNotificationsSection extends ConsumerWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: systemNotifications.length,
       separatorBuilder: (context, index) => Container(
-        height: responsive.scale(1),
+        height: responsive.s(1),
         color: naTheme.dividerColor,
-        margin: responsive.scalePadding(
+        margin: responsive.sPadding(
           const EdgeInsets.symmetric(vertical: 8),
         ),
       ),

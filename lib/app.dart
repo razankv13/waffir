@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:waffir/core/navigation/app_router.dart';
 import 'package:waffir/core/themes/app_theme.dart';
+import 'package:waffir/core/utils/responsive_helper.dart';
 import 'package:waffir/flavors.dart';
 
 class App extends ConsumerWidget {
@@ -13,28 +14,30 @@ class App extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
 
-    return MaterialApp.router(
-      title: F.title,
+    return ResponsiveScope(
+      child: MaterialApp.router(
+        title: F.title,
 
-      // Waffir Design System Theme
-      theme: AppTheme.lightTheme,
-      //  darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light, // Can be changed to ThemeMode.system
-      // Localization & RTL Support
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      localizationsDelegates: [
-        ...context.localizationDelegates,
-        CountryLocalizations.delegate,
-      ],
+        // Waffir Design System Theme
+        theme: AppTheme.lightTheme,
+        //  darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.light, // Can be changed to ThemeMode.system
+        // Localization & RTL Support
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        localizationsDelegates: [
+          ...context.localizationDelegates,
+          CountryLocalizations.delegate,
+        ],
 
-      routerConfig: router,
+        routerConfig: router,
 
-      builder: (context, child) {
-        return _flavorBanner(child: child ?? const SizedBox.shrink());
-      },
+        builder: (context, child) {
+          return _flavorBanner(child: child ?? const SizedBox.shrink());
+        },
 
-      debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 

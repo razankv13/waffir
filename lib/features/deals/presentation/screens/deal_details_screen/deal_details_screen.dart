@@ -197,28 +197,28 @@ class _DealDetailsErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Center(
       child: Padding(
-        padding: responsive.scalePadding(const EdgeInsets.all(24)),
+        padding: responsive.sPadding(const EdgeInsets.all(24)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               isNotFound ? Icons.search_off_rounded : Icons.error_outline,
-              size: responsive.scale(64),
+              size: responsive.s(64),
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
             ),
-            SizedBox(height: responsive.scale(16)),
+            SizedBox(height: responsive.s(16)),
             Text(
               isNotFound ? LocaleKeys.dealDetails.errors.noLongerAvailable.tr() : message,
               style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: responsive.scale(16)),
+            SizedBox(height: responsive.s(16)),
             FilledButton(
               onPressed: onRetry,
               style: FilledButton.styleFrom(

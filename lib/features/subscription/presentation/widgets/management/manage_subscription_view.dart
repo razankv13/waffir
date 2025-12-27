@@ -8,7 +8,7 @@ class ManageSubscriptionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
     final theme = Theme.of(context);
 
     // Using exact colors from Figma where they don't map perfectly to AppColors,
@@ -28,7 +28,7 @@ class ManageSubscriptionView extends StatelessWidget {
       children: [
         // "My Subscription" Header
         SizedBox(
-          width: responsive.scale(392),
+          width: responsive.s(392),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -37,39 +37,39 @@ class ManageSubscriptionView extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   color: kColorBlack,
-                  fontSize: responsive.scale(18),
+                  fontSize: responsive.s(18),
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Parkinsans', // Preserving font from Figma
                 ),
               ),
-              SizedBox(height: responsive.scale(16)),
+              SizedBox(height: responsive.s(16)),
             ],
           ),
         ),
 
         // Main Content Container
         Container(
-          width: responsive.scale(392),
-          padding: EdgeInsets.all(responsive.scale(16)),
+          width: responsive.s(392),
+          padding: EdgeInsets.all(responsive.s(16)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Savings Card
               _buildSavingsCard(responsive, kColorWhite, kColorBlack, kColorPurple),
-              SizedBox(height: responsive.scale(24)),
+              SizedBox(height: responsive.s(24)),
 
               // Current Plan Card
               _buildCurrentPlanCard(responsive, kColorGreen01, kColorBlack, kColorWhite),
-              SizedBox(height: responsive.scale(24)),
+              SizedBox(height: responsive.s(24)),
 
               // Family Members Section
               _buildFamilyMembersSection(responsive, kColorBlack, kColorGray01, kColorPurple, kColorWhite, kColorGreen03, kColorGreen04),
-              SizedBox(height: responsive.scale(24)),
+              SizedBox(height: responsive.s(24)),
 
               // Manage Subscription Button (Cancel)
               _buildManageSubscriptionAction(responsive, kColorBlack, kColorWhite, kColorGreen04),
-              SizedBox(height: responsive.scale(24)),
+              SizedBox(height: responsive.s(24)),
 
               // Help & Support
               _buildHelpAndSupport(responsive, kColorBlack, kColorGray04),
@@ -83,7 +83,7 @@ class ManageSubscriptionView extends StatelessWidget {
   Widget _buildSavingsCard(ResponsiveHelper responsive, Color bgColor, Color textColor, Color purpleColor) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(responsive.scale(18)),
+      padding: EdgeInsets.all(responsive.s(18)),
       decoration: ShapeDecoration(
         color: bgColor,
         shape: RoundedRectangleBorder(
@@ -103,18 +103,18 @@ class ManageSubscriptionView extends StatelessWidget {
                   'Your Savings This Year',
                   style: TextStyle(
                     color: textColor,
-                    fontSize: responsive.scale(18),
+                    fontSize: responsive.s(18),
                     fontFamily: 'Parkinsans',
                     fontWeight: FontWeight.w700,
                     height: 1,
                   ),
                 ),
-                SizedBox(height: responsive.scale(4)),
+                SizedBox(height: responsive.s(4)),
                 Text(
                   "You've saved \$428 so far in 2023",
                   style: TextStyle(
                     color: textColor,
-                    fontSize: responsive.scale(12),
+                    fontSize: responsive.s(12),
                     fontFamily: 'Parkinsans',
                     fontWeight: FontWeight.w500,
                     height: 1.15,
@@ -123,7 +123,7 @@ class ManageSubscriptionView extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: responsive.scale(12)),
+          SizedBox(height: responsive.s(12)),
           // Bars Graph
           SizedBox(
             width: double.infinity,
@@ -138,7 +138,7 @@ class ManageSubscriptionView extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: responsive.scale(8)),
+          SizedBox(height: responsive.s(8)),
           // Months Labels
           SizedBox(
             width: double.infinity,
@@ -161,8 +161,8 @@ class ManageSubscriptionView extends StatelessWidget {
 
   Widget _buildBar(ResponsiveHelper responsive, Color color, double height, String label) {
     return Container(
-      width: responsive.scale(67),
-      height: responsive.scale(height),
+      width: responsive.s(67),
+      height: responsive.s(height),
       decoration: BoxDecoration(color: color),
       child: Stack(
         children: [
@@ -172,7 +172,7 @@ class ManageSubscriptionView extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: responsive.scale(12),
+                fontSize: responsive.s(12),
                 fontFamily: 'Parkinsans',
                 fontWeight: FontWeight.w500,
                 height: 1,
@@ -186,13 +186,13 @@ class ManageSubscriptionView extends StatelessWidget {
 
   Widget _buildMonthLabel(ResponsiveHelper responsive, String text, Color color) {
     return SizedBox(
-      width: responsive.scale(67),
+      width: responsive.s(67),
       child: Text(
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
           color: color,
-          fontSize: responsive.scale(12),
+          fontSize: responsive.s(12),
           fontFamily: 'Parkinsans',
           fontWeight: FontWeight.w400,
           height: 1,
@@ -204,7 +204,7 @@ class ManageSubscriptionView extends StatelessWidget {
   Widget _buildCurrentPlanCard(ResponsiveHelper responsive, Color bgColor, Color textColor, Color whiteColor) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(responsive.scale(16)),
+      padding: EdgeInsets.all(responsive.s(16)),
       decoration: ShapeDecoration(
         color: bgColor,
         shape: RoundedRectangleBorder(
@@ -219,15 +219,15 @@ class ManageSubscriptionView extends StatelessWidget {
             'Current Plan',
             style: TextStyle(
               color: textColor,
-              fontSize: responsive.scale(18),
+              fontSize: responsive.s(18),
               fontFamily: 'Parkinsans',
               fontWeight: FontWeight.w700,
               height: 1,
             ),
           ),
-          SizedBox(height: responsive.scale(24)),
+          SizedBox(height: responsive.s(24)),
           Container(
-            width: responsive.scale(325),
+            width: responsive.s(325),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -235,40 +235,40 @@ class ManageSubscriptionView extends StatelessWidget {
                   'Family Annual Plan',
                   style: TextStyle(
                     color: textColor,
-                    fontSize: responsive.scale(14),
+                    fontSize: responsive.s(14),
                     fontFamily: 'Parkinsans',
                     fontWeight: FontWeight.w700,
                     height: 1.15,
                   ),
                 ),
-                SizedBox(height: responsive.scale(8)),
+                SizedBox(height: responsive.s(8)),
                 Text(
                   '\$79.99/year (33% off monthly)',
                   style: TextStyle(
                     color: textColor,
-                    fontSize: responsive.scale(12),
+                    fontSize: responsive.s(12),
                     fontFamily: 'Parkinsans',
                     fontWeight: FontWeight.w500,
                     height: 1.15,
                   ),
                 ),
-                 SizedBox(height: responsive.scale(8)),
+                 SizedBox(height: responsive.s(8)),
                 Text(
                   'Renews on Dec 15, 2023',
                   style: TextStyle(
                     color: textColor,
-                    fontSize: responsive.scale(12),
+                    fontSize: responsive.s(12),
                     fontFamily: 'Parkinsans',
                     fontWeight: FontWeight.w500,
                     height: 1.15,
                   ),
                 ),
-                 SizedBox(height: responsive.scale(8)),
+                 SizedBox(height: responsive.s(8)),
                 Text(
                   'Unlimited deals, Family sharing (up to 5)',
                   style: TextStyle(
                     color: textColor,
-                    fontSize: responsive.scale(12),
+                    fontSize: responsive.s(12),
                     fontFamily: 'Parkinsans',
                     fontWeight: FontWeight.w500,
                     height: 1.15,
@@ -277,10 +277,10 @@ class ManageSubscriptionView extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: responsive.scale(24)),
+          SizedBox(height: responsive.s(24)),
           Container(
-            height: responsive.scale(45),
-            padding: EdgeInsets.symmetric(horizontal: responsive.scale(10), vertical: responsive.scale(2)),
+            height: responsive.s(45),
+            padding: EdgeInsets.symmetric(horizontal: responsive.s(10), vertical: responsive.s(2)),
             decoration: ShapeDecoration(
               color: whiteColor,
               shape: RoundedRectangleBorder(
@@ -294,7 +294,7 @@ class ManageSubscriptionView extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: textColor,
-                  fontSize: responsive.scale(16),
+                  fontSize: responsive.s(16),
                   fontFamily: 'Parkinsans',
                   fontWeight: FontWeight.w400,
                   height: 1,
@@ -313,19 +313,19 @@ class ManageSubscriptionView extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(
-            width: responsive.scale(360),
+            width: responsive.s(360),
             child: Text(
               'Family Members',
               style: TextStyle(
                 color: blackColor,
-                fontSize: responsive.scale(17),
+                fontSize: responsive.s(17),
                 fontFamily: 'Parkinsans',
                 fontWeight: FontWeight.w700,
                 height: 1,
               ),
             ),
           ),
-          SizedBox(height: responsive.scale(12)),
+          SizedBox(height: responsive.s(12)),
           
           // Family Member 1 (You)
           _buildFamilyMemberItem(
@@ -341,7 +341,7 @@ class ManageSubscriptionView extends StatelessWidget {
             avatarTextColor: whiteColor,
           ),
           
-          SizedBox(height: responsive.scale(12)), // Stack overlap imitation if needed, but simple column is safer for now
+          SizedBox(height: responsive.s(12)), // Stack overlap imitation if needed, but simple column is safer for now
           
           // Family Member 2 (Pending/Red) // Wait, Figma had a stacked layout with positioned elements.
           // Implementing as a list for simplicity unless stack visuals are critical.
@@ -363,7 +363,7 @@ class ManageSubscriptionView extends StatelessWidget {
           // It seems to be a removed/error member. 
           // I will implement the next real members for now: "Emma Miller" and "Liam Miller".
           
-           SizedBox(height: responsive.scale(12)),
+           SizedBox(height: responsive.s(12)),
 
           _buildFamilyMemberItem(
             responsive, 
@@ -379,7 +379,7 @@ class ManageSubscriptionView extends StatelessWidget {
             isPending: true,
           ),
 
-           SizedBox(height: responsive.scale(12)),
+           SizedBox(height: responsive.s(12)),
 
           _buildFamilyMemberItem(
             responsive, 
@@ -394,12 +394,12 @@ class ManageSubscriptionView extends StatelessWidget {
             avatarTextColor: whiteColor,
           ),
           
-          SizedBox(height: responsive.scale(12)),
+          SizedBox(height: responsive.s(12)),
 
           // Add Member Button
           Container(
             width: double.infinity,
-            height: responsive.scale(48),
+            height: responsive.s(48),
             decoration: ShapeDecoration(
               color: green04Color,
               shape: RoundedRectangleBorder(
@@ -409,14 +409,14 @@ class ManageSubscriptionView extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.add, color: whiteColor, size: responsive.scale(16)), // Placeholder icon
-                SizedBox(width: responsive.scale(4)),
+                Icon(Icons.add, color: whiteColor, size: responsive.s(16)), // Placeholder icon
+                SizedBox(width: responsive.s(4)),
                 Text(
                   'Add member',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: whiteColor,
-                    fontSize: responsive.scale(14),
+                    fontSize: responsive.s(14),
                     fontFamily: 'Parkinsans',
                     fontWeight: FontWeight.w600,
                     height: 1,
@@ -425,7 +425,7 @@ class ManageSubscriptionView extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: responsive.scale(12)),
+          SizedBox(height: responsive.s(12)),
           
           Text.rich(
             TextSpan(
@@ -434,7 +434,7 @@ class ManageSubscriptionView extends StatelessWidget {
                   text: '1',
                   style: TextStyle(
                     color: blackColor,
-                    fontSize: responsive.scale(12),
+                    fontSize: responsive.s(12),
                     fontFamily: 'Parkinsans',
                     fontWeight: FontWeight.w800,
                     height: 1,
@@ -444,7 +444,7 @@ class ManageSubscriptionView extends StatelessWidget {
                   text: ' slot remaining (max 5 members)',
                   style: TextStyle(
                     color: blackColor,
-                    fontSize: responsive.scale(12),
+                    fontSize: responsive.s(12),
                     fontFamily: 'Parkinsans',
                     fontWeight: FontWeight.w500,
                     height: 1,
@@ -477,12 +477,12 @@ class ManageSubscriptionView extends StatelessWidget {
     if (hasError) {
         // Reduced implementation for the red circle item
          return Container(
-            width: responsive.scale(360),
+            width: responsive.s(360),
             padding: EdgeInsets.fromLTRB(
-              responsive.scale(12), 
-              responsive.scale(12), 
-              responsive.scale(16), 
-              responsive.scale(12)
+              responsive.s(12), 
+              responsive.s(12), 
+              responsive.s(16), 
+              responsive.s(12)
             ),
             decoration: ShapeDecoration(
               color: bgColor,
@@ -494,8 +494,8 @@ class ManageSubscriptionView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                      Container(
-                        width: responsive.scale(40),
-                        height: responsive.scale(40),
+                        width: responsive.s(40),
+                        height: responsive.s(40),
                         decoration: ShapeDecoration(
                             color: avatarBgColor,
                             shape: RoundedRectangleBorder(
@@ -509,12 +509,12 @@ class ManageSubscriptionView extends StatelessWidget {
     }
     
     return Container(
-      width: responsive.scale(360),
+      width: responsive.s(360),
       padding: EdgeInsets.fromLTRB(
-        responsive.scale(12), 
-        responsive.scale(12), 
-        responsive.scale(24), 
-        responsive.scale(12)
+        responsive.s(12), 
+        responsive.s(12), 
+        responsive.s(24), 
+        responsive.s(12)
       ),
       decoration: ShapeDecoration(
         color: bgColor,
@@ -529,8 +529,8 @@ class ManageSubscriptionView extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: responsive.scale(40),
-                height: responsive.scale(40),
+                width: responsive.s(40),
+                height: responsive.s(40),
                 decoration: ShapeDecoration(
                   color: avatarBgColor,
                   shape: RoundedRectangleBorder(
@@ -543,7 +543,7 @@ class ManageSubscriptionView extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: avatarTextColor,
-                      fontSize: responsive.scale(12),
+                      fontSize: responsive.s(12),
                       fontFamily: 'Parkinsans',
                       fontWeight: FontWeight.w500,
                       height: 1, // Adjusted height for centering
@@ -551,7 +551,7 @@ class ManageSubscriptionView extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: responsive.scale(12)),
+              SizedBox(width: responsive.s(12)),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -559,18 +559,18 @@ class ManageSubscriptionView extends StatelessWidget {
                     name ?? '',
                     style: TextStyle(
                       color: AppColors.black,
-                      fontSize: responsive.scale(11.90),
+                      fontSize: responsive.s(11.90),
                       fontFamily: 'Parkinsans',
                       fontWeight: FontWeight.w700,
                       height: 1,
                     ),
                   ),
-                  SizedBox(height: responsive.scale(4)),
+                  SizedBox(height: responsive.s(4)),
                   Text(
                     role ?? '',
                     style: TextStyle(
                       color: AppColors.black,
-                      fontSize: responsive.scale(10),
+                      fontSize: responsive.s(10),
                       fontFamily: 'Parkinsans',
                       fontWeight: FontWeight.w400,
                       height: 1,
@@ -582,7 +582,7 @@ class ManageSubscriptionView extends StatelessWidget {
           ),
           if (status != null)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: responsive.scale(12), vertical: responsive.scale(8)),
+              padding: EdgeInsets.symmetric(horizontal: responsive.s(12), vertical: responsive.s(8)),
               decoration: ShapeDecoration(
                 color: isPending ? Colors.transparent : statusColor,
                 shape: RoundedRectangleBorder(
@@ -595,7 +595,7 @@ class ManageSubscriptionView extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: isPending ? statusColor : Colors.white,
-                  fontSize: responsive.scale(12),
+                  fontSize: responsive.s(12),
                   fontFamily: 'Parkinsans',
                   fontWeight: FontWeight.w500,
                   height: 1,
@@ -617,15 +617,15 @@ class ManageSubscriptionView extends StatelessWidget {
             'Manage Subscription',
             style: TextStyle(
                color: blackColor,
-               fontSize: responsive.scale(12),
+               fontSize: responsive.s(12),
                fontFamily: 'Parkinsans',
                fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: responsive.scale(16)),
+          SizedBox(height: responsive.s(16)),
           Container(
             width: double.infinity,
-            height: responsive.scale(48),
+            height: responsive.s(48),
             decoration: ShapeDecoration(
               color: whiteColor,
               shape: RoundedRectangleBorder(
@@ -639,7 +639,7 @@ class ManageSubscriptionView extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: blackColor,
-                  fontSize: responsive.scale(14),
+                  fontSize: responsive.s(14),
                   fontFamily: 'Parkinsans',
                   fontWeight: FontWeight.w600,
                   height: 1,
@@ -662,17 +662,17 @@ class ManageSubscriptionView extends StatelessWidget {
                     'Help & Support',
                     style: TextStyle(
                         color: blackColor,
-                        fontSize: responsive.scale(12),
+                        fontSize: responsive.s(12),
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w600,
                     ),
                 ),
-                SizedBox(height: responsive.scale(12)),
+                SizedBox(height: responsive.s(12)),
                 _buildSupportItem(responsive, 'Contact Support', gray04Color),
-                SizedBox(height: responsive.scale(4)),
+                SizedBox(height: responsive.s(4)),
                 _buildSupportItem(responsive, 'FAQ & Troubleshooting', const Color(0xFF6E6B7F)),
                 
-                SizedBox(height: responsive.scale(64)),
+                SizedBox(height: responsive.s(64)),
                 
                  Center(
                    child: Text(
@@ -680,7 +680,7 @@ class ManageSubscriptionView extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           color: gray04Color,
-                          fontSize: responsive.scale(10.20),
+                          fontSize: responsive.s(10.20),
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w400,
                           height: 1.57,
@@ -695,13 +695,13 @@ class ManageSubscriptionView extends StatelessWidget {
   Widget _buildSupportItem(ResponsiveHelper responsive, String text, Color color) {
       return Row(
           children: [
-              SizedBox(width: responsive.scale(20), height: responsive.scale(20)), // Placeholder for icon
-              SizedBox(width: responsive.scale(4)),
+              SizedBox(width: responsive.s(20), height: responsive.s(20)), // Placeholder for icon
+              SizedBox(width: responsive.s(4)),
               Text(
                  text,
                  style: TextStyle(
                      color: color,
-                     fontSize: responsive.scale(11.90),
+                     fontSize: responsive.s(11.90),
                      fontFamily: 'Inter',
                      fontWeight: FontWeight.w400,
                  ),

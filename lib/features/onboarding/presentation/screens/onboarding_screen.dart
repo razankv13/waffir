@@ -58,24 +58,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final responsive = context.rs;
 
     // Responsive horizontal padding
-    final horizontalPadding = ResponsiveHelper(
-      context,
-    ).horizontalPadding(mobile: 16.0, tablet: 32.0, desktop: 48.0);
+    final horizontalPadding = responsive.horizontalPadding(tablet: 32.0, desktop: 48.0);
 
     // Responsive spacing
-    final sectionGap = ResponsiveHelper(
-      context,
-    ).verticalPadding(mobile: 40.0, tablet: 48.0, desktop: 56.0);
+    final sectionGap = responsive.verticalPadding(mobile: 40.0, tablet: 48.0, desktop: 56.0);
 
-    final contentGap = ResponsiveHelper(
-      context,
-    ).verticalPadding(mobile: 64.0, tablet: 80.0, desktop: 96.0);
+    final contentGap = responsive.verticalPadding(mobile: 64.0, tablet: 80.0, desktop: 96.0);
 
-    final bottomPadding = ResponsiveHelper(
-      context,
-    ).verticalPadding(mobile: 120.0, tablet: 80.0, desktop: 60.0);
+    final bottomPadding = responsive.verticalPadding(mobile: 120.0, tablet: 80.0, desktop: 60.0);
 
     // Pixel-perfect values from Figma (393x852)
     const double titleFontSize = 20.0;
@@ -89,8 +82,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             // Responsive shape dimensions
-            final shapeWidth = ResponsiveHelper(context).scale(467.78);
-            final shapeHeight = ResponsiveHelper(context).scale(461.3);
+            final shapeWidth = ResponsiveHelper.of(context).s(467.78);
+            final shapeHeight = ResponsiveHelper.of(context).s(461.3);
 
             return Stack(
               children: [
@@ -120,7 +113,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Top spacer (gradient height from Figma)
-                          SizedBox(height: ResponsiveHelper(context).scale(87.0)),
+                          SizedBox(height: ResponsiveHelper.of(context).s(87.0)),
 
                           // Content sections
                           Column(

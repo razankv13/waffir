@@ -23,7 +23,7 @@ class BankCatalogScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -94,7 +94,7 @@ class BankCatalogScreen extends HookConsumerWidget {
           return StatefulBuilder(
             builder: (context, setLocalState) {
               return Padding(
-                padding: responsive.scalePadding(
+                padding: responsive.sPadding(
                   EdgeInsets.only(
                     left: 16,
                     right: 16,
@@ -114,20 +114,20 @@ class BankCatalogScreen extends HookConsumerWidget {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: responsive.scale(12)),
+                    SizedBox(height: responsive.s(12)),
                     Flexible(
                       child: ListView.separated(
                         shrinkWrap: true,
                         itemCount: data.bankCards.length,
                         separatorBuilder: (context, _) =>
-                            SizedBox(height: responsive.scale(8)),
+                            SizedBox(height: responsive.s(8)),
                         itemBuilder: (context, index) {
                           final card = data.bankCards[index];
                           final isSelected = localSelected.contains(card.id);
                           return Material(
                             color: colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(
-                              responsive.scale(12),
+                              responsive.s(12),
                             ),
                             child: SwitchListTile(
                               value: isSelected,
@@ -160,7 +160,7 @@ class BankCatalogScreen extends HookConsumerWidget {
                         },
                       ),
                     ),
-                    SizedBox(height: responsive.scale(16)),
+                    SizedBox(height: responsive.s(16)),
                     FilledButton(
                       onPressed: data.isSavingCards
                           ? null
@@ -203,17 +203,17 @@ class BankCatalogScreen extends HookConsumerWidget {
         onNotification: (notification) {
           if (data.isLoadingOffers || data.isLoadingMore || !data.hasMore)
             return false;
-          if (notification.metrics.extentAfter > responsive.scale(500))
+          if (notification.metrics.extentAfter > responsive.s(500))
             return false;
           controller.loadMore();
           return false;
         },
         child: ListView(
           padding: EdgeInsets.only(
-            left: responsive.scale(16),
-            right: responsive.scale(16),
-            top: responsive.scale(16),
-            bottom: responsive.scale(24) + responsive.bottomSafeArea,
+            left: responsive.s(16),
+            right: responsive.s(16),
+            top: responsive.s(16),
+            bottom: responsive.s(24) + responsive.bottomSafeArea,
           ),
           children: [
             CatalogSearchFilterBar(
@@ -236,11 +236,11 @@ class BankCatalogScreen extends HookConsumerWidget {
                           fillColor: colorScheme.surfaceContainerHighest,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(
-                              responsive.scale(12),
+                              responsive.s(12),
                             ),
                             borderSide: BorderSide.none,
                           ),
-                          contentPadding: responsive.scalePadding(
+                          contentPadding: responsive.sPadding(
                             const EdgeInsets.symmetric(
                               horizontal: 12,
                               vertical: 10,
@@ -267,7 +267,7 @@ class BankCatalogScreen extends HookConsumerWidget {
                         },
                       ),
                     ),
-                    SizedBox(width: responsive.scale(12)),
+                    SizedBox(width: responsive.s(12)),
                     OutlinedButton(
                       onPressed: () => openMyCardsSheet(data),
                       child: const Text('My Cards'),
@@ -280,10 +280,10 @@ class BankCatalogScreen extends HookConsumerWidget {
                     filled: true,
                     fillColor: colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(responsive.scale(12)),
+                      borderRadius: BorderRadius.circular(responsive.s(12)),
                       borderSide: BorderSide.none,
                     ),
-                    contentPadding: responsive.scalePadding(
+                    contentPadding: responsive.sPadding(
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     ),
                   ),
@@ -308,7 +308,7 @@ class BankCatalogScreen extends HookConsumerWidget {
                 ),
               ],
             ),
-            SizedBox(height: responsive.scale(16)),
+            SizedBox(height: responsive.s(16)),
             Text(
               'Bank Offers',
               style: textTheme.titleMedium?.copyWith(
@@ -316,10 +316,10 @@ class BankCatalogScreen extends HookConsumerWidget {
                 color: colorScheme.onSurface,
               ),
             ),
-            SizedBox(height: responsive.scale(12)),
+            SizedBox(height: responsive.s(12)),
             if (data.isLoadingOffers && data.offers.isEmpty)
               Padding(
-                padding: EdgeInsets.symmetric(vertical: responsive.scale(16)),
+                padding: EdgeInsets.symmetric(vertical: responsive.s(16)),
                 child: const Center(child: CircularProgressIndicator()),
               )
             else if (data.offers.isEmpty && data.offersFailure == null)
@@ -338,7 +338,7 @@ class BankCatalogScreen extends HookConsumerWidget {
               ...data.offers.map((offer) => _BankOfferTile(offer: offer)),
             if (data.isLoadingMore)
               Padding(
-                padding: EdgeInsets.symmetric(vertical: responsive.scale(16)),
+                padding: EdgeInsets.symmetric(vertical: responsive.s(16)),
                 child: const Center(child: CircularProgressIndicator()),
               ),
           ],
@@ -365,23 +365,23 @@ class BankCatalogScreen extends HookConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => Center(
           child: Padding(
-            padding: responsive.scalePadding(const EdgeInsets.all(24)),
+            padding: responsive.sPadding(const EdgeInsets.all(24)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   Icons.error_outline,
-                  size: responsive.scale(64),
+                  size: responsive.s(64),
                   color: colorScheme.onSurfaceVariant,
                 ),
-                SizedBox(height: responsive.scale(12)),
+                SizedBox(height: responsive.s(12)),
                 Text(
                   'Failed to load banks.',
                   style: textTheme.titleMedium?.copyWith(
                     color: colorScheme.onSurface,
                   ),
                 ),
-                SizedBox(height: responsive.scale(16)),
+                SizedBox(height: responsive.s(16)),
                 FilledButton(
                   onPressed: controller.refresh,
                   child: const Text('Retry'),
@@ -403,7 +403,7 @@ class _BankOfferTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final isArabic =
@@ -421,10 +421,10 @@ class _BankOfferTile extends StatelessWidget {
 
     final label = discountLabel();
 
-    final borderRadius = BorderRadius.circular(responsive.scale(12));
+    final borderRadius = BorderRadius.circular(responsive.s(12));
 
     return Padding(
-      padding: EdgeInsets.only(bottom: responsive.scale(12)),
+      padding: EdgeInsets.only(bottom: responsive.s(12)),
       child: Material(
         color: colorScheme.surfaceContainerHighest,
         borderRadius: borderRadius,
@@ -440,16 +440,16 @@ class _BankOfferTile extends StatelessWidget {
             );
           },
           child: Padding(
-            padding: responsive.scalePadding(const EdgeInsets.all(12)),
+            padding: responsive.sPadding(const EdgeInsets.all(12)),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: responsive.scale(64),
-                  height: responsive.scale(64),
+                  width: responsive.s(64),
+                  height: responsive.s(64),
                   decoration: BoxDecoration(
                     color: colorScheme.surface,
-                    borderRadius: BorderRadius.circular(responsive.scale(10)),
+                    borderRadius: BorderRadius.circular(responsive.s(10)),
                   ),
                   child:
                       offer.imageUrl == null || offer.imageUrl!.trim().isEmpty
@@ -459,7 +459,7 @@ class _BankOfferTile extends StatelessWidget {
                         )
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(
-                            responsive.scale(10),
+                            responsive.s(10),
                           ),
                           child: AppNetworkImage(
                             imageUrl: offer.imageUrl!,
@@ -473,7 +473,7 @@ class _BankOfferTile extends StatelessWidget {
                           ),
                         ),
                 ),
-                SizedBox(width: responsive.scale(12)),
+                SizedBox(width: responsive.s(12)),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -487,7 +487,7 @@ class _BankOfferTile extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: responsive.scale(4)),
+                      SizedBox(height: responsive.s(4)),
                       Text(
                         offer.localizedBankName(isArabic: isArabic) ?? '',
                         style: textTheme.bodySmall?.copyWith(
@@ -497,9 +497,9 @@ class _BankOfferTile extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       if (label != null) ...[
-                        SizedBox(height: responsive.scale(8)),
+                        SizedBox(height: responsive.s(8)),
                         Container(
-                          padding: responsive.scalePadding(
+                          padding: responsive.sPadding(
                             const EdgeInsets.symmetric(
                               horizontal: 10,
                               vertical: 6,
@@ -508,7 +508,7 @@ class _BankOfferTile extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(
-                              responsive.scale(999),
+                              responsive.s(999),
                             ),
                           ),
                           child: Text(

@@ -26,7 +26,7 @@ class WaffirBackButton extends HookWidget {
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         if (padding == null) {
-          finalPadding.value = EdgeInsets.only(top: context.responsive.topSafeArea, left: 16);
+          finalPadding.value = EdgeInsets.only(top: context.rs.topSafeArea, left: 16);
         }
       });
       return null;

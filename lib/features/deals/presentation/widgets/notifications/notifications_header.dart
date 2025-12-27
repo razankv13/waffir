@@ -16,12 +16,12 @@ class NotificationsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final naTheme = Theme.of(context).extension<NotificationsAlertsTheme>()!;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Container(
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: naTheme.headerDivider, width: responsive.scale(1)),
+          bottom: BorderSide(color: naTheme.headerDivider, width: responsive.s(1)),
         ),
       ),
       child: Column(
@@ -29,40 +29,40 @@ class NotificationsHeader extends StatelessWidget {
           // Back button row
           Align(
             alignment: Alignment.topLeft,
-            child: WaffirBackButton(size: responsive.scale(44)),
+            child: WaffirBackButton(size: responsive.s(44)),
           ),
           Padding(
-            padding: responsive.scalePadding(
+            padding: responsive.sPadding(
               const EdgeInsets.only(left: 16, right: 16, bottom: 12),
             ),
             child: Column(
               children: [
-                SizedBox(height: responsive.scale(12)),
+                SizedBox(height: responsive.s(12)),
 
                 // Filter toggle (Deal Alerts / Notifications)
                 const NotificationsFilterToggle(),
 
-                SizedBox(height: responsive.scale(12)),
+                SizedBox(height: responsive.s(12)),
 
                 // Title & subtitle
                 Text(
                   LocaleKeys.notifications.header.title.tr(),
                   style: naTheme.titleStyle.copyWith(
                     color: naTheme.textPrimary,
-                    fontSize: responsive.scaleFontSize(18, minSize: 16),
+                    fontSize: responsive.sFont(18, minSize: 16),
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: responsive.scale(16)),
+                SizedBox(height: responsive.s(16)),
                 Text(
                   LocaleKeys.notifications.header.subtitle.tr(),
                   style: naTheme.subtitleStyle.copyWith(
                     color: naTheme.textPrimary,
-                    fontSize: responsive.scaleFontSize(16, minSize: 14),
+                    fontSize: responsive.sFont(16, minSize: 14),
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: responsive.scale(16)),
+                SizedBox(height: responsive.s(16)),
 
                 // Search bar
                 const NotificationsSearchBar(),

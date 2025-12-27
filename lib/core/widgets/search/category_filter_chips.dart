@@ -51,11 +51,11 @@ class CategoryFilterChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final displayLabels = categoryLabels ?? categories;
 
     return Padding(
-      padding: responsive.scalePadding(const EdgeInsets.symmetric(horizontal: 16)),
+      padding: responsive.sPadding(const EdgeInsets.symmetric(horizontal: 16)),
       child: Row(
         children: List.generate(categories.length, (index) {
           final category = categories[index];
@@ -94,13 +94,13 @@ class _CategoryChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final filterColors = theme.extension<FilterColors>();
-    final responsive = context.responsive;
+    final responsive = context.rs;
 
-    final verticalPadding = responsive.scale(8);
-    final iconSize = responsive.scaleWithMin(24, min: 20);
-    final gap = responsive.scale(4);
-    final fontSize = responsive.scaleFontSize(14, minSize: 11);
-    final borderWidth = responsive.scaleWithMin(2, min: 2);
+    final verticalPadding = responsive.s(8);
+    final iconSize = responsive.s(24);
+    final gap = responsive.s(4);
+    final fontSize = responsive.sFont(14, minSize: 11);
+    final borderWidth = responsive.s(2);
 
     return GestureDetector(
       onTap: onTap,

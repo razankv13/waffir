@@ -40,7 +40,7 @@ class LanguageSelectionScreen extends HookConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    final responsive = context.responsive;
+    final responsive = context.rs;
     final safeAreaInsets = MediaQuery.of(context).padding;
 
     // Watch profile state
@@ -102,13 +102,13 @@ class LanguageSelectionScreen extends HookConsumerWidget {
     }
 
     // Figma: screen bottom padding is 120px.
-    final bottomPadding = (responsive.scale(120) - safeAreaInsets.bottom).clamp(
+    final bottomPadding = (responsive.s(120) - safeAreaInsets.bottom).clamp(
       0.0,
       double.infinity,
     );
 
     final titleStyle = (textTheme.bodyLarge ?? const TextStyle()).copyWith(
-      fontSize: responsive.scaleFontSize(16, minSize: 12),
+      fontSize: responsive.sFont(16, minSize: 12),
       fontWeight: FontWeight.w500,
       height: 1.15,
       color: colorScheme.onSurface,
@@ -127,17 +127,17 @@ class LanguageSelectionScreen extends HookConsumerWidget {
         children: [
           // Background shape (exported from Figma) + blur.
           Positioned(
-            left: -responsive.scale(40),
-            top: -responsive.scale(85.54),
+            left: -responsive.s(40),
+            top: -responsive.s(85.54),
             child: ImageFiltered(
               imageFilter: ImageFilter.blur(
-                sigmaX: responsive.scale(100),
-                sigmaY: responsive.scale(100),
+                sigmaX: responsive.s(100),
+                sigmaY: responsive.s(100),
               ),
               child: SvgPicture.asset(
                 'assets/images/language_switch_shape.svg',
-                width: responsive.scale(467.78),
-                height: responsive.scale(394.6),
+                width: responsive.s(467.78),
+                height: responsive.s(394.6),
                 fit: BoxFit.cover,
               ),
             ),
@@ -151,37 +151,37 @@ class LanguageSelectionScreen extends HookConsumerWidget {
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: WaffirBackButton(size: responsive.scale(44)),
+                  child: WaffirBackButton(size: responsive.s(44)),
                 ),
 
-                SizedBox(height: responsive.scale(32)),
+                SizedBox(height: responsive.s(32)),
 
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+                  padding: EdgeInsets.symmetric(horizontal: responsive.s(16)),
                   child: Text('Change Language', style: titleStyle),
                 ),
 
-                SizedBox(height: responsive.scale(32)),
+                SizedBox(height: responsive.s(32)),
 
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: responsive.scale(16)),
+                  padding: EdgeInsets.symmetric(horizontal: responsive.s(16)),
                   child: Column(
                     children: [
                       // Arabic option
                       _LanguagePillButton(
                         label: 'العربية',
-                        width: responsive.scale(361),
-                        height: responsive.scale(48),
+                        width: responsive.s(361),
+                        height: responsive.s(48),
                         isSelected: selectedLanguage.value == 'ar',
                         borderColor: selectedLanguage.value == 'ar'
                             ? colorScheme.primary
                             : const Color(0xFFCECECE),
                         borderWidth: selectedLanguage.value == 'ar'
-                            ? responsive.scale(2)
-                            : responsive.scale(1),
-                        borderRadius: responsive.scale(selectedLanguage.value == 'ar' ? 30 : 60),
+                            ? responsive.s(2)
+                            : responsive.s(1),
+                        borderRadius: responsive.s(selectedLanguage.value == 'ar' ? 30 : 60),
                         textStyle: (textTheme.labelLarge ?? const TextStyle()).copyWith(
-                          fontSize: responsive.scaleFontSize(14, minSize: 11),
+                          fontSize: responsive.sFont(14, minSize: 11),
                           fontWeight:
                               selectedLanguage.value == 'ar' ? FontWeight.w600 : FontWeight.w500,
                           height: 1.0,
@@ -189,22 +189,22 @@ class LanguageSelectionScreen extends HookConsumerWidget {
                         ),
                         onPressed: () => selectedLanguage.value = 'ar',
                       ),
-                      SizedBox(height: responsive.scale(16)),
+                      SizedBox(height: responsive.s(16)),
                       // English option
                       _LanguagePillButton(
                         label: 'English',
-                        width: responsive.scale(361),
-                        height: responsive.scale(48),
+                        width: responsive.s(361),
+                        height: responsive.s(48),
                         isSelected: selectedLanguage.value == 'en',
                         borderColor: selectedLanguage.value == 'en'
                             ? colorScheme.primary
                             : const Color(0xFFCECECE),
                         borderWidth: selectedLanguage.value == 'en'
-                            ? responsive.scale(2)
-                            : responsive.scale(1),
-                        borderRadius: responsive.scale(selectedLanguage.value == 'en' ? 30 : 60),
+                            ? responsive.s(2)
+                            : responsive.s(1),
+                        borderRadius: responsive.s(selectedLanguage.value == 'en' ? 30 : 60),
                         textStyle: (textTheme.labelLarge ?? const TextStyle()).copyWith(
-                          fontSize: responsive.scaleFontSize(14, minSize: 11),
+                          fontSize: responsive.sFont(14, minSize: 11),
                           fontWeight:
                               selectedLanguage.value == 'en' ? FontWeight.w600 : FontWeight.w500,
                           height: 1.0,
@@ -212,22 +212,22 @@ class LanguageSelectionScreen extends HookConsumerWidget {
                         ),
                         onPressed: () => selectedLanguage.value = 'en',
                       ),
-                      SizedBox(height: responsive.scale(16)),
+                      SizedBox(height: responsive.s(16)),
                       // Spanish option
                       _LanguagePillButton(
                         label: 'Español',
-                        width: responsive.scale(361),
-                        height: responsive.scale(48),
+                        width: responsive.s(361),
+                        height: responsive.s(48),
                         isSelected: selectedLanguage.value == 'es',
                         borderColor: selectedLanguage.value == 'es'
                             ? colorScheme.primary
                             : const Color(0xFFCECECE),
                         borderWidth: selectedLanguage.value == 'es'
-                            ? responsive.scale(2)
-                            : responsive.scale(1),
-                        borderRadius: responsive.scale(selectedLanguage.value == 'es' ? 30 : 60),
+                            ? responsive.s(2)
+                            : responsive.s(1),
+                        borderRadius: responsive.s(selectedLanguage.value == 'es' ? 30 : 60),
                         textStyle: (textTheme.labelLarge ?? const TextStyle()).copyWith(
-                          fontSize: responsive.scaleFontSize(14, minSize: 11),
+                          fontSize: responsive.sFont(14, minSize: 11),
                           fontWeight:
                               selectedLanguage.value == 'es' ? FontWeight.w600 : FontWeight.w500,
                           height: 1.0,
@@ -235,22 +235,22 @@ class LanguageSelectionScreen extends HookConsumerWidget {
                         ),
                         onPressed: () => selectedLanguage.value = 'es',
                       ),
-                      SizedBox(height: responsive.scale(16)),
+                      SizedBox(height: responsive.s(16)),
                       // French option
                       _LanguagePillButton(
                         label: 'Français',
-                        width: responsive.scale(361),
-                        height: responsive.scale(48),
+                        width: responsive.s(361),
+                        height: responsive.s(48),
                         isSelected: selectedLanguage.value == 'fr',
                         borderColor: selectedLanguage.value == 'fr'
                             ? colorScheme.primary
                             : const Color(0xFFCECECE),
                         borderWidth: selectedLanguage.value == 'fr'
-                            ? responsive.scale(2)
-                            : responsive.scale(1),
-                        borderRadius: responsive.scale(selectedLanguage.value == 'fr' ? 30 : 60),
+                            ? responsive.s(2)
+                            : responsive.s(1),
+                        borderRadius: responsive.s(selectedLanguage.value == 'fr' ? 30 : 60),
                         textStyle: (textTheme.labelLarge ?? const TextStyle()).copyWith(
-                          fontSize: responsive.scaleFontSize(14, minSize: 11),
+                          fontSize: responsive.sFont(14, minSize: 11),
                           fontWeight:
                               selectedLanguage.value == 'fr' ? FontWeight.w600 : FontWeight.w500,
                           height: 1.0,
@@ -266,35 +266,35 @@ class LanguageSelectionScreen extends HookConsumerWidget {
 
                 Padding(
                   padding: EdgeInsets.only(
-                    left: responsive.scale(31.5),
-                    right: responsive.scale(31.5),
+                    left: responsive.s(31.5),
+                    right: responsive.s(31.5),
                     bottom: bottomPadding,
                   ),
                   child: SizedBox(
-                    width: responsive.scale(330),
-                    height: responsive.scale(48),
+                    width: responsive.s(330),
+                    height: responsive.s(48),
                     child: FilledButton(
                       onPressed: isSaving.value ? null : saveLanguage,
                       style: FilledButton.styleFrom(
                         backgroundColor: colorScheme.primary,
                         foregroundColor: colorScheme.onPrimary,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(responsive.scale(30)),
+                          borderRadius: BorderRadius.circular(responsive.s(30)),
                         ),
                       ),
                       child: isSaving.value
                           ? SizedBox(
-                              width: responsive.scale(18),
-                              height: responsive.scale(18),
+                              width: responsive.s(18),
+                              height: responsive.s(18),
                               child: CircularProgressIndicator(
-                                strokeWidth: responsive.scaleWithMin(2, min: 1.5),
+                                strokeWidth: responsive.s(2),
                                 valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onPrimary),
                               ),
                             )
                           : Text(
                               LocaleKeys.buttons.save.tr(),
                               style: (textTheme.labelLarge ?? const TextStyle()).copyWith(
-                                fontSize: responsive.scaleFontSize(14, minSize: 11),
+                                fontSize: responsive.sFont(14, minSize: 11),
                                 fontWeight: FontWeight.w600,
                                 height: 1.0,
                                 color: colorScheme.onPrimary,

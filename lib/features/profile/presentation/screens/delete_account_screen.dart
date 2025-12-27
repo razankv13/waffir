@@ -21,7 +21,7 @@ class DeleteAccountScreen extends HookConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     // Local state using hooks
     final confirmationChecked = useState(false);
@@ -102,14 +102,14 @@ class DeleteAccountScreen extends HookConsumerWidget {
         children: [
           // Gradient background shape
           Positioned(
-            top: responsive.scale(-85),
-            left: responsive.scale(-40),
+            top: responsive.s(-85),
+            left: responsive.s(-40),
             child: Container(
-              width: responsive.scale(468),
-              height: responsive.scale(395),
+              width: responsive.s(468),
+              height: responsive.s(395),
               decoration: BoxDecoration(
                 color: colorScheme.error.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(responsive.scale(200)),
+                borderRadius: BorderRadius.circular(responsive.s(200)),
               ),
             ),
           ),
@@ -121,16 +121,16 @@ class DeleteAccountScreen extends HookConsumerWidget {
               SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: responsive.scalePadding(const EdgeInsets.all(16)),
+                  padding: responsive.sPadding(const EdgeInsets.all(16)),
                   child: Row(
                     children: [
-                      WaffirBackButton(size: responsive.scale(44)),
-                      SizedBox(width: responsive.scale(16)),
+                      WaffirBackButton(size: responsive.s(44)),
+                      SizedBox(width: responsive.s(16)),
                       Text(
                         'Delete Account',
                         style: textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w600,
-                          fontSize: responsive.scaleFontSize(22, minSize: 18),
+                          fontSize: responsive.sFont(22, minSize: 18),
                         ),
                       ),
                     ],
@@ -141,52 +141,52 @@ class DeleteAccountScreen extends HookConsumerWidget {
               // Warning content
               Expanded(
                 child: SingleChildScrollView(
-                  padding: responsive.scalePadding(const EdgeInsets.all(16)),
+                  padding: responsive.sPadding(const EdgeInsets.all(16)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // Warning icon
                       Center(
                         child: Container(
-                          width: responsive.scale(80),
-                          height: responsive.scale(80),
+                          width: responsive.s(80),
+                          height: responsive.s(80),
                           decoration: BoxDecoration(
                             color: colorScheme.error.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.warning_rounded,
-                            size: responsive.scale(48),
+                            size: responsive.s(48),
                             color: colorScheme.error,
                           ),
                         ),
                       ),
 
-                      SizedBox(height: responsive.scale(24)),
+                      SizedBox(height: responsive.s(24)),
 
                       // Warning title
                       Text(
                         'Are you sure you want to delete your account?',
                         style: textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w600,
-                          fontSize: responsive.scaleFontSize(22, minSize: 18),
+                          fontSize: responsive.sFont(22, minSize: 18),
                         ),
                         textAlign: TextAlign.center,
                       ),
 
-                      SizedBox(height: responsive.scale(16)),
+                      SizedBox(height: responsive.s(16)),
 
                       // Warning description
                       Text(
                         'This action is permanent and cannot be undone. All your data will be permanently deleted.',
                         style: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurface.withValues(alpha: 0.7),
-                          fontSize: responsive.scaleFontSize(14, minSize: 12),
+                          fontSize: responsive.sFont(14, minSize: 12),
                         ),
                         textAlign: TextAlign.center,
                       ),
 
-                      SizedBox(height: responsive.scale(32)),
+                      SizedBox(height: responsive.s(32)),
 
                       // What will be deleted section
                       ProfileCard(
@@ -197,34 +197,34 @@ class DeleteAccountScreen extends HookConsumerWidget {
                               'What will be deleted:',
                               style: textTheme.titleSmall?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                fontSize: responsive.scaleFontSize(14, minSize: 12),
+                                fontSize: responsive.sFont(14, minSize: 12),
                               ),
                             ),
-                            SizedBox(height: responsive.scale(16)),
+                            SizedBox(height: responsive.s(16)),
                             const _DeletedItem(
                               icon: Icons.person_outline,
                               title: 'Personal Information',
                               subtitle: 'Name, email, phone, and profile data',
                             ),
-                            SizedBox(height: responsive.scale(12)),
+                            SizedBox(height: responsive.s(12)),
                             const _DeletedItem(
                               icon: Icons.favorite_outline,
                               title: 'Saved Deals',
                               subtitle: 'All your bookmarked deals',
                             ),
-                            SizedBox(height: responsive.scale(12)),
+                            SizedBox(height: responsive.s(12)),
                             const _DeletedItem(
                               icon: Icons.credit_card_outlined,
                               title: 'Credit Cards',
                               subtitle: 'Saved credit card preferences',
                             ),
-                            SizedBox(height: responsive.scale(12)),
+                            SizedBox(height: responsive.s(12)),
                             const _DeletedItem(
                               icon: Icons.history,
                               title: 'Activity History',
                               subtitle: 'All your browsing and interaction history',
                             ),
-                            SizedBox(height: responsive.scale(12)),
+                            SizedBox(height: responsive.s(12)),
                             const _DeletedItem(
                               icon: Icons.settings_outlined,
                               title: 'Preferences',
@@ -234,16 +234,16 @@ class DeleteAccountScreen extends HookConsumerWidget {
                         ),
                       ),
 
-                      SizedBox(height: responsive.scale(24)),
+                      SizedBox(height: responsive.s(24)),
 
                       // Confirmation checkbox
                       InkWell(
                         onTap: () {
                           confirmationChecked.value = !confirmationChecked.value;
                         },
-                        borderRadius: BorderRadius.circular(responsive.scale(8)),
+                        borderRadius: BorderRadius.circular(responsive.s(8)),
                         child: Padding(
-                          padding: responsive.scalePadding(const EdgeInsets.symmetric(vertical: 8)),
+                          padding: responsive.sPadding(const EdgeInsets.symmetric(vertical: 8)),
                           child: Row(
                             children: [
                               Checkbox(
@@ -253,12 +253,12 @@ class DeleteAccountScreen extends HookConsumerWidget {
                                 },
                                 activeColor: colorScheme.error,
                               ),
-                              SizedBox(width: responsive.scale(8)),
+                              SizedBox(width: responsive.s(8)),
                               Expanded(
                                 child: Text(
                                   'I understand that this action cannot be undone and all my data will be permanently deleted.',
                                   style: textTheme.bodySmall?.copyWith(
-                                    fontSize: responsive.scaleFontSize(12),
+                                    fontSize: responsive.sFont(12),
                                   ),
                                 ),
                               ),
@@ -267,7 +267,7 @@ class DeleteAccountScreen extends HookConsumerWidget {
                         ),
                       ),
 
-                      SizedBox(height: responsive.scale(32)),
+                      SizedBox(height: responsive.s(32)),
                     ],
                   ),
                 ),
@@ -277,7 +277,7 @@ class DeleteAccountScreen extends HookConsumerWidget {
               SafeArea(
                 top: false,
                 child: Padding(
-                  padding: responsive.scalePadding(const EdgeInsets.all(16)),
+                  padding: responsive.sPadding(const EdgeInsets.all(16)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -285,42 +285,42 @@ class DeleteAccountScreen extends HookConsumerWidget {
                         onPressed: isLoading.value ? null : deleteAccount,
                         style: FilledButton.styleFrom(
                           backgroundColor: colorScheme.error,
-                          minimumSize: Size.fromHeight(responsive.scale(48)),
+                          minimumSize: Size.fromHeight(responsive.s(48)),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(responsive.scale(24)),
+                            borderRadius: BorderRadius.circular(responsive.s(24)),
                           ),
                         ),
                         child: isLoading.value
                             ? SizedBox(
-                                width: responsive.scale(20),
-                                height: responsive.scale(20),
+                                width: responsive.s(20),
+                                height: responsive.s(20),
                                 child: CircularProgressIndicator(
-                                  strokeWidth: responsive.scaleWithMin(2, min: 1.5),
+                                  strokeWidth: responsive.s(2),
                                   valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onError),
                                 ),
                               )
                             : Text(
                                 'Delete Account',
                                 style: textTheme.labelLarge?.copyWith(
-                                  fontSize: responsive.scaleFontSize(14, minSize: 12),
+                                  fontSize: responsive.sFont(14, minSize: 12),
                                   fontWeight: FontWeight.w600,
                                   color: colorScheme.onError,
                                 ),
                               ),
                       ),
-                      SizedBox(height: responsive.scale(12)),
+                      SizedBox(height: responsive.s(12)),
                       OutlinedButton(
                         onPressed: isLoading.value ? null : () => context.pop(),
                         style: OutlinedButton.styleFrom(
-                          minimumSize: Size.fromHeight(responsive.scale(48)),
+                          minimumSize: Size.fromHeight(responsive.s(48)),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(responsive.scale(24)),
+                            borderRadius: BorderRadius.circular(responsive.s(24)),
                           ),
                         ),
                         child: Text(
                           'Cancel',
                           style: textTheme.labelLarge?.copyWith(
-                            fontSize: responsive.scaleFontSize(14, minSize: 12),
+                            fontSize: responsive.sFont(14, minSize: 12),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -350,12 +350,12 @@ class _DeletedItem extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    final responsive = ResponsiveHelper(context);
+    final responsive = ResponsiveHelper.of(context);
 
     return Row(
       children: [
-        Icon(icon, size: responsive.scale(24), color: colorScheme.error),
-        SizedBox(width: responsive.scale(16)),
+        Icon(icon, size: responsive.s(24), color: colorScheme.error),
+        SizedBox(width: responsive.s(16)),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,14 +364,14 @@ class _DeletedItem extends StatelessWidget {
                 title,
                 style: textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500,
-                  fontSize: responsive.scaleFontSize(14, minSize: 12),
+                  fontSize: responsive.sFont(14, minSize: 12),
                 ),
               ),
               Text(
                 subtitle,
                 style: textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurface.withValues(alpha: 0.6),
-                  fontSize: responsive.scaleFontSize(12),
+                  fontSize: responsive.sFont(12),
                 ),
               ),
             ],
